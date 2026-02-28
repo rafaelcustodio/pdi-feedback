@@ -1,0 +1,174 @@
+"use server";
+
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
+
+export type OrgUnitNode = {
+  id: string;
+  name: string;
+  parentId: string | null;
+  createdAt: Date;
+  children: OrgUnitNode[];
+  _count: { employeeHierarchies: number };
+};
+
+function buildTree(
+  units: {
+    id: string;
+    name: string;
+    parentId: string | null;
+    createdAt: Date;
+    _count: { employeeHierarchies: number };
+  }[]
+): OrgUnitNode[] {
+  const map = new Map<string, OrgUnitNode>();
+  const roots: OrgUnitNode[] = [];
+
+  for (const unit of units) {
+    map.set(unit.id, { ...unit, children: [] });
+  }
+
+  for (const unit of units) {
+    const node = map.get(unit.id)!;
+    if (unit.parentId && map.has(unit.parentId)) {
+      map.get(unit.parentId)!.children.push(node);
+    } else {
+      roots.push(node);
+    }
+  }
+
+  return roots;
+}
+
+export async function getOrganizationalUnits(): Promise<{
+  tree: OrgUnitNode[];
+  flat: { id: string; name: string; parentId: string | null }[];
+}> {
+  const session = await auth();
+  if (!session?.user || session.user.role !== "admin") {
+    throw new Error("Acesso não autorizado");
+  }
+
+  const units = await prisma.organizationalUnit.findMany({
+    orderBy: { name: "asc" },
+    include: {
+      _count: { select: { employeeHierarchies: true } },
+    },
+  });
+
+  return {
+    tree: buildTree(units),
+    flat: units.map((u) => ({ id: u.id, name: u.name, parentId: u.parentId })),
+  };
+}
+
+export async function createOrganizationalUnit(
+  name: string,
+  parentId: string | null
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user || session.user.role !== "admin") {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const trimmedName = name.trim();
+  if (!trimmedName) {
+    return { success: false, error: "Nome é obrigatório" };
+  }
+
+  if (parentId) {
+    const parent = await prisma.organizationalUnit.findUnique({
+      where: { id: parentId },
+    });
+    if (!parent) {
+      return { success: false, error: "Unidade-pai não encontrada" };
+    }
+  }
+
+  await prisma.organizationalUnit.create({
+    data: {
+      name: trimmedName,
+      parentId: parentId || null,
+    },
+  });
+
+  revalidatePath("/configuracoes");
+  return { success: true };
+}
+
+export async function updateOrganizationalUnit(
+  id: string,
+  name: string
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user || session.user.role !== "admin") {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const trimmedName = name.trim();
+  if (!trimmedName) {
+    return { success: false, error: "Nome é obrigatório" };
+  }
+
+  const unit = await prisma.organizationalUnit.findUnique({
+    where: { id },
+  });
+  if (!unit) {
+    return { success: false, error: "Unidade não encontrada" };
+  }
+
+  await prisma.organizationalUnit.update({
+    where: { id },
+    data: { name: trimmedName },
+  });
+
+  revalidatePath("/configuracoes");
+  return { success: true };
+}
+
+export async function deleteOrganizationalUnit(
+  id: string
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user || session.user.role !== "admin") {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const unit = await prisma.organizationalUnit.findUnique({
+    where: { id },
+    include: {
+      _count: {
+        select: {
+          children: true,
+          employeeHierarchies: true,
+        },
+      },
+    },
+  });
+
+  if (!unit) {
+    return { success: false, error: "Unidade não encontrada" };
+  }
+
+  if (unit._count.children > 0) {
+    return {
+      success: false,
+      error: "Não é possível excluir uma unidade que possui sub-unidades",
+    };
+  }
+
+  if (unit._count.employeeHierarchies > 0) {
+    return {
+      success: false,
+      error: "Não é possível excluir uma unidade que possui colaboradores vinculados",
+    };
+  }
+
+  await prisma.organizationalUnit.delete({
+    where: { id },
+  });
+
+  revalidatePath("/configuracoes");
+  return { success: true };
+}
