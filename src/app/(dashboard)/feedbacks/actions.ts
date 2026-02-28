@@ -325,9 +325,9 @@ export async function updateFeedback(
     return { success: false, error: "Apenas o gestor que criou este feedback pode editá-lo" };
   }
 
-  // Can only edit drafts
-  if (feedback.status !== "draft") {
-    return { success: false, error: "Apenas feedbacks em rascunho podem ser editados" };
+  // Can only edit drafts and scheduled
+  if (feedback.status !== "draft" && feedback.status !== "scheduled") {
+    return { success: false, error: "Apenas feedbacks em rascunho ou agendados podem ser editados" };
   }
 
   if (!data.period.trim()) {

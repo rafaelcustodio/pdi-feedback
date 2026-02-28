@@ -111,6 +111,7 @@ model PDI {
   status          PDIStatus @default(draft)
   period          String
   frequencyMonths Int?
+  conductedAt     DateTime?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
@@ -174,6 +175,7 @@ model PDIComment {
 
 enum FeedbackStatus {
   draft
+  scheduled
   submitted
 }
 
@@ -188,6 +190,8 @@ model Feedback {
   rating          Int?
   status          FeedbackStatus @default(draft)
   frequencyMonths Int?
+  conductedAt     DateTime?
+  scheduledAt     DateTime?
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 
@@ -242,6 +246,8 @@ model PDISchedule {
 enum NotificationType {
   pdi_reminder
   feedback_reminder
+  feedback_scheduled
+  feedback_submitted_auto
   general
 }
 

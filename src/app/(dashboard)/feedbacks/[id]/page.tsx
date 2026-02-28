@@ -26,7 +26,7 @@ export default async function FeedbackDetailPage({
 
   // Check if the current user can edit this feedback
   const canEdit =
-    feedback.status === "draft" &&
+    (feedback.status === "draft" || feedback.status === "scheduled") &&
     (role === "admin" || feedback.managerId === userId);
 
   if (canEdit) {

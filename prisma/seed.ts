@@ -165,6 +165,7 @@ async function main() {
       status: PDIStatus.active,
       period: "2026-S1",
       frequencyMonths: 6,
+      conductedAt: new Date("2026-01-15"),
     },
   });
 
@@ -220,6 +221,7 @@ async function main() {
       rating: 4,
       status: FeedbackStatus.submitted,
       frequencyMonths: 6,
+      conductedAt: new Date("2025-12-10"),
     },
   });
 
@@ -234,6 +236,24 @@ async function main() {
       rating: 3,
       status: FeedbackStatus.draft,
       frequencyMonths: 6,
+      conductedAt: new Date("2026-01-20"),
+    },
+  });
+
+  // Scheduled feedback (manager filled in advance, auto-submits on scheduled date)
+  await prisma.feedback.create({
+    data: {
+      employeeId: hrAnalyst.id,
+      managerId: managerHR.id,
+      period: "2026-S1",
+      content: "Juliana tem se destacado na organização de processos seletivos.",
+      strengths: "Organização, comunicação interpessoal, proatividade",
+      improvements: "Conhecimento em análise de dados de RH, uso de ferramentas de BI",
+      rating: 4,
+      status: FeedbackStatus.scheduled,
+      frequencyMonths: 6,
+      conductedAt: new Date("2026-02-25"),
+      scheduledAt: new Date("2026-03-15"),
     },
   });
 
@@ -301,8 +321,8 @@ async function main() {
   console.log(`  Users created: 7`);
   console.log(`  Org units created: 4`);
   console.log(`  Hierarchies created: 5`);
-  console.log(`  PDIs created: 1 (with 3 goals)`);
-  console.log(`  Feedbacks created: 2`);
+  console.log(`  PDIs created: 1 (with 3 goals, conductedAt set)`);
+  console.log(`  Feedbacks created: 3 (submitted w/ conductedAt, draft w/ conductedAt, scheduled w/ scheduledAt)`);
   console.log(`  Schedules created: 3`);
   console.log(`  Notifications created: 2`);
 }

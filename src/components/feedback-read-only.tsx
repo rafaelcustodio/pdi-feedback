@@ -10,6 +10,7 @@ interface FeedbackReadOnlyProps {
 
 const statusLabels: Record<string, string> = {
   draft: "Rascunho",
+  scheduled: "Agendado",
   submitted: "Submetido",
 };
 
@@ -36,7 +37,9 @@ export function FeedbackReadOnly({ feedback }: FeedbackReadOnlyProps) {
           className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${
             feedback.status === "submitted"
               ? "bg-green-100 text-green-700"
-              : "bg-yellow-100 text-yellow-700"
+              : feedback.status === "scheduled"
+                ? "bg-blue-100 text-blue-700"
+                : "bg-yellow-100 text-yellow-700"
           }`}
         >
           {statusLabels[feedback.status] ?? feedback.status}

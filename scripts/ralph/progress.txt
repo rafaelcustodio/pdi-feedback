@@ -28,6 +28,10 @@ Started: Sat Feb 28 06:24:15 PST 2026
 - Notification deduplication: embed messageKey `[type_id_date]` in message, check `{ contains: messageKey }` before creating
 - Email service: Nodemailer with SMTP config via env vars (SMTP_HOST/PORT/USER/PASS/FROM), fallback to JSON transport (console logging) in dev
 - Cron API routes: use `/api/cron/*` pattern, protect with CRON_SECRET Bearer token, exclude from NextAuth middleware matcher
+- FeedbackStatus enum: `draft`, `scheduled`, `submitted` - scheduled feedbacks are editable (like drafts), not visible to employees
+- NotificationType enum: `pdi_reminder`, `feedback_reminder`, `feedback_scheduled`, `feedback_submitted_auto`, `general`
+- UI status label maps: update `statusLabels` Record and color classes in feedback-table.tsx and feedback-read-only.tsx when adding new statuses
+- Migration files created manually in `prisma/migrations/YYYYMMDDHHMMSS_description/migration.sql` (no DB connection needed)
 - Middleware exclusions: add new API patterns to the regex negative lookahead in `src/middleware.ts`
 - Avoid `setState` in `useEffect` for prop syncing - ESLint `react-hooks/set-state-in-effect` rule - use `useMemo` with derived state instead
 - PDIGoal.dueDate is nullable (`DateTime?`) - always guard with null check or `{ not: null }` in Prisma where
@@ -450,4 +454,33 @@ Started: Sat Feb 28 06:24:15 PST 2026
   - HTML email templates use inline styles (no CSS classes) since email clients don't support external stylesheets or `<style>` tags reliably
   - Consolidated emails per manager are more user-friendly than one email per notification - group by userId and send one summary email
   - The cron endpoint returns JSON with counts (notificationsCreated, emailsSent, emailsFailed, managersNotified) for monitoring
+---
+
+## 2026-02-28 20:40 - US-016
+- What was implemented: Schema migration for scheduling and conducted dates
+  - Added `conductedAt` (DateTime, nullable) to PDI model
+  - Added `conductedAt` (DateTime, nullable) to Feedback model
+  - Added `scheduledAt` (DateTime, nullable) to Feedback model
+  - Added `scheduled` value to FeedbackStatus enum (draft/scheduled/submitted)
+  - Added `feedback_scheduled` and `feedback_submitted_auto` to NotificationType enum
+  - Created migration `20260228200000_add_conducted_at_scheduled_at_and_new_enums`
+  - Regenerated Prisma client
+  - Updated seed data with conductedAt examples on PDI and Feedback, plus a scheduled feedback example
+  - Updated UI components (feedback-table, feedback-read-only, notification-table) with new status/type labels and colors
+  - Updated feedback editing logic to allow editing scheduled feedbacks (not just drafts)
+- Files changed:
+  - `prisma/schema.prisma` - Added conductedAt, scheduledAt fields and new enum values
+  - `prisma/migrations/20260228200000_.../migration.sql` - ALTER TABLE and ALTER TYPE statements
+  - `prisma/seed.ts` - Added conductedAt to existing records, new scheduled feedback example
+  - `src/components/feedback-table.tsx` - Added 'Agendado' status label and blue badge color
+  - `src/components/feedback-read-only.tsx` - Added 'Agendado' status label and blue badge color
+  - `src/components/notification-table.tsx` - Added feedback_scheduled and feedback_submitted_auto type labels/colors
+  - `src/app/(dashboard)/feedbacks/[id]/page.tsx` - Allow editing when status is 'scheduled'
+  - `src/app/(dashboard)/feedbacks/actions.ts` - Allow updating scheduled feedbacks
+- **Learnings for future iterations:**
+  - New enum values in Prisma require UI label maps to be updated in all components that display status badges
+  - When adding a new FeedbackStatus, check all places that compare `status === "draft"` or `status !== "draft"` - they may need to include the new status
+  - Migration SQL for adding enum values uses `ALTER TYPE "EnumName" ADD VALUE 'value'` - cannot be done in a transaction
+  - All new fields are nullable so existing code continues to work without changes to existing queries
+  - The `@rollup/rollup-linux-x64-gnu` package may need to be installed for vitest to run in this environment
 ---

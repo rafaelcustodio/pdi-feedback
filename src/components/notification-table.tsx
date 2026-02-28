@@ -22,6 +22,10 @@ function getTypeColor(type: string): string {
       return "bg-blue-100 text-blue-700";
     case "feedback_reminder":
       return "bg-purple-100 text-purple-700";
+    case "feedback_scheduled":
+      return "bg-indigo-100 text-indigo-700";
+    case "feedback_submitted_auto":
+      return "bg-green-100 text-green-700";
     default:
       return "bg-gray-100 text-gray-700";
   }
@@ -33,6 +37,10 @@ function getTypeLabel(type: string): string {
       return "PDI";
     case "feedback_reminder":
       return "Feedback";
+    case "feedback_scheduled":
+      return "Agendamento";
+    case "feedback_submitted_auto":
+      return "Auto-envio";
     default:
       return "Geral";
   }

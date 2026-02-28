@@ -28,6 +28,7 @@ interface FeedbackTableProps {
 
 const statusLabels: Record<string, string> = {
   draft: "Rascunho",
+  scheduled: "Agendado",
   submitted: "Submetido",
 };
 
@@ -200,7 +201,9 @@ export function FeedbackTable({
                       className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
                         fb.status === "submitted"
                           ? "bg-green-100 text-green-700"
-                          : "bg-yellow-100 text-yellow-700"
+                          : fb.status === "scheduled"
+                            ? "bg-blue-100 text-blue-700"
+                            : "bg-yellow-100 text-yellow-700"
                       }`}
                     >
                       {statusLabels[fb.status] ?? fb.status}
@@ -216,9 +219,9 @@ export function FeedbackTable({
                       <Link
                         href={`/feedbacks/${fb.id}`}
                         className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-blue-600"
-                        title={fb.status === "draft" ? "Editar" : "Visualizar"}
+                        title={fb.status === "draft" || fb.status === "scheduled" ? "Editar" : "Visualizar"}
                       >
-                        {fb.status === "draft" ? (
+                        {fb.status === "draft" || fb.status === "scheduled" ? (
                           <Pencil size={14} />
                         ) : (
                           <Eye size={14} />

@@ -257,6 +257,153 @@
       "priority": 15,
       "passes": true,
       "notes": "Nodemailer with SMTP config (SMTP_HOST/PORT/USER/PASS/FROM). Cron route at /api/cron/email-reminders (GET, protected by CRON_SECRET header). Generates notifications then sends consolidated HTML emails per manager. Updates emailSent=true on Notification after sending. Middleware excludes /api/cron from auth."
+    },
+    {
+      "id": "US-016",
+      "title": "Migração de schema para agendamento e datas de realização",
+      "description": "Como desenvolvedor, preciso atualizar o schema do banco de dados para suportar os novos campos de data de realização (conductedAt), agendamento de feedbacks (scheduledAt, status scheduled) e novos tipos de notificação.",
+      "acceptanceCriteria": [
+        "Campo conductedAt (DateTime, nullable) adicionado ao modelo PDI no schema Prisma",
+        "Campo conductedAt (DateTime, nullable) adicionado ao modelo Feedback no schema Prisma",
+        "Campo scheduledAt (DateTime, nullable) adicionado ao modelo Feedback no schema Prisma",
+        "Valor 'scheduled' adicionado ao enum FeedbackStatus (draft/scheduled/submitted)",
+        "Valores 'feedback_scheduled' e 'feedback_submitted_auto' adicionados ao enum NotificationType",
+        "Migration gerada e aplicada com sucesso",
+        "Prisma client regenerado",
+        "Seed atualizado para incluir exemplos de feedbacks com conductedAt e scheduledAt",
+        "Typecheck passa",
+        "Tests passam"
+      ],
+      "priority": 16,
+      "passes": true,
+      "notes": "Schema migration only - no UI changes. Use PRISMA_SCHEMA_ENGINE_BINARY=/tmp/fake-schema-engine workaround. Update existing Feedback/PDI queries if needed to handle new nullable fields. The existing code should continue working since new fields are nullable. UI label maps updated for new FeedbackStatus 'scheduled' and NotificationType values. Feedback editing allowed for 'scheduled' status."
+    },
+    {
+      "id": "US-017",
+      "title": "Adicionar campo conductedAt ao formulário de feedback",
+      "description": "Como gestor, quero registrar a data de realização (quando a conversa/sessão de feedback aconteceu) ao criar ou editar um feedback, separando da data de criação automática.",
+      "acceptanceCriteria": [
+        "Campo 'Data de realização' (conductedAt) adicionado ao formulário de feedback como date picker obrigatório",
+        "Data de criação (createdAt) exibida como informação somente leitura no formulário de edição",
+        "Server actions createFeedback e updateFeedback atualizados para salvar conductedAt",
+        "FeedbackReadOnly exibe 'Realizado em' (conductedAt) e 'Criado em' (createdAt)",
+        "Edição permitida enquanto status for 'draft' ou 'scheduled'",
+        "Typecheck passa",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 17,
+      "passes": false,
+      "notes": "Update feedback-form.tsx, feedbacks/actions.ts, and feedback-read-only.tsx. The conductedAt field represents when the feedback session actually happened (filled by manager), while createdAt is automatic."
+    },
+    {
+      "id": "US-018",
+      "title": "Adicionar campo conductedAt ao formulário de PDI",
+      "description": "Como gestor, quero registrar a data de realização (quando a sessão de PDI aconteceu) ao criar ou editar um PDI, separando da data de criação automática.",
+      "acceptanceCriteria": [
+        "Campo 'Data de realização' (conductedAt) adicionado ao formulário de PDI como date picker obrigatório",
+        "Data de criação (createdAt) exibida como informação somente leitura no formulário de edição",
+        "Server actions createPDI e updatePDI atualizados para salvar conductedAt",
+        "PDITracking exibe 'Realizado em' (conductedAt) e 'Criado em' (createdAt)",
+        "Typecheck passa",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 18,
+      "passes": false,
+      "notes": "Update pdi-form.tsx, pdis/actions.ts, and pdi-tracking.tsx. Same pattern as US-017 for feedback. The conductedAt field represents when the PDI session actually happened."
+    },
+    {
+      "id": "US-019",
+      "title": "Agendar submissão de feedback",
+      "description": "Como gestor, quero preencher um feedback agora e agendar a submissão automática para uma data futura, para preparar o feedback com antecedência e entregá-lo ao colaborador no momento adequado.",
+      "acceptanceCriteria": [
+        "Botão 'Agendar submissão' no formulário de feedback ao lado de 'Salvar rascunho' e 'Submeter feedback'",
+        "Ao clicar, abre modal/popover com date picker para selecionar data de submissão futura",
+        "Data de agendamento (scheduledAt) deve ser data futura (validação: não permite data passada ou hoje)",
+        "Feedback agendado recebe status 'scheduled' — diferente de 'draft' e 'submitted'",
+        "Feedback com status 'scheduled' pode ser editado pelo gestor antes da data agendada",
+        "Gestor pode cancelar agendamento voltando feedback ao status 'draft'",
+        "Gestor pode alterar data do agendamento enquanto feedback não foi submetido",
+        "Na listagem de feedbacks do gestor, feedbacks agendados exibem badge 'Agendado' com data prevista",
+        "Conteúdo do feedback agendado NÃO é visível para o colaborador antes da submissão",
+        "Typecheck passa",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 19,
+      "passes": false,
+      "notes": "Depends on US-016 schema (scheduled status, scheduledAt field). Update feedback-form.tsx with schedule button + date picker modal. Update feedback-table.tsx with 'Agendado' badge (blue). Update feedbacks/actions.ts with schedule/cancel logic. Employee visibility filter: only show submitted feedbacks (already in place, just ensure 'scheduled' is excluded like 'draft')."
+    },
+    {
+      "id": "US-020",
+      "title": "Execução automática de feedbacks agendados",
+      "description": "Como sistema, preciso submeter automaticamente os feedbacks agendados na data programada para que o colaborador receba o feedback no momento correto.",
+      "acceptanceCriteria": [
+        "Job cron diário verificando feedbacks com status 'scheduled' e scheduledAt <= data atual",
+        "Feedbacks encontrados são automaticamente alterados para status 'submitted'",
+        "Notificação interna criada para o colaborador informando que recebeu novo feedback",
+        "E-mail enviado ao colaborador notificando sobre o novo feedback com link para visualizar",
+        "Gestor recebe notificação confirmando que feedback agendado foi submetido",
+        "Em caso de erro, feedback permanece como 'scheduled' e gestor recebe notificação de falha",
+        "Log de execução do job registrado para auditoria",
+        "Typecheck passa"
+      ],
+      "priority": 20,
+      "passes": false,
+      "notes": "Add to existing cron route at /api/cron/email-reminders or create separate /api/cron/scheduled-feedbacks route. Use notification types feedback_scheduled and feedback_submitted_auto from US-016 schema. Reuse email service from email.ts and templates from email-templates.ts."
+    },
+    {
+      "id": "US-021",
+      "title": "Agendar data futura para preencher feedback",
+      "description": "Como gestor, quero agendar uma data futura para preencher um feedback de um colaborador, para receber um lembrete e ter o feedback já criado como rascunho quando a data chegar.",
+      "acceptanceCriteria": [
+        "Na página de feedbacks ou do colaborador, botão 'Agendar feedback futuro'",
+        "Modal com campos: colaborador (pré-selecionado se vindo da página do colaborador), data prevista para preenchimento",
+        "Ao confirmar, cria feedback com status 'draft' e campo scheduledAt preenchido com data futura",
+        "Feedback criado visível na listagem do gestor com badge 'Agendado para preenchimento' e data prevista",
+        "7 dias antes da data agendada, notificação interna lembrando o gestor de preencher",
+        "Na data agendada, notificação interna + e-mail de lembrete enviados ao gestor",
+        "Colaborador recebe notificação prévia informando que há feedback agendado (sem conteúdo)",
+        "Gestor pode preencher o feedback a qualquer momento antes da data agendada",
+        "Typecheck passa",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 21,
+      "passes": false,
+      "notes": "Different from US-019 (schedule submission). This creates an empty draft with a future date for the manager to fill in later. The scheduledAt field here means 'planned date to write the feedback', not 'date to auto-submit'. Notifications use generateScheduleNotifications pattern from US-013."
+    },
+    {
+      "id": "US-022",
+      "title": "Atualizar visibilidade de feedbacks agendados para colaboradores",
+      "description": "Como colaborador, quero que feedbacks com status draft ou scheduled não apareçam na minha listagem, mas quero receber notificação de que há feedbacks agendados para datas futuras.",
+      "acceptanceCriteria": [
+        "Feedbacks com status 'draft' ou 'scheduled' NÃO aparecem na listagem do colaborador",
+        "Colaborador vê notificação de que há feedbacks agendados para datas futuras (sem conteúdo)",
+        "Listagem do colaborador ordena por data de realização (conductedAt) mais recente primeiro",
+        "Cada item mostra: período, data de realização, data de submissão, nome do gestor, rating",
+        "Filtro por período/ano e por data de realização",
+        "Typecheck passa",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 22,
+      "passes": false,
+      "notes": "Update feedback-table.tsx and feedbacks/actions.ts. Employee filter already excludes draft (status === 'submitted'), just ensure 'scheduled' is also excluded. Add banner/alert at top of employee feedback list showing count of scheduled feedbacks. Update ordering to use conductedAt instead of createdAt."
+    },
+    {
+      "id": "US-023",
+      "title": "Visualizar datas de criação, realização e agendamento",
+      "description": "Como usuário, quero ver claramente as datas de criação, realização e agendamento nos detalhes e listagens de PDIs e feedbacks para ter um histórico completo e transparente.",
+      "acceptanceCriteria": [
+        "Na listagem de feedbacks: coluna 'Data de realização' visível e ordenável",
+        "Na listagem de PDIs: coluna 'Data de realização' visível e ordenável",
+        "Na página de detalhe do feedback: exibir 'Criado em', 'Realizado em' e 'Agendado para' (se aplicável)",
+        "Na página de detalhe do PDI: exibir 'Criado em' e 'Realizado em'",
+        "Filtro por período de realização (data início e data fim) nas listagens de feedbacks e PDIs",
+        "Datas formatadas no padrão brasileiro (dd/mm/aaaa)",
+        "Typecheck passa",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 23,
+      "passes": false,
+      "notes": "Update feedback-table.tsx and pdi-table.tsx to add conductedAt column. Add date range filter (two date pickers) to both list pages. Use toLocaleDateString('pt-BR') for date formatting. Update feedbacks/actions.ts and pdis/actions.ts to support ordering by conductedAt and date range filtering."
     }
   ]
 }
