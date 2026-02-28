@@ -1,0 +1,263 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================
+// User & Authentication
+// ============================================================
+
+enum UserRole {
+  admin
+  manager
+  employee
+}
+
+model User {
+  id          String    @id @default(cuid())
+  name        String
+  email       String    @unique
+  password    String?
+  role        UserRole  @default(employee)
+  avatarUrl   String?
+  ssoProvider String?
+  ssoId       String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations as employee
+  employeeHierarchies EmployeeHierarchy[] @relation("Employee")
+  pdisAsEmployee      PDI[]               @relation("PDIEmployee")
+  feedbacksReceived   Feedback[]          @relation("FeedbackEmployee")
+  feedbackSchedulesAsEmployee FeedbackSchedule[] @relation("FeedbackScheduleEmployee")
+  pdiSchedulesAsEmployee      PDISchedule[]      @relation("PDIScheduleEmployee")
+
+  // Relations as manager
+  managerHierarchies  EmployeeHierarchy[] @relation("Manager")
+  pdisAsManager       PDI[]               @relation("PDIManager")
+  feedbacksGiven      Feedback[]          @relation("FeedbackManager")
+  feedbackSchedulesAsManager FeedbackSchedule[] @relation("FeedbackScheduleManager")
+  pdiSchedulesAsManager      PDISchedule[]      @relation("PDIScheduleManager")
+
+  // Other relations
+  pdiComments   PDIComment[]
+  notifications Notification[]
+
+  @@index([email])
+  @@index([role])
+}
+
+// ============================================================
+// Organizational Structure
+// ============================================================
+
+model OrganizationalUnit {
+  id        String   @id @default(cuid())
+  name      String
+  parentId  String?
+  createdAt DateTime @default(now())
+
+  parent   OrganizationalUnit?  @relation("OrgUnitHierarchy", fields: [parentId], references: [id])
+  children OrganizationalUnit[] @relation("OrgUnitHierarchy")
+
+  employeeHierarchies EmployeeHierarchy[]
+
+  @@index([parentId])
+}
+
+model EmployeeHierarchy {
+  id                   String   @id @default(cuid())
+  employeeId           String
+  managerId            String
+  organizationalUnitId String
+  startDate            DateTime @default(now())
+  endDate              DateTime?
+
+  employee           User               @relation("Employee", fields: [employeeId], references: [id])
+  manager            User               @relation("Manager", fields: [managerId], references: [id])
+  organizationalUnit OrganizationalUnit @relation(fields: [organizationalUnitId], references: [id])
+
+  @@index([employeeId])
+  @@index([managerId])
+  @@index([organizationalUnitId])
+}
+
+// ============================================================
+// PDI (Plano de Desenvolvimento Individual)
+// ============================================================
+
+enum PDIStatus {
+  draft
+  active
+  completed
+  cancelled
+}
+
+enum GoalStatus {
+  pending
+  in_progress
+  completed
+}
+
+model PDI {
+  id              String    @id @default(cuid())
+  employeeId      String
+  managerId       String
+  status          PDIStatus @default(draft)
+  period          String
+  frequencyMonths Int?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  employee User @relation("PDIEmployee", fields: [employeeId], references: [id])
+  manager  User @relation("PDIManager", fields: [managerId], references: [id])
+
+  goals    PDIGoal[]
+  comments PDIComment[]
+
+  @@index([employeeId])
+  @@index([managerId])
+  @@index([status])
+}
+
+model PDIGoal {
+  id          String     @id @default(cuid())
+  pdiId       String
+  title       String
+  description String?
+  competency  String
+  status      GoalStatus @default(pending)
+  dueDate     DateTime?
+  createdAt   DateTime   @default(now())
+
+  pdi       PDI           @relation(fields: [pdiId], references: [id], onDelete: Cascade)
+  evidences PDIEvidence[]
+
+  @@index([pdiId])
+  @@index([status])
+}
+
+model PDIEvidence {
+  id          String   @id @default(cuid())
+  goalId      String
+  description String
+  fileUrl     String?
+  createdAt   DateTime @default(now())
+
+  goal PDIGoal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+
+  @@index([goalId])
+}
+
+model PDIComment {
+  id        String   @id @default(cuid())
+  pdiId     String
+  authorId  String
+  content   String
+  createdAt DateTime @default(now())
+
+  pdi    PDI  @relation(fields: [pdiId], references: [id], onDelete: Cascade)
+  author User @relation(fields: [authorId], references: [id])
+
+  @@index([pdiId])
+  @@index([authorId])
+}
+
+// ============================================================
+// Feedback
+// ============================================================
+
+enum FeedbackStatus {
+  draft
+  submitted
+}
+
+model Feedback {
+  id              String         @id @default(cuid())
+  employeeId      String
+  managerId       String
+  period          String
+  content         String?
+  strengths       String?
+  improvements    String?
+  rating          Int?
+  status          FeedbackStatus @default(draft)
+  frequencyMonths Int?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  employee User @relation("FeedbackEmployee", fields: [employeeId], references: [id])
+  manager  User @relation("FeedbackManager", fields: [managerId], references: [id])
+
+  @@index([employeeId])
+  @@index([managerId])
+  @@index([status])
+}
+
+// ============================================================
+// Scheduling
+// ============================================================
+
+model FeedbackSchedule {
+  id              String   @id @default(cuid())
+  employeeId      String
+  managerId       String
+  frequencyMonths Int
+  nextDueDate     DateTime
+  isActive        Boolean  @default(true)
+
+  employee User @relation("FeedbackScheduleEmployee", fields: [employeeId], references: [id])
+  manager  User @relation("FeedbackScheduleManager", fields: [managerId], references: [id])
+
+  @@index([employeeId])
+  @@index([managerId])
+  @@index([nextDueDate])
+}
+
+model PDISchedule {
+  id              String   @id @default(cuid())
+  employeeId      String
+  managerId       String
+  frequencyMonths Int
+  nextDueDate     DateTime
+  isActive        Boolean  @default(true)
+
+  employee User @relation("PDIScheduleEmployee", fields: [employeeId], references: [id])
+  manager  User @relation("PDIScheduleManager", fields: [managerId], references: [id])
+
+  @@index([employeeId])
+  @@index([managerId])
+  @@index([nextDueDate])
+}
+
+// ============================================================
+// Notifications
+// ============================================================
+
+enum NotificationType {
+  pdi_reminder
+  feedback_reminder
+  general
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  isRead    Boolean          @default(false)
+  emailSent Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([type])
+}
