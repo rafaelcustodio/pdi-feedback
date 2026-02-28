@@ -402,8 +402,8 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 23,
-      "passes": false,
-      "notes": "Update feedback-table.tsx and pdi-table.tsx to add conductedAt column. Add date range filter (two date pickers) to both list pages. Use toLocaleDateString('pt-BR') for date formatting. Update feedbacks/actions.ts and pdis/actions.ts to support ordering by conductedAt and date range filtering."
+      "passes": true,
+      "notes": "Added conductedAt column to both feedback and PDI tables for all user roles. Date range filter (conductedAtFrom/conductedAtTo) added to PDI table (feedback already had it). PDI actions updated with conductedAt in PDIListItem, date range filtering, and orderBy conductedAt desc. All dates formatted with toLocaleDateString('pt-BR'). Feedback detail already showed Realizado em/Agendado para/Criado em. PDI tracking already showed Realizado em/Criado em."
     }
   ]
 }

@@ -610,3 +610,25 @@ Started: Sat Feb 28 06:24:15 PST 2026
   - CalendarClock icon from lucide-react works well for scheduled/calendar banners
   - For date range filtering, use separate gte/lte conditions in AND array (not combined in one object)
 ---
+
+## 2026-02-28 - US-023
+- What was implemented:
+  - Added 'Data de Realização' (conductedAt) column to feedback table for manager/admin view (was previously only in employee view)
+  - Added 'Data de Realização' column to PDI table for all users
+  - Added conductedAt date range filter (two date pickers) to PDI table and page
+  - Updated PDI actions: added conductedAt to PDIListItem type, added conductedAtFrom/conductedAtTo params to getPDIs, changed orderBy to conductedAt desc with createdAt fallback
+  - Updated PDI page to accept and pass conductedAtFrom/conductedAtTo search params
+  - Renamed "Data" column headers to "Data de Criação" for clarity in both tables
+  - All dates already used toLocaleDateString('pt-BR') format (dd/mm/aaaa)
+  - Feedback detail (read-only) already showed 'Realizado em', 'Agendado para', 'Criado em' - no changes needed
+  - PDI tracking already showed 'Realizado em', 'Criado em' - no changes needed
+- Files changed:
+  - `src/components/feedback-table.tsx` - Added conductedAt column for manager/admin view, updated colSpan
+  - `src/components/pdi-table.tsx` - Added conductedAt column, date range filter, updated props/buildUrl
+  - `src/app/(dashboard)/pdis/actions.ts` - Added conductedAt to PDIListItem, date range filter params, orderBy conductedAt
+  - `src/app/(dashboard)/pdis/page.tsx` - Added conductedAtFrom/conductedAtTo search params
+- **Learnings for future iterations:**
+  - Feedback table already had conductedAt column and date range filter for employee view from US-022 - just needed to extend to manager/admin view
+  - Feedback detail and PDI tracking views already displayed all needed date metadata from US-017/US-018 - no changes needed
+  - Pattern for date range filtering: accept string params, parse to Date, use Prisma gte/lte with setHours(23,59,59,999) for end date
+---
