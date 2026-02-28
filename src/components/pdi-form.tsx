@@ -1,0 +1,394 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Save, Play, ArrowLeft, Plus, Trash2 } from "lucide-react";
+import Link from "next/link";
+import {
+  createPDI,
+  updatePDI,
+} from "@/app/(dashboard)/pdis/actions";
+import type { SubordinateOption, GoalInput } from "@/app/(dashboard)/pdis/actions";
+
+interface PDIFormProps {
+  mode: "create" | "edit";
+  subordinates?: SubordinateOption[];
+  initialData?: {
+    id: string;
+    employeeId: string;
+    employeeName: string;
+    period: string;
+    goals: {
+      id: string;
+      title: string;
+      description: string;
+      competency: string;
+      status: string;
+      dueDate: string;
+    }[];
+  };
+}
+
+const COMPETENCIES = [
+  "Liderança",
+  "Comunicação",
+  "Trabalho em Equipe",
+  "Resolução de Problemas",
+  "Gestão de Tempo",
+  "Inovação",
+  "Conhecimento Técnico",
+  "Relacionamento Interpessoal",
+  "Orientação a Resultados",
+  "Adaptabilidade",
+];
+
+function createEmptyGoal(): GoalInput {
+  return {
+    title: "",
+    description: "",
+    competency: "",
+    status: "pending",
+    dueDate: "",
+  };
+}
+
+export function PDIForm({
+  mode,
+  subordinates,
+  initialData,
+}: PDIFormProps) {
+  const router = useRouter();
+  const [employeeId, setEmployeeId] = useState(initialData?.employeeId ?? "");
+  const [period, setPeriod] = useState(initialData?.period ?? "");
+  const [goals, setGoals] = useState<GoalInput[]>(
+    initialData?.goals && initialData.goals.length > 0
+      ? initialData.goals
+      : [createEmptyGoal()]
+  );
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const hasValidGoals = goals.some(
+    (g) => g.title.trim() && g.competency.trim()
+  );
+
+  const canActivate =
+    (mode === "create" ? !!employeeId : true) &&
+    !!period.trim() &&
+    hasValidGoals;
+
+  function updateGoal(index: number, field: keyof GoalInput, value: string) {
+    setGoals((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [field]: value };
+      return updated;
+    });
+  }
+
+  function addGoal() {
+    setGoals((prev) => [...prev, createEmptyGoal()]);
+  }
+
+  function removeGoal(index: number) {
+    setGoals((prev) => {
+      if (prev.length <= 1) return prev;
+      return prev.filter((_, i) => i !== index);
+    });
+  }
+
+  async function handleSave(activate: boolean) {
+    setLoading(true);
+    setError(null);
+
+    const goalsData = goals.filter((g) => g.title.trim());
+
+    let result;
+    if (mode === "create") {
+      result = await createPDI({
+        employeeId,
+        period,
+        goals: goalsData,
+        activate,
+      });
+    } else {
+      result = await updatePDI(initialData!.id, {
+        period,
+        goals: goalsData,
+        activate,
+      });
+    }
+
+    setLoading(false);
+
+    if (result.success) {
+      router.push("/pdis");
+    } else {
+      setError(result.error ?? "Erro ao salvar");
+    }
+  }
+
+  function handleSubmitForm(e: React.FormEvent) {
+    e.preventDefault();
+    handleSave(false);
+  }
+
+  return (
+    <form onSubmit={handleSubmitForm} className="space-y-6">
+      <div className="flex items-center gap-3">
+        <Link
+          href="/pdis"
+          className="rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+        >
+          <ArrowLeft size={20} />
+        </Link>
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900">
+            {mode === "create" ? "Novo PDI" : "Editar PDI"}
+          </h1>
+          <p className="mt-1 text-sm text-gray-600">
+            {mode === "create"
+              ? "Crie um plano de desenvolvimento para um colaborador da sua equipe."
+              : `Edite o PDI de ${initialData?.employeeName}.`}
+          </p>
+        </div>
+      </div>
+
+      {error && (
+        <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
+      {/* Basic Info */}
+      <div className="rounded-lg border border-gray-200 bg-white p-6">
+        <h2 className="mb-4 text-lg font-medium text-gray-900">
+          Informações Gerais
+        </h2>
+        <div className="space-y-4">
+          {/* Employee selection (create mode only) */}
+          {mode === "create" && subordinates && (
+            <div>
+              <label
+                htmlFor="pdi-employee"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
+                Colaborador *
+              </label>
+              <select
+                id="pdi-employee"
+                value={employeeId}
+                onChange={(e) => setEmployeeId(e.target.value)}
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                required
+                disabled={loading}
+              >
+                <option value="">Selecione um colaborador</option>
+                {subordinates.map((sub) => (
+                  <option key={sub.id} value={sub.id}>
+                    {sub.name} ({sub.email})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {/* Employee name (edit mode - read only) */}
+          {mode === "edit" && initialData && (
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">
+                Colaborador
+              </label>
+              <p className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700">
+                {initialData.employeeName}
+              </p>
+            </div>
+          )}
+
+          {/* Period */}
+          <div>
+            <label
+              htmlFor="pdi-period"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
+              Período *
+            </label>
+            <input
+              id="pdi-period"
+              type="text"
+              value={period}
+              onChange={(e) => setPeriod(e.target.value)}
+              placeholder="Ex: 1º Semestre 2026, Q1 2026, Janeiro-Junho 2026"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              required
+              disabled={loading}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Goals Section */}
+      <div className="rounded-lg border border-gray-200 bg-white p-6">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-lg font-medium text-gray-900">
+            Metas ({goals.length})
+          </h2>
+          <button
+            type="button"
+            onClick={addGoal}
+            disabled={loading}
+            className="inline-flex items-center gap-1.5 rounded-md bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-200 disabled:opacity-50"
+          >
+            <Plus size={14} />
+            Adicionar Meta
+          </button>
+        </div>
+
+        <div className="space-y-4">
+          {goals.map((goal, index) => (
+            <div
+              key={index}
+              className="rounded-lg border border-gray-200 bg-gray-50 p-4"
+            >
+              <div className="mb-3 flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700">
+                  Meta {index + 1}
+                </span>
+                {goals.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeGoal(index)}
+                    disabled={loading}
+                    className="rounded p-1 text-gray-400 hover:bg-gray-200 hover:text-red-500 disabled:opacity-50"
+                    title="Remover meta"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                )}
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                {/* Title */}
+                <div className="sm:col-span-2">
+                  <label
+                    htmlFor={`goal-title-${index}`}
+                    className="mb-1 block text-xs font-medium text-gray-600"
+                  >
+                    Título *
+                  </label>
+                  <input
+                    id={`goal-title-${index}`}
+                    type="text"
+                    value={goal.title}
+                    onChange={(e) => updateGoal(index, "title", e.target.value)}
+                    placeholder="Ex: Concluir certificação AWS"
+                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    disabled={loading}
+                  />
+                </div>
+
+                {/* Competency */}
+                <div>
+                  <label
+                    htmlFor={`goal-competency-${index}`}
+                    className="mb-1 block text-xs font-medium text-gray-600"
+                  >
+                    Competência *
+                  </label>
+                  <select
+                    id={`goal-competency-${index}`}
+                    value={goal.competency}
+                    onChange={(e) =>
+                      updateGoal(index, "competency", e.target.value)
+                    }
+                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    disabled={loading}
+                  >
+                    <option value="">Selecione uma competência</option>
+                    {COMPETENCIES.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Due Date */}
+                <div>
+                  <label
+                    htmlFor={`goal-duedate-${index}`}
+                    className="mb-1 block text-xs font-medium text-gray-600"
+                  >
+                    Prazo
+                  </label>
+                  <input
+                    id={`goal-duedate-${index}`}
+                    type="date"
+                    value={goal.dueDate}
+                    onChange={(e) =>
+                      updateGoal(index, "dueDate", e.target.value)
+                    }
+                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    disabled={loading}
+                  />
+                </div>
+
+                {/* Description */}
+                <div className="sm:col-span-2">
+                  <label
+                    htmlFor={`goal-desc-${index}`}
+                    className="mb-1 block text-xs font-medium text-gray-600"
+                  >
+                    Descrição
+                  </label>
+                  <textarea
+                    id={`goal-desc-${index}`}
+                    value={goal.description}
+                    onChange={(e) =>
+                      updateGoal(index, "description", e.target.value)
+                    }
+                    placeholder="Detalhes sobre a meta e como atingi-la..."
+                    rows={2}
+                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    disabled={loading}
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex justify-end gap-3">
+        <Link
+          href="/pdis"
+          className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Cancelar
+        </Link>
+        <button
+          type="submit"
+          disabled={loading || !period.trim() || (mode === "create" && !employeeId)}
+          className="inline-flex items-center gap-2 rounded-md bg-gray-600 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 disabled:opacity-50"
+        >
+          <Save size={16} />
+          {loading ? "Salvando..." : "Salvar Rascunho"}
+        </button>
+        <button
+          type="button"
+          onClick={() => handleSave(true)}
+          disabled={loading || !canActivate}
+          className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+          title={
+            !canActivate
+              ? "Preencha todos os campos e adicione pelo menos uma meta com título e competência para ativar"
+              : ""
+          }
+        >
+          <Play size={16} />
+          {loading ? "Ativando..." : "Ativar PDI"}
+        </button>
+      </div>
+    </form>
+  );
+}
