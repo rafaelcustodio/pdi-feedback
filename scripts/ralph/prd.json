@@ -140,8 +140,8 @@
         "Typecheck passa"
       ],
       "priority": 8,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Dashboard uses getDashboardData() server action with access control filtering. Cards show subordinate count, pending PDIs (draft/active), overdue PDI goals, pending feedbacks (draft), overdue feedback schedules. Upcoming items combine PDI goals, PDI schedules, and feedback schedules sorted by dueDate."
     },
     {
       "id": "US-008",

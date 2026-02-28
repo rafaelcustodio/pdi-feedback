@@ -12,6 +12,7 @@ Started: Sat Feb 28 06:24:15 PST 2026
 - Manager filtering: use `getManagerCandidates(orgUnitId, excludeUserId)` to get managers for a given org unit + admins
 - Prisma `findUnique` in while loops can cause implicit `any` - use explicit type casts for included relations
 - Prisma v7 requires driver adapters (e.g., `PrismaPg`) in PrismaClient constructor - no more `url` in schema.prisma datasource
+- Prisma model `PDI` accessed as `prisma.pDI` (camelCase), `PDIGoal` as `prisma.pDIGoal`, etc.
 - Prisma v7 generated client output is at `src/generated/prisma/client` - import from `@/generated/prisma/client`
 - Prisma binary engines (binaries.prisma.sh) blocked by firewall - use `PRISMA_SCHEMA_ENGINE_BINARY=/tmp/fake-schema-engine` workaround for CLI commands (validate, generate)
 - npm install requires `--no-bin-links` and `--ignore-scripts` flags due to 9p filesystem (WSL2 mount) - then install prisma separately with scripts enabled
@@ -233,4 +234,24 @@ Started: Sat Feb 28 06:24:15 PST 2026
   - The `"use server"` directive in access-control.ts means all exported functions are server actions callable from client components
   - Access filter functions return `{}` for admin (no filter), or `{ employeeId: { in: [...ids] } }` for filtered access - spread into Prisma `where` clauses
   - Vitest runs with `node node_modules/vitest/vitest.mjs run` (no bin links available)
+---
+
+## 2026-02-28 - US-007
+- What was implemented:
+  - Dashboard page with server-side data fetching via `getDashboardData()` server action
+  - Three summary cards: Collaborators (direct+indirect count), PDIs Pending (draft/active with overdue goal count), Feedbacks Pending (draft with overdue schedule count)
+  - Upcoming items list showing next 5 PDI goals, PDI schedules, and feedback schedules sorted by due date
+  - Each upcoming item links directly to the relevant PDI or feedback page
+  - All data filtered by access control (admin sees all, manager sees subordinates, employee sees own)
+  - Responsive layout: 1 column on mobile, 2 on tablet, 3 on desktop for cards
+  - Portuguese (pt-BR) labels and date formatting
+- Files changed:
+  - `src/app/(dashboard)/dashboard/actions.ts` - Server action `getDashboardData()` with access-controlled queries for subordinate count, PDI/feedback counts, and upcoming items
+  - `src/app/(dashboard)/dashboard/page.tsx` - Updated from placeholder to full dashboard with cards and upcoming items list
+- **Learnings for future iterations:**
+  - Prisma model `PDI` is accessed as `prisma.pDI` (camelCase of the model name) - not `prisma.pdi` or `prisma.PDI`
+  - Spread access filter objects into Prisma `where` clauses: `{ ...pdiFilter, status: "active" }` works well
+  - `PDISchedule` and `FeedbackSchedule` have `nextDueDate` for upcoming items; `PDIGoal.dueDate` for goal-level deadlines
+  - Combine multiple upcoming item sources (goals, PDI schedules, feedback schedules) into a single sorted list with a union type
+  - Dashboard is a server component - no need for client-side state or `useEffect` for data fetching
 ---
