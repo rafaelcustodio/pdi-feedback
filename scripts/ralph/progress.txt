@@ -7,6 +7,10 @@ Started: Sat Feb 28 06:24:15 PST 2026
 - Server actions always check `auth()` and role before executing - return `{ success, error? }` pattern
 - Use `revalidatePath()` after mutations to refresh server component data
 - Tree structures: use `buildTree()` utility to convert flat Prisma results into nested nodes for rendering
+- Employee pages use route pattern: `/colaboradores` (list), `/colaboradores/novo` (create), `/colaboradores/[id]` (edit), `/colaboradores/[id]/hierarquia` (tree view)
+- Soft delete pattern: set `isActive = false` on User, close `EmployeeHierarchy.endDate`, preserve all history
+- Manager filtering: use `getManagerCandidates(orgUnitId, excludeUserId)` to get managers for a given org unit + admins
+- Prisma `findUnique` in while loops can cause implicit `any` - use explicit type casts for included relations
 - Prisma v7 requires driver adapters (e.g., `PrismaPg`) in PrismaClient constructor - no more `url` in schema.prisma datasource
 - Prisma v7 generated client output is at `src/generated/prisma/client` - import from `@/generated/prisma/client`
 - Prisma binary engines (binaries.prisma.sh) blocked by firewall - use `PRISMA_SCHEMA_ENGINE_BINARY=/tmp/fake-schema-engine` workaround for CLI commands (validate, generate)
@@ -168,4 +172,33 @@ Started: Sat Feb 28 06:24:15 PST 2026
   - Tree building from flat list: create a Map of nodes, then iterate again to attach children to parents
   - Admin pages should check role both in the server component (redirect) and in server actions (return error)
   - No existing server action patterns before this story - this establishes the pattern for future CRUD features
+---
+
+## 2026-02-28 - US-005
+- What was implemented:
+  - Admin page with employee list table (search by name/email, pagination with page controls)
+  - Create employee page (`/colaboradores/novo`) with form: name, email, role, password, org unit, manager
+  - Edit employee page (`/colaboradores/[id]`) pre-populated with current data including hierarchy
+  - Manager dropdown dynamically filtered by selected organizational unit (shows managers/admins in that unit + all admins)
+  - Hierarchy tree view page (`/colaboradores/[id]/hierarquia`) showing upward chain (employee → manager → top) plus direct reports
+  - Soft delete: deactivate employee sets `isActive = false` and closes `EmployeeHierarchy.endDate` - preserves all history
+  - Reactivate employee functionality to restore inactive employees
+  - Server actions for all CRUD operations with admin role checks and validation
+- Files changed:
+  - `src/app/(dashboard)/colaboradores/actions.ts` - Server actions: getEmployees, getEmployeeById, getOrgUnitsFlat, getManagerCandidates, createEmployee, updateEmployee, deactivateEmployee, reactivateEmployee, getEmployeeHierarchyTree
+  - `src/app/(dashboard)/colaboradores/page.tsx` - Updated from placeholder to admin list page with search/pagination
+  - `src/app/(dashboard)/colaboradores/novo/page.tsx` - Create employee page
+  - `src/app/(dashboard)/colaboradores/[id]/page.tsx` - Edit employee page
+  - `src/app/(dashboard)/colaboradores/[id]/hierarquia/page.tsx` - Hierarchy tree view page
+  - `src/components/employee-table.tsx` - Client component: table with search, pagination, status badges, action buttons
+  - `src/components/employee-form.tsx` - Client component: create/edit form with dynamic manager loading
+  - `src/components/employee-hierarchy.tsx` - Client component: visual hierarchy tree with target highlighting
+- **Learnings for future iterations:**
+  - Prisma `findUnique` inside a while loop causes TS7022 "implicitly has type any" - use explicit type cast on included relations
+  - `EmployeeHierarchy.endDate = null` means active; set it to `new Date()` to close the record (keeping history)
+  - When updating hierarchy, close old record (set endDate) then create new record - never delete
+  - Manager candidates: filter by org unit via `employeeHierarchies.some({ organizationalUnitId })`, always include admins
+  - Next.js App Router `searchParams` is a Promise in Next.js 16 - must await it
+  - Use `window.location.href` for navigation with query params in client components (simpler than router.push with searchParams)
+  - Role badge colors: admin=purple, manager=blue, employee=gray - consistent throughout the app
 ---

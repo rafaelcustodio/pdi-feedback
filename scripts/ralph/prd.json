@@ -106,8 +106,8 @@
         "Typecheck passa"
       ],
       "priority": 6,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Employee CRUD uses server actions pattern. Manager dropdown filtered by org unit via getManagerCandidates. Soft delete sets isActive=false and closes hierarchy endDate. Hierarchy tree walks upward from employee to top manager, then adds direct reports."
     },
     {
       "id": "US-006",
