@@ -31,6 +31,7 @@ export type FeedbackDetail = {
   improvements: string | null;
   rating: number | null;
   status: string;
+  conductedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
   employeeName: string;
@@ -188,6 +189,7 @@ export async function getFeedbackById(
     improvements: feedback.improvements,
     rating: feedback.rating,
     status: feedback.status,
+    conductedAt: feedback.conductedAt,
     createdAt: feedback.createdAt,
     updatedAt: feedback.updatedAt,
     employeeName: feedback.employee.name,
@@ -233,6 +235,7 @@ export async function createFeedback(data: {
   strengths: string;
   improvements: string;
   rating: number;
+  conductedAt: string;
   submit?: boolean;
 }): Promise<{ success: boolean; error?: string; id?: string }> {
   const session = await auth();
@@ -256,6 +259,15 @@ export async function createFeedback(data: {
 
   if (!data.period.trim()) {
     return { success: false, error: "Período é obrigatório" };
+  }
+
+  if (!data.conductedAt.trim()) {
+    return { success: false, error: "Data de realização é obrigatória" };
+  }
+
+  const conductedAtDate = new Date(data.conductedAt);
+  if (isNaN(conductedAtDate.getTime())) {
+    return { success: false, error: "Data de realização inválida" };
   }
 
   // If submitting, validate all required fields
@@ -283,6 +295,7 @@ export async function createFeedback(data: {
       strengths: data.strengths.trim() || null,
       improvements: data.improvements.trim() || null,
       rating: data.rating || null,
+      conductedAt: conductedAtDate,
       status: data.submit ? "submitted" : "draft",
     },
   });
@@ -304,6 +317,7 @@ export async function updateFeedback(
     strengths: string;
     improvements: string;
     rating: number;
+    conductedAt: string;
     submit?: boolean;
   }
 ): Promise<{ success: boolean; error?: string }> {
@@ -334,6 +348,15 @@ export async function updateFeedback(
     return { success: false, error: "Período é obrigatório" };
   }
 
+  if (!data.conductedAt.trim()) {
+    return { success: false, error: "Data de realização é obrigatória" };
+  }
+
+  const conductedAtDate = new Date(data.conductedAt);
+  if (isNaN(conductedAtDate.getTime())) {
+    return { success: false, error: "Data de realização inválida" };
+  }
+
   // If submitting, validate all required fields
   if (data.submit) {
     if (!data.content.trim()) {
@@ -358,7 +381,8 @@ export async function updateFeedback(
       strengths: data.strengths.trim() || null,
       improvements: data.improvements.trim() || null,
       rating: data.rating || null,
-      status: data.submit ? "submitted" : "draft",
+      conductedAt: conductedAtDate,
+      status: data.submit ? "submitted" : feedback.status,
     },
   });
 

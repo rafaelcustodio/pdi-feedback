@@ -22,6 +22,8 @@ interface FeedbackFormProps {
     strengths: string;
     improvements: string;
     rating: number;
+    conductedAt: string;
+    createdAt?: string;
   };
 }
 
@@ -73,6 +75,7 @@ export function FeedbackForm({
   const router = useRouter();
   const [employeeId, setEmployeeId] = useState(initialData?.employeeId ?? "");
   const [period, setPeriod] = useState(initialData?.period ?? "");
+  const [conductedAt, setConductedAt] = useState(initialData?.conductedAt ?? "");
   const [content, setContent] = useState(initialData?.content ?? "");
   const [strengths, setStrengths] = useState(initialData?.strengths ?? "");
   const [improvements, setImprovements] = useState(
@@ -85,6 +88,7 @@ export function FeedbackForm({
   const canSubmit =
     (mode === "create" ? !!employeeId : true) &&
     !!period.trim() &&
+    !!conductedAt &&
     !!content.trim() &&
     !!strengths.trim() &&
     !!improvements.trim() &&
@@ -104,6 +108,7 @@ export function FeedbackForm({
         strengths,
         improvements,
         rating,
+        conductedAt,
         submit,
       });
     } else {
@@ -113,6 +118,7 @@ export function FeedbackForm({
         strengths,
         improvements,
         rating,
+        conductedAt,
         submit,
       });
     }
@@ -219,6 +225,46 @@ export function FeedbackForm({
             />
           </div>
 
+          {/* Conducted At */}
+          <div>
+            <label
+              htmlFor="fb-conducted-at"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
+              Data de Realização *
+            </label>
+            <input
+              id="fb-conducted-at"
+              type="date"
+              value={conductedAt}
+              onChange={(e) => setConductedAt(e.target.value)}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              required
+              disabled={loading}
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              Data em que a sessão de feedback foi realizada.
+            </p>
+          </div>
+
+          {/* Created At (edit mode only - read only info) */}
+          {mode === "edit" && initialData?.createdAt && (
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">
+                Data de Criação
+              </label>
+              <p className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700">
+                {new Date(initialData.createdAt).toLocaleDateString("pt-BR", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </p>
+            </div>
+          )}
+
           {/* Rating */}
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">
@@ -299,7 +345,7 @@ export function FeedbackForm({
         </Link>
         <button
           type="submit"
-          disabled={loading || !period.trim() || (mode === "create" && !employeeId)}
+          disabled={loading || !period.trim() || !conductedAt || (mode === "create" && !employeeId)}
           className="inline-flex items-center gap-2 rounded-md bg-gray-600 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 disabled:opacity-50"
         >
           <Save size={16} />

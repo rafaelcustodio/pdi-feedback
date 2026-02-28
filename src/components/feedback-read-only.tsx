@@ -110,7 +110,17 @@ export function FeedbackReadOnly({ feedback }: FeedbackReadOnlyProps) {
           )}
 
           {/* Metadata */}
-          <div className="border-t border-gray-200 pt-4 text-xs text-gray-500">
+          <div className="border-t border-gray-200 pt-4 text-xs text-gray-500 space-y-1">
+            {feedback.conductedAt && (
+              <p>
+                Realizado em:{" "}
+                {new Date(feedback.conductedAt).toLocaleDateString("pt-BR", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                })}
+              </p>
+            )}
             <p>
               Criado em:{" "}
               {new Date(feedback.createdAt).toLocaleDateString("pt-BR", {

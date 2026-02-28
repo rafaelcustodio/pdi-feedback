@@ -43,6 +43,10 @@ export default async function FeedbackDetailPage({
             strengths: feedback.strengths ?? "",
             improvements: feedback.improvements ?? "",
             rating: feedback.rating ?? 0,
+            conductedAt: feedback.conductedAt
+              ? new Date(feedback.conductedAt).toISOString().split("T")[0]
+              : "",
+            createdAt: new Date(feedback.createdAt).toISOString(),
           }}
         />
       </div>
