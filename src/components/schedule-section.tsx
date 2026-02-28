@@ -110,6 +110,11 @@ export function ScheduleSection({
       {success && (
         <div className="mb-4 rounded-md border border-green-200 bg-green-50 p-3 text-sm text-green-700">
           Agendamento salvo com sucesso!
+          {(pdiFrequency || feedbackFrequency) && (
+            <span className="block mt-1 text-xs text-green-600">
+              Eventos agendados gerados automaticamente para os próximos 12 meses.
+            </span>
+          )}
         </div>
       )}
 

@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { generateScheduledEvents, removeScheduledEvents } from "@/lib/schedule-utils";
 
 export type EmployeeListItem = {
   id: string;
@@ -552,12 +553,16 @@ export async function saveEmployeeSchedules(
         },
       });
     }
+    // Generate scheduled PDI events for the next 12 months
+    await generateScheduledEvents(employeeId, "pdi", data.pdiFrequency, managerId);
   } else if (existingPdiSchedule) {
     // Deactivate
     await prisma.pDISchedule.update({
       where: { id: existingPdiSchedule.id },
       data: { isActive: false },
     });
+    // Remove future scheduled PDI events
+    await removeScheduledEvents(employeeId, "pdi");
   }
 
   // Handle Feedback schedule
@@ -588,11 +593,15 @@ export async function saveEmployeeSchedules(
         },
       });
     }
+    // Generate scheduled Feedback events for the next 12 months
+    await generateScheduledEvents(employeeId, "feedback", data.feedbackFrequency, managerId);
   } else if (existingFeedbackSchedule) {
     await prisma.feedbackSchedule.update({
       where: { id: existingFeedbackSchedule.id },
       data: { isActive: false },
     });
+    // Remove future scheduled Feedback events
+    await removeScheduledEvents(employeeId, "feedback");
   }
 
   revalidatePath(`/colaboradores/${employeeId}`);
