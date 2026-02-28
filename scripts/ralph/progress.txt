@@ -661,3 +661,23 @@ Started: Sat Feb 28 14:20:00 PST 2026
   - Migration SQL for adding enum values uses `ALTER TYPE "EnumName" ADD VALUE 'value'` — this is safe and doesn't affect existing rows
   - All quality checks pass: typecheck, lint, and 7 tests in access-control.test.ts
 ---
+
+## 2026-02-28 - US-002
+- What was implemented:
+  - Created `generateScheduledEvents(employeeId, type, frequencyMonths, managerId)` in `src/lib/schedule-utils.ts`
+  - Function removes existing future `scheduled` records before generating new ones (dedup)
+  - Generates PDI/Feedback records with status `scheduled`, auto-filled `period` (e.g., "Mai/2026"), `scheduledAt`, `managerId`
+  - Created `removeScheduledEvents(employeeId, type)` for when frequency is set to "Nenhum"
+  - Updated `saveEmployeeSchedules` in `colaboradores/actions.ts` to call `generateScheduledEvents` after saving frequency, and `removeScheduledEvents` when deactivating
+  - Updated `recalculatePDISchedule` and `recalculateFeedbackSchedule` to check for future scheduled records and regenerate if none exist after a cycle completes
+  - Added visual feedback in `ScheduleSection` component showing "Eventos agendados gerados automaticamente para os próximos 12 meses"
+- Files changed:
+  - `src/lib/schedule-utils.ts` — new `generateScheduledEvents`, `removeScheduledEvents`, updated recalculate functions
+  - `src/app/(dashboard)/colaboradores/actions.ts` — import + calls to generate/remove
+  - `src/components/schedule-section.tsx` — visual feedback message
+- **Learnings for future iterations:**
+  - `generateScheduledEvents` uses `while (offset <= 12)` with step = frequencyMonths to generate exactly `floor(12/freq)` events
+  - Period format for auto-generated events is "Abr/2026" style (3-letter PT month abbreviation + year)
+  - Existing future `scheduled` records are deleted before regeneration — safe to call multiple times
+  - `removeScheduledEvents` only deletes records with `scheduledAt >= now` to preserve past records
+---
