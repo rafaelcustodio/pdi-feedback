@@ -123,8 +123,8 @@
         "Typecheck passa"
       ],
       "priority": 7,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Pure function computeSubordinates in hierarchy-utils.ts for testability. Server-side helpers in access-control.ts use 'use server' directive. Vitest added for unit testing. getAccessibleEmployeeIds returns 'all' for admin, [self] for employee, [self, ...subordinates] for manager."
     },
     {
       "id": "US-007",

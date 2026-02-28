@@ -201,4 +201,36 @@ Started: Sat Feb 28 06:24:15 PST 2026
   - Next.js App Router `searchParams` is a Promise in Next.js 16 - must await it
   - Use `window.location.href` for navigation with query params in client components (simpler than router.push with searchParams)
   - Role badge colors: admin=purple, manager=blue, employee=gray - consistent throughout the app
+- Access control: pure functions in `src/lib/hierarchy-utils.ts` (no server deps), server-side helpers in `src/lib/access-control.ts` (with `"use server"`)
+- `computeSubordinates(managerId, hierarchies)` is the pure recursive function; `getSubordinates(managerId)` wraps it with DB call
+- Access filter pattern: `getPDIAccessFilter(userId, role)` / `getFeedbackAccessFilter(userId, role)` return Prisma `where` objects
+- Vitest installed for unit tests - config at `vitest.config.ts`, run with `node node_modules/vitest/vitest.mjs run`
+- Separate pure logic from server-dependent code to enable unit testing without Next.js/Prisma dependencies
+---
+
+## 2026-02-28 - US-006
+- What was implemented:
+  - Pure utility function `computeSubordinates(managerId, hierarchies)` in `src/lib/hierarchy-utils.ts` - recursively collects all direct and indirect subordinate IDs from a flat hierarchy list
+  - DB-backed `getSubordinates(managerId)` in `src/lib/access-control.ts` - fetches active hierarchies from Prisma and delegates to `computeSubordinates`
+  - `getAccessibleEmployeeIds(userId, role)` - returns "all" for admin, [self] for employee, [self, ...subordinates] for manager
+  - `canAccessEmployee(userId, userRole, targetEmployeeId)` - boolean check for individual employee access
+  - `getPDIAccessFilter(userId, role)` and `getFeedbackAccessFilter(userId, role)` - return Prisma `where` clause objects for filtering queries
+  - `getSessionAccessControl()` - server helper to get current user's access control info from session
+  - Vitest unit test suite with 7 tests covering: 3-level hierarchy traversal, mid-level manager access, leaf employee (no subordinates), unknown user, empty hierarchy, single-level, and deep (4+ levels) hierarchy
+  - Vitest configuration with path alias support
+  - Added `test` script to package.json
+- Files changed:
+  - `src/lib/hierarchy-utils.ts` - Pure recursive `computeSubordinates` function (no server/DB deps)
+  - `src/lib/access-control.ts` - Server-side access control functions using Prisma and NextAuth
+  - `src/lib/__tests__/access-control.test.ts` - Vitest unit tests for `computeSubordinates`
+  - `vitest.config.ts` - Vitest configuration with `@/` path alias
+  - `package.json` - Added vitest devDependency and `test` script
+  - `package-lock.json` - Updated lockfile
+- **Learnings for future iterations:**
+  - Vitest cannot resolve `next/server` in test context - separate pure logic from server-dependent code into different files
+  - `hierarchy-utils.ts` has no `"use server"` directive and no imports from next-auth/prisma - keeps it testable
+  - `access-control.ts` re-exports `computeSubordinates` and `HierarchyEntry` from `hierarchy-utils.ts` for convenience
+  - The `"use server"` directive in access-control.ts means all exported functions are server actions callable from client components
+  - Access filter functions return `{}` for admin (no filter), or `{ employeeId: { in: [...ids] } }` for filtered access - spread into Prisma `where` clauses
+  - Vitest runs with `node node_modules/vitest/vitest.mjs run` (no bin links available)
 ---
