@@ -347,8 +347,8 @@
         "Typecheck passa"
       ],
       "priority": 20,
-      "passes": false,
-      "notes": "Add to existing cron route at /api/cron/email-reminders or create separate /api/cron/scheduled-feedbacks route. Use notification types feedback_scheduled and feedback_submitted_auto from US-016 schema. Reuse email service from email.ts and templates from email-templates.ts."
+      "passes": true,
+      "notes": "Separate cron route at /api/cron/scheduled-feedbacks. Queries feedbacks with status 'scheduled' and scheduledAt <= now. Updates to 'submitted', creates notifications (feedback_submitted_auto type) for both employee and manager, sends HTML emails, recalculates schedule. On error: keeps 'scheduled' status, creates failure notification for manager. Execution log returned in JSON response."
     },
     {
       "id": "US-021",

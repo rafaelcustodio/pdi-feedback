@@ -32,6 +32,8 @@ Started: Sat Feb 28 06:24:15 PST 2026
 - NotificationType enum: `pdi_reminder`, `feedback_reminder`, `feedback_scheduled`, `feedback_submitted_auto`, `general`
 - UI status label maps: update `statusLabels` Record and color classes in feedback-table.tsx and feedback-read-only.tsx when adding new statuses
 - Migration files created manually in `prisma/migrations/YYYYMMDDHHMMSS_description/migration.sql` (no DB connection needed)
+- Cron routes: `/api/cron/email-reminders` (schedule notifications + emails), `/api/cron/scheduled-feedbacks` (auto-submit scheduled feedbacks)
+- Per-item try/catch in cron loops: allows partial success, failed items don't block others, failure notifications created for managers
 - Middleware exclusions: add new API patterns to the regex negative lookahead in `src/middleware.ts`
 - Avoid `setState` in `useEffect` for prop syncing - ESLint `react-hooks/set-state-in-effect` rule - use `useMemo` with derived state instead
 - PDIGoal.dueDate is nullable (`DateTime?`) - always guard with null check or `{ not: null }` in Prisma where
@@ -546,4 +548,21 @@ Started: Sat Feb 28 06:24:15 PST 2026
   - Schedule workflow: save draft first, then schedule — the `scheduleFeedback` action validates that all required fields are already saved on the feedback record
   - Employee visibility for feedbacks: already filters by `status: "submitted"` in `getFeedbacks`, so `scheduled` feedbacks are automatically excluded from employee view
   - Modal pattern: use fixed inset-0 overlay with bg-black/50 for modal backdrop, no need for external dialog library
+---
+
+## 2026-02-28 13:03 - US-020
+- Implemented automatic submission of scheduled feedbacks via daily cron job
+- Created new cron route at `/api/cron/scheduled-feedbacks/route.ts`
+- Added email templates: `buildFeedbackSubmittedEmployeeHtml` and `buildFeedbackSubmittedManagerHtml` in email-templates.ts
+- Cron queries feedbacks with status 'scheduled' and scheduledAt <= now
+- For each feedback: updates to 'submitted', creates notifications for both employee and manager (type: feedback_submitted_auto), sends HTML emails, recalculates feedback schedule
+- Error handling: on failure, feedback stays as 'scheduled', manager gets failure notification
+- Execution log returned in JSON response for auditability
+- Files changed: src/app/api/cron/scheduled-feedbacks/route.ts (new), src/lib/email-templates.ts
+- **Learnings for future iterations:**
+  - Cron routes are excluded from auth middleware via the `api/cron` pattern in middleware.ts matcher — no extra config needed for new cron routes
+  - CRON_SECRET validation pattern: check `request.headers.get("authorization")` against `Bearer ${cronSecret}`
+  - Use messageKey pattern in notification message field for idempotency (e.g., `[feedback_auto_${id}]`)
+  - `recalculateFeedbackSchedule` from schedule-utils.ts should be called after any feedback submission (manual or auto)
+  - Per-feedback try/catch allows partial success — failed feedbacks don't block others
 ---
