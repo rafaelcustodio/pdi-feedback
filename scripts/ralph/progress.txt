@@ -35,6 +35,7 @@ Started: Sat Feb 28 06:24:15 PST 2026
 - Cron routes: `/api/cron/email-reminders` (schedule notifications + emails), `/api/cron/scheduled-feedbacks` (auto-submit scheduled feedbacks)
 - Per-item try/catch in cron loops: allows partial success, failed items don't block others, failure notifications created for managers
 - Middleware exclusions: add new API patterns to the regex negative lookahead in `src/middleware.ts`
+- Draft feedback with scheduledAt = "Agendado para preenchimento" (planned fill-in date); scheduled feedback with scheduledAt = "Agendado" (auto-submit date)
 - Avoid `setState` in `useEffect` for prop syncing - ESLint `react-hooks/set-state-in-effect` rule - use `useMemo` with derived state instead
 - PDIGoal.dueDate is nullable (`DateTime?`) - always guard with null check or `{ not: null }` in Prisma where
 - Prisma v7 generated client output is at `src/generated/prisma/client` - import from `@/generated/prisma/client`
@@ -565,4 +566,27 @@ Started: Sat Feb 28 06:24:15 PST 2026
   - Use messageKey pattern in notification message field for idempotency (e.g., `[feedback_auto_${id}]`)
   - `recalculateFeedbackSchedule` from schedule-utils.ts should be called after any feedback submission (manual or auto)
   - Per-feedback try/catch allows partial success — failed feedbacks don't block others
+---
+
+## 2026-02-28 - US-021
+- What was implemented:
+  - "Agendar feedback futuro" button on feedbacks list page with modal (employee dropdown + date picker)
+  - `createFutureFeedback` server action: creates empty draft feedback with scheduledAt set to future date
+  - Employee notification created at scheduling time (feedback_scheduled type, no content visible)
+  - Feedback table shows "Agendado para preenchimento" badge (indigo color) with date for draft+scheduledAt feedbacks
+  - Cron email-reminders updated to generate notifications for draft feedbacks with scheduledAt within 7 days or on the date
+  - Manager can fill the feedback anytime by clicking the edit (pencil) icon on the draft
+  - FeedbackListItem type updated to include conductedAt field
+  - Subordinates list passed from feedbacks page to table component for the modal
+- Files changed:
+  - src/app/(dashboard)/feedbacks/actions.ts — added createFutureFeedback action, added conductedAt to FeedbackListItem
+  - src/app/(dashboard)/feedbacks/page.tsx — fetch and pass subordinates to FeedbackTable
+  - src/components/feedback-table.tsx — added "Agendar Feedback Futuro" button, modal, "Agendado para preenchimento" badge
+  - src/app/api/cron/email-reminders/route.ts — added draft+scheduledAt feedback reminder generation
+- **Learnings for future iterations:**
+  - Draft feedbacks with scheduledAt are visually distinct ("Agendado para preenchimento" in indigo) from scheduled-for-submission feedbacks ("Agendado" in blue)
+  - The scheduledAt field has dual meaning: for status=scheduled it means auto-submit date; for status=draft it means planned fill-in date
+  - CalendarPlus icon from lucide-react works well for the "schedule future" action
+  - router.refresh() is needed after server action mutations when staying on the same page (not navigating away)
+  - FeedbackTable can accept optional subordinates prop for the future feedback modal — only fetched for managers/admins
 ---

@@ -367,8 +367,8 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 21,
-      "passes": false,
-      "notes": "Different from US-019 (schedule submission). This creates an empty draft with a future date for the manager to fill in later. The scheduledAt field here means 'planned date to write the feedback', not 'date to auto-submit'. Notifications use generateScheduleNotifications pattern from US-013."
+      "passes": true,
+      "notes": "Different from US-019 (schedule submission). This creates an empty draft with a future date for the manager to fill in later. The scheduledAt field here means 'planned date to write the feedback', not 'date to auto-submit'. createFutureFeedback server action creates draft + employee notification. Cron email-reminders handles 7-day and on-date notifications for managers. FeedbackTable shows 'Agendado para preenchimento' badge (indigo) for draft+scheduledAt."
     },
     {
       "id": "US-022",
