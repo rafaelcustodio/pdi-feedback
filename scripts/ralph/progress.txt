@@ -3,6 +3,10 @@ Started: Sat Feb 28 06:24:15 PST 2026
 ---
 
 ## Codebase Patterns
+- Server actions use `"use server"` directive and are placed in `actions.ts` next to the page that uses them
+- Server actions always check `auth()` and role before executing - return `{ success, error? }` pattern
+- Use `revalidatePath()` after mutations to refresh server component data
+- Tree structures: use `buildTree()` utility to convert flat Prisma results into nested nodes for rendering
 - Prisma v7 requires driver adapters (e.g., `PrismaPg`) in PrismaClient constructor - no more `url` in schema.prisma datasource
 - Prisma v7 generated client output is at `src/generated/prisma/client` - import from `@/generated/prisma/client`
 - Prisma binary engines (binaries.prisma.sh) blocked by firewall - use `PRISMA_SCHEMA_ENGINE_BINARY=/tmp/fake-schema-engine` workaround for CLI commands (validate, generate)
@@ -140,4 +144,28 @@ Started: Sat Feb 28 06:24:15 PST 2026
   - SSO `signIn` callback runs before `jwt` callback - create/link user in signIn, then fetch in jwt
   - `signIn("microsoft-entra-id", { callbackUrl: "/dashboard" })` triggers full redirect (not `redirect: false` like credentials)
   - New SSO users get `role: "employee"` by default - admin must change role manually
+---
+
+## 2026-02-28 - US-004
+- What was implemented:
+  - Server actions for organizational unit CRUD (create, update, delete, list) at `src/app/(dashboard)/configuracoes/actions.ts`
+  - Tree view component (`src/components/org-unit-tree.tsx`) with expand/collapse, inline editing, delete with validation
+  - Create form component (`src/components/org-unit-form.tsx`) with name field and parent dropdown
+  - Admin-only configuracoes page (server component) that fetches org units and renders form + tree
+  - `buildTree()` utility to convert flat Prisma results into nested tree structure
+  - Role-based access control: admin-only for all actions, redirect non-admins to dashboard
+  - Delete protection: cannot delete units with children or linked employees
+  - UI in pt-BR with consistent Tailwind styling matching existing components
+- Files changed:
+  - `src/app/(dashboard)/configuracoes/actions.ts` - Server actions for org unit CRUD
+  - `src/app/(dashboard)/configuracoes/page.tsx` - Updated from placeholder to full admin page
+  - `src/components/org-unit-tree.tsx` - Recursive tree view component with inline editing
+  - `src/components/org-unit-form.tsx` - Create form with parent dropdown
+- **Learnings for future iterations:**
+  - Server actions are the standard Next.js pattern for mutations - use `"use server"` directive and return `{ success, error? }` objects
+  - `revalidatePath()` is needed after mutations to refresh server component data (the page re-fetches)
+  - Prisma `include: { _count: { select: { ... } } }` is useful for checking if a record has related children before deletion
+  - Tree building from flat list: create a Map of nodes, then iterate again to attach children to parents
+  - Admin pages should check role both in the server component (redirect) and in server actions (return error)
+  - No existing server action patterns before this story - this establishes the pattern for future CRUD features
 ---
