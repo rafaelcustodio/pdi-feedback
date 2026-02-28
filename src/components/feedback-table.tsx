@@ -30,6 +30,7 @@ interface FeedbackTableProps {
   year: string;
   conductedAtFrom?: string;
   conductedAtTo?: string;
+  statusFilter?: string;
   availableYears: number[];
   canCreate: boolean;
   isEmployeeView: boolean;
@@ -52,6 +53,7 @@ export function FeedbackTable({
   year: initialYear,
   conductedAtFrom: initialConductedAtFrom = "",
   conductedAtTo: initialConductedAtTo = "",
+  statusFilter: initialStatusFilter = "",
   availableYears,
   canCreate,
   isEmployeeView,
@@ -63,6 +65,7 @@ export function FeedbackTable({
   const [yearValue, setYearValue] = useState(initialYear);
   const [conductedAtFromValue, setConductedAtFromValue] = useState(initialConductedAtFrom);
   const [conductedAtToValue, setConductedAtToValue] = useState(initialConductedAtTo);
+  const [statusFilterValue, setStatusFilterValue] = useState(initialStatusFilter);
   const [showFutureModal, setShowFutureModal] = useState(false);
   const [futureEmployeeId, setFutureEmployeeId] = useState("");
   const [futureDate, setFutureDate] = useState("");
@@ -82,6 +85,7 @@ export function FeedbackTable({
     page?: string;
     conductedAtFrom?: string;
     conductedAtTo?: string;
+    status?: string;
   }) {
     const params = new URLSearchParams();
     const s = overrides.search ?? searchValue;
@@ -89,10 +93,12 @@ export function FeedbackTable({
     const p = overrides.page ?? "1";
     const caFrom = overrides.conductedAtFrom ?? conductedAtFromValue;
     const caTo = overrides.conductedAtTo ?? conductedAtToValue;
+    const st = overrides.status ?? statusFilterValue;
     if (s.trim()) params.set("search", s.trim());
     if (y) params.set("year", y);
     if (caFrom) params.set("conductedAtFrom", caFrom);
     if (caTo) params.set("conductedAtTo", caTo);
+    if (st) params.set("status", st);
     params.set("page", p);
     return `/feedbacks?${params.toString()}`;
   }
@@ -113,9 +119,27 @@ export function FeedbackTable({
     window.location.href = buildUrl({ conductedAtFrom: from, conductedAtTo: to, page: "1" });
   }
 
+  function handleStatusFilter(newStatus: string) {
+    setStatusFilterValue(newStatus);
+    window.location.href = buildUrl({ status: newStatus, page: "1" });
+  }
+
   function goToPage(p: number) {
     window.location.href = buildUrl({ page: String(p) });
   }
+
+  // Status filter options — employees only see submitted
+  const statusOptions = isEmployeeView
+    ? [
+        { value: "", label: "Todos os status" },
+        { value: "submitted", label: "Submetido" },
+      ]
+    : [
+        { value: "", label: "Todos os status" },
+        { value: "scheduled", label: "Agendado" },
+        { value: "draft", label: "Rascunho" },
+        { value: "submitted", label: "Submetido" },
+      ];
 
   async function handleCreateFutureFeedback() {
     if (!futureEmployeeId || !futureDate) return;
@@ -193,6 +217,21 @@ export function FeedbackTable({
                 {availableYears.map((y) => (
                   <option key={y} value={String(y)}>
                     {y}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+          {!isEmployeeView && (
+            <div className="flex items-center gap-1.5">
+              <select
+                value={statusFilterValue}
+                onChange={(e) => handleStatusFilter(e.target.value)}
+                className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                {statusOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
                   </option>
                 ))}
               </select>

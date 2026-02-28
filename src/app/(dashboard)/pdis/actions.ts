@@ -15,6 +15,7 @@ export type PDIListItem = {
   period: string;
   status: string;
   conductedAt: Date | null;
+  scheduledAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
   employeeName: string;
@@ -85,7 +86,8 @@ export async function getPDIs(
   page: number = 1,
   pageSize: number = 10,
   conductedAtFrom: string = "",
-  conductedAtTo: string = ""
+  conductedAtTo: string = "",
+  statusFilter: string = ""
 ): Promise<{
   pdis: PDIListItem[];
   total: number;
@@ -105,6 +107,16 @@ export async function getPDIs(
   let whereClause: Record<string, unknown> = { ...accessFilter };
 
   const andConditions: Record<string, unknown>[] = [];
+
+  // Employees should NOT see scheduled PDIs
+  if (role === "employee") {
+    andConditions.push({ status: { not: "scheduled" } });
+  }
+
+  // Status filter
+  if (statusFilter.trim()) {
+    andConditions.push({ status: statusFilter.trim() });
+  }
 
   if (search.trim()) {
     andConditions.push({
@@ -139,7 +151,7 @@ export async function getPDIs(
   const [pdis, total] = await Promise.all([
     prisma.pDI.findMany({
       where: whereClause,
-      orderBy: [{ conductedAt: "desc" }, { createdAt: "desc" }],
+      orderBy: [{ scheduledAt: "desc" }, { conductedAt: "desc" }, { createdAt: "desc" }],
       skip: (page - 1) * pageSize,
       take: pageSize,
       include: {
@@ -157,6 +169,7 @@ export async function getPDIs(
       period: p.period,
       status: p.status,
       conductedAt: p.conductedAt,
+      scheduledAt: p.scheduledAt,
       createdAt: p.createdAt,
       updatedAt: p.updatedAt,
       employeeName: p.employee.name,

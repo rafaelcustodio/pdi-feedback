@@ -17,6 +17,7 @@ export default async function FeedbacksPage({
     year?: string;
     conductedAtFrom?: string;
     conductedAtTo?: string;
+    status?: string;
   }>;
 }) {
   const session = await auth();
@@ -30,13 +31,14 @@ export default async function FeedbacksPage({
   const year = params.year ?? "";
   const conductedAtFrom = params.conductedAtFrom ?? "";
   const conductedAtTo = params.conductedAtTo ?? "";
+  const statusFilter = params.status ?? "";
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
 
   const canCreate = role !== "employee";
   const isEmployeeView = role === "employee";
 
   const [data, availableYears, subordinates, scheduledCount] = await Promise.all([
-    getFeedbacks(search, page, 10, year, conductedAtFrom, conductedAtTo),
+    getFeedbacks(search, page, 10, year, conductedAtFrom, conductedAtTo, statusFilter),
     getAvailableYears(),
     canCreate ? getSubordinatesForFeedback() : Promise.resolve([]),
     isEmployeeView ? getScheduledFeedbackCountForEmployee() : Promise.resolve(0),
@@ -64,6 +66,7 @@ export default async function FeedbacksPage({
         year={year}
         conductedAtFrom={conductedAtFrom}
         conductedAtTo={conductedAtTo}
+        statusFilter={statusFilter}
         availableYears={availableYears}
         canCreate={canCreate}
         isEmployeeView={isEmployeeView}

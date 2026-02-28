@@ -53,7 +53,8 @@ export async function getFeedbacks(
   pageSize: number = 10,
   year: string = "",
   conductedAtFrom: string = "",
-  conductedAtTo: string = ""
+  conductedAtTo: string = "",
+  statusFilter: string = ""
 ): Promise<{
   feedbacks: FeedbackListItem[];
   total: number;
@@ -130,6 +131,11 @@ export async function getFeedbacks(
         { period: { contains: search.trim(), mode: "insensitive" as const } },
       ],
     });
+  }
+
+  // Status filter
+  if (statusFilter.trim()) {
+    andConditions.push({ status: statusFilter.trim() });
   }
 
   if (andConditions.length > 0) {

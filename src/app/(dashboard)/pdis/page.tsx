@@ -11,6 +11,7 @@ export default async function PDIsPage({
     page?: string;
     conductedAtFrom?: string;
     conductedAtTo?: string;
+    status?: string;
   }>;
 }) {
   const session = await auth();
@@ -23,9 +24,10 @@ export default async function PDIsPage({
   const search = params.search ?? "";
   const conductedAtFrom = params.conductedAtFrom ?? "";
   const conductedAtTo = params.conductedAtTo ?? "";
+  const statusFilter = params.status ?? "";
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
 
-  const data = await getPDIs(search, page, 10, conductedAtFrom, conductedAtTo);
+  const data = await getPDIs(search, page, 10, conductedAtFrom, conductedAtTo, statusFilter);
 
   return (
     <div className="space-y-6">
@@ -48,7 +50,9 @@ export default async function PDIsPage({
         search={search}
         conductedAtFrom={conductedAtFrom}
         conductedAtTo={conductedAtTo}
+        statusFilter={statusFilter}
         canCreate={role !== "employee"}
+        isEmployeeView={role === "employee"}
       />
     </div>
   );

@@ -10,6 +10,7 @@ import {
   Eye,
   Pencil,
   Target,
+  Filter,
 } from "lucide-react";
 import type { PDIListItem } from "@/app/(dashboard)/pdis/actions";
 
@@ -21,10 +22,13 @@ interface PDITableProps {
   search: string;
   conductedAtFrom?: string;
   conductedAtTo?: string;
+  statusFilter?: string;
   canCreate: boolean;
+  isEmployeeView?: boolean;
 }
 
 const statusLabels: Record<string, string> = {
+  scheduled: "Agendado",
   draft: "Rascunho",
   active: "Ativo",
   completed: "Concluído",
@@ -32,6 +36,7 @@ const statusLabels: Record<string, string> = {
 };
 
 const statusColors: Record<string, string> = {
+  scheduled: "bg-gray-100 text-gray-600",
   draft: "bg-yellow-100 text-yellow-700",
   active: "bg-blue-100 text-blue-700",
   completed: "bg-green-100 text-green-700",
@@ -46,11 +51,14 @@ export function PDITable({
   search: initialSearch,
   conductedAtFrom: initialConductedAtFrom = "",
   conductedAtTo: initialConductedAtTo = "",
+  statusFilter: initialStatusFilter = "",
   canCreate,
+  isEmployeeView = false,
 }: PDITableProps) {
   const [searchValue, setSearchValue] = useState(initialSearch);
   const [conductedAtFromValue, setConductedAtFromValue] = useState(initialConductedAtFrom);
   const [conductedAtToValue, setConductedAtToValue] = useState(initialConductedAtTo);
+  const [statusFilterValue, setStatusFilterValue] = useState(initialStatusFilter);
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
@@ -59,15 +67,18 @@ export function PDITable({
     page?: string;
     conductedAtFrom?: string;
     conductedAtTo?: string;
+    status?: string;
   }) {
     const params = new URLSearchParams();
     const s = overrides.search ?? searchValue;
     const p = overrides.page ?? "1";
     const caFrom = overrides.conductedAtFrom ?? conductedAtFromValue;
     const caTo = overrides.conductedAtTo ?? conductedAtToValue;
+    const st = overrides.status ?? statusFilterValue;
     if (s.trim()) params.set("search", s.trim());
     if (caFrom) params.set("conductedAtFrom", caFrom);
     if (caTo) params.set("conductedAtTo", caTo);
+    if (st) params.set("status", st);
     params.set("page", p);
     return `/pdis?${params.toString()}`;
   }
@@ -83,35 +94,74 @@ export function PDITable({
     window.location.href = buildUrl({ conductedAtFrom: from, conductedAtTo: to, page: "1" });
   }
 
+  function handleStatusFilter(newStatus: string) {
+    setStatusFilterValue(newStatus);
+    window.location.href = buildUrl({ status: newStatus, page: "1" });
+  }
+
   function goToPage(p: number) {
     window.location.href = buildUrl({ page: String(p) });
   }
+
+  // Status filter options — employees don't see 'scheduled'
+  const statusOptions = isEmployeeView
+    ? [
+        { value: "", label: "Todos os status" },
+        { value: "draft", label: "Rascunho" },
+        { value: "active", label: "Ativo" },
+        { value: "completed", label: "Concluído" },
+        { value: "cancelled", label: "Cancelado" },
+      ]
+    : [
+        { value: "", label: "Todos os status" },
+        { value: "scheduled", label: "Agendado" },
+        { value: "draft", label: "Rascunho" },
+        { value: "active", label: "Ativo" },
+        { value: "completed", label: "Concluído" },
+        { value: "cancelled", label: "Cancelado" },
+      ];
 
   return (
     <div className="space-y-4">
       {/* Header with search and create button */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <form onSubmit={handleSearch} className="flex flex-1 gap-2">
-          <div className="relative flex-1 sm:max-w-xs">
-            <Search
-              size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-            />
-            <input
-              type="text"
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              placeholder="Buscar por colaborador ou período..."
-              className="w-full rounded-md border border-gray-300 py-2 pl-9 pr-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            />
+        <div className="flex flex-1 flex-col gap-2 sm:flex-row sm:items-center">
+          <form onSubmit={handleSearch} className="flex flex-1 gap-2">
+            <div className="relative flex-1 sm:max-w-xs">
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              />
+              <input
+                type="text"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                placeholder="Buscar por colaborador ou período..."
+                className="w-full rounded-md border border-gray-300 py-2 pl-9 pr-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+            <button
+              type="submit"
+              className="rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
+            >
+              Buscar
+            </button>
+          </form>
+          <div className="flex items-center gap-1.5">
+            <Filter size={14} className="text-gray-400" />
+            <select
+              value={statusFilterValue}
+              onChange={(e) => handleStatusFilter(e.target.value)}
+              className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+              {statusOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
           </div>
-          <button
-            type="submit"
-            className="rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
-          >
-            Buscar
-          </button>
-        </form>
+        </div>
         {canCreate && (
           <Link
             href="/pdis/novo"
@@ -171,10 +221,10 @@ export function PDITable({
                 Status
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                Data de Realização
+                Data Agendada
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                Data de Criação
+                Data de Realização
               </th>
               <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
                 Ações
@@ -219,21 +269,23 @@ export function PDITable({
                     </span>
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
-                    {pdi.conductedAt
-                      ? new Date(pdi.conductedAt).toLocaleDateString("pt-BR")
+                    {pdi.scheduledAt
+                      ? new Date(pdi.scheduledAt).toLocaleDateString("pt-BR")
                       : "—"}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
-                    {new Date(pdi.createdAt).toLocaleDateString("pt-BR")}
+                    {pdi.conductedAt
+                      ? new Date(pdi.conductedAt).toLocaleDateString("pt-BR")
+                      : "—"}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-1">
                       <Link
                         href={`/pdis/${pdi.id}`}
                         className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-blue-600"
-                        title={pdi.status === "draft" ? "Editar" : "Visualizar"}
+                        title={pdi.status === "draft" || pdi.status === "scheduled" ? "Editar" : "Visualizar"}
                       >
-                        {pdi.status === "draft" ? (
+                        {pdi.status === "draft" || pdi.status === "scheduled" ? (
                           <Pencil size={14} />
                         ) : (
                           <Eye size={14} />
