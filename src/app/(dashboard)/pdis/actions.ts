@@ -54,6 +54,7 @@ export type PDIDetail = {
   managerId: string;
   period: string;
   status: string;
+  conductedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
   employeeName: string;
@@ -196,6 +197,7 @@ export async function getPDIById(id: string): Promise<PDIDetail | null> {
     managerId: pdi.managerId,
     period: pdi.period,
     status: pdi.status,
+    conductedAt: pdi.conductedAt,
     createdAt: pdi.createdAt,
     updatedAt: pdi.updatedAt,
     employeeName: pdi.employee.name,
@@ -257,6 +259,7 @@ export async function getSubordinatesForPDI(): Promise<SubordinateOption[]> {
 export async function createPDI(data: {
   employeeId: string;
   period: string;
+  conductedAt: string;
   goals: GoalInput[];
   activate?: boolean;
 }): Promise<{ success: boolean; error?: string; id?: string }> {
@@ -281,6 +284,10 @@ export async function createPDI(data: {
     return { success: false, error: "Período é obrigatório" };
   }
 
+  if (!data.conductedAt) {
+    return { success: false, error: "Data de realização é obrigatória" };
+  }
+
   if (data.activate && data.goals.length === 0) {
     return { success: false, error: "Adicione pelo menos uma meta para ativar o PDI" };
   }
@@ -301,6 +308,7 @@ export async function createPDI(data: {
       employeeId: data.employeeId,
       managerId: userId,
       period: data.period.trim(),
+      conductedAt: new Date(data.conductedAt),
       status: data.activate ? "active" : "draft",
       goals: {
         create: data.goals
@@ -324,6 +332,7 @@ export async function updatePDI(
   id: string,
   data: {
     period: string;
+    conductedAt: string;
     goals: GoalInput[];
     activate?: boolean;
   }
@@ -354,6 +363,10 @@ export async function updatePDI(
 
   if (!data.period.trim()) {
     return { success: false, error: "Período é obrigatório" };
+  }
+
+  if (!data.conductedAt) {
+    return { success: false, error: "Data de realização é obrigatória" };
   }
 
   if (data.activate && data.goals.length === 0) {
@@ -421,7 +434,8 @@ export async function updatePDI(
       where: { id },
       data: {
         period: data.period.trim(),
-        status: data.activate ? "active" : "draft",
+        conductedAt: new Date(data.conductedAt),
+        status: data.activate ? "active" : pdi.status,
       },
     });
   });

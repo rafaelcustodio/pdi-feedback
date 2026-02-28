@@ -18,6 +18,8 @@ interface PDIFormProps {
     employeeId: string;
     employeeName: string;
     period: string;
+    conductedAt: string;
+    createdAt?: string;
     goals: {
       id: string;
       title: string;
@@ -60,6 +62,7 @@ export function PDIForm({
   const router = useRouter();
   const [employeeId, setEmployeeId] = useState(initialData?.employeeId ?? "");
   const [period, setPeriod] = useState(initialData?.period ?? "");
+  const [conductedAt, setConductedAt] = useState(initialData?.conductedAt ?? "");
   const [goals, setGoals] = useState<GoalInput[]>(
     initialData?.goals && initialData.goals.length > 0
       ? initialData.goals
@@ -75,6 +78,7 @@ export function PDIForm({
   const canActivate =
     (mode === "create" ? !!employeeId : true) &&
     !!period.trim() &&
+    !!conductedAt &&
     hasValidGoals;
 
   function updateGoal(index: number, field: keyof GoalInput, value: string) {
@@ -107,12 +111,14 @@ export function PDIForm({
       result = await createPDI({
         employeeId,
         period,
+        conductedAt,
         goals: goalsData,
         activate,
       });
     } else {
       result = await updatePDI(initialData!.id, {
         period,
+        conductedAt,
         goals: goalsData,
         activate,
       });
@@ -223,6 +229,43 @@ export function PDIForm({
               disabled={loading}
             />
           </div>
+
+          {/* Conducted At */}
+          <div>
+            <label
+              htmlFor="pdi-conducted-at"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
+              Data de realização *
+            </label>
+            <input
+              id="pdi-conducted-at"
+              type="date"
+              value={conductedAt}
+              onChange={(e) => setConductedAt(e.target.value)}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              required
+              disabled={loading}
+            />
+          </div>
+
+          {/* Created At (read-only, edit mode only) */}
+          {mode === "edit" && initialData?.createdAt && (
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">
+                Data de criação
+              </label>
+              <p className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700">
+                {new Date(initialData.createdAt).toLocaleDateString("pt-BR", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -368,7 +411,7 @@ export function PDIForm({
         </Link>
         <button
           type="submit"
-          disabled={loading || !period.trim() || (mode === "create" && !employeeId)}
+          disabled={loading || !period.trim() || !conductedAt || (mode === "create" && !employeeId)}
           className="inline-flex items-center gap-2 rounded-md bg-gray-600 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 disabled:opacity-50"
         >
           <Save size={16} />

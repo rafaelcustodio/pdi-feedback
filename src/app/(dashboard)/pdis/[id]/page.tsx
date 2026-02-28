@@ -39,6 +39,10 @@ export default async function PDIDetailPage({
             employeeId: pdi.employeeId,
             employeeName: pdi.employeeName,
             period: pdi.period,
+            conductedAt: pdi.conductedAt
+              ? new Date(pdi.conductedAt).toISOString().split("T")[0]
+              : "",
+            createdAt: pdi.createdAt.toISOString(),
             goals: pdi.goals.map((g) => ({
               id: g.id,
               title: g.title,

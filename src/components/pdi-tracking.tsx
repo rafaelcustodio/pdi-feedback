@@ -151,6 +151,12 @@ export function PDITracking({ pdi, userId, userRole }: PDITrackingProps) {
 
       {/* Metadata */}
       <div className="text-xs text-gray-400">
+        {pdi.conductedAt && (
+          <>
+            Realizado em{" "}
+            {new Date(pdi.conductedAt).toLocaleDateString("pt-BR")} |{" "}
+          </>
+        )}
         Criado em {new Date(pdi.createdAt).toLocaleDateString("pt-BR")} |
         Última atualização em{" "}
         {new Date(pdi.updatedAt).toLocaleDateString("pt-BR")}
