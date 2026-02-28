@@ -1,6 +1,10 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { getFeedbacks, getAvailableYears } from "./actions";
+import {
+  getFeedbacks,
+  getAvailableYears,
+  getSubordinatesForFeedback,
+} from "./actions";
 import { FeedbackTable } from "@/components/feedback-table";
 
 export default async function FeedbacksPage({
@@ -19,9 +23,12 @@ export default async function FeedbacksPage({
   const year = params.year ?? "";
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
 
-  const [data, availableYears] = await Promise.all([
+  const canCreate = role !== "employee";
+
+  const [data, availableYears, subordinates] = await Promise.all([
     getFeedbacks(search, page, 10, year),
     getAvailableYears(),
+    canCreate ? getSubordinatesForFeedback() : Promise.resolve([]),
   ]);
 
   return (
@@ -45,8 +52,9 @@ export default async function FeedbacksPage({
         search={search}
         year={year}
         availableYears={availableYears}
-        canCreate={role !== "employee"}
+        canCreate={canCreate}
         isEmployeeView={role === "employee"}
+        subordinates={subordinates}
       />
     </div>
   );

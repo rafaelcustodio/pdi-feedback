@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Search,
@@ -11,8 +12,13 @@ import {
   Pencil,
   Star,
   Filter,
+  CalendarPlus,
 } from "lucide-react";
-import type { FeedbackListItem } from "@/app/(dashboard)/feedbacks/actions";
+import type {
+  FeedbackListItem,
+  SubordinateOption,
+} from "@/app/(dashboard)/feedbacks/actions";
+import { createFutureFeedback } from "@/app/(dashboard)/feedbacks/actions";
 
 interface FeedbackTableProps {
   feedbacks: FeedbackListItem[];
@@ -24,6 +30,7 @@ interface FeedbackTableProps {
   availableYears: number[];
   canCreate: boolean;
   isEmployeeView: boolean;
+  subordinates?: SubordinateOption[];
 }
 
 const statusLabels: Record<string, string> = {
@@ -42,9 +49,21 @@ export function FeedbackTable({
   availableYears,
   canCreate,
   isEmployeeView,
+  subordinates,
 }: FeedbackTableProps) {
+  const router = useRouter();
   const [searchValue, setSearchValue] = useState(initialSearch);
   const [yearValue, setYearValue] = useState(initialYear);
+  const [showFutureModal, setShowFutureModal] = useState(false);
+  const [futureEmployeeId, setFutureEmployeeId] = useState("");
+  const [futureDate, setFutureDate] = useState("");
+  const [futureLoading, setFutureLoading] = useState(false);
+  const [futureError, setFutureError] = useState<string | null>(null);
+  const minFutureDate = useMemo(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split("T")[0];
+  }, []);
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
@@ -71,6 +90,27 @@ export function FeedbackTable({
 
   function goToPage(p: number) {
     window.location.href = buildUrl({ page: String(p) });
+  }
+
+  async function handleCreateFutureFeedback() {
+    if (!futureEmployeeId || !futureDate) return;
+    setFutureLoading(true);
+    setFutureError(null);
+
+    const result = await createFutureFeedback({
+      employeeId: futureEmployeeId,
+      scheduledAt: futureDate,
+    });
+
+    setFutureLoading(false);
+    if (result.success) {
+      setShowFutureModal(false);
+      setFutureEmployeeId("");
+      setFutureDate("");
+      router.refresh();
+    } else {
+      setFutureError(result.error ?? "Erro ao agendar feedback futuro");
+    }
   }
 
   return (
@@ -122,13 +162,23 @@ export function FeedbackTable({
           )}
         </div>
         {canCreate && (
-          <Link
-            href="/feedbacks/novo"
-            className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-          >
-            <Plus size={16} />
-            Novo Feedback
-          </Link>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowFutureModal(true)}
+              className="inline-flex items-center gap-2 rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700"
+            >
+              <CalendarPlus size={16} />
+              Agendar Feedback Futuro
+            </button>
+            <Link
+              href="/feedbacks/novo"
+              className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            >
+              <Plus size={16} />
+              Novo Feedback
+            </Link>
+          </div>
         )}
       </div>
 
@@ -197,21 +247,34 @@ export function FeedbackTable({
                     )}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm">
-                    <span
-                      className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                        fb.status === "submitted"
-                          ? "bg-green-100 text-green-700"
-                          : fb.status === "scheduled"
-                            ? "bg-blue-100 text-blue-700"
-                            : "bg-yellow-100 text-yellow-700"
-                      }`}
-                    >
-                      {statusLabels[fb.status] ?? fb.status}
-                    </span>
-                    {fb.status === "scheduled" && fb.scheduledAt && (
-                      <span className="ml-1.5 text-xs text-blue-600">
-                        {new Date(fb.scheduledAt).toLocaleDateString("pt-BR")}
-                      </span>
+                    {fb.status === "draft" && fb.scheduledAt ? (
+                      <>
+                        <span className="inline-flex rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-700">
+                          Agendado para preenchimento
+                        </span>
+                        <span className="ml-1.5 text-xs text-indigo-600">
+                          {new Date(fb.scheduledAt).toLocaleDateString("pt-BR")}
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span
+                          className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
+                            fb.status === "submitted"
+                              ? "bg-green-100 text-green-700"
+                              : fb.status === "scheduled"
+                                ? "bg-blue-100 text-blue-700"
+                                : "bg-yellow-100 text-yellow-700"
+                          }`}
+                        >
+                          {statusLabels[fb.status] ?? fb.status}
+                        </span>
+                        {fb.status === "scheduled" && fb.scheduledAt && (
+                          <span className="ml-1.5 text-xs text-blue-600">
+                            {new Date(fb.scheduledAt).toLocaleDateString("pt-BR")}
+                          </span>
+                        )}
+                      </>
                     )}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
@@ -287,6 +350,95 @@ export function FeedbackTable({
             >
               <ChevronRight size={16} />
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Future Feedback Modal */}
+      {showFutureModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-gray-900">
+              Agendar Feedback Futuro
+            </h3>
+            <p className="mt-1 text-sm text-gray-600">
+              Agende uma data futura para preencher um feedback. Um rascunho será criado e você receberá lembretes.
+            </p>
+
+            {futureError && (
+              <div className="mt-3 rounded-md border border-red-200 bg-red-50 p-2 text-sm text-red-700">
+                {futureError}
+              </div>
+            )}
+
+            <div className="mt-4 space-y-4">
+              <div>
+                <label
+                  htmlFor="future-employee"
+                  className="mb-1 block text-sm font-medium text-gray-700"
+                >
+                  Colaborador *
+                </label>
+                <select
+                  id="future-employee"
+                  value={futureEmployeeId}
+                  onChange={(e) => setFutureEmployeeId(e.target.value)}
+                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                  disabled={futureLoading}
+                >
+                  <option value="">Selecione um colaborador</option>
+                  {subordinates?.map((sub) => (
+                    <option key={sub.id} value={sub.id}>
+                      {sub.name} ({sub.email})
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label
+                  htmlFor="future-date"
+                  className="mb-1 block text-sm font-medium text-gray-700"
+                >
+                  Data prevista para preenchimento *
+                </label>
+                <input
+                  id="future-date"
+                  type="date"
+                  value={futureDate}
+                  onChange={(e) => setFutureDate(e.target.value)}
+                  min={minFutureDate}
+                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                  disabled={futureLoading}
+                />
+                <p className="mt-1 text-xs text-gray-500">
+                  Você receberá um lembrete 7 dias antes e na data agendada.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowFutureModal(false);
+                  setFutureEmployeeId("");
+                  setFutureDate("");
+                  setFutureError(null);
+                }}
+                className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleCreateFutureFeedback}
+                disabled={!futureEmployeeId || !futureDate || futureLoading}
+                className="inline-flex items-center gap-2 rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-50"
+              >
+                <CalendarPlus size={16} />
+                {futureLoading ? "Agendando..." : "Confirmar Agendamento"}
+              </button>
+            </div>
           </div>
         </div>
       )}

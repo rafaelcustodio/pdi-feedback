@@ -191,6 +191,52 @@ export async function GET(request: Request) {
       }
     }
 
+    // Draft feedbacks with scheduledAt (future feedback fill-in reminders)
+    const draftFeedbacksWithSchedule = await prisma.feedback.findMany({
+      where: {
+        status: "draft",
+        scheduledAt: { not: null, lte: sevenDaysFromNow },
+      },
+      include: {
+        manager: { select: { id: true, name: true } },
+        employee: { select: { id: true, name: true } },
+      },
+    });
+
+    for (const feedback of draftFeedbacksWithSchedule) {
+      if (!feedback.scheduledAt) continue;
+      const isOnOrPastDate = feedback.scheduledAt <= now;
+      const dueDateStr = feedback.scheduledAt.toLocaleDateString("pt-BR");
+      const messageKey = `feedback_fill_${feedback.id}_${dueDateStr}`;
+
+      const existing = await prisma.notification.findFirst({
+        where: {
+          userId: feedback.managerId,
+          type: "feedback_reminder",
+          message: { contains: messageKey },
+        },
+      });
+
+      if (!existing) {
+        const title = isOnOrPastDate
+          ? `Feedback para preencher hoje - ${feedback.employee.name}`
+          : `Feedback agendado próximo - ${feedback.employee.name}`;
+        const message = isOnOrPastDate
+          ? `O feedback agendado para ${feedback.employee.name} está previsto para ${dueDateStr}. Preencha-o agora. [${messageKey}]`
+          : `O feedback agendado para ${feedback.employee.name} está previsto para ${dueDateStr}. [${messageKey}]`;
+
+        await prisma.notification.create({
+          data: {
+            userId: feedback.managerId,
+            type: "feedback_reminder",
+            title,
+            message,
+          },
+        });
+        notificationsCreated++;
+      }
+    }
+
     // -------------------------------------------------------
     // Step 2: Find unsent notifications and group by manager
     // -------------------------------------------------------

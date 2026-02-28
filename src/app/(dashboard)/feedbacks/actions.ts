@@ -15,6 +15,7 @@ export type FeedbackListItem = {
   period: string;
   status: string;
   rating: number | null;
+  conductedAt: Date | null;
   scheduledAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
@@ -139,6 +140,7 @@ export async function getFeedbacks(
       period: f.period,
       status: f.status,
       rating: f.rating,
+      conductedAt: f.conductedAt,
       scheduledAt: f.scheduledAt,
       createdAt: f.createdAt,
       updatedAt: f.updatedAt,
@@ -511,6 +513,77 @@ export async function scheduleFeedback(
   revalidatePath("/feedbacks");
   revalidatePath(`/feedbacks/${id}`);
   return { success: true };
+}
+
+export async function createFutureFeedback(data: {
+  employeeId: string;
+  scheduledAt: string;
+}): Promise<{ success: boolean; error?: string; id?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  if (role === "employee") {
+    return { success: false, error: "Apenas gestores podem agendar feedbacks" };
+  }
+
+  const hasAccess = await canAccessEmployee(userId, role, data.employeeId);
+  if (!hasAccess) {
+    return { success: false, error: "Você não tem acesso a este colaborador" };
+  }
+
+  const scheduledDate = new Date(data.scheduledAt);
+  if (isNaN(scheduledDate.getTime())) {
+    return { success: false, error: "Data de agendamento inválida" };
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const scheduleDay = new Date(scheduledDate);
+  scheduleDay.setHours(0, 0, 0, 0);
+
+  if (scheduleDay <= today) {
+    return { success: false, error: "A data de agendamento deve ser uma data futura" };
+  }
+
+  // Get employee and manager names for notifications
+  const [employee, manager] = await Promise.all([
+    prisma.user.findUnique({ where: { id: data.employeeId }, select: { name: true } }),
+    prisma.user.findUnique({ where: { id: userId }, select: { name: true } }),
+  ]);
+
+  if (!employee || !manager) {
+    return { success: false, error: "Colaborador ou gestor não encontrado" };
+  }
+
+  // Create an empty draft feedback with scheduledAt set to the future date
+  const feedback = await prisma.feedback.create({
+    data: {
+      employeeId: data.employeeId,
+      managerId: userId,
+      period: "",
+      status: "draft",
+      scheduledAt: scheduledDate,
+    },
+  });
+
+  // Notify the employee that a feedback has been scheduled (without content)
+  const scheduledDateStr = scheduledDate.toLocaleDateString("pt-BR");
+  await prisma.notification.create({
+    data: {
+      userId: data.employeeId,
+      type: "feedback_scheduled",
+      title: `Feedback agendado - ${manager.name}`,
+      message: `Seu gestor ${manager.name} agendou um feedback para ${scheduledDateStr}. [feedback_future_${feedback.id}]`,
+    },
+  });
+
+  revalidatePath("/feedbacks");
+  return { success: true, id: feedback.id };
 }
 
 export async function cancelScheduleFeedback(
