@@ -205,8 +205,8 @@
         "Typecheck passa"
       ],
       "priority": 12,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "PDITracking component replaces PDIReadOnly for non-draft PDIs. Server actions: addEvidence, addComment, updateGoalStatus. Employee can change goal status (in_progress, completed). Manager can reject completion (revert to in_progress). Comments are chat-style with author alignment. Evidence added per goal with description field."
     },
     {
       "id": "US-012",
