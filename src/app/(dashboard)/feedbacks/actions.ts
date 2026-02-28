@@ -45,7 +45,8 @@ export type SubordinateOption = {
 export async function getFeedbacks(
   search: string = "",
   page: number = 1,
-  pageSize: number = 10
+  pageSize: number = 10,
+  year: string = ""
 ): Promise<{
   feedbacks: FeedbackListItem[];
   total: number;
@@ -77,13 +78,40 @@ export async function getFeedbacks(
     whereClause = { ...accessFilter };
   }
 
+  // Build additional filters as AND conditions
+  const andConditions: Record<string, unknown>[] = [];
+
+  // Filter by year (on period field or createdAt year)
+  if (year.trim()) {
+    const yearNum = parseInt(year.trim(), 10);
+    if (!isNaN(yearNum)) {
+      andConditions.push({
+        OR: [
+          { period: { contains: year.trim() } },
+          {
+            createdAt: {
+              gte: new Date(`${yearNum}-01-01`),
+              lt: new Date(`${yearNum + 1}-01-01`),
+            },
+          },
+        ],
+      });
+    }
+  }
+
+  // Filter by search text
   if (search.trim()) {
-    whereClause = {
-      ...whereClause,
+    andConditions.push({
       OR: [
         { employee: { name: { contains: search.trim(), mode: "insensitive" as const } } },
         { period: { contains: search.trim(), mode: "insensitive" as const } },
       ],
+    });
+  }
+
+  if (andConditions.length > 0) {
+    whereClause = {
+      AND: [whereClause, ...andConditions],
     };
   }
 
@@ -331,4 +359,45 @@ export async function updateFeedback(
   revalidatePath("/feedbacks");
   revalidatePath(`/feedbacks/${id}`);
   return { success: true };
+}
+
+export async function getAvailableYears(): Promise<number[]> {
+  const session = await auth();
+  if (!session?.user?.id) return [];
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  const accessFilter = await getFeedbackAccessFilter(userId, role);
+
+  let whereClause: Record<string, unknown>;
+  if (role === "employee") {
+    whereClause = {
+      employeeId: userId,
+      OR: [
+        { status: "submitted" },
+        { managerId: userId },
+      ],
+    };
+  } else {
+    whereClause = { ...accessFilter };
+  }
+
+  const feedbacks = await prisma.feedback.findMany({
+    where: whereClause,
+    select: { createdAt: true, period: true },
+    orderBy: { createdAt: "desc" },
+  });
+
+  const years = new Set<number>();
+  for (const fb of feedbacks) {
+    years.add(fb.createdAt.getFullYear());
+    // Also extract year from period string if present (e.g., "Q1 2026", "2026-01")
+    const match = fb.period.match(/\b(20\d{2})\b/);
+    if (match) {
+      years.add(parseInt(match[1], 10));
+    }
+  }
+
+  return Array.from(years).sort((a, b) => b - a);
 }

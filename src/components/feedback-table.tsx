@@ -10,6 +10,7 @@ import {
   Eye,
   Pencil,
   Star,
+  Filter,
 } from "lucide-react";
 import type { FeedbackListItem } from "@/app/(dashboard)/feedbacks/actions";
 
@@ -19,7 +20,10 @@ interface FeedbackTableProps {
   page: number;
   pageSize: number;
   search: string;
+  year: string;
+  availableYears: number[];
   canCreate: boolean;
+  isEmployeeView: boolean;
 }
 
 const statusLabels: Record<string, string> = {
@@ -33,52 +37,89 @@ export function FeedbackTable({
   page,
   pageSize,
   search: initialSearch,
+  year: initialYear,
+  availableYears,
   canCreate,
+  isEmployeeView,
 }: FeedbackTableProps) {
   const [searchValue, setSearchValue] = useState(initialSearch);
+  const [yearValue, setYearValue] = useState(initialYear);
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
+  function buildUrl(overrides: { search?: string; year?: string; page?: string }) {
+    const params = new URLSearchParams();
+    const s = overrides.search ?? searchValue;
+    const y = overrides.year ?? yearValue;
+    const p = overrides.page ?? "1";
+    if (s.trim()) params.set("search", s.trim());
+    if (y) params.set("year", y);
+    params.set("page", p);
+    return `/feedbacks?${params.toString()}`;
+  }
+
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    const params = new URLSearchParams();
-    if (searchValue.trim()) params.set("search", searchValue.trim());
-    params.set("page", "1");
-    window.location.href = `/feedbacks?${params.toString()}`;
+    window.location.href = buildUrl({ search: searchValue, page: "1" });
+  }
+
+  function handleYearChange(newYear: string) {
+    setYearValue(newYear);
+    window.location.href = buildUrl({ year: newYear, page: "1" });
   }
 
   function goToPage(p: number) {
-    const params = new URLSearchParams();
-    if (searchValue.trim()) params.set("search", searchValue.trim());
-    params.set("page", String(p));
-    window.location.href = `/feedbacks?${params.toString()}`;
+    window.location.href = buildUrl({ page: String(p) });
   }
 
   return (
     <div className="space-y-4">
-      {/* Header with search and create button */}
+      {/* Header with search, year filter, and create button */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <form onSubmit={handleSearch} className="flex flex-1 gap-2">
-          <div className="relative flex-1 sm:max-w-xs">
-            <Search
-              size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-            />
-            <input
-              type="text"
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              placeholder="Buscar por colaborador ou período..."
-              className="w-full rounded-md border border-gray-300 py-2 pl-9 pr-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            />
-          </div>
-          <button
-            type="submit"
-            className="rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
-          >
-            Buscar
-          </button>
-        </form>
+        <div className="flex flex-1 flex-col gap-2 sm:flex-row sm:items-center">
+          <form onSubmit={handleSearch} className="flex flex-1 gap-2">
+            <div className="relative flex-1 sm:max-w-xs">
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              />
+              <input
+                type="text"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                placeholder={
+                  isEmployeeView
+                    ? "Buscar por gestor ou período..."
+                    : "Buscar por colaborador ou período..."
+                }
+                className="w-full rounded-md border border-gray-300 py-2 pl-9 pr-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+            <button
+              type="submit"
+              className="rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
+            >
+              Buscar
+            </button>
+          </form>
+          {availableYears.length > 0 && (
+            <div className="flex items-center gap-1.5">
+              <Filter size={14} className="text-gray-400" />
+              <select
+                value={yearValue}
+                onChange={(e) => handleYearChange(e.target.value)}
+                className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                <option value="">Todos os anos</option>
+                {availableYears.map((y) => (
+                  <option key={y} value={String(y)}>
+                    {y}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+        </div>
         {canCreate && (
           <Link
             href="/feedbacks/novo"
@@ -95,9 +136,11 @@ export function FeedbackTable({
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                Colaborador
-              </th>
+              {!isEmployeeView && (
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  Colaborador
+                </th>
+              )}
               <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 Gestor
               </th>
@@ -111,7 +154,7 @@ export function FeedbackTable({
                 Status
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                Data
+                {isEmployeeView ? "Data de Submissão" : "Data"}
               </th>
               <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
                 Ações
@@ -122,7 +165,7 @@ export function FeedbackTable({
             {feedbacks.length === 0 ? (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={isEmployeeView ? 6 : 7}
                   className="px-4 py-8 text-center text-sm text-gray-500"
                 >
                   Nenhum feedback encontrado.
@@ -131,9 +174,11 @@ export function FeedbackTable({
             ) : (
               feedbacks.map((fb) => (
                 <tr key={fb.id} className="hover:bg-gray-50">
-                  <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-900">
-                    {fb.employeeName}
-                  </td>
+                  {!isEmployeeView && (
+                    <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-900">
+                      {fb.employeeName}
+                    </td>
+                  )}
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
                     {fb.managerName}
                   </td>
@@ -162,7 +207,9 @@ export function FeedbackTable({
                     </span>
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
-                    {new Date(fb.createdAt).toLocaleDateString("pt-BR")}
+                    {isEmployeeView && fb.status === "submitted"
+                      ? new Date(fb.updatedAt).toLocaleDateString("pt-BR")
+                      : new Date(fb.createdAt).toLocaleDateString("pt-BR")}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-1">
