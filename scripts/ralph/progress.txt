@@ -699,3 +699,34 @@ Started: Sat Feb 28 14:20:00 PST 2026
   - EmployeeHierarchy with `endDate: null` gives current active assignments — use for org unit filtering
   - Calendar date range: use `new Date(year, month - 1, 1)` for start and `new Date(year, month, 0, 23, 59, 59, 999)` for end of month
 ---
+
+## 2026-02-28 - US-004
+- What was implemented:
+  - Calendar page route `/calendario` with server component that calls `getCalendarEvents`
+  - Calendar sidebar item added between Dashboard and Colaboradores with Calendar icon from lucide-react
+  - CalendarView client component (`src/components/calendar-view.tsx`) with:
+    - Monthly grid view (CSS Grid, 7 columns Dom-Sáb) with day-of-week header
+    - Month navigation (ChevronLeft/ChevronRight buttons) and "Hoje" button to return to current month
+    - Current day highlighted with blue circle
+    - Adjacent month days displayed in gray
+    - Events rendered as colored badges with status-based styling:
+      - Left border: blue for PDI, green for Feedback (type indicator)
+      - Background: gray=scheduled, yellow=draft, blue=active, green=submitted/completed
+      - Status icons: Clock, Pencil, Play, Check
+    - Overflow handling: days with >3 events show "+N mais" button to expand
+    - Click-to-navigate: badges link to PDI/Feedback detail pages
+    - Color legend below the calendar
+    - Responsive mobile view: agenda-style list grouped by day (hidden on md+, shown on <md)
+  - Date serialization for passing server-fetched events to client component
+- Files changed:
+  - `src/components/layout/sidebar.tsx` — added Calendar import and "Calendário" nav item
+  - `src/app/(dashboard)/calendario/page.tsx` — new server component page
+  - `src/components/calendar-view.tsx` — new client component with grid, navigation, badges, mobile list
+- **Learnings for future iterations:**
+  - Dates must be serialized to ISO strings when passing from server to client components in Next.js
+  - Use `searchParams` for month/year to allow URL-based navigation and sharing
+  - CSS Grid with `grid-cols-7` naturally creates the calendar layout
+  - `new Date(year, month, 0)` gives last day of previous month (useful for days-in-month calc)
+  - Expand/collapse pattern for overflow events uses local state (`expandedDay`)
+  - `useSearchParams()` in client component preserves existing URL params when navigating months
+---
