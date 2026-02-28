@@ -1,7 +1,8 @@
 import { auth } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
-import { getEmployeeById, getOrgUnitsFlat } from "../actions";
+import { getEmployeeById, getOrgUnitsFlat, getEmployeeSchedules } from "../actions";
 import { EmployeeForm } from "@/components/employee-form";
+import { ScheduleSection } from "@/components/schedule-section";
 
 export default async function EditarColaboradorPage({
   params,
@@ -14,9 +15,10 @@ export default async function EditarColaboradorPage({
   }
 
   const { id } = await params;
-  const [employee, orgUnits] = await Promise.all([
+  const [employee, orgUnits, schedules] = await Promise.all([
     getEmployeeById(id),
     getOrgUnitsFlat(),
+    getEmployeeSchedules(id),
   ]);
 
   if (!employee) {
@@ -24,17 +26,26 @@ export default async function EditarColaboradorPage({
   }
 
   return (
-    <EmployeeForm
-      mode="edit"
-      orgUnits={orgUnits}
-      initialData={{
-        id: employee.id,
-        name: employee.name,
-        email: employee.email,
-        role: employee.role,
-        orgUnitId: employee.hierarchy?.organizationalUnitId,
-        managerId: employee.hierarchy?.managerId,
-      }}
-    />
+    <div className="space-y-6">
+      <EmployeeForm
+        mode="edit"
+        orgUnits={orgUnits}
+        initialData={{
+          id: employee.id,
+          name: employee.name,
+          email: employee.email,
+          role: employee.role,
+          orgUnitId: employee.hierarchy?.organizationalUnitId,
+          managerId: employee.hierarchy?.managerId,
+        }}
+      />
+      <ScheduleSection
+        employeeId={employee.id}
+        initialPdiFrequency={schedules.pdiFrequency}
+        initialPdiNextDueDate={schedules.pdiNextDueDate}
+        initialFeedbackFrequency={schedules.feedbackFrequency}
+        initialFeedbackNextDueDate={schedules.feedbackNextDueDate}
+      />
+    </div>
   );
 }

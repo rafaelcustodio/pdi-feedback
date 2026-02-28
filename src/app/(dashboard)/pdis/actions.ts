@@ -8,6 +8,7 @@ import {
   getPDIAccessFilter,
   canAccessEmployee,
 } from "@/lib/access-control";
+import { recalculatePDISchedule } from "@/lib/schedule-utils";
 
 export type PDIListItem = {
   id: string;
@@ -550,6 +551,7 @@ export async function updateGoalStatus(
       where: { id: goalId },
       data: { status: newStatus },
     });
+    await checkAndCompletePDI(pdi.id, pdi.employeeId, goalId, newStatus);
     revalidatePath(`/pdis/${pdi.id}`);
     return { success: true };
   }
@@ -560,9 +562,41 @@ export async function updateGoalStatus(
       where: { id: goalId },
       data: { status: newStatus },
     });
+    await checkAndCompletePDI(pdi.id, pdi.employeeId, goalId, newStatus);
     revalidatePath(`/pdis/${pdi.id}`);
     return { success: true };
   }
 
   return { success: false, error: "Acesso não autorizado" };
+}
+
+/**
+ * After updating a goal status, check if ALL goals of the PDI are completed.
+ * If so, mark the PDI as completed and recalculate the PDI schedule.
+ */
+async function checkAndCompletePDI(
+  pdiId: string,
+  employeeId: string,
+  updatedGoalId: string,
+  updatedGoalStatus: string
+): Promise<void> {
+  // Only check if the goal was just marked as completed
+  if (updatedGoalStatus !== "completed") return;
+
+  const allGoals = await prisma.pDIGoal.findMany({
+    where: { pdiId },
+    select: { id: true, status: true },
+  });
+
+  const allCompleted = allGoals.every(
+    (g) => g.id === updatedGoalId ? true : g.status === "completed"
+  );
+
+  if (allCompleted) {
+    await prisma.pDI.update({
+      where: { id: pdiId },
+      data: { status: "completed" },
+    });
+    await recalculatePDISchedule(employeeId);
+  }
 }

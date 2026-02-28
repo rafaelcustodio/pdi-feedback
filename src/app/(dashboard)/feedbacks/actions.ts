@@ -8,6 +8,7 @@ import {
   getFeedbackAccessFilter,
   canAccessEmployee,
 } from "@/lib/access-control";
+import { recalculateFeedbackSchedule } from "@/lib/schedule-utils";
 
 export type FeedbackListItem = {
   id: string;
@@ -286,6 +287,11 @@ export async function createFeedback(data: {
     },
   });
 
+  // Recalculate feedback schedule after submission
+  if (data.submit) {
+    await recalculateFeedbackSchedule(data.employeeId);
+  }
+
   revalidatePath("/feedbacks");
   return { success: true, id: feedback.id };
 }
@@ -355,6 +361,11 @@ export async function updateFeedback(
       status: data.submit ? "submitted" : "draft",
     },
   });
+
+  // Recalculate feedback schedule after submission
+  if (data.submit) {
+    await recalculateFeedbackSchedule(feedback.employeeId);
+  }
 
   revalidatePath("/feedbacks");
   revalidatePath(`/feedbacks/${id}`);

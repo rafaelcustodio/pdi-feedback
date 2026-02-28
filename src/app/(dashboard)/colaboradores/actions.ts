@@ -434,6 +434,171 @@ export async function reactivateEmployee(
   return { success: true };
 }
 
+// ============================================================
+// US-012: Schedule management (PDI & Feedback frequency)
+// ============================================================
+
+export type EmployeeSchedules = {
+  pdiFrequency: number | null;
+  pdiNextDueDate: Date | null;
+  pdiScheduleId: string | null;
+  feedbackFrequency: number | null;
+  feedbackNextDueDate: Date | null;
+  feedbackScheduleId: string | null;
+};
+
+export async function getEmployeeSchedules(
+  employeeId: string
+): Promise<EmployeeSchedules> {
+  const session = await requireAdmin();
+  if (!session) {
+    return {
+      pdiFrequency: null,
+      pdiNextDueDate: null,
+      pdiScheduleId: null,
+      feedbackFrequency: null,
+      feedbackNextDueDate: null,
+      feedbackScheduleId: null,
+    };
+  }
+
+  const [pdiSchedule, feedbackSchedule] = await Promise.all([
+    prisma.pDISchedule.findFirst({
+      where: { employeeId, isActive: true },
+      orderBy: { nextDueDate: "asc" },
+    }),
+    prisma.feedbackSchedule.findFirst({
+      where: { employeeId, isActive: true },
+      orderBy: { nextDueDate: "asc" },
+    }),
+  ]);
+
+  return {
+    pdiFrequency: pdiSchedule?.frequencyMonths ?? null,
+    pdiNextDueDate: pdiSchedule?.nextDueDate ?? null,
+    pdiScheduleId: pdiSchedule?.id ?? null,
+    feedbackFrequency: feedbackSchedule?.frequencyMonths ?? null,
+    feedbackNextDueDate: feedbackSchedule?.nextDueDate ?? null,
+    feedbackScheduleId: feedbackSchedule?.id ?? null,
+  };
+}
+
+function calculateNextDueDate(frequencyMonths: number): Date {
+  const now = new Date();
+  const next = new Date(now);
+  next.setMonth(next.getMonth() + frequencyMonths);
+  return next;
+}
+
+export async function saveEmployeeSchedules(
+  employeeId: string,
+  data: {
+    pdiFrequency: number | null;
+    feedbackFrequency: number | null;
+  }
+): Promise<{ success: boolean; error?: string }> {
+  const session = await requireAdmin();
+  if (!session) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const validFrequencies = [1, 2, 3, 6, 12];
+
+  if (data.pdiFrequency !== null && !validFrequencies.includes(data.pdiFrequency)) {
+    return { success: false, error: "Frequência de PDI inválida" };
+  }
+  if (data.feedbackFrequency !== null && !validFrequencies.includes(data.feedbackFrequency)) {
+    return { success: false, error: "Frequência de feedback inválida" };
+  }
+
+  // Find the employee's current manager
+  const hierarchy = await prisma.employeeHierarchy.findFirst({
+    where: { employeeId, endDate: null },
+  });
+
+  if (!hierarchy) {
+    return { success: false, error: "Colaborador não possui gestor vinculado. Configure a hierarquia antes do agendamento." };
+  }
+
+  const managerId = hierarchy.managerId;
+
+  // Handle PDI schedule
+  const existingPdiSchedule = await prisma.pDISchedule.findFirst({
+    where: { employeeId, isActive: true },
+  });
+
+  if (data.pdiFrequency !== null) {
+    if (existingPdiSchedule) {
+      // Update existing
+      await prisma.pDISchedule.update({
+        where: { id: existingPdiSchedule.id },
+        data: {
+          frequencyMonths: data.pdiFrequency,
+          managerId,
+          nextDueDate:
+            existingPdiSchedule.frequencyMonths !== data.pdiFrequency
+              ? calculateNextDueDate(data.pdiFrequency)
+              : existingPdiSchedule.nextDueDate,
+        },
+      });
+    } else {
+      // Create new
+      await prisma.pDISchedule.create({
+        data: {
+          employeeId,
+          managerId,
+          frequencyMonths: data.pdiFrequency,
+          nextDueDate: calculateNextDueDate(data.pdiFrequency),
+        },
+      });
+    }
+  } else if (existingPdiSchedule) {
+    // Deactivate
+    await prisma.pDISchedule.update({
+      where: { id: existingPdiSchedule.id },
+      data: { isActive: false },
+    });
+  }
+
+  // Handle Feedback schedule
+  const existingFeedbackSchedule = await prisma.feedbackSchedule.findFirst({
+    where: { employeeId, isActive: true },
+  });
+
+  if (data.feedbackFrequency !== null) {
+    if (existingFeedbackSchedule) {
+      await prisma.feedbackSchedule.update({
+        where: { id: existingFeedbackSchedule.id },
+        data: {
+          frequencyMonths: data.feedbackFrequency,
+          managerId,
+          nextDueDate:
+            existingFeedbackSchedule.frequencyMonths !== data.feedbackFrequency
+              ? calculateNextDueDate(data.feedbackFrequency)
+              : existingFeedbackSchedule.nextDueDate,
+        },
+      });
+    } else {
+      await prisma.feedbackSchedule.create({
+        data: {
+          employeeId,
+          managerId,
+          frequencyMonths: data.feedbackFrequency,
+          nextDueDate: calculateNextDueDate(data.feedbackFrequency),
+        },
+      });
+    }
+  } else if (existingFeedbackSchedule) {
+    await prisma.feedbackSchedule.update({
+      where: { id: existingFeedbackSchedule.id },
+      data: { isActive: false },
+    });
+  }
+
+  revalidatePath(`/colaboradores/${employeeId}`);
+  return { success: true };
+}
+
 export async function getEmployeeHierarchyTree(
   employeeId: string
 ): Promise<HierarchyNode[]> {
