@@ -128,3 +128,107 @@ export function buildReminderEmailSubject(
   }
   return `[PDI & Feedback] Lembretes: ${parts.join(", ")}`;
 }
+
+/**
+ * Build the HTML email sent to an employee when a scheduled feedback is auto-submitted.
+ */
+export function buildFeedbackSubmittedEmployeeHtml(
+  employeeName: string,
+  managerName: string,
+  period: string,
+  feedbackUrl: string
+): string {
+  return `
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; background: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <div style="max-width: 640px; margin: 0 auto; padding: 32px 16px;">
+    <div style="background: #1d4ed8; color: #fff; padding: 24px 32px; border-radius: 8px 8px 0 0;">
+      <h1 style="margin: 0; font-size: 22px; font-weight: 600;">
+        Novo Feedback Disponível
+      </h1>
+      <p style="margin: 8px 0 0; font-size: 14px; opacity: 0.9;">
+        Você recebeu um novo feedback
+      </p>
+    </div>
+    <div style="background: #fff; padding: 24px 32px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
+      <p style="color: #374151; font-size: 15px; line-height: 1.6; margin-top: 0;">
+        Olá <strong>${employeeName}</strong>,
+      </p>
+      <p style="color: #374151; font-size: 15px; line-height: 1.6;">
+        Seu gestor <strong>${managerName}</strong> submeteu um feedback referente ao período <strong>${period}</strong>.
+      </p>
+      <p style="color: #374151; font-size: 15px; line-height: 1.6;">
+        Clique no botão abaixo para visualizar o feedback completo.
+      </p>
+      <div style="margin-top: 24px; text-align: center;">
+        <a href="${feedbackUrl}" style="display: inline-block; padding: 12px 32px; background: #1d4ed8; color: #fff; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 15px;">
+          Ver Feedback
+        </a>
+      </div>
+    </div>
+    <div style="text-align: center; padding: 16px; font-size: 12px; color: #9ca3af;">
+      Este é um e-mail automático do sistema PDI &amp; Feedback HR.
+      <br>
+      Não responda a este e-mail.
+    </div>
+  </div>
+</body>
+</html>`;
+}
+
+/**
+ * Build the HTML email sent to a manager confirming their scheduled feedback was auto-submitted.
+ */
+export function buildFeedbackSubmittedManagerHtml(
+  managerName: string,
+  employeeName: string,
+  period: string,
+  feedbackUrl: string
+): string {
+  return `
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; background: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <div style="max-width: 640px; margin: 0 auto; padding: 32px 16px;">
+    <div style="background: #059669; color: #fff; padding: 24px 32px; border-radius: 8px 8px 0 0;">
+      <h1 style="margin: 0; font-size: 22px; font-weight: 600;">
+        Feedback Agendado Submetido
+      </h1>
+      <p style="margin: 8px 0 0; font-size: 14px; opacity: 0.9;">
+        Confirmação de submissão automática
+      </p>
+    </div>
+    <div style="background: #fff; padding: 24px 32px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
+      <p style="color: #374151; font-size: 15px; line-height: 1.6; margin-top: 0;">
+        Olá <strong>${managerName}</strong>,
+      </p>
+      <p style="color: #374151; font-size: 15px; line-height: 1.6;">
+        O feedback agendado para <strong>${employeeName}</strong> referente ao período <strong>${period}</strong> foi submetido automaticamente com sucesso.
+      </p>
+      <p style="color: #374151; font-size: 15px; line-height: 1.6;">
+        O colaborador já pode visualizar o feedback.
+      </p>
+      <div style="margin-top: 24px; text-align: center;">
+        <a href="${feedbackUrl}" style="display: inline-block; padding: 12px 32px; background: #059669; color: #fff; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 15px;">
+          Ver Feedback
+        </a>
+      </div>
+    </div>
+    <div style="text-align: center; padding: 16px; font-size: 12px; color: #9ca3af;">
+      Este é um e-mail automático do sistema PDI &amp; Feedback HR.
+      <br>
+      Não responda a este e-mail.
+    </div>
+  </div>
+</body>
+</html>`;
+}
