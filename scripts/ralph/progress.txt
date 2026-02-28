@@ -26,6 +26,9 @@ Started: Sat Feb 28 06:24:15 PST 2026
 - Competencies for PDI goals: predefined list in pdi-form.tsx (Liderança, Comunicação, etc.) - stored as string in DB
 - Notification model accessed as `prisma.notification` (lowercase) - similar to `prisma.feedback`
 - Notification deduplication: embed messageKey `[type_id_date]` in message, check `{ contains: messageKey }` before creating
+- Email service: Nodemailer with SMTP config via env vars (SMTP_HOST/PORT/USER/PASS/FROM), fallback to JSON transport (console logging) in dev
+- Cron API routes: use `/api/cron/*` pattern, protect with CRON_SECRET Bearer token, exclude from NextAuth middleware matcher
+- Middleware exclusions: add new API patterns to the regex negative lookahead in `src/middleware.ts`
 - Avoid `setState` in `useEffect` for prop syncing - ESLint `react-hooks/set-state-in-effect` rule - use `useMemo` with derived state instead
 - PDIGoal.dueDate is nullable (`DateTime?`) - always guard with null check or `{ not: null }` in Prisma where
 - Prisma v7 generated client output is at `src/generated/prisma/client` - import from `@/generated/prisma/client`
@@ -419,4 +422,32 @@ Started: Sat Feb 28 06:24:15 PST 2026
   - Notification deduplication: embed a unique messageKey in the message text (e.g., `[pdi_schedule_{id}_{date}]`) and check with `{ contains: messageKey }` before creating
   - `generateScheduleNotifications` runs on notification page visit as a lightweight trigger - for production, this should be a cron job
   - Notification messages strip the messageKey from display using `message.replace(/\s*\[.*?\]\s*$/, "")`
+---
+
+## 2026-02-28 - US-014
+- What was implemented:
+  - Email service (`src/lib/email.ts`) using Nodemailer with SMTP configuration via environment variables (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM)
+  - Development fallback: JSON transport that logs emails to console when SMTP_HOST is not configured
+  - HTML email template (`src/lib/email-templates.ts`) with corporate styling: header with logo, overdue section (red), upcoming section (amber), table with employee name, type (PDI/Feedback), due date, and direct link
+  - Consolidated email per manager: groups all pending items into a single email rather than one email per notification
+  - Cron API route (`GET /api/cron/email-reminders`) that runs the complete flow: generate notifications → find unsent → group by manager → send emails → update emailSent=true
+  - Cron route protected by CRON_SECRET Bearer token header (optional in dev)
+  - Middleware updated to exclude `/api/cron` routes from NextAuth authentication
+  - Updated `.env.example` with SMTP and CRON_SECRET configuration variables
+- Files changed:
+  - `src/lib/email.ts` - Nodemailer transport setup with SMTP config
+  - `src/lib/email-templates.ts` - HTML email template builder with ReminderItem type
+  - `src/app/api/cron/email-reminders/route.ts` - Cron endpoint with notification generation, email sending, and emailSent update
+  - `src/middleware.ts` - Added `api/cron` to middleware exclusion pattern
+  - `.env.example` - Added SMTP_HOST/PORT/USER/PASS/FROM and CRON_SECRET variables
+  - `package.json` - Added nodemailer dependency
+  - `package-lock.json` - Updated lockfile
+- **Learnings for future iterations:**
+  - Nodemailer's `jsonTransport: true` option is perfect for development - it doesn't try to connect to any server, just returns the message as JSON
+  - API routes under `/api/cron` need to be excluded from NextAuth middleware - add to the regex negative lookahead in middleware.ts matcher
+  - The cron route reuses the same notification generation logic as `generateScheduleNotifications()` but without requiring user authentication
+  - Notification `emailSent` field prevents duplicate emails - the cron job only processes notifications where `emailSent: false`
+  - HTML email templates use inline styles (no CSS classes) since email clients don't support external stylesheets or `<style>` tags reliably
+  - Consolidated emails per manager are more user-friendly than one email per notification - group by userId and send one summary email
+  - The cron endpoint returns JSON with counts (notificationsCreated, emailsSent, emailsFailed, managersNotified) for monitoring
 ---

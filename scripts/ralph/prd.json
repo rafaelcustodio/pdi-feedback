@@ -255,8 +255,8 @@
         "Typecheck passa"
       ],
       "priority": 15,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Nodemailer with SMTP config (SMTP_HOST/PORT/USER/PASS/FROM). Cron route at /api/cron/email-reminders (GET, protected by CRON_SECRET header). Generates notifications then sends consolidated HTML emails per manager. Updates emailSent=true on Notification after sending. Middleware excludes /api/cron from auth."
     }
   ]
 }
