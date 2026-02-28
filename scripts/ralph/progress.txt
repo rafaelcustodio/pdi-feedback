@@ -530,3 +530,20 @@ Started: Sat Feb 28 06:24:15 PST 2026
   - When preserving status on update, use `pdi.status` from the fetched record rather than hardcoding "draft"
   - PDITracking metadata section shows "Realizado em | Criado em | Última atualização em" when conductedAt is present
 ---
+
+## 2026-02-28 12:58 - US-019
+- Implemented feedback scheduling feature: managers can schedule automatic feedback submission for a future date
+- Added `scheduleFeedback` and `cancelScheduleFeedback` server actions in feedbacks/actions.ts
+- Added `scheduledAt` field to `FeedbackListItem` and `FeedbackDetail` types
+- Updated feedback-form.tsx with "Agendar Submissão" button (purple) and modal date picker
+- Added "Cancelar Agendamento" button (red border) shown when editing a scheduled feedback
+- Updated feedback-table.tsx to show scheduled date next to "Agendado" badge
+- Updated feedback-read-only.tsx to display "Agendado para" in metadata section
+- Updated feedbacks/[id]/page.tsx to pass status and scheduledAt in initialData
+- Files changed: feedbacks/actions.ts, feedback-form.tsx, feedback-table.tsx, feedback-read-only.tsx, feedbacks/[id]/page.tsx
+- **Learnings for future iterations:**
+  - React 19 ESLint `react-hooks/purity` rule: `Date.now()` cannot be called in render — use `useMemo` to compute derived date values
+  - Schedule workflow: save draft first, then schedule — the `scheduleFeedback` action validates that all required fields are already saved on the feedback record
+  - Employee visibility for feedbacks: already filters by `status: "submitted"` in `getFeedbacks`, so `scheduled` feedbacks are automatically excluded from employee view
+  - Modal pattern: use fixed inset-0 overlay with bg-black/50 for modal backdrop, no need for external dialog library
+---

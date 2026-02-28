@@ -329,8 +329,8 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 19,
-      "passes": false,
-      "notes": "Depends on US-016 schema (scheduled status, scheduledAt field). Update feedback-form.tsx with schedule button + date picker modal. Update feedback-table.tsx with 'Agendado' badge (blue). Update feedbacks/actions.ts with schedule/cancel logic. Employee visibility filter: only show submitted feedbacks (already in place, just ensure 'scheduled' is excluded like 'draft')."
+      "passes": true,
+      "notes": "Schedule button in feedback-form.tsx with modal date picker. Server actions scheduleFeedback (validates all fields + future date) and cancelScheduleFeedback in feedbacks/actions.ts. FeedbackListItem/FeedbackDetail types include scheduledAt. Feedback table shows 'Agendado' badge with date. Read-only view shows 'Agendado para' in metadata. Employee visibility already excludes non-submitted feedbacks."
     },
     {
       "id": "US-020",
