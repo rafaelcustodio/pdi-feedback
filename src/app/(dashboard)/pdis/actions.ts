@@ -618,6 +618,133 @@ export async function updateGoalStatus(
   return { success: false, error: "Acesso não autorizado" };
 }
 
+export async function reschedulePDI(
+  id: string,
+  newDate: string
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  const pdi = await prisma.pDI.findUnique({
+    where: { id },
+    include: { employee: { select: { name: true } }, manager: { select: { name: true } } },
+  });
+  if (!pdi) {
+    return { success: false, error: "PDI não encontrado" };
+  }
+
+  if (role !== "admin" && pdi.managerId !== userId) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  if (pdi.status !== "scheduled" && pdi.status !== "draft") {
+    return { success: false, error: "Apenas PDIs agendados ou em rascunho podem ser reagendados" };
+  }
+
+  const scheduledDate = new Date(newDate);
+  if (isNaN(scheduledDate.getTime())) {
+    return { success: false, error: "Data inválida" };
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const scheduleDay = new Date(scheduledDate);
+  scheduleDay.setHours(0, 0, 0, 0);
+
+  if (scheduleDay <= today) {
+    return { success: false, error: "A data deve ser uma data futura" };
+  }
+
+  await prisma.pDI.update({
+    where: { id },
+    data: { scheduledAt: scheduledDate },
+  });
+
+  // Notify employee
+  const dateStr = scheduledDate.toLocaleDateString("pt-BR");
+  await prisma.notification.create({
+    data: {
+      userId: pdi.employeeId,
+      type: "general",
+      title: "PDI reagendado",
+      message: `Seu PDI com ${pdi.manager.name} foi reagendado para ${dateStr}. [pdi_reschedule_${id}]`,
+    },
+  });
+
+  revalidatePath("/pdis");
+  revalidatePath(`/pdis/${id}`);
+  revalidatePath("/calendario");
+  return { success: true };
+}
+
+export async function cancelScheduledPDI(
+  id: string
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  const pdi = await prisma.pDI.findUnique({
+    where: { id },
+    include: {
+      employee: { select: { name: true } },
+      manager: { select: { name: true } },
+      goals: { select: { id: true } },
+    },
+  });
+  if (!pdi) {
+    return { success: false, error: "PDI não encontrado" };
+  }
+
+  if (role !== "admin" && pdi.managerId !== userId) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  if (pdi.status !== "scheduled" && pdi.status !== "draft") {
+    return { success: false, error: "Apenas PDIs agendados ou em rascunho podem ser cancelados" };
+  }
+
+  const hasContent = pdi.goals.length > 0;
+
+  if (pdi.status === "scheduled" && !hasContent) {
+    // Delete the record entirely if it's scheduled with no content
+    await prisma.pDI.delete({ where: { id } });
+  } else {
+    // Has content (draft or scheduled with goals) — mark as cancelled
+    await prisma.pDI.update({
+      where: { id },
+      data: { status: "cancelled" },
+    });
+  }
+
+  // Notify employee
+  const dateStr = pdi.scheduledAt
+    ? pdi.scheduledAt.toLocaleDateString("pt-BR")
+    : "";
+  await prisma.notification.create({
+    data: {
+      userId: pdi.employeeId,
+      type: "general",
+      title: "PDI cancelado",
+      message: `O PDI${dateStr ? ` agendado para ${dateStr}` : ""} com ${pdi.manager.name} foi cancelado. [pdi_cancel_${id}]`,
+    },
+  });
+
+  revalidatePath("/pdis");
+  revalidatePath(`/pdis/${id}`);
+  revalidatePath("/calendario");
+  return { success: true };
+}
+
 /**
  * After updating a goal status, check if ALL goals of the PDI are completed.
  * If so, mark the PDI as completed and recalculate the PDI schedule.

@@ -640,6 +640,129 @@ export async function getScheduledFeedbackCountForEmployee(): Promise<number> {
   return count;
 }
 
+export async function rescheduleFeedback(
+  id: string,
+  newDate: string
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  const feedback = await prisma.feedback.findUnique({
+    where: { id },
+    include: { employee: { select: { name: true } }, manager: { select: { name: true } } },
+  });
+  if (!feedback) {
+    return { success: false, error: "Feedback não encontrado" };
+  }
+
+  if (role !== "admin" && feedback.managerId !== userId) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  if (feedback.status !== "scheduled" && feedback.status !== "draft") {
+    return { success: false, error: "Apenas feedbacks agendados ou em rascunho podem ser reagendados" };
+  }
+
+  const scheduledDate = new Date(newDate);
+  if (isNaN(scheduledDate.getTime())) {
+    return { success: false, error: "Data inválida" };
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const scheduleDay = new Date(scheduledDate);
+  scheduleDay.setHours(0, 0, 0, 0);
+
+  if (scheduleDay <= today) {
+    return { success: false, error: "A data deve ser uma data futura" };
+  }
+
+  await prisma.feedback.update({
+    where: { id },
+    data: { scheduledAt: scheduledDate },
+  });
+
+  // Notify employee
+  const dateStr = scheduledDate.toLocaleDateString("pt-BR");
+  await prisma.notification.create({
+    data: {
+      userId: feedback.employeeId,
+      type: "general",
+      title: "Feedback reagendado",
+      message: `Seu feedback com ${feedback.manager.name} foi reagendado para ${dateStr}. [feedback_reschedule_${id}]`,
+    },
+  });
+
+  revalidatePath("/feedbacks");
+  revalidatePath(`/feedbacks/${id}`);
+  revalidatePath("/calendario");
+  return { success: true };
+}
+
+export async function cancelScheduledFeedback(
+  id: string
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  const feedback = await prisma.feedback.findUnique({
+    where: { id },
+    include: { employee: { select: { name: true } }, manager: { select: { name: true } } },
+  });
+  if (!feedback) {
+    return { success: false, error: "Feedback não encontrado" };
+  }
+
+  if (role !== "admin" && feedback.managerId !== userId) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  if (feedback.status !== "scheduled" && feedback.status !== "draft") {
+    return { success: false, error: "Apenas feedbacks agendados ou em rascunho podem ser cancelados" };
+  }
+
+  const hasContent = !!(feedback.content?.trim() || feedback.strengths?.trim() || feedback.improvements?.trim());
+
+  if (feedback.status === "scheduled" && !hasContent) {
+    // Delete the record entirely if scheduled with no content
+    await prisma.feedback.delete({ where: { id } });
+  } else {
+    // Has content — remove scheduledAt and revert to draft
+    await prisma.feedback.update({
+      where: { id },
+      data: { scheduledAt: null, status: "draft" },
+    });
+  }
+
+  // Notify employee
+  const dateStr = feedback.scheduledAt
+    ? feedback.scheduledAt.toLocaleDateString("pt-BR")
+    : "";
+  await prisma.notification.create({
+    data: {
+      userId: feedback.employeeId,
+      type: "general",
+      title: "Feedback cancelado",
+      message: `O feedback${dateStr ? ` agendado para ${dateStr}` : ""} com ${feedback.manager.name} foi cancelado. [feedback_cancel_${id}]`,
+    },
+  });
+
+  revalidatePath("/feedbacks");
+  revalidatePath(`/feedbacks/${id}`);
+  revalidatePath("/calendario");
+  return { success: true };
+}
+
 export async function cancelScheduleFeedback(
   id: string
 ): Promise<{ success: boolean; error?: string }> {

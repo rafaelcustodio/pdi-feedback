@@ -2,13 +2,15 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Save, Send, ArrowLeft, Star, Calendar, X, CalendarClock } from "lucide-react";
+import { Save, Send, ArrowLeft, Star, Calendar, X, CalendarClock, CalendarX2 } from "lucide-react";
 import Link from "next/link";
 import {
   createFeedback,
   updateFeedback,
   scheduleFeedback,
   cancelScheduleFeedback,
+  rescheduleFeedback,
+  cancelScheduledFeedback,
 } from "@/app/(dashboard)/feedbacks/actions";
 import type { SubordinateOption } from "@/app/(dashboard)/feedbacks/actions";
 
@@ -90,11 +92,19 @@ export function FeedbackForm({
   const [error, setError] = useState<string | null>(null);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [scheduleDate, setScheduleDate] = useState("");
+  const [showRescheduleModal, setShowRescheduleModal] = useState(false);
+  const [rescheduleDate, setRescheduleDate] = useState("");
+  const [showCancelEventModal, setShowCancelEventModal] = useState(false);
   const minScheduleDate = useMemo(() => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     return tomorrow.toISOString().split("T")[0];
   }, []);
+
+  const canRescheduleOrCancel =
+    mode === "edit" &&
+    initialData?.scheduledAt &&
+    (initialData?.status === "scheduled" || initialData?.status === "draft");
 
   const canSubmit =
     (mode === "create" ? !!employeeId : true) &&
@@ -203,6 +213,35 @@ export function FeedbackForm({
       }
     }
     setShowScheduleModal(false);
+  }
+
+  async function handleRescheduleEvent() {
+    if (!rescheduleDate || !initialData?.id) return;
+    setLoading(true);
+    setError(null);
+    const result = await rescheduleFeedback(initialData.id, rescheduleDate);
+    setLoading(false);
+    if (result.success) {
+      setShowRescheduleModal(false);
+      setRescheduleDate("");
+      router.push("/feedbacks");
+    } else {
+      setError(result.error ?? "Erro ao reagendar");
+    }
+  }
+
+  async function handleCancelEvent() {
+    if (!initialData?.id) return;
+    setLoading(true);
+    setError(null);
+    const result = await cancelScheduledFeedback(initialData.id);
+    setLoading(false);
+    if (result.success) {
+      setShowCancelEventModal(false);
+      router.push("/feedbacks");
+    } else {
+      setError(result.error ?? "Erro ao cancelar evento");
+    }
   }
 
   async function handleCancelSchedule() {
@@ -441,7 +480,29 @@ export function FeedbackForm({
         >
           Cancelar
         </Link>
-        {initialData?.status === "scheduled" && (
+        {canRescheduleOrCancel && (
+          <>
+            <button
+              type="button"
+              onClick={() => setShowCancelEventModal(true)}
+              disabled={loading}
+              className="inline-flex items-center gap-2 rounded-md border border-red-300 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
+            >
+              <CalendarX2 size={16} />
+              Cancelar Evento
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowRescheduleModal(true)}
+              disabled={loading}
+              className="inline-flex items-center gap-2 rounded-md border border-orange-300 px-4 py-2 text-sm font-medium text-orange-700 hover:bg-orange-50 disabled:opacity-50"
+            >
+              <Calendar size={16} />
+              Reagendar
+            </button>
+          </>
+        )}
+        {initialData?.status === "scheduled" && !canRescheduleOrCancel && (
           <button
             type="button"
             onClick={handleCancelSchedule}
@@ -538,6 +599,95 @@ export function FeedbackForm({
               >
                 <Calendar size={16} />
                 {loading ? "Agendando..." : "Confirmar Agendamento"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reschedule Event Modal */}
+      {showRescheduleModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-gray-900">
+              Reagendar Feedback
+            </h3>
+            <p className="mt-1 text-sm text-gray-600">
+              Selecione a nova data para este feedback.
+            </p>
+            <div className="mt-4">
+              <label
+                htmlFor="reschedule-event-date"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
+                Nova data *
+              </label>
+              <input
+                id="reschedule-event-date"
+                type="date"
+                value={rescheduleDate}
+                onChange={(e) => setRescheduleDate(e.target.value)}
+                min={minScheduleDate}
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                A data deve ser futura (a partir de amanhã).
+              </p>
+            </div>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowRescheduleModal(false);
+                  setRescheduleDate("");
+                }}
+                className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleRescheduleEvent}
+                disabled={!rescheduleDate || loading}
+                className="inline-flex items-center gap-2 rounded-md bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700 disabled:opacity-50"
+              >
+                <Calendar size={16} />
+                {loading ? "Reagendando..." : "Confirmar Reagendamento"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cancel Event Confirmation Modal */}
+      {showCancelEventModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-gray-900">
+              Cancelar Feedback agendado
+            </h3>
+            <p className="mt-2 text-sm text-gray-600">
+              Tem certeza que deseja cancelar este Feedback agendado?
+              {initialData?.status === "scheduled"
+                ? " O registro será removido."
+                : " O agendamento será removido e o feedback voltará para rascunho."}
+            </p>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setShowCancelEventModal(false)}
+                className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Voltar
+              </button>
+              <button
+                type="button"
+                onClick={handleCancelEvent}
+                disabled={loading}
+                className="inline-flex items-center gap-2 rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
+              >
+                <CalendarX2 size={16} />
+                {loading ? "Cancelando..." : "Confirmar Cancelamento"}
               </button>
             </div>
           </div>
