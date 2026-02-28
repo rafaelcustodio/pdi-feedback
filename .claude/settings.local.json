@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh api:*)",
+      "Bash(chmod +x:*)",
+      "Bash(docker version:*)",
+      "Bash(wsl:*)",
+      "Bash(powershell.exe:*)",
+      "Bash(bash:*)"
+    ]
+  }
+}

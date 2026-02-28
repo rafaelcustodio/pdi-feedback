@@ -1,0 +1,262 @@
+{
+  "project": "PDI-Feedback-HR",
+  "branchName": "ralph/us-001-database-schema",
+  "description": "Sistema Corporativo de PDI e Feedback - HR application for managing Individual Development Plans and employee feedback",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Modelagem do banco de dados",
+      "description": "Como desenvolvedor, preciso criar o schema do banco de dados PostgreSQL para suportar todas as entidades do sistema (usuários, estrutura organizacional, PDIs, feedbacks, agendamentos e notificações).",
+      "acceptanceCriteria": [
+        "Schema Prisma criado com as tabelas: User, OrganizationalUnit, EmployeeHierarchy, PDI, PDIGoal, PDIEvidence, PDIComment, Feedback, FeedbackSchedule, PDISchedule, Notification",
+        "Tabela User contém: id, name, email, password (hash), role (admin/manager/employee), avatarUrl, ssoProvider, ssoId, createdAt, updatedAt",
+        "Tabela OrganizationalUnit contém: id, name, parentId (self-reference), createdAt",
+        "Tabela EmployeeHierarchy contém: id, employeeId (FK User), managerId (FK User), organizationalUnitId (FK), startDate, endDate",
+        "Tabela PDI contém: id, employeeId (FK), managerId (FK), status (draft/active/completed/cancelled), period, frequencyMonths, createdAt, updatedAt",
+        "Tabela PDIGoal contém: id, pdiId (FK), title, description, competency, status (pending/in_progress/completed), dueDate, createdAt",
+        "Tabela PDIEvidence contém: id, goalId (FK), description, fileUrl, createdAt",
+        "Tabela PDIComment contém: id, pdiId (FK), authorId (FK User), content, createdAt",
+        "Tabela Feedback contém: id, employeeId (FK), managerId (FK), period, content, strengths, improvements, rating, status (draft/submitted), frequencyMonths, createdAt, updatedAt",
+        "Tabela FeedbackSchedule contém: id, employeeId (FK), managerId (FK), frequencyMonths, nextDueDate, isActive",
+        "Tabela PDISchedule contém: id, employeeId (FK), managerId (FK), frequencyMonths, nextDueDate, isActive",
+        "Tabela Notification contém: id, userId (FK), type (pdi_reminder/feedback_reminder/general), title, message, isRead, emailSent, createdAt",
+        "Migration gerada e executada com sucesso",
+        "Seed com dados de exemplo (empresa fictícia com 3 níveis hierárquicos)",
+        "Typecheck passa"
+      ],
+      "priority": 1,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-015",
+      "title": "Layout base e navegação",
+      "description": "Como usuário do sistema, quero uma interface limpa e consistente com menu lateral e header para navegar facilmente entre as seções.",
+      "acceptanceCriteria": [
+        "Layout com sidebar (menu lateral) colapsável e header fixo",
+        "Sidebar com itens: Dashboard, Colaboradores, PDIs, Feedbacks, Notificações, Configurações (admin only)",
+        "Header com: logo, nome do usuário logado, avatar, botão de sino (notificações), menu dropdown com Meu Perfil e Sair",
+        "Itens do menu destacam a seção ativa",
+        "Layout responsivo: sidebar vira hamburger menu em telas menores",
+        "Tema claro com cores corporativas neutras (customizável via Tailwind)",
+        "Typecheck passa"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": "Layout base needs to be in place before other UI stories"
+    },
+    {
+      "id": "US-002",
+      "title": "Configuração de autenticação local (credenciais)",
+      "description": "Como administrador do sistema, quero que usuários possam fazer login com e-mail e senha para acessar o sistema sem depender de SSO.",
+      "acceptanceCriteria": [
+        "Página de login com campos e-mail e senha",
+        "Senhas armazenadas com hash bcrypt",
+        "Sessão gerenciada via NextAuth.js com JWT",
+        "Redirecionamento para dashboard após login bem-sucedido",
+        "Mensagem de erro clara para credenciais inválidas",
+        "Typecheck passa"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": "Forgot password feature deferred to later iteration"
+    },
+    {
+      "id": "US-003",
+      "title": "Configuração de autenticação via SSO Microsoft",
+      "description": "Como colaborador da empresa, quero fazer login usando minha conta corporativa Microsoft para não precisar gerenciar outra senha.",
+      "acceptanceCriteria": [
+        "Botão Entrar com Microsoft na página de login",
+        "Integração com Azure AD via NextAuth.js provider (Microsoft)",
+        "Na primeira autenticação SSO, o sistema cria o usuário automaticamente se o e-mail não existir",
+        "Se o e-mail já existir, vincula a conta SSO ao usuário existente",
+        "Sessão JWT contém id, name, email e role do usuário",
+        "Typecheck passa"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-004",
+      "title": "CRUD de estrutura organizacional",
+      "description": "Como administrador, quero cadastrar e editar a estrutura organizacional (departamentos, áreas, equipes) em formato de árvore para que o sistema reflita a hierarquia da empresa.",
+      "acceptanceCriteria": [
+        "Página admin para gerenciar unidades organizacionais",
+        "Formulário para criar unidade com nome e unidade-pai (dropdown)",
+        "Visualização da estrutura em formato de árvore (tree view)",
+        "Edição inline do nome da unidade",
+        "Exclusão de unidade (somente se não tiver filhos ou colaboradores vinculados)",
+        "Typecheck passa"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-005",
+      "title": "Gestão de colaboradores e vínculos hierárquicos",
+      "description": "Como administrador, quero cadastrar colaboradores e definir seus gestores e unidades organizacionais para que o sistema saiba quem gerencia quem.",
+      "acceptanceCriteria": [
+        "Página admin com lista de colaboradores (tabela com busca e paginação)",
+        "Formulário para criar/editar colaborador: nome, e-mail, role, unidade organizacional, gestor direto",
+        "Dropdown de gestor filtrado por unidade organizacional",
+        "Visualização da árvore hierárquica de um colaborador específico",
+        "Desativação de colaborador (soft delete) sem perder histórico",
+        "Typecheck passa"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-006",
+      "title": "Controle de acesso por hierarquia",
+      "description": "Como gestor, quero visualizar apenas os PDIs e feedbacks dos colaboradores da minha árvore hierárquica para garantir a privacidade dos dados.",
+      "acceptanceCriteria": [
+        "Função utilitária getSubordinates(managerId) que retorna todos os colaboradores diretos e indiretos (recursivo)",
+        "Middleware/hook que filtra consultas de PDI e Feedback pelo resultado de getSubordinates",
+        "Gestor nível 1 vê colaboradores dos gestores nível 2 abaixo dele",
+        "Colaborador comum vê apenas seus próprios PDIs e feedbacks",
+        "Admin vê todos os PDIs e feedbacks de toda a empresa",
+        "Teste unitário para a função getSubordinates com árvore de 3 níveis",
+        "Typecheck passa"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-007",
+      "title": "Dashboard principal",
+      "description": "Como gestor, quero ver um painel com resumo das pendências de PDI e feedback dos meus colaboradores para saber o que precisa de atenção.",
+      "acceptanceCriteria": [
+        "Card com total de colaboradores diretos e indiretos",
+        "Card com PDIs pendentes/atrasados no mês atual",
+        "Card com feedbacks pendentes/atrasados no mês atual",
+        "Lista resumida dos próximos 5 PDIs/feedbacks a vencer",
+        "Link direto para o PDI ou feedback pendente ao clicar no item",
+        "Layout responsivo (desktop e tablet)",
+        "Typecheck passa"
+      ],
+      "priority": 8,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-008",
+      "title": "Criar e editar feedback (top-down)",
+      "description": "Como gestor, quero criar um feedback para meu colaborador, preenchendo pontos fortes, pontos de melhoria e avaliação geral, para documentar o desempenho.",
+      "acceptanceCriteria": [
+        "Página de criação de feedback com campos: colaborador (dropdown dos subordinados), período, pontos fortes, pontos de melhoria, conteúdo geral, rating (1-5 estrelas)",
+        "Feedback criado com status rascunho por padrão",
+        "Botão Salvar rascunho e Submeter feedback",
+        "Após submissão, feedback fica visível para o colaborador (somente leitura)",
+        "Edição permitida apenas enquanto status for rascunho",
+        "Validação: todos os campos obrigatórios preenchidos antes de submeter",
+        "Typecheck passa"
+      ],
+      "priority": 9,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-009",
+      "title": "Visualizar histórico de feedbacks",
+      "description": "Como colaborador, quero ver o histórico de todos os feedbacks que recebi para acompanhar minha evolução ao longo do tempo.",
+      "acceptanceCriteria": [
+        "Página Meus Feedbacks com lista de feedbacks recebidos (ordenados por data, mais recente primeiro)",
+        "Cada item mostra: período, data de submissão, nome do gestor, rating",
+        "Ao clicar, abre o feedback completo em modo somente leitura",
+        "Filtro por período/ano",
+        "Typecheck passa"
+      ],
+      "priority": 10,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-010",
+      "title": "Criar e editar PDI",
+      "description": "Como gestor, quero criar um PDI para meu colaborador com metas vinculadas a competências específicas para direcionar seu desenvolvimento.",
+      "acceptanceCriteria": [
+        "Página de criação de PDI com: colaborador (dropdown dos subordinados), período, status (draft/active)",
+        "Seção para adicionar metas (goals): título, descrição, competência associada (dropdown), prazo, status",
+        "Possibilidade de adicionar múltiplas metas ao mesmo PDI",
+        "Botão para adicionar/remover metas dinamicamente",
+        "PDI criado como rascunho por padrão, com botão Ativar PDI",
+        "Typecheck passa"
+      ],
+      "priority": 11,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-011",
+      "title": "Acompanhar PDI (evidências e comentários)",
+      "description": "Como colaborador, quero adicionar evidências de progresso e comentários às metas do meu PDI para demonstrar minha evolução.",
+      "acceptanceCriteria": [
+        "Página de detalhe do PDI mostrando todas as metas e seus status",
+        "Botão Adicionar evidência em cada meta: campo de descrição e upload de arquivo (opcional)",
+        "Seção de comentários no PDI (tipo chat): gestor e colaborador podem comentar",
+        "Colaborador pode alterar status da meta para em andamento ou concluído",
+        "Gestor pode aprovar ou rejeitar a conclusão de uma meta",
+        "Barra de progresso visual do PDI (% de metas concluídas)",
+        "Typecheck passa"
+      ],
+      "priority": 12,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-012",
+      "title": "Configurar frequência de PDI e feedback por colaborador",
+      "description": "Como gestor, quero definir a frequência com que PDIs e feedbacks devem ser realizados para cada colaborador.",
+      "acceptanceCriteria": [
+        "Na página do colaborador, seção Agendamento com dois campos: frequência do PDI e frequência do feedback (em meses)",
+        "Opções de frequência: 1, 2, 3, 6 ou 12 meses",
+        "Ao salvar, o sistema calcula a próxima data de vencimento baseada na data atual",
+        "Exibir próxima data prevista para PDI e feedback na página do colaborador",
+        "Após completar um PDI ou feedback, o sistema recalcula automaticamente a próxima data",
+        "Typecheck passa"
+      ],
+      "priority": 13,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-013",
+      "title": "Sistema de notificações internas",
+      "description": "Como gestor, quero receber notificações dentro do sistema quando houver PDIs ou feedbacks pendentes.",
+      "acceptanceCriteria": [
+        "Ícone de sino no header com badge de contagem de notificações não lidas",
+        "Dropdown ao clicar no sino mostrando últimas 10 notificações",
+        "Página Notificações com lista completa e paginação",
+        "Marcar como lida ao clicar na notificação",
+        "Botão Marcar todas como lidas",
+        "Notificação criada automaticamente quando faltam 7 dias para o vencimento de um PDI ou feedback",
+        "Notificação criada automaticamente quando um PDI ou feedback está atrasado",
+        "Typecheck passa"
+      ],
+      "priority": 14,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-014",
+      "title": "Envio de lembretes por e-mail",
+      "description": "Como gestor, quero receber e-mails de lembrete sobre PDIs e feedbacks pendentes.",
+      "acceptanceCriteria": [
+        "Job agendado (cron) que roda diariamente verificando schedules com nextDueDate nos próximos 7 dias",
+        "E-mail enviado ao gestor com lista de PDIs e feedbacks pendentes para o mês",
+        "Template de e-mail HTML com: nome do colaborador, tipo (PDI ou Feedback), data de vencimento, link direto",
+        "Campo emailSent na tabela Notification atualizado para evitar duplicatas",
+        "Integração com serviço de e-mail (Resend ou Nodemailer)",
+        "Typecheck passa"
+      ],
+      "priority": 15,
+      "passes": false,
+      "notes": ""
+    }
+  ]
+}
