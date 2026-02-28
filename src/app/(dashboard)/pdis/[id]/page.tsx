@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
 import { getPDIById } from "../actions";
 import { PDIForm } from "@/components/pdi-form";
-import { PDIReadOnly } from "@/components/pdi-read-only";
+import { PDITracking } from "@/components/pdi-tracking";
 
 export default async function PDIDetailPage({
   params,
@@ -55,10 +55,10 @@ export default async function PDIDetailPage({
     );
   }
 
-  // Read-only view for active/completed/cancelled PDIs or employees viewing their PDIs
+  // Interactive tracking view for active/completed/cancelled PDIs
   return (
     <div className="mx-auto max-w-3xl">
-      <PDIReadOnly pdi={pdi} />
+      <PDITracking pdi={pdi} userId={userId} userRole={role} />
     </div>
   );
 }

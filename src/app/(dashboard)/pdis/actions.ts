@@ -21,6 +21,13 @@ export type PDIListItem = {
   completedGoalCount: number;
 };
 
+export type EvidenceDetail = {
+  id: string;
+  description: string;
+  fileUrl: string | null;
+  createdAt: Date;
+};
+
 export type GoalDetail = {
   id: string;
   title: string;
@@ -28,6 +35,15 @@ export type GoalDetail = {
   competency: string;
   status: string;
   dueDate: Date | null;
+  createdAt: Date;
+  evidences: EvidenceDetail[];
+};
+
+export type CommentDetail = {
+  id: string;
+  authorId: string;
+  authorName: string;
+  content: string;
   createdAt: Date;
 };
 
@@ -42,6 +58,7 @@ export type PDIDetail = {
   employeeName: string;
   managerName: string;
   goals: GoalDetail[];
+  comments: CommentDetail[];
 };
 
 export type SubordinateOption = {
@@ -143,7 +160,18 @@ export async function getPDIById(id: string): Promise<PDIDetail | null> {
     include: {
       employee: { select: { name: true } },
       manager: { select: { name: true } },
-      goals: { orderBy: { createdAt: "asc" } },
+      goals: {
+        orderBy: { createdAt: "asc" },
+        include: {
+          evidences: { orderBy: { createdAt: "desc" } },
+        },
+      },
+      comments: {
+        orderBy: { createdAt: "asc" },
+        include: {
+          author: { select: { name: true } },
+        },
+      },
     },
   });
 
@@ -179,6 +207,19 @@ export async function getPDIById(id: string): Promise<PDIDetail | null> {
       status: g.status,
       dueDate: g.dueDate,
       createdAt: g.createdAt,
+      evidences: g.evidences.map((e) => ({
+        id: e.id,
+        description: e.description,
+        fileUrl: e.fileUrl,
+        createdAt: e.createdAt,
+      })),
+    })),
+    comments: pdi.comments.map((c) => ({
+      id: c.id,
+      authorId: c.authorId,
+      authorName: c.author.name,
+      content: c.content,
+      createdAt: c.createdAt,
     })),
   };
 }
@@ -387,4 +428,141 @@ export async function updatePDI(
   revalidatePath("/pdis");
   revalidatePath(`/pdis/${id}`);
   return { success: true };
+}
+
+// ============================================================
+// US-011: Evidence, Comments, Goal Status
+// ============================================================
+
+export async function addEvidence(
+  goalId: string,
+  description: string
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  if (!description.trim()) {
+    return { success: false, error: "Descrição é obrigatória" };
+  }
+
+  // Find the goal and its PDI to check access
+  const goal = await prisma.pDIGoal.findUnique({
+    where: { id: goalId },
+    include: { pdi: true },
+  });
+
+  if (!goal) {
+    return { success: false, error: "Meta não encontrada" };
+  }
+
+  // Only the employee or the manager/admin can add evidence
+  const pdi = goal.pdi;
+  if (role !== "admin" && pdi.managerId !== userId && pdi.employeeId !== userId) {
+    const hasAccess = await canAccessEmployee(userId, role, pdi.employeeId);
+    if (!hasAccess) {
+      return { success: false, error: "Acesso não autorizado" };
+    }
+  }
+
+  await prisma.pDIEvidence.create({
+    data: {
+      goalId,
+      description: description.trim(),
+    },
+  });
+
+  revalidatePath(`/pdis/${pdi.id}`);
+  return { success: true };
+}
+
+export async function addComment(
+  pdiId: string,
+  content: string
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  if (!content.trim()) {
+    return { success: false, error: "Conteúdo é obrigatório" };
+  }
+
+  const pdi = await prisma.pDI.findUnique({ where: { id: pdiId } });
+  if (!pdi) {
+    return { success: false, error: "PDI não encontrado" };
+  }
+
+  // Only employee, manager, or admin can comment
+  if (role !== "admin" && pdi.managerId !== userId && pdi.employeeId !== userId) {
+    const hasAccess = await canAccessEmployee(userId, role, pdi.employeeId);
+    if (!hasAccess) {
+      return { success: false, error: "Acesso não autorizado" };
+    }
+  }
+
+  await prisma.pDIComment.create({
+    data: {
+      pdiId,
+      authorId: userId,
+      content: content.trim(),
+    },
+  });
+
+  revalidatePath(`/pdis/${pdiId}`);
+  return { success: true };
+}
+
+export async function updateGoalStatus(
+  goalId: string,
+  newStatus: "pending" | "in_progress" | "completed"
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  const goal = await prisma.pDIGoal.findUnique({
+    where: { id: goalId },
+    include: { pdi: true },
+  });
+
+  if (!goal) {
+    return { success: false, error: "Meta não encontrada" };
+  }
+
+  const pdi = goal.pdi;
+
+  // Employee can change their own goal status
+  if (pdi.employeeId === userId) {
+    await prisma.pDIGoal.update({
+      where: { id: goalId },
+      data: { status: newStatus },
+    });
+    revalidatePath(`/pdis/${pdi.id}`);
+    return { success: true };
+  }
+
+  // Manager who created the PDI or admin can also change status (approve/reject)
+  if (role === "admin" || pdi.managerId === userId) {
+    await prisma.pDIGoal.update({
+      where: { id: goalId },
+      data: { status: newStatus },
+    });
+    revalidatePath(`/pdis/${pdi.id}`);
+    return { success: true };
+  }
+
+  return { success: false, error: "Acesso não autorizado" };
 }
