@@ -632,3 +632,32 @@ Started: Sat Feb 28 06:24:15 PST 2026
   - Feedback detail and PDI tracking views already displayed all needed date metadata from US-017/US-018 - no changes needed
   - Pattern for date range filtering: accept string params, parse to Date, use Prisma gte/lte with setHours(23,59,59,999) for end date
 ---
+
+---
+# New PRD: Calendário e Ciclo Unificado de Desenvolvimento
+Started: Sat Feb 28 14:20:00 PST 2026
+---
+
+## Codebase Patterns (Calendario)
+- PDI model already had `scheduledAt` in generated Prisma client types (models/PDI.ts) but NOT in schema.prisma — previous iteration added the field to generated files but not the actual schema
+- When Prisma engine can't download (no network), manually update: enums.ts, internal/prismaNamespace.ts, internal/prismaNamespaceBrowser.ts, and internal/class.ts (inlineSchema string)
+- PDIScalarFieldEnum in prismaNamespace.ts and prismaNamespaceBrowser.ts must match the schema fields exactly
+- class.ts contains an `inlineSchema` string with escaped newlines (`\\n`) and escaped quotes (`\\"`) — use Python for safe string replacement
+- Feedback model already had `scheduledAt` and `scheduled` status from previous iterations; PDI did not
+---
+
+## 2026-02-28 14:20 - US-001
+- What was implemented: Schema migration adding `scheduled` to PDIStatus enum, `scheduledAt DateTime?` field to PDI model, index on PDI.scheduledAt, and index on Feedback.scheduledAt
+- Files changed:
+  - `prisma/schema.prisma` — Added `scheduled` to PDIStatus enum, `scheduledAt` field to PDI, @@index on PDI.scheduledAt and Feedback.scheduledAt
+  - `prisma/migrations/20260228210000_add_scheduled_to_pdi_status_and_calendar_indexes/migration.sql` — SQL migration
+  - `src/generated/prisma/enums.ts` — Added `scheduled` to PDIStatus const (not committed, gitignored)
+  - `src/generated/prisma/internal/prismaNamespace.ts` — Added `scheduledAt` to PDIScalarFieldEnum (not committed, gitignored)
+  - `src/generated/prisma/internal/prismaNamespaceBrowser.ts` — Same as above (not committed, gitignored)
+  - `src/generated/prisma/internal/class.ts` — Updated inlineSchema (not committed, gitignored)
+- **Learnings for future iterations:**
+  - The generated Prisma client (src/generated/prisma/) is gitignored; after schema changes, generated files need updating via `prisma:generate` or manually if no network
+  - The PDI model types in models/PDI.ts already had `scheduledAt` from a prior iteration, so only the enum and scalar field enums needed updating
+  - Migration SQL for adding enum values uses `ALTER TYPE "EnumName" ADD VALUE 'value'` — this is safe and doesn't affect existing rows
+  - All quality checks pass: typecheck, lint, and 7 tests in access-control.test.ts
+---

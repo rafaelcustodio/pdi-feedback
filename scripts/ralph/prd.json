@@ -1,409 +1,215 @@
 {
   "project": "PDI-Feedback-HR",
-  "branchName": "ralph/us-001-database-schema",
-  "description": "Sistema Corporativo de PDI e Feedback - HR application for managing Individual Development Plans and employee feedback",
+  "branchName": "ralph/calendario-ciclo-desenvolvimento",
+  "description": "Calendário e Ciclo Unificado de Desenvolvimento - Visão em calendário mensal com geração automática de eventos de PDI e Feedback, ciclo de vida unificado (scheduled → draft → active/submitted) e filtros por setor",
   "userStories": [
     {
       "id": "US-001",
-      "title": "Modelagem do banco de dados",
-      "description": "Como desenvolvedor, preciso criar o schema do banco de dados PostgreSQL para suportar todas as entidades do sistema (usuários, estrutura organizacional, PDIs, feedbacks, agendamentos e notificações).",
+      "title": "Schema migration — adicionar scheduled ao PDI e índices de calendário",
+      "description": "Como desenvolvedor, preciso alinhar o modelo PDI com o ciclo de vida unificado, adicionando o status 'scheduled' e o campo 'scheduledAt', além de índices para queries do calendário.",
       "acceptanceCriteria": [
-        "Schema Prisma criado com as tabelas: User, OrganizationalUnit, EmployeeHierarchy, PDI, PDIGoal, PDIEvidence, PDIComment, Feedback, FeedbackSchedule, PDISchedule, Notification",
-        "Tabela User contém: id, name, email, password (hash), role (admin/manager/employee), avatarUrl, ssoProvider, ssoId, createdAt, updatedAt",
-        "Tabela OrganizationalUnit contém: id, name, parentId (self-reference), createdAt",
-        "Tabela EmployeeHierarchy contém: id, employeeId (FK User), managerId (FK User), organizationalUnitId (FK), startDate, endDate",
-        "Tabela PDI contém: id, employeeId (FK), managerId (FK), status (draft/active/completed/cancelled), period, frequencyMonths, createdAt, updatedAt",
-        "Tabela PDIGoal contém: id, pdiId (FK), title, description, competency, status (pending/in_progress/completed), dueDate, createdAt",
-        "Tabela PDIEvidence contém: id, goalId (FK), description, fileUrl, createdAt",
-        "Tabela PDIComment contém: id, pdiId (FK), authorId (FK User), content, createdAt",
-        "Tabela Feedback contém: id, employeeId (FK), managerId (FK), period, content, strengths, improvements, rating, status (draft/submitted), frequencyMonths, createdAt, updatedAt",
-        "Tabela FeedbackSchedule contém: id, employeeId (FK), managerId (FK), frequencyMonths, nextDueDate, isActive",
-        "Tabela PDISchedule contém: id, employeeId (FK), managerId (FK), frequencyMonths, nextDueDate, isActive",
-        "Tabela Notification contém: id, userId (FK), type (pdi_reminder/feedback_reminder/general), title, message, isRead, emailSent, createdAt",
-        "Migration gerada e executada com sucesso",
-        "Seed com dados de exemplo (empresa fictícia com 3 níveis hierárquicos)",
+        "Valor 'scheduled' adicionado ao enum PDIStatus no schema Prisma (ficando: draft, scheduled, active, completed, cancelled)",
+        "Campo 'scheduledAt DateTime?' adicionado ao model PDI",
+        "Índice adicionado em PDI.scheduledAt para queries do calendário",
+        "Índice adicionado em Feedback.scheduledAt (se não existir) para queries do calendário",
+        "Migration gerada e aplicada com sucesso sem perda de dados existentes",
+        "PDIs existentes (draft/active/completed/cancelled) não são afetados pela migration",
+        "Prisma client regenerado (prisma:generate)",
         "Typecheck passa"
       ],
       "priority": 1,
       "passes": true,
-      "notes": "Migration requires PostgreSQL database. Prisma binary engines blocked by firewall - use PRISMA_SCHEMA_ENGINE_BINARY=/tmp/fake-schema-engine workaround."
-    },
-    {
-      "id": "US-015",
-      "title": "Layout base e navegação",
-      "description": "Como usuário do sistema, quero uma interface limpa e consistente com menu lateral e header para navegar facilmente entre as seções.",
-      "acceptanceCriteria": [
-        "Layout com sidebar (menu lateral) colapsável e header fixo",
-        "Sidebar com itens: Dashboard, Colaboradores, PDIs, Feedbacks, Notificações, Configurações (admin only)",
-        "Header com: logo, nome do usuário logado, avatar, botão de sino (notificações), menu dropdown com Meu Perfil e Sair",
-        "Itens do menu destacam a seção ativa",
-        "Layout responsivo: sidebar vira hamburger menu em telas menores",
-        "Tema claro com cores corporativas neutras (customizável via Tailwind)",
-        "Typecheck passa"
-      ],
-      "priority": 2,
-      "passes": true,
-      "notes": "Layout base needs to be in place before other UI stories"
+      "notes": ""
     },
     {
       "id": "US-002",
-      "title": "Configuração de autenticação local (credenciais)",
-      "description": "Como administrador do sistema, quero que usuários possam fazer login com e-mail e senha para acessar o sistema sem depender de SSO.",
+      "title": "Backend — geração automática de eventos scheduled ao configurar periodicidade",
+      "description": "Como gestor, quero que ao configurar a frequência de PDI/Feedback de um colaborador, o sistema crie automaticamente registros com status 'scheduled' para os próximos 12 meses.",
       "acceptanceCriteria": [
-        "Página de login com campos e-mail e senha",
-        "Senhas armazenadas com hash bcrypt",
-        "Sessão gerenciada via NextAuth.js com JWT",
-        "Redirecionamento para dashboard após login bem-sucedido",
-        "Mensagem de erro clara para credenciais inválidas",
+        "Função utilitária generateScheduledEvents(employeeId, type, frequencyMonths, managerId) criada em src/lib/ ou dentro de colaboradores/actions.ts",
+        "Ao salvar frequência de PDI (ex: 3 meses), cria registros PDI com status 'scheduled' e scheduledAt espaçados pela frequência cobrindo 12 meses (ex: 4 registros para trimestral)",
+        "Ao salvar frequência de Feedback (ex: 6 meses), cria registros Feedback com status 'scheduled' e scheduledAt cobrindo 12 meses",
+        "Campo 'period' dos registros gerados preenchido automaticamente (ex: 'Mar/2026', 'Jun/2026')",
+        "Campo 'managerId' preenchido com gestor atual do colaborador (via EmployeeHierarchy onde endDate é null)",
+        "Se já existem registros 'scheduled' futuros para o colaborador/tipo, são removidos antes de gerar novos (evita duplicatas)",
+        "Se frequência for removida (Nenhum), registros 'scheduled' futuros são excluídos",
+        "Funções recalculatePDISchedule e recalculateFeedbackSchedule atualizadas para gerar próximo slot scheduled ao completar/submeter ciclo",
         "Typecheck passa"
       ],
-      "priority": 3,
-      "passes": true,
-      "notes": "Forgot password feature deferred to later iteration"
+      "priority": 2,
+      "passes": false,
+      "notes": ""
     },
     {
       "id": "US-003",
-      "title": "Configuração de autenticação via SSO Microsoft",
-      "description": "Como colaborador da empresa, quero fazer login usando minha conta corporativa Microsoft para não precisar gerenciar outra senha.",
+      "title": "Server action — getCalendarEvents para buscar eventos do calendário",
+      "description": "Como desenvolvedor, preciso de uma server action que retorne os eventos de PDI e Feedback para um determinado mês, respeitando controle de acesso.",
       "acceptanceCriteria": [
-        "Botão Entrar com Microsoft na página de login",
-        "Integração com Azure AD via NextAuth.js provider (Microsoft)",
-        "Na primeira autenticação SSO, o sistema cria o usuário automaticamente se o e-mail não existir",
-        "Se o e-mail já existir, vincula a conta SSO ao usuário existente",
-        "Sessão JWT contém id, name, email e role do usuário",
+        "Server action getCalendarEvents(month, year, filters?) criada em src/app/(dashboard)/calendario/actions.ts",
+        "Busca PDIs onde scheduledAt está no mês/ano solicitado (inclui todos os status: scheduled, draft, active, completed)",
+        "Busca Feedbacks onde scheduledAt está no mês/ano solicitado (inclui todos os status: scheduled, draft, submitted)",
+        "Para PDIs sem scheduledAt, inclui se conductedAt estiver no mês/ano solicitado",
+        "Para Feedbacks sem scheduledAt, inclui se conductedAt ou scheduledAt estiver no mês/ano",
+        "Retorna array normalizado com: id, type ('pdi'|'feedback'), employeeName, scheduledAt (ou conductedAt como fallback), status, href (link para detalhe)",
+        "Respeita controle de acesso: usa getAccessibleEmployeeIds — gestor vê subordinados, admin vê todos, employee vê próprios",
+        "Colaborador NÃO vê eventos com status 'scheduled' ou 'draft' de Feedback (mesma regra existente)",
+        "Suporta filtro opcional por organizationalUnitId (setor) — filtra employeeId por colaboradores do setor via EmployeeHierarchy",
+        "Suporta filtro opcional por tipo ('pdi' | 'feedback' | 'all')",
         "Typecheck passa"
       ],
-      "priority": 4,
-      "passes": true,
-      "notes": "MicrosoftEntraID provider uses `issuer` URL (not `tenantId`). Set AZURE_AD_TENANT_ID to restrict to org, or leave empty for common endpoint."
+      "priority": 3,
+      "passes": false,
+      "notes": ""
     },
     {
       "id": "US-004",
-      "title": "CRUD de estrutura organizacional",
-      "description": "Como administrador, quero cadastrar e editar a estrutura organizacional (departamentos, áreas, equipes) em formato de árvore para que o sistema reflita a hierarquia da empresa.",
+      "title": "Página de calendário mensal com grid e navegação",
+      "description": "Como gestor, quero uma página de calendário mensal que mostre todos os PDIs e Feedbacks agendados dos meus subordinados em formato de grid visual.",
       "acceptanceCriteria": [
-        "Página admin para gerenciar unidades organizacionais",
-        "Formulário para criar unidade com nome e unidade-pai (dropdown)",
-        "Visualização da estrutura em formato de árvore (tree view)",
-        "Edição inline do nome da unidade",
-        "Exclusão de unidade (somente se não tiver filhos ou colaboradores vinculados)",
-        "Typecheck passa"
+        "Nova rota /calendario com page.tsx server component que chama getCalendarEvents",
+        "Item 'Calendário' adicionado à sidebar (entre Dashboard e Colaboradores) com ícone Calendar do lucide-react, ativo na rota /calendario",
+        "Client component calendar-view.tsx renderiza grid mensal (CSS Grid, 7 colunas Dom-Sáb)",
+        "Header do grid com nomes dos dias da semana (Dom, Seg, Ter, Qua, Qui, Sex, Sáb)",
+        "Navegação entre meses: botões prev/next (ChevronLeft/ChevronRight) e label 'Março 2026' centralizado",
+        "Botão 'Hoje' para voltar ao mês atual",
+        "Dias do mês atual preenchidos, dias de meses adjacentes exibidos em cinza claro para completar o grid",
+        "Dia atual destacado com borda ou fundo azul claro",
+        "Eventos exibidos como badges coloridos dentro das células de dia: PDI com badge azul, Feedback com badge verde",
+        "Badges mostram nome do colaborador (truncado com ellipsis se necessário)",
+        "Cor do badge varia por status: cinza=scheduled, amarelo=draft, azul=active(PDI), verde=submitted/completed",
+        "Legenda de cores exibida abaixo do calendário",
+        "Dias com mais de 3 eventos mostram '+N mais' clicável que expande lista completa",
+        "Clicar em um badge navega para a página de detalhe do PDI (/pdis/[id]) ou Feedback (/feedbacks/[id])",
+        "Em telas < 768px, calendário muda para formato de lista cronológica (agenda) do mês",
+        "Typecheck passa",
+        "Verify in browser using dev-browser skill"
       ],
-      "priority": 5,
-      "passes": true,
-      "notes": "Server actions pattern established. Use revalidatePath for cache invalidation. buildTree utility converts flat list to tree structure."
+      "priority": 4,
+      "passes": false,
+      "notes": ""
     },
     {
       "id": "US-005",
-      "title": "Gestão de colaboradores e vínculos hierárquicos",
-      "description": "Como administrador, quero cadastrar colaboradores e definir seus gestores e unidades organizacionais para que o sistema saiba quem gerencia quem.",
+      "title": "Filtros do calendário por setor e tipo de evento",
+      "description": "Como gestor, quero filtrar o calendário por setor (unidade organizacional) e por tipo (PDI/Feedback) para focar na equipe ou atividade relevante.",
       "acceptanceCriteria": [
-        "Página admin com lista de colaboradores (tabela com busca e paginação)",
-        "Formulário para criar/editar colaborador: nome, e-mail, role, unidade organizacional, gestor direto",
-        "Dropdown de gestor filtrado por unidade organizacional",
-        "Visualização da árvore hierárquica de um colaborador específico",
-        "Desativação de colaborador (soft delete) sem perder histórico",
-        "Typecheck passa"
+        "Dropdown 'Setor' acima do calendário listando OrganizationalUnits acessíveis ao usuário",
+        "Opção 'Todos os setores' como padrão no dropdown de setor",
+        "Dropdown 'Tipo' com opções: 'Todos', 'PDI', 'Feedback'",
+        "Filtros aplicados via URL search params (ex: ?setor=xxx&tipo=pdi) para permitir compartilhamento de links",
+        "Ao selecionar setor, calendário mostra apenas eventos de colaboradores vinculados àquela OrganizationalUnit",
+        "Filtros persistem ao navegar entre meses",
+        "Contagem de eventos no mês exibida ao lado dos filtros (ex: '12 eventos em Março/2026')",
+        "Server action getCalendarEvents já suporta filtros (US-003) — esta US conecta os filtros da UI",
+        "Typecheck passa",
+        "Verify in browser using dev-browser skill"
       ],
-      "priority": 6,
-      "passes": true,
-      "notes": "Employee CRUD uses server actions pattern. Manager dropdown filtered by org unit via getManagerCandidates. Soft delete sets isActive=false and closes hierarchy endDate. Hierarchy tree walks upward from employee to top manager, then adds direct reports."
+      "priority": 5,
+      "passes": false,
+      "notes": ""
     },
     {
       "id": "US-006",
-      "title": "Controle de acesso por hierarquia",
-      "description": "Como gestor, quero visualizar apenas os PDIs e feedbacks dos colaboradores da minha árvore hierárquica para garantir a privacidade dos dados.",
+      "title": "Transição scheduled → draft ao pré-preencher PDI ou Feedback",
+      "description": "Como gestor, quero clicar em um evento 'scheduled' e pré-preencher o PDI ou Feedback antes da reunião, com transição automática de status.",
       "acceptanceCriteria": [
-        "Função utilitária getSubordinates(managerId) que retorna todos os colaboradores diretos e indiretos (recursivo)",
-        "Middleware/hook que filtra consultas de PDI e Feedback pelo resultado de getSubordinates",
-        "Gestor nível 1 vê colaboradores dos gestores nível 2 abaixo dele",
-        "Colaborador comum vê apenas seus próprios PDIs e feedbacks",
-        "Admin vê todos os PDIs e feedbacks de toda a empresa",
-        "Teste unitário para a função getSubordinates com árvore de 3 níveis",
-        "Typecheck passa"
+        "Ao abrir PDI com status 'scheduled', exibe formulário de edição (pdi-form) com campos editáveis",
+        "Ao abrir Feedback com status 'scheduled', exibe formulário de edição (feedback-form) com campos editáveis",
+        "Campos employeeId, managerId e scheduledAt já pré-preenchidos (vindos da geração automática)",
+        "Campo period pré-preenchido mas editável",
+        "Banner informativo no topo: 'Este [PDI/Feedback] está agendado para [data formatada]. Preencha antes da reunião.'",
+        "Ao salvar a primeira edição (save draft), status muda automaticamente de 'scheduled' para 'draft' — server actions updatePDI e updateFeedback atualizados",
+        "Para PDI scheduled: gestor pode adicionar/editar metas normalmente",
+        "Para Feedback scheduled: gestor pode preencher conteúdo, pontos fortes, melhorias e rating",
+        "Página de detalhe do PDI (/pdis/[id]) redireciona para formulário se status é 'scheduled' (mesmo comportamento que 'draft')",
+        "Página de detalhe do Feedback (/feedbacks/[id]) redireciona para formulário se status é 'scheduled' (mesmo comportamento que 'draft')",
+        "Typecheck passa",
+        "Verify in browser using dev-browser skill"
       ],
-      "priority": 7,
-      "passes": true,
-      "notes": "Pure function computeSubordinates in hierarchy-utils.ts for testability. Server-side helpers in access-control.ts use 'use server' directive. Vitest added for unit testing. getAccessibleEmployeeIds returns 'all' for admin, [self] for employee, [self, ...subordinates] for manager."
+      "priority": 6,
+      "passes": false,
+      "notes": ""
     },
     {
       "id": "US-007",
-      "title": "Dashboard principal",
-      "description": "Como gestor, quero ver um painel com resumo das pendências de PDI e feedback dos meus colaboradores para saber o que precisa de atenção.",
+      "title": "Atualizar listagens de PDI e Feedback para incluir status scheduled",
+      "description": "Como gestor, quero ver PDIs e Feedbacks com status 'scheduled' nas listagens existentes para ter visibilidade do pipeline completo.",
       "acceptanceCriteria": [
-        "Card com total de colaboradores diretos e indiretos",
-        "Card com PDIs pendentes/atrasados no mês atual",
-        "Card com feedbacks pendentes/atrasados no mês atual",
-        "Lista resumida dos próximos 5 PDIs/feedbacks a vencer",
-        "Link direto para o PDI ou feedback pendente ao clicar no item",
-        "Layout responsivo (desktop e tablet)",
-        "Typecheck passa"
+        "Listagem de PDIs (/pdis) inclui PDIs com status 'scheduled' para gestores e admins",
+        "Listagem de Feedbacks (/feedbacks) inclui Feedbacks com status 'scheduled' para gestores e admins",
+        "Colaboradores NÃO veem registros com status 'scheduled' nas listagens",
+        "Badge 'Agendado' (cor cinza) exibido na coluna de status para registros 'scheduled'",
+        "Coluna 'Data agendada' exibida mostrando scheduledAt formatada (dd/mm/aaaa) para registros scheduled",
+        "Filtro de status nas tabelas atualizado para incluir opção 'Agendado'",
+        "Ordenação inclui scheduled por scheduledAt desc",
+        "Label maps atualizados para incluir 'scheduled' → 'Agendado' em PDI (Feedback já deve ter)",
+        "Typecheck passa",
+        "Verify in browser using dev-browser skill"
       ],
-      "priority": 8,
-      "passes": true,
-      "notes": "Dashboard uses getDashboardData() server action with access control filtering. Cards show subordinate count, pending PDIs (draft/active), overdue PDI goals, pending feedbacks (draft), overdue feedback schedules. Upcoming items combine PDI goals, PDI schedules, and feedback schedules sorted by dueDate."
+      "priority": 7,
+      "passes": false,
+      "notes": ""
     },
     {
       "id": "US-008",
-      "title": "Criar e editar feedback (top-down)",
-      "description": "Como gestor, quero criar um feedback para meu colaborador, preenchendo pontos fortes, pontos de melhoria e avaliação geral, para documentar o desempenho.",
+      "title": "Atualizar dashboard com seção Próximos Eventos do calendário",
+      "description": "Como gestor, quero ver no dashboard um resumo dos próximos eventos agendados para ter visão rápida da agenda sem ir ao calendário.",
       "acceptanceCriteria": [
-        "Página de criação de feedback com campos: colaborador (dropdown dos subordinados), período, pontos fortes, pontos de melhoria, conteúdo geral, rating (1-5 estrelas)",
-        "Feedback criado com status rascunho por padrão",
-        "Botão Salvar rascunho e Submeter feedback",
-        "Após submissão, feedback fica visível para o colaborador (somente leitura)",
-        "Edição permitida apenas enquanto status for rascunho",
-        "Validação: todos os campos obrigatórios preenchidos antes de submeter",
-        "Typecheck passa"
+        "Seção 'Próximos Eventos' no dashboard mostrando os próximos 7 PDIs/Feedbacks ordenados por scheduledAt",
+        "Cada item mostra: ícone de tipo (PDI/Feedback), nome do colaborador, data agendada, badge de status (scheduled/draft)",
+        "Eventos 'scheduled' (não preparados) destacados com indicador de atenção (ícone ou cor diferente)",
+        "Link 'Ver calendário completo' apontando para /calendario",
+        "Clique em cada item redireciona para detalhe do PDI/Feedback",
+        "getDashboardData() atualizado para incluir upcomingScheduledEvents consultando PDIs e Feedbacks com scheduledAt futura",
+        "Mantém cards existentes (subordinados, PDIs pendentes, feedbacks pendentes) sem quebrar",
+        "Typecheck passa",
+        "Verify in browser using dev-browser skill"
       ],
-      "priority": 9,
-      "passes": true,
-      "notes": "Feedback CRUD uses access-controlled server actions. Managers create/edit feedbacks for subordinates. Star rating component for 1-5 rating. Draft/submit workflow: draft allows editing, submitted is read-only for employee. FeedbackReadOnly component for view mode."
+      "priority": 8,
+      "passes": false,
+      "notes": ""
     },
     {
       "id": "US-009",
-      "title": "Visualizar histórico de feedbacks",
-      "description": "Como colaborador, quero ver o histórico de todos os feedbacks que recebi para acompanhar minha evolução ao longo do tempo.",
+      "title": "Reagendar e cancelar eventos do calendário",
+      "description": "Como gestor, quero alterar a data ou cancelar um evento agendado para acomodar mudanças de agenda.",
       "acceptanceCriteria": [
-        "Página Meus Feedbacks com lista de feedbacks recebidos (ordenados por data, mais recente primeiro)",
-        "Cada item mostra: período, data de submissão, nome do gestor, rating",
-        "Ao clicar, abre o feedback completo em modo somente leitura",
-        "Filtro por período/ano",
-        "Typecheck passa"
+        "Botão 'Reagendar' visível na página de detalhe de PDI/Feedback com status 'scheduled' ou 'draft'",
+        "Ao clicar em Reagendar, abre date picker para selecionar nova data (deve ser data futura)",
+        "Ao confirmar, scheduledAt é atualizado e evento aparece na nova data no calendário",
+        "Botão 'Cancelar evento' visível para registros 'scheduled' ou 'draft'",
+        "Ao cancelar PDI scheduled (sem conteúdo/metas): registro é excluído do banco",
+        "Ao cancelar PDI draft (com conteúdo): status muda para 'cancelled'",
+        "Ao cancelar Feedback scheduled (sem conteúdo): registro é excluído do banco",
+        "Ao cancelar Feedback draft (com conteúdo): registro é excluído ou voltado para draft sem scheduledAt",
+        "Confirmação antes de cancelar: dialog 'Tem certeza que deseja cancelar este [PDI/Feedback] agendado?'",
+        "Server actions reschedulePDI(id, newDate), cancelScheduledPDI(id), rescheduleFeedback(id, newDate), cancelScheduledFeedback(id) criadas",
+        "Notificação enviada ao colaborador se evento for reagendado ou cancelado",
+        "Typecheck passa",
+        "Verify in browser using dev-browser skill"
       ],
-      "priority": 10,
-      "passes": true,
-      "notes": "Enhanced feedback list page: employees see 'Meus Feedbacks' title with submission date, year filter dropdown, and read-only detail view. Year filter searches both period string and createdAt year. AND-based query composition prevents filter conflicts."
+      "priority": 9,
+      "passes": false,
+      "notes": ""
     },
     {
       "id": "US-010",
-      "title": "Criar e editar PDI",
-      "description": "Como gestor, quero criar um PDI para meu colaborador com metas vinculadas a competências específicas para direcionar seu desenvolvimento.",
+      "title": "Cron job para manutenção do calendário — gerar novos slots futuros",
+      "description": "Como sistema, preciso gerar automaticamente novos slots de eventos quando o horizonte de 12 meses avança, mantendo o calendário sempre populado.",
       "acceptanceCriteria": [
-        "Página de criação de PDI com: colaborador (dropdown dos subordinados), período, status (draft/active)",
-        "Seção para adicionar metas (goals): título, descrição, competência associada (dropdown), prazo, status",
-        "Possibilidade de adicionar múltiplas metas ao mesmo PDI",
-        "Botão para adicionar/remover metas dinamicamente",
-        "PDI criado como rascunho por padrão, com botão Ativar PDI",
+        "Novo endpoint GET /api/cron/generate-events protegido por CRON_SECRET (mesmo padrão do email-reminders)",
+        "Job verifica todos os PDISchedule e FeedbackSchedule ativos",
+        "Para cada schedule ativo, verifica se há registros 'scheduled' cobrindo os próximos 12 meses",
+        "Se houver lacunas (último scheduled é antes de 12 meses no futuro), gera registros faltantes",
+        "Não gera duplicatas — verifica se já existe registro scheduled para a mesma data/colaborador/tipo",
+        "Atualiza nextDueDate no schedule para refletir próxima data sem registro",
+        "Resposta JSON com resumo: { generated: N, checked: M, errors: [] }",
+        "Middleware atualizado para excluir /api/cron/generate-events da autenticação (mesmo padrão existente)",
         "Typecheck passa"
       ],
-      "priority": 11,
-      "passes": true,
-      "notes": "PDI CRUD follows feedback pattern. Server actions with access control, PDI form with dynamic goals (add/remove), draft/active workflow. Competencies from predefined list. Goals managed in transactions for update (delete removed, update existing, create new). PDIReadOnly component for non-draft view with progress bar."
-    },
-    {
-      "id": "US-011",
-      "title": "Acompanhar PDI (evidências e comentários)",
-      "description": "Como colaborador, quero adicionar evidências de progresso e comentários às metas do meu PDI para demonstrar minha evolução.",
-      "acceptanceCriteria": [
-        "Página de detalhe do PDI mostrando todas as metas e seus status",
-        "Botão Adicionar evidência em cada meta: campo de descrição e upload de arquivo (opcional)",
-        "Seção de comentários no PDI (tipo chat): gestor e colaborador podem comentar",
-        "Colaborador pode alterar status da meta para em andamento ou concluído",
-        "Gestor pode aprovar ou rejeitar a conclusão de uma meta",
-        "Barra de progresso visual do PDI (% de metas concluídas)",
-        "Typecheck passa"
-      ],
-      "priority": 12,
-      "passes": true,
-      "notes": "PDITracking component replaces PDIReadOnly for non-draft PDIs. Server actions: addEvidence, addComment, updateGoalStatus. Employee can change goal status (in_progress, completed). Manager can reject completion (revert to in_progress). Comments are chat-style with author alignment. Evidence added per goal with description field."
-    },
-    {
-      "id": "US-012",
-      "title": "Configurar frequência de PDI e feedback por colaborador",
-      "description": "Como gestor, quero definir a frequência com que PDIs e feedbacks devem ser realizados para cada colaborador.",
-      "acceptanceCriteria": [
-        "Na página do colaborador, seção Agendamento com dois campos: frequência do PDI e frequência do feedback (em meses)",
-        "Opções de frequência: 1, 2, 3, 6 ou 12 meses",
-        "Ao salvar, o sistema calcula a próxima data de vencimento baseada na data atual",
-        "Exibir próxima data prevista para PDI e feedback na página do colaborador",
-        "Após completar um PDI ou feedback, o sistema recalcula automaticamente a próxima data",
-        "Typecheck passa"
-      ],
-      "priority": 13,
-      "passes": true,
-      "notes": "Schedule management via employee edit page. Auto-recalculates next due date when PDI is completed (all goals done) or feedback is submitted. Uses recalculatePDISchedule/recalculateFeedbackSchedule from schedule-utils.ts."
-    },
-    {
-      "id": "US-013",
-      "title": "Sistema de notificações internas",
-      "description": "Como gestor, quero receber notificações dentro do sistema quando houver PDIs ou feedbacks pendentes.",
-      "acceptanceCriteria": [
-        "Ícone de sino no header com badge de contagem de notificações não lidas",
-        "Dropdown ao clicar no sino mostrando últimas 10 notificações",
-        "Página Notificações com lista completa e paginação",
-        "Marcar como lida ao clicar na notificação",
-        "Botão Marcar todas como lidas",
-        "Notificação criada automaticamente quando faltam 7 dias para o vencimento de um PDI ou feedback",
-        "Notificação criada automaticamente quando um PDI ou feedback está atrasado",
-        "Typecheck passa"
-      ],
-      "priority": 14,
-      "passes": true,
-      "notes": "Notification dropdown in header with optimistic mark-as-read. Full notifications page with filter tabs (all/unread/read) and pagination. Auto-generates notifications for schedules due within 7 days and overdue PDI goals/schedules/feedback schedules. Uses messageKey pattern for idempotent notification creation."
-    },
-    {
-      "id": "US-014",
-      "title": "Envio de lembretes por e-mail",
-      "description": "Como gestor, quero receber e-mails de lembrete sobre PDIs e feedbacks pendentes.",
-      "acceptanceCriteria": [
-        "Job agendado (cron) que roda diariamente verificando schedules com nextDueDate nos próximos 7 dias",
-        "E-mail enviado ao gestor com lista de PDIs e feedbacks pendentes para o mês",
-        "Template de e-mail HTML com: nome do colaborador, tipo (PDI ou Feedback), data de vencimento, link direto",
-        "Campo emailSent na tabela Notification atualizado para evitar duplicatas",
-        "Integração com serviço de e-mail (Resend ou Nodemailer)",
-        "Typecheck passa"
-      ],
-      "priority": 15,
-      "passes": true,
-      "notes": "Nodemailer with SMTP config (SMTP_HOST/PORT/USER/PASS/FROM). Cron route at /api/cron/email-reminders (GET, protected by CRON_SECRET header). Generates notifications then sends consolidated HTML emails per manager. Updates emailSent=true on Notification after sending. Middleware excludes /api/cron from auth."
-    },
-    {
-      "id": "US-016",
-      "title": "Migração de schema para agendamento e datas de realização",
-      "description": "Como desenvolvedor, preciso atualizar o schema do banco de dados para suportar os novos campos de data de realização (conductedAt), agendamento de feedbacks (scheduledAt, status scheduled) e novos tipos de notificação.",
-      "acceptanceCriteria": [
-        "Campo conductedAt (DateTime, nullable) adicionado ao modelo PDI no schema Prisma",
-        "Campo conductedAt (DateTime, nullable) adicionado ao modelo Feedback no schema Prisma",
-        "Campo scheduledAt (DateTime, nullable) adicionado ao modelo Feedback no schema Prisma",
-        "Valor 'scheduled' adicionado ao enum FeedbackStatus (draft/scheduled/submitted)",
-        "Valores 'feedback_scheduled' e 'feedback_submitted_auto' adicionados ao enum NotificationType",
-        "Migration gerada e aplicada com sucesso",
-        "Prisma client regenerado",
-        "Seed atualizado para incluir exemplos de feedbacks com conductedAt e scheduledAt",
-        "Typecheck passa",
-        "Tests passam"
-      ],
-      "priority": 16,
-      "passes": true,
-      "notes": "Schema migration only - no UI changes. Use PRISMA_SCHEMA_ENGINE_BINARY=/tmp/fake-schema-engine workaround. Update existing Feedback/PDI queries if needed to handle new nullable fields. The existing code should continue working since new fields are nullable. UI label maps updated for new FeedbackStatus 'scheduled' and NotificationType values. Feedback editing allowed for 'scheduled' status."
-    },
-    {
-      "id": "US-017",
-      "title": "Adicionar campo conductedAt ao formulário de feedback",
-      "description": "Como gestor, quero registrar a data de realização (quando a conversa/sessão de feedback aconteceu) ao criar ou editar um feedback, separando da data de criação automática.",
-      "acceptanceCriteria": [
-        "Campo 'Data de realização' (conductedAt) adicionado ao formulário de feedback como date picker obrigatório",
-        "Data de criação (createdAt) exibida como informação somente leitura no formulário de edição",
-        "Server actions createFeedback e updateFeedback atualizados para salvar conductedAt",
-        "FeedbackReadOnly exibe 'Realizado em' (conductedAt) e 'Criado em' (createdAt)",
-        "Edição permitida enquanto status for 'draft' ou 'scheduled'",
-        "Typecheck passa",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 17,
-      "passes": true,
-      "notes": "Update feedback-form.tsx, feedbacks/actions.ts, and feedback-read-only.tsx. The conductedAt field represents when the feedback session actually happened (filled by manager), while createdAt is automatic. conductedAt is required (date picker), createdAt shown read-only in edit mode. FeedbackReadOnly shows 'Realizado em' before 'Criado em'."
-    },
-    {
-      "id": "US-018",
-      "title": "Adicionar campo conductedAt ao formulário de PDI",
-      "description": "Como gestor, quero registrar a data de realização (quando a sessão de PDI aconteceu) ao criar ou editar um PDI, separando da data de criação automática.",
-      "acceptanceCriteria": [
-        "Campo 'Data de realização' (conductedAt) adicionado ao formulário de PDI como date picker obrigatório",
-        "Data de criação (createdAt) exibida como informação somente leitura no formulário de edição",
-        "Server actions createPDI e updatePDI atualizados para salvar conductedAt",
-        "PDITracking exibe 'Realizado em' (conductedAt) e 'Criado em' (createdAt)",
-        "Typecheck passa",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 18,
-      "passes": true,
-      "notes": "Update pdi-form.tsx, pdis/actions.ts, and pdi-tracking.tsx. Same pattern as US-017 for feedback. The conductedAt field represents when the PDI session actually happened."
-    },
-    {
-      "id": "US-019",
-      "title": "Agendar submissão de feedback",
-      "description": "Como gestor, quero preencher um feedback agora e agendar a submissão automática para uma data futura, para preparar o feedback com antecedência e entregá-lo ao colaborador no momento adequado.",
-      "acceptanceCriteria": [
-        "Botão 'Agendar submissão' no formulário de feedback ao lado de 'Salvar rascunho' e 'Submeter feedback'",
-        "Ao clicar, abre modal/popover com date picker para selecionar data de submissão futura",
-        "Data de agendamento (scheduledAt) deve ser data futura (validação: não permite data passada ou hoje)",
-        "Feedback agendado recebe status 'scheduled' — diferente de 'draft' e 'submitted'",
-        "Feedback com status 'scheduled' pode ser editado pelo gestor antes da data agendada",
-        "Gestor pode cancelar agendamento voltando feedback ao status 'draft'",
-        "Gestor pode alterar data do agendamento enquanto feedback não foi submetido",
-        "Na listagem de feedbacks do gestor, feedbacks agendados exibem badge 'Agendado' com data prevista",
-        "Conteúdo do feedback agendado NÃO é visível para o colaborador antes da submissão",
-        "Typecheck passa",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 19,
-      "passes": true,
-      "notes": "Schedule button in feedback-form.tsx with modal date picker. Server actions scheduleFeedback (validates all fields + future date) and cancelScheduleFeedback in feedbacks/actions.ts. FeedbackListItem/FeedbackDetail types include scheduledAt. Feedback table shows 'Agendado' badge with date. Read-only view shows 'Agendado para' in metadata. Employee visibility already excludes non-submitted feedbacks."
-    },
-    {
-      "id": "US-020",
-      "title": "Execução automática de feedbacks agendados",
-      "description": "Como sistema, preciso submeter automaticamente os feedbacks agendados na data programada para que o colaborador receba o feedback no momento correto.",
-      "acceptanceCriteria": [
-        "Job cron diário verificando feedbacks com status 'scheduled' e scheduledAt <= data atual",
-        "Feedbacks encontrados são automaticamente alterados para status 'submitted'",
-        "Notificação interna criada para o colaborador informando que recebeu novo feedback",
-        "E-mail enviado ao colaborador notificando sobre o novo feedback com link para visualizar",
-        "Gestor recebe notificação confirmando que feedback agendado foi submetido",
-        "Em caso de erro, feedback permanece como 'scheduled' e gestor recebe notificação de falha",
-        "Log de execução do job registrado para auditoria",
-        "Typecheck passa"
-      ],
-      "priority": 20,
-      "passes": true,
-      "notes": "Separate cron route at /api/cron/scheduled-feedbacks. Queries feedbacks with status 'scheduled' and scheduledAt <= now. Updates to 'submitted', creates notifications (feedback_submitted_auto type) for both employee and manager, sends HTML emails, recalculates schedule. On error: keeps 'scheduled' status, creates failure notification for manager. Execution log returned in JSON response."
-    },
-    {
-      "id": "US-021",
-      "title": "Agendar data futura para preencher feedback",
-      "description": "Como gestor, quero agendar uma data futura para preencher um feedback de um colaborador, para receber um lembrete e ter o feedback já criado como rascunho quando a data chegar.",
-      "acceptanceCriteria": [
-        "Na página de feedbacks ou do colaborador, botão 'Agendar feedback futuro'",
-        "Modal com campos: colaborador (pré-selecionado se vindo da página do colaborador), data prevista para preenchimento",
-        "Ao confirmar, cria feedback com status 'draft' e campo scheduledAt preenchido com data futura",
-        "Feedback criado visível na listagem do gestor com badge 'Agendado para preenchimento' e data prevista",
-        "7 dias antes da data agendada, notificação interna lembrando o gestor de preencher",
-        "Na data agendada, notificação interna + e-mail de lembrete enviados ao gestor",
-        "Colaborador recebe notificação prévia informando que há feedback agendado (sem conteúdo)",
-        "Gestor pode preencher o feedback a qualquer momento antes da data agendada",
-        "Typecheck passa",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 21,
-      "passes": true,
-      "notes": "Different from US-019 (schedule submission). This creates an empty draft with a future date for the manager to fill in later. The scheduledAt field here means 'planned date to write the feedback', not 'date to auto-submit'. createFutureFeedback server action creates draft + employee notification. Cron email-reminders handles 7-day and on-date notifications for managers. FeedbackTable shows 'Agendado para preenchimento' badge (indigo) for draft+scheduledAt."
-    },
-    {
-      "id": "US-022",
-      "title": "Atualizar visibilidade de feedbacks agendados para colaboradores",
-      "description": "Como colaborador, quero que feedbacks com status draft ou scheduled não apareçam na minha listagem, mas quero receber notificação de que há feedbacks agendados para datas futuras.",
-      "acceptanceCriteria": [
-        "Feedbacks com status 'draft' ou 'scheduled' NÃO aparecem na listagem do colaborador",
-        "Colaborador vê notificação de que há feedbacks agendados para datas futuras (sem conteúdo)",
-        "Listagem do colaborador ordena por data de realização (conductedAt) mais recente primeiro",
-        "Cada item mostra: período, data de realização, data de submissão, nome do gestor, rating",
-        "Filtro por período/ano e por data de realização",
-        "Typecheck passa",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 22,
-      "passes": true,
-      "notes": "Update feedback-table.tsx and feedbacks/actions.ts. Employee filter already excludes draft (status === 'submitted'), just ensure 'scheduled' is also excluded. Add banner/alert at top of employee feedback list showing count of scheduled feedbacks. Update ordering to use conductedAt instead of createdAt. Added getScheduledFeedbackCountForEmployee() for banner count. Date range filter (conductedAtFrom/conductedAtTo) added. Employee columns: period, conductedAt, submission date (updatedAt), manager, rating."
-    },
-    {
-      "id": "US-023",
-      "title": "Visualizar datas de criação, realização e agendamento",
-      "description": "Como usuário, quero ver claramente as datas de criação, realização e agendamento nos detalhes e listagens de PDIs e feedbacks para ter um histórico completo e transparente.",
-      "acceptanceCriteria": [
-        "Na listagem de feedbacks: coluna 'Data de realização' visível e ordenável",
-        "Na listagem de PDIs: coluna 'Data de realização' visível e ordenável",
-        "Na página de detalhe do feedback: exibir 'Criado em', 'Realizado em' e 'Agendado para' (se aplicável)",
-        "Na página de detalhe do PDI: exibir 'Criado em' e 'Realizado em'",
-        "Filtro por período de realização (data início e data fim) nas listagens de feedbacks e PDIs",
-        "Datas formatadas no padrão brasileiro (dd/mm/aaaa)",
-        "Typecheck passa",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 23,
-      "passes": true,
-      "notes": "Added conductedAt column to both feedback and PDI tables for all user roles. Date range filter (conductedAtFrom/conductedAtTo) added to PDI table (feedback already had it). PDI actions updated with conductedAt in PDIListItem, date range filtering, and orderBy conductedAt desc. All dates formatted with toLocaleDateString('pt-BR'). Feedback detail already showed Realizado em/Agendado para/Criado em. PDI tracking already showed Realizado em/Criado em."
+      "priority": 10,
+      "passes": false,
+      "notes": ""
     }
   ]
 }
