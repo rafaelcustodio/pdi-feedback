@@ -508,3 +508,25 @@ Started: Sat Feb 28 06:24:15 PST 2026
   - The `conductedAt` field is required in the form (both for draft save and submit) as it represents when the feedback session actually happened
   - `createdAt` is passed as ISO string from server component to client form for display purposes only
 ---
+
+## 2026-02-28 20:51 - US-018
+- What was implemented: Added conductedAt (date of realization) field to PDI form, server actions, and tracking view
+  - Added `conductedAt` date picker (type="date", required) to `PDIForm` component after the Period field
+  - Added `createdAt` read-only display in edit mode showing when the PDI record was created
+  - Updated `PDIDetail` type to include `conductedAt: Date | null`
+  - Updated `getPDIById` to return `conductedAt` from the database
+  - Updated `createPDI` server action to accept, validate, and save `conductedAt`
+  - Updated `updatePDI` server action to accept, validate, and save `conductedAt`
+  - Updated `PDITracking` component to show "Realizado em" (conductedAt) before "Criado em" (createdAt) in metadata section
+  - Updated PDI detail page to pass `conductedAt` (as YYYY-MM-DD string) and `createdAt` (as ISO string) to the form
+  - Fixed updatePDI to preserve existing status (`pdi.status`) when not activating, instead of resetting to "draft"
+- Files changed:
+  - `src/app/(dashboard)/pdis/actions.ts` - Added conductedAt to PDIDetail type, getPDIById, createPDI, updatePDI
+  - `src/app/(dashboard)/pdis/[id]/page.tsx` - Pass conductedAt and createdAt to PDIForm initialData
+  - `src/components/pdi-form.tsx` - Added conductedAt date input, createdAt read-only display, updated form state and validation
+  - `src/components/pdi-tracking.tsx` - Added "Realizado em" display for conductedAt
+- **Learnings for future iterations:**
+  - Same pattern as US-017 for feedback: date picker with YYYY-MM-DD string, convert at server action boundary
+  - When preserving status on update, use `pdi.status` from the fetched record rather than hardcoding "draft"
+  - PDITracking metadata section shows "Realizado em | Criado em | Última atualização em" when conductedAt is present
+---
