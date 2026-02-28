@@ -821,3 +821,27 @@ Started: Sat Feb 28 14:20:00 PST 2026
   - Dashboard sections follow pattern: rounded-xl card with border-b header and divide-y list items
   - Status badges use inline-flex with rounded-full for pill style
 ---
+
+## 2026-02-28 - US-009
+- What was implemented:
+  - Server actions `reschedulePDI(id, newDate)` and `cancelScheduledPDI(id)` in pdis/actions.ts
+  - Server actions `rescheduleFeedback(id, newDate)` and `cancelScheduledFeedback(id)` in feedbacks/actions.ts
+  - Reschedule button with date picker modal in PDI form (pdi-form.tsx) for scheduled/draft PDIs with scheduledAt
+  - Reschedule button with date picker modal in Feedback form (feedback-form.tsx) for scheduled/draft feedbacks with scheduledAt
+  - Cancel event button with confirmation dialog in both PDI and Feedback forms
+  - Cancel logic: scheduled PDI without goals → delete record; draft PDI with goals → status='cancelled'
+  - Cancel logic: scheduled Feedback without content → delete record; draft Feedback with content → revert to draft, clear scheduledAt
+  - Notification sent to employee on reschedule or cancel (using `general` notification type)
+  - Date validation ensures new date must be future
+- Files changed:
+  - `src/app/(dashboard)/pdis/actions.ts` — Added reschedulePDI, cancelScheduledPDI server actions
+  - `src/app/(dashboard)/feedbacks/actions.ts` — Added rescheduleFeedback, cancelScheduledFeedback server actions
+  - `src/components/pdi-form.tsx` — Added reschedule/cancel buttons, modals, handlers
+  - `src/components/feedback-form.tsx` — Added reschedule/cancel event buttons, modals, handlers
+- **Learnings for future iterations:**
+  - Feedback already had `cancelScheduleFeedback` for canceling auto-submit schedule (different from calendar event cancellation); new `cancelScheduledFeedback` handles calendar event cancellation
+  - Use `general` NotificationType for reschedule/cancel notifications (avoids adding new enum values + migration)
+  - Modal pattern: fixed inset-0 z-50 with bg-black/50 backdrop, max-w-md white card — consistent across forms
+  - `CalendarX2` icon from lucide-react is ideal for cancel event actions; `Calendar` for reschedule
+  - `canRescheduleOrCancel` computed flag: mode=edit && scheduledAt exists && status is scheduled|draft
+---
