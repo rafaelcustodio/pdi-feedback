@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Save, Play, ArrowLeft, Plus, Trash2 } from "lucide-react";
+import { Save, Play, ArrowLeft, Plus, Trash2, CalendarClock } from "lucide-react";
 import Link from "next/link";
 import {
   createPDI,
@@ -18,6 +18,8 @@ interface PDIFormProps {
     employeeId: string;
     employeeName: string;
     period: string;
+    status?: string;
+    scheduledAt?: string;
     conductedAt: string;
     createdAt?: string;
     goals: {
@@ -162,6 +164,23 @@ export function PDIForm({
       {error && (
         <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
           {error}
+        </div>
+      )}
+
+      {initialData?.status === "scheduled" && initialData.scheduledAt && (
+        <div className="flex items-start gap-3 rounded-md border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
+          <CalendarClock size={20} className="mt-0.5 shrink-0 text-blue-600" />
+          <p>
+            Este PDI está agendado para{" "}
+            <strong>
+              {new Date(initialData.scheduledAt + "T00:00:00").toLocaleDateString("pt-BR", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+              })}
+            </strong>
+            . Preencha antes da reunião.
+          </p>
         </div>
       )}
 

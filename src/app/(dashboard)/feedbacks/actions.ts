@@ -412,7 +412,7 @@ export async function updateFeedback(
       improvements: data.improvements.trim() || null,
       rating: data.rating || null,
       conductedAt: conductedAtDate,
-      status: data.submit ? "submitted" : feedback.status,
+      status: data.submit ? "submitted" : (feedback.status === "scheduled" ? "draft" : feedback.status),
     },
   });
 

@@ -24,9 +24,9 @@ export default async function PDIDetailPage({
   const userId = session.user.id;
   const role = session.user.role || "employee";
 
-  // Can edit only draft PDIs, and only the creator manager or admin
+  // Can edit draft and scheduled PDIs, and only the creator manager or admin
   const canEdit =
-    pdi.status === "draft" &&
+    (pdi.status === "draft" || pdi.status === "scheduled") &&
     (role === "admin" || pdi.managerId === userId);
 
   if (canEdit) {
@@ -39,6 +39,10 @@ export default async function PDIDetailPage({
             employeeId: pdi.employeeId,
             employeeName: pdi.employeeName,
             period: pdi.period,
+            status: pdi.status,
+            scheduledAt: pdi.scheduledAt
+              ? new Date(pdi.scheduledAt).toISOString().split("T")[0]
+              : undefined,
             conductedAt: pdi.conductedAt
               ? new Date(pdi.conductedAt).toISOString().split("T")[0]
               : "",

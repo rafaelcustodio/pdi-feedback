@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Save, Send, ArrowLeft, Star, Calendar, X } from "lucide-react";
+import { Save, Send, ArrowLeft, Star, Calendar, X, CalendarClock } from "lucide-react";
 import Link from "next/link";
 import {
   createFeedback,
@@ -242,6 +242,23 @@ export function FeedbackForm({
       {error && (
         <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
           {error}
+        </div>
+      )}
+
+      {initialData?.status === "scheduled" && initialData.scheduledAt && (
+        <div className="flex items-start gap-3 rounded-md border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
+          <CalendarClock size={20} className="mt-0.5 shrink-0 text-blue-600" />
+          <p>
+            Este Feedback está agendado para{" "}
+            <strong>
+              {new Date(initialData.scheduledAt + "T00:00:00").toLocaleDateString("pt-BR", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+              })}
+            </strong>
+            . Preencha antes da reunião.
+          </p>
         </div>
       )}
 

@@ -56,6 +56,7 @@ export type PDIDetail = {
   period: string;
   status: string;
   conductedAt: Date | null;
+  scheduledAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
   employeeName: string;
@@ -217,6 +218,7 @@ export async function getPDIById(id: string): Promise<PDIDetail | null> {
     period: pdi.period,
     status: pdi.status,
     conductedAt: pdi.conductedAt,
+    scheduledAt: pdi.scheduledAt,
     createdAt: pdi.createdAt,
     updatedAt: pdi.updatedAt,
     employeeName: pdi.employee.name,
@@ -376,8 +378,8 @@ export async function updatePDI(
     return { success: false, error: "Apenas o gestor que criou este PDI pode editá-lo" };
   }
 
-  if (pdi.status !== "draft") {
-    return { success: false, error: "Apenas PDIs em rascunho podem ser editados" };
+  if (pdi.status !== "draft" && pdi.status !== "scheduled") {
+    return { success: false, error: "Apenas PDIs em rascunho ou agendados podem ser editados" };
   }
 
   if (!data.period.trim()) {
@@ -454,7 +456,7 @@ export async function updatePDI(
       data: {
         period: data.period.trim(),
         conductedAt: new Date(data.conductedAt),
-        status: data.activate ? "active" : pdi.status,
+        status: data.activate ? "active" : (pdi.status === "scheduled" ? "draft" : pdi.status),
       },
     });
   });
