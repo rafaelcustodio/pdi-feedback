@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import MicrosoftEntraID from "next-auth/providers/microsoft-entra-id";
 import { compare } from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
@@ -40,6 +41,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         };
       },
     }),
+    MicrosoftEntraID({
+      clientId: process.env.AZURE_AD_CLIENT_ID,
+      clientSecret: process.env.AZURE_AD_CLIENT_SECRET,
+      issuer: process.env.AZURE_AD_TENANT_ID
+        ? `https://login.microsoftonline.com/${process.env.AZURE_AD_TENANT_ID}/v2.0`
+        : undefined,
+    }),
   ],
   session: {
     strategy: "jwt",
@@ -59,10 +67,57 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       return isLoggedIn;
     },
-    async jwt({ token, user }) {
-      if (user) {
+    async signIn({ user, account }) {
+      if (account?.provider === "microsoft-entra-id") {
+        const email = user.email;
+        if (!email) return false;
+
+        const existingUser = await prisma.user.findUnique({
+          where: { email },
+        });
+
+        if (existingUser) {
+          // Link SSO to existing user if not already linked
+          if (!existingUser.ssoProvider) {
+            await prisma.user.update({
+              where: { id: existingUser.id },
+              data: {
+                ssoProvider: "microsoft",
+                ssoId: account.providerAccountId,
+                avatarUrl: existingUser.avatarUrl || user.image || null,
+              },
+            });
+          }
+        } else {
+          // Auto-create user on first SSO login
+          await prisma.user.create({
+            data: {
+              name: user.name || email.split("@")[0],
+              email,
+              role: "employee",
+              ssoProvider: "microsoft",
+              ssoId: account.providerAccountId,
+              avatarUrl: user.image || null,
+            },
+          });
+        }
+      }
+      return true;
+    },
+    async jwt({ token, user, account }) {
+      if (user && account?.provider === "credentials") {
         token.id = user.id;
         token.role = (user as { role?: string }).role;
+      }
+      if (account?.provider === "microsoft-entra-id") {
+        // Fetch the database user to get id and role
+        const dbUser = await prisma.user.findUnique({
+          where: { email: token.email as string },
+        });
+        if (dbUser) {
+          token.id = dbUser.id;
+          token.role = dbUser.role;
+        }
       }
       return token;
     },
