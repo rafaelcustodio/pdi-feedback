@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import { signOut } from "next-auth/react";
 import { Bell, Menu, User, LogOut } from "lucide-react";
 
 interface HeaderProps {
@@ -105,9 +106,7 @@ export function Header({
               </a>
               <button
                 className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                onClick={() => {
-                  // TODO: implement logout with NextAuth
-                }}
+                onClick={() => signOut({ callbackUrl: "/login" })}
               >
                 <LogOut size={16} />
                 Sair

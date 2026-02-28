@@ -1,23 +1,24 @@
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
 import { AppLayout } from "@/components/layout/app-layout";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // TODO: Replace with real session data from NextAuth
-  const mockUser = {
-    name: "Admin Sistema",
-    avatarUrl: null,
-    role: "admin",
-  };
+  const session = await auth();
+
+  if (!session?.user) {
+    redirect("/login");
+  }
 
   return (
     <AppLayout
-      userName={mockUser.name}
-      avatarUrl={mockUser.avatarUrl}
-      userRole={mockUser.role}
-      notificationCount={3}
+      userName={session.user.name}
+      avatarUrl={session.user.image ?? null}
+      userRole={session.user.role}
+      notificationCount={0}
     >
       {children}
     </AppLayout>

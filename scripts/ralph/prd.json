@@ -58,7 +58,7 @@
         "Typecheck passa"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "Forgot password feature deferred to later iteration"
     },
     {

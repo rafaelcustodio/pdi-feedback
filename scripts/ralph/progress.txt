@@ -15,6 +15,14 @@ Started: Sat Feb 28 06:24:15 PST 2026
 - Layout uses `(dashboard)` route group with `AppLayout` wrapper component
 - Sidebar nav items defined in `src/components/layout/sidebar.tsx` - add new routes there
 - Use `next/image` instead of `<img>` to avoid ESLint warnings
+- NextAuth v5 (next-auth@beta 5.0.0-beta.30) with `AUTH_SECRET` env var (also supports `NEXTAUTH_SECRET`)
+- Auth config at `src/lib/auth.ts` - exports `handlers`, `signIn`, `signOut`, `auth`
+- API route at `src/app/api/auth/[...nextauth]/route.ts`
+- Middleware at `src/middleware.ts` protects all routes except `/login` and `/api/auth`
+- Session provider at `src/components/providers/session-provider.tsx` wraps root layout
+- Dashboard layout uses `auth()` server-side to get session; use `session.user.role` for role checks
+- Login page at `/login` - uses `signIn("credentials", { redirect: false })` for error handling
+- Type augmentations for NextAuth in `src/types/next-auth.d.ts`
 
 ---
 
@@ -75,4 +83,37 @@ Started: Sat Feb 28 06:24:15 PST 2026
   - Route group `(dashboard)` doesn't add `/dashboard` to the URL - routes are `/dashboard`, `/colaboradores`, etc. directly
   - Mock user data in `(dashboard)/layout.tsx` - replace with NextAuth session when auth stories are implemented
   - The sidebar toggle state is client-side only (useState) - no persistence across page loads
+---
+
+## 2026-02-28 - US-002
+- What was implemented:
+  - NextAuth v5 (next-auth@beta 5.0.0-beta.30) configuration with Credentials provider
+  - Login page (`/login`) with email and password fields, loading state, and error display
+  - JWT session strategy with custom `jwt` and `session` callbacks to include `id` and `role`
+  - Middleware (`src/middleware.ts`) protecting all routes except `/login` and `/api/auth`
+  - `authorized` callback redirects authenticated users away from login page to dashboard
+  - SessionProvider wrapping root layout for client-side session access
+  - Dashboard layout updated to use `auth()` server-side session instead of mock data
+  - Header logout button wired to `signOut({ callbackUrl: "/login" })`
+  - TypeScript type augmentations for NextAuth `Session`, `User`, and `JWT` types
+- Files changed:
+  - `src/lib/auth.ts` - NextAuth configuration with Credentials provider, JWT, callbacks
+  - `src/app/api/auth/[...nextauth]/route.ts` - NextAuth API route handlers
+  - `src/app/login/page.tsx` - Login page with form, validation, error message
+  - `src/middleware.ts` - Route protection middleware
+  - `src/components/providers/session-provider.tsx` - Client-side SessionProvider wrapper
+  - `src/types/next-auth.d.ts` - Type augmentations for session/user/jwt
+  - `src/app/layout.tsx` - Added SessionProvider wrapper
+  - `src/app/(dashboard)/layout.tsx` - Replaced mock data with real auth session
+  - `src/components/layout/header.tsx` - Wired logout button to signOut
+  - `.env` - Added AUTH_SECRET and NEXTAUTH_URL
+  - `package.json` - Added next-auth dependency
+- **Learnings for future iterations:**
+  - NextAuth v5 uses `AUTH_SECRET` env var (also supports `NEXTAUTH_SECRET` for backwards compat)
+  - Credentials provider in NextAuth v5: `authorize()` receives raw credentials object, cast fields to string
+  - The `authorized` callback in NextAuth v5 replaces the old middleware pattern - it receives `{ auth, request }` and returns boolean or Response
+  - Use `signIn("credentials", { redirect: false })` client-side to handle errors without page redirect
+  - Dashboard layout is a server component that calls `auth()` directly - no need for `useSession` hook
+  - `signOut({ callbackUrl: "/login" })` redirects to login after logout
+  - bcryptjs (already installed) works with `compare()` for password verification
 ---
