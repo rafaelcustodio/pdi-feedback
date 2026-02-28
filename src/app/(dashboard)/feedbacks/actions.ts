@@ -51,7 +51,9 @@ export async function getFeedbacks(
   search: string = "",
   page: number = 1,
   pageSize: number = 10,
-  year: string = ""
+  year: string = "",
+  conductedAtFrom: string = "",
+  conductedAtTo: string = ""
 ): Promise<{
   feedbacks: FeedbackListItem[];
   total: number;
@@ -68,8 +70,8 @@ export async function getFeedbacks(
 
   const accessFilter = await getFeedbackAccessFilter(userId, role);
 
-  // For employees, also show submitted feedbacks where they are the employee
-  // (they can see feedbacks about themselves once submitted)
+  // For employees, only show submitted feedbacks where they are the employee
+  // (draft and scheduled are NOT visible to employees)
   let whereClause: Record<string, unknown>;
   if (role === "employee") {
     whereClause = {
@@ -104,6 +106,22 @@ export async function getFeedbacks(
     }
   }
 
+  // Filter by conductedAt date range
+  if (conductedAtFrom.trim()) {
+    const fromDate = new Date(conductedAtFrom.trim());
+    if (!isNaN(fromDate.getTime())) {
+      andConditions.push({ conductedAt: { gte: fromDate } });
+    }
+  }
+  if (conductedAtTo.trim()) {
+    const toDate = new Date(conductedAtTo.trim());
+    if (!isNaN(toDate.getTime())) {
+      // Set to end of day
+      toDate.setHours(23, 59, 59, 999);
+      andConditions.push({ conductedAt: { lte: toDate } });
+    }
+  }
+
   // Filter by search text
   if (search.trim()) {
     andConditions.push({
@@ -120,10 +138,16 @@ export async function getFeedbacks(
     };
   }
 
+  // Employees: order by conductedAt (most recent first), fallback to createdAt
+  // Managers/admins: order by createdAt (most recent first)
+  const orderBy = role === "employee"
+    ? [{ conductedAt: "desc" as const }, { createdAt: "desc" as const }]
+    : [{ createdAt: "desc" as const }];
+
   const [feedbacks, total] = await Promise.all([
     prisma.feedback.findMany({
       where: whereClause,
-      orderBy: { createdAt: "desc" },
+      orderBy,
       skip: (page - 1) * pageSize,
       take: pageSize,
       include: {
@@ -584,6 +608,30 @@ export async function createFutureFeedback(data: {
 
   revalidatePath("/feedbacks");
   return { success: true, id: feedback.id };
+}
+
+export async function getScheduledFeedbackCountForEmployee(): Promise<number> {
+  const session = await auth();
+  if (!session?.user?.id) return 0;
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  if (role !== "employee") return 0;
+
+  // Count feedbacks where the employee has upcoming scheduled feedbacks
+  // (either draft+scheduledAt for future fill-in, or scheduled for auto-submit)
+  const count = await prisma.feedback.count({
+    where: {
+      employeeId: userId,
+      OR: [
+        { status: "scheduled" },
+        { status: "draft", scheduledAt: { not: null } },
+      ],
+    },
+  });
+
+  return count;
 }
 
 export async function cancelScheduleFeedback(

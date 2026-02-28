@@ -13,6 +13,7 @@ import {
   Star,
   Filter,
   CalendarPlus,
+  CalendarClock,
 } from "lucide-react";
 import type {
   FeedbackListItem,
@@ -27,10 +28,13 @@ interface FeedbackTableProps {
   pageSize: number;
   search: string;
   year: string;
+  conductedAtFrom?: string;
+  conductedAtTo?: string;
   availableYears: number[];
   canCreate: boolean;
   isEmployeeView: boolean;
   subordinates?: SubordinateOption[];
+  scheduledCount?: number;
 }
 
 const statusLabels: Record<string, string> = {
@@ -46,14 +50,19 @@ export function FeedbackTable({
   pageSize,
   search: initialSearch,
   year: initialYear,
+  conductedAtFrom: initialConductedAtFrom = "",
+  conductedAtTo: initialConductedAtTo = "",
   availableYears,
   canCreate,
   isEmployeeView,
   subordinates,
+  scheduledCount = 0,
 }: FeedbackTableProps) {
   const router = useRouter();
   const [searchValue, setSearchValue] = useState(initialSearch);
   const [yearValue, setYearValue] = useState(initialYear);
+  const [conductedAtFromValue, setConductedAtFromValue] = useState(initialConductedAtFrom);
+  const [conductedAtToValue, setConductedAtToValue] = useState(initialConductedAtTo);
   const [showFutureModal, setShowFutureModal] = useState(false);
   const [futureEmployeeId, setFutureEmployeeId] = useState("");
   const [futureDate, setFutureDate] = useState("");
@@ -67,13 +76,23 @@ export function FeedbackTable({
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
-  function buildUrl(overrides: { search?: string; year?: string; page?: string }) {
+  function buildUrl(overrides: {
+    search?: string;
+    year?: string;
+    page?: string;
+    conductedAtFrom?: string;
+    conductedAtTo?: string;
+  }) {
     const params = new URLSearchParams();
     const s = overrides.search ?? searchValue;
     const y = overrides.year ?? yearValue;
     const p = overrides.page ?? "1";
+    const caFrom = overrides.conductedAtFrom ?? conductedAtFromValue;
+    const caTo = overrides.conductedAtTo ?? conductedAtToValue;
     if (s.trim()) params.set("search", s.trim());
     if (y) params.set("year", y);
+    if (caFrom) params.set("conductedAtFrom", caFrom);
+    if (caTo) params.set("conductedAtTo", caTo);
     params.set("page", p);
     return `/feedbacks?${params.toString()}`;
   }
@@ -86,6 +105,12 @@ export function FeedbackTable({
   function handleYearChange(newYear: string) {
     setYearValue(newYear);
     window.location.href = buildUrl({ year: newYear, page: "1" });
+  }
+
+  function handleConductedAtFilter(from: string, to: string) {
+    setConductedAtFromValue(from);
+    setConductedAtToValue(to);
+    window.location.href = buildUrl({ conductedAtFrom: from, conductedAtTo: to, page: "1" });
   }
 
   function goToPage(p: number) {
@@ -115,6 +140,19 @@ export function FeedbackTable({
 
   return (
     <div className="space-y-4">
+      {/* Scheduled feedbacks banner for employees */}
+      {isEmployeeView && scheduledCount > 0 && (
+        <div className="flex items-center gap-3 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3">
+          <CalendarClock size={20} className="shrink-0 text-blue-600" />
+          <p className="text-sm text-blue-800">
+            {scheduledCount === 1
+              ? "Você tem 1 feedback agendado para uma data futura."
+              : `Você tem ${scheduledCount} feedbacks agendados para datas futuras.`}
+            {" "}O conteúdo será disponibilizado quando o feedback for submetido pelo gestor.
+          </p>
+        </div>
+      )}
+
       {/* Header with search, year filter, and create button */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-1 flex-col gap-2 sm:flex-row sm:items-center">
@@ -182,6 +220,33 @@ export function FeedbackTable({
         )}
       </div>
 
+      {/* Date range filter for conductedAt */}
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-xs font-medium text-gray-500">Realizado de:</span>
+        <input
+          type="date"
+          value={conductedAtFromValue}
+          onChange={(e) => handleConductedAtFilter(e.target.value, conductedAtToValue)}
+          className="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        />
+        <span className="text-xs font-medium text-gray-500">até:</span>
+        <input
+          type="date"
+          value={conductedAtToValue}
+          onChange={(e) => handleConductedAtFilter(conductedAtFromValue, e.target.value)}
+          className="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        />
+        {(conductedAtFromValue || conductedAtToValue) && (
+          <button
+            type="button"
+            onClick={() => handleConductedAtFilter("", "")}
+            className="rounded-md px-2 py-1.5 text-xs text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+          >
+            Limpar
+          </button>
+        )}
+      </div>
+
       {/* Table */}
       <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
         <table className="min-w-full divide-y divide-gray-200">
@@ -201,9 +266,16 @@ export function FeedbackTable({
               <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 Avaliação
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                Status
-              </th>
+              {!isEmployeeView && (
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  Status
+                </th>
+              )}
+              {isEmployeeView && (
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  Data de Realização
+                </th>
+              )}
               <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 {isEmployeeView ? "Data de Submissão" : "Data"}
               </th>
@@ -246,39 +318,48 @@ export function FeedbackTable({
                       "—"
                     )}
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-sm">
-                    {fb.status === "draft" && fb.scheduledAt ? (
-                      <>
-                        <span className="inline-flex rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-700">
-                          Agendado para preenchimento
-                        </span>
-                        <span className="ml-1.5 text-xs text-indigo-600">
-                          {new Date(fb.scheduledAt).toLocaleDateString("pt-BR")}
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <span
-                          className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                            fb.status === "submitted"
-                              ? "bg-green-100 text-green-700"
-                              : fb.status === "scheduled"
-                                ? "bg-blue-100 text-blue-700"
-                                : "bg-yellow-100 text-yellow-700"
-                          }`}
-                        >
-                          {statusLabels[fb.status] ?? fb.status}
-                        </span>
-                        {fb.status === "scheduled" && fb.scheduledAt && (
-                          <span className="ml-1.5 text-xs text-blue-600">
+                  {!isEmployeeView && (
+                    <td className="whitespace-nowrap px-4 py-3 text-sm">
+                      {fb.status === "draft" && fb.scheduledAt ? (
+                        <>
+                          <span className="inline-flex rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-700">
+                            Agendado para preenchimento
+                          </span>
+                          <span className="ml-1.5 text-xs text-indigo-600">
                             {new Date(fb.scheduledAt).toLocaleDateString("pt-BR")}
                           </span>
-                        )}
-                      </>
-                    )}
-                  </td>
+                        </>
+                      ) : (
+                        <>
+                          <span
+                            className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
+                              fb.status === "submitted"
+                                ? "bg-green-100 text-green-700"
+                                : fb.status === "scheduled"
+                                  ? "bg-blue-100 text-blue-700"
+                                  : "bg-yellow-100 text-yellow-700"
+                            }`}
+                          >
+                            {statusLabels[fb.status] ?? fb.status}
+                          </span>
+                          {fb.status === "scheduled" && fb.scheduledAt && (
+                            <span className="ml-1.5 text-xs text-blue-600">
+                              {new Date(fb.scheduledAt).toLocaleDateString("pt-BR")}
+                            </span>
+                          )}
+                        </>
+                      )}
+                    </td>
+                  )}
+                  {isEmployeeView && (
+                    <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
+                      {fb.conductedAt
+                        ? new Date(fb.conductedAt).toLocaleDateString("pt-BR")
+                        : "—"}
+                    </td>
+                  )}
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
-                    {isEmployeeView && fb.status === "submitted"
+                    {isEmployeeView
                       ? new Date(fb.updatedAt).toLocaleDateString("pt-BR")
                       : new Date(fb.createdAt).toLocaleDateString("pt-BR")}
                   </td>

@@ -4,13 +4,20 @@ import {
   getFeedbacks,
   getAvailableYears,
   getSubordinatesForFeedback,
+  getScheduledFeedbackCountForEmployee,
 } from "./actions";
 import { FeedbackTable } from "@/components/feedback-table";
 
 export default async function FeedbacksPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; page?: string; year?: string }>;
+  searchParams: Promise<{
+    search?: string;
+    page?: string;
+    year?: string;
+    conductedAtFrom?: string;
+    conductedAtTo?: string;
+  }>;
 }) {
   const session = await auth();
   if (!session?.user) {
@@ -21,24 +28,28 @@ export default async function FeedbacksPage({
   const params = await searchParams;
   const search = params.search ?? "";
   const year = params.year ?? "";
+  const conductedAtFrom = params.conductedAtFrom ?? "";
+  const conductedAtTo = params.conductedAtTo ?? "";
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
 
   const canCreate = role !== "employee";
+  const isEmployeeView = role === "employee";
 
-  const [data, availableYears, subordinates] = await Promise.all([
-    getFeedbacks(search, page, 10, year),
+  const [data, availableYears, subordinates, scheduledCount] = await Promise.all([
+    getFeedbacks(search, page, 10, year, conductedAtFrom, conductedAtTo),
     getAvailableYears(),
     canCreate ? getSubordinatesForFeedback() : Promise.resolve([]),
+    isEmployeeView ? getScheduledFeedbackCountForEmployee() : Promise.resolve(0),
   ]);
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold text-gray-900">
-          {role === "employee" ? "Meus Feedbacks" : "Feedbacks"}
+          {isEmployeeView ? "Meus Feedbacks" : "Feedbacks"}
         </h1>
         <p className="mt-1 text-sm text-gray-600">
-          {role === "employee"
+          {isEmployeeView
             ? "Visualize o histórico de feedbacks recebidos."
             : "Gerencie os feedbacks dos colaboradores da sua equipe."}
         </p>
@@ -51,10 +62,13 @@ export default async function FeedbacksPage({
         pageSize={data.pageSize}
         search={search}
         year={year}
+        conductedAtFrom={conductedAtFrom}
+        conductedAtTo={conductedAtTo}
         availableYears={availableYears}
         canCreate={canCreate}
-        isEmployeeView={role === "employee"}
+        isEmployeeView={isEmployeeView}
         subordinates={subordinates}
+        scheduledCount={scheduledCount}
       />
     </div>
   );
