@@ -13,6 +13,9 @@ Started: Sat Feb 28 06:24:15 PST 2026
 - Prisma `findUnique` in while loops can cause implicit `any` - use explicit type casts for included relations
 - Prisma v7 requires driver adapters (e.g., `PrismaPg`) in PrismaClient constructor - no more `url` in schema.prisma datasource
 - Prisma model `PDI` accessed as `prisma.pDI` (camelCase), `PDIGoal` as `prisma.pDIGoal`, etc.
+- Prisma model `Feedback` accessed as `prisma.feedback` (lowercase) - unlike `PDI` which is `prisma.pDI`
+- Feedback access: employees see own submitted feedbacks, managers see subordinates, admins see all
+- Dual-button save pattern: form submit = save draft, separate button = submit with full validation
 - Prisma v7 generated client output is at `src/generated/prisma/client` - import from `@/generated/prisma/client`
 - Prisma binary engines (binaries.prisma.sh) blocked by firewall - use `PRISMA_SCHEMA_ENGINE_BINARY=/tmp/fake-schema-engine` workaround for CLI commands (validate, generate)
 - npm install requires `--no-bin-links` and `--ignore-scripts` flags due to 9p filesystem (WSL2 mount) - then install prisma separately with scripts enabled
@@ -254,4 +257,32 @@ Started: Sat Feb 28 06:24:15 PST 2026
   - `PDISchedule` and `FeedbackSchedule` have `nextDueDate` for upcoming items; `PDIGoal.dueDate` for goal-level deadlines
   - Combine multiple upcoming item sources (goals, PDI schedules, feedback schedules) into a single sorted list with a union type
   - Dashboard is a server component - no need for client-side state or `useEffect` for data fetching
+---
+
+## 2026-02-28 - US-008
+- What was implemented:
+  - Server actions for feedback CRUD (`getFeedbacks`, `getFeedbackById`, `getSubordinatesForFeedback`, `createFeedback`, `updateFeedback`) with access control
+  - Feedback list page (`/feedbacks`) with search, pagination, status badges, and role-aware create button
+  - Create feedback page (`/feedbacks/novo`) with employee dropdown (subordinates only), period, star rating (1-5), strengths, improvements, content fields
+  - Edit feedback page (`/feedbacks/[id]`) - shows edit form for draft feedbacks (manager/admin only), read-only view for submitted feedbacks
+  - Star rating component with hover effects
+  - Dual save actions: "Salvar Rascunho" (saves as draft) and "Submeter Feedback" (validates all fields, sets status to submitted)
+  - Read-only view component (`FeedbackReadOnly`) for submitted feedbacks visible to employee
+  - Access control: managers see subordinate feedbacks, employees see own submitted feedbacks, admins see all
+- Files changed:
+  - `src/app/(dashboard)/feedbacks/actions.ts` - Server actions for feedback CRUD with access control
+  - `src/app/(dashboard)/feedbacks/page.tsx` - Updated from placeholder to full list page with search/pagination
+  - `src/app/(dashboard)/feedbacks/novo/page.tsx` - Create feedback page (managers/admins only)
+  - `src/app/(dashboard)/feedbacks/[id]/page.tsx` - View/edit feedback detail page
+  - `src/components/feedback-form.tsx` - Client component: create/edit form with star rating, dual save buttons
+  - `src/components/feedback-table.tsx` - Client component: feedback list table with search and pagination
+  - `src/components/feedback-read-only.tsx` - Client component: read-only feedback display
+- **Learnings for future iterations:**
+  - Prisma model `Feedback` accessed as `prisma.feedback` (lowercase, unlike `PDI` → `prisma.pDI`)
+  - Employee access to feedbacks: employees see feedbacks where `employeeId === userId AND status === "submitted"` - draft feedbacks are only visible to the creating manager
+  - Feedback edit permission: only the manager who created the feedback (`managerId === userId`) or an admin can edit, and only while status is "draft"
+  - Star rating component: use `onMouseEnter`/`onMouseLeave` for hover state, separate `hover` and `value` state for preview effect
+  - Dual-button save pattern: default form submit saves as draft, separate button calls `handleSave(true)` for submission with full validation
+  - The `submit` flag in `createFeedback`/`updateFeedback` triggers server-side validation of all required fields
+  - `getSubordinatesForFeedback()` reuses `getAccessibleEmployeeIds` to list valid employee targets, excluding self
 ---
