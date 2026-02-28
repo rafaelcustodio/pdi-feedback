@@ -8,6 +8,8 @@ import {
   AlertTriangle,
   Calendar,
   ArrowRight,
+  CalendarClock,
+  Clock,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -100,6 +102,76 @@ export default async function DashboardPage() {
             </p>
           )}
         </div>
+      </div>
+
+      {/* Upcoming Scheduled Events */}
+      <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+        <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
+          <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-900">
+            <CalendarClock size={20} />
+            Próximos Eventos
+          </h2>
+          <Link
+            href="/calendario"
+            className="text-sm font-medium text-blue-600 hover:text-blue-700"
+          >
+            Ver calendário completo
+          </Link>
+        </div>
+        {data.upcomingScheduledEvents.length === 0 ? (
+          <div className="px-6 py-8 text-center text-gray-500">
+            Nenhum evento agendado encontrado.
+          </div>
+        ) : (
+          <ul className="divide-y divide-gray-100">
+            {data.upcomingScheduledEvents.map((event) => (
+              <li key={`${event.type}-${event.id}`}>
+                <Link
+                  href={event.href}
+                  className="flex items-center justify-between px-6 py-4 transition-colors hover:bg-gray-50"
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`flex h-8 w-8 items-center justify-center rounded-lg ${
+                        event.type === "pdi"
+                          ? "bg-blue-50 text-blue-600"
+                          : "bg-green-50 text-green-600"
+                      }`}
+                    >
+                      {event.type === "pdi" ? (
+                        <ClipboardList size={16} />
+                      ) : (
+                        <MessageSquare size={16} />
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">
+                        {event.type === "pdi" ? "PDI" : "Feedback"} —{" "}
+                        {event.employeeName}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {formatDate(event.scheduledAt)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {event.status === "scheduled" ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700">
+                        <Clock size={12} />
+                        Não preparado
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">
+                        Rascunho
+                      </span>
+                    )}
+                    <ArrowRight size={16} className="text-gray-400" />
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {/* Upcoming Items */}

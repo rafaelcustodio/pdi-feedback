@@ -15,6 +15,7 @@ export type DashboardData = {
   feedbacksPending: number;
   feedbacksOverdue: number;
   upcomingItems: UpcomingItem[];
+  upcomingScheduledEvents: ScheduledEvent[];
 };
 
 export type UpcomingItem = {
@@ -23,6 +24,15 @@ export type UpcomingItem = {
   title: string;
   employeeName: string;
   dueDate: Date;
+  href: string;
+};
+
+export type ScheduledEvent = {
+  id: string;
+  type: "pdi" | "feedback";
+  employeeName: string;
+  scheduledAt: Date;
+  status: string;
   href: string;
 };
 
@@ -180,6 +190,62 @@ export async function getDashboardData(): Promise<DashboardData | null> {
   items.sort((a, b) => a.dueDate.getTime() - b.dueDate.getTime());
   const upcomingItems = items.slice(0, 5);
 
+  // 5. Upcoming scheduled events (next 7 PDIs/Feedbacks ordered by scheduledAt)
+  const scheduledPdis = await prisma.pDI.findMany({
+    where: {
+      ...pdiFilter,
+      scheduledAt: { gte: now },
+      status: { in: ["scheduled", "draft"] },
+    },
+    orderBy: { scheduledAt: "asc" },
+    take: 7,
+    include: {
+      employee: { select: { name: true } },
+    },
+  });
+
+  const scheduledFeedbacks = await prisma.feedback.findMany({
+    where: {
+      ...feedbackFilter,
+      scheduledAt: { gte: now },
+      status: { in: ["scheduled", "draft"] },
+    },
+    orderBy: { scheduledAt: "asc" },
+    take: 7,
+    include: {
+      employee: { select: { name: true } },
+    },
+  });
+
+  const scheduledEvents: ScheduledEvent[] = [];
+
+  for (const pdi of scheduledPdis) {
+    scheduledEvents.push({
+      id: pdi.id,
+      type: "pdi",
+      employeeName: pdi.employee.name,
+      scheduledAt: pdi.scheduledAt!,
+      status: pdi.status,
+      href: `/pdis/${pdi.id}`,
+    });
+  }
+
+  for (const fb of scheduledFeedbacks) {
+    scheduledEvents.push({
+      id: fb.id,
+      type: "feedback",
+      employeeName: fb.employee.name,
+      scheduledAt: fb.scheduledAt!,
+      status: fb.status,
+      href: `/feedbacks/${fb.id}`,
+    });
+  }
+
+  scheduledEvents.sort(
+    (a, b) => a.scheduledAt.getTime() - b.scheduledAt.getTime()
+  );
+  const upcomingScheduledEvents = scheduledEvents.slice(0, 7);
+
   return {
     subordinateCount,
     pdisPending: pendingPdis,
@@ -187,5 +253,6 @@ export async function getDashboardData(): Promise<DashboardData | null> {
     feedbacksPending: pendingFeedbacks,
     feedbacksOverdue: overdueFeedbackSchedules,
     upcomingItems,
+    upcomingScheduledEvents,
   };
 }
