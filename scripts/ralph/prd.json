@@ -74,8 +74,8 @@
         "Typecheck passa"
       ],
       "priority": 4,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "MicrosoftEntraID provider uses `issuer` URL (not `tenantId`). Set AZURE_AD_TENANT_ID to restrict to org, or leave empty for common endpoint."
     },
     {
       "id": "US-004",

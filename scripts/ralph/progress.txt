@@ -16,6 +16,8 @@ Started: Sat Feb 28 06:24:15 PST 2026
 - Sidebar nav items defined in `src/components/layout/sidebar.tsx` - add new routes there
 - Use `next/image` instead of `<img>` to avoid ESLint warnings
 - NextAuth v5 (next-auth@beta 5.0.0-beta.30) with `AUTH_SECRET` env var (also supports `NEXTAUTH_SECRET`)
+- MicrosoftEntraID provider uses `issuer` URL not `tenantId` - format: `https://login.microsoftonline.com/{tenantId}/v2.0`
+- SSO provider string in NextAuth callbacks is `"microsoft-entra-id"` (the provider id)
 - Auth config at `src/lib/auth.ts` - exports `handlers`, `signIn`, `signOut`, `auth`
 - API route at `src/app/api/auth/[...nextauth]/route.ts`
 - Middleware at `src/middleware.ts` protects all routes except `/login` and `/api/auth`
@@ -116,4 +118,26 @@ Started: Sat Feb 28 06:24:15 PST 2026
   - Dashboard layout is a server component that calls `auth()` directly - no need for `useSession` hook
   - `signOut({ callbackUrl: "/login" })` redirects to login after logout
   - bcryptjs (already installed) works with `compare()` for password verification
+---
+
+## 2026-02-28 - US-003
+- What was implemented:
+  - Added MicrosoftEntraID (Azure AD) provider to NextAuth config
+  - "Entrar com Microsoft" button on login page with Microsoft logo SVG and loading state
+  - `signIn` callback: auto-creates user in DB on first SSO login if email doesn't exist
+  - `signIn` callback: links SSO provider to existing user if email already exists but no SSO linked
+  - Updated `jwt` callback to fetch DB user (id, role) for SSO logins
+  - Login page visual separator ("ou") between credential and SSO login
+  - Environment variables for Azure AD (AZURE_AD_CLIENT_ID, AZURE_AD_CLIENT_SECRET, AZURE_AD_TENANT_ID)
+- Files changed:
+  - `src/lib/auth.ts` - Added MicrosoftEntraID provider, signIn callback, updated jwt callback
+  - `src/app/login/page.tsx` - Added "Entrar com Microsoft" SSO button with divider
+  - `.env.example` - Updated Azure AD SSO variable comments
+  - `.env` - Added Azure AD placeholder variables
+- **Learnings for future iterations:**
+  - MicrosoftEntraID provider does NOT accept `tenantId` directly - use `issuer` URL: `https://login.microsoftonline.com/{tenantId}/v2.0`
+  - The provider id string in callbacks is `"microsoft-entra-id"` (matches the import module name)
+  - SSO `signIn` callback runs before `jwt` callback - create/link user in signIn, then fetch in jwt
+  - `signIn("microsoft-entra-id", { callbackUrl: "/dashboard" })` triggers full redirect (not `redirect: false` like credentials)
+  - New SSO users get `role: "employee"` by default - admin must change role manually
 ---
