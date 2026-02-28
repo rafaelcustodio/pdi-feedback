@@ -42,7 +42,7 @@
         "Typecheck passa"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "Layout base needs to be in place before other UI stories"
     },
     {

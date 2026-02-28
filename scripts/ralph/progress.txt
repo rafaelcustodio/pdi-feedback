@@ -10,8 +10,11 @@ Started: Sat Feb 28 06:24:15 PST 2026
 - TypeScript: `node node_modules/typescript/bin/tsc --noEmit` (no npx bin links)
 - ESLint: `node node_modules/eslint/bin/eslint.js`
 - Prisma CLI: `PRISMA_SCHEMA_ENGINE_BINARY=/tmp/fake-schema-engine node node_modules/prisma/build/index.js <command>`
-- Project uses Next.js 16 App Router + Tailwind CSS v4 + shadcn/ui (to be installed)
+- Project uses Next.js 16 App Router + Tailwind CSS v4 + lucide-react for icons
 - Portuguese (pt-BR) language for UI labels and content
+- Layout uses `(dashboard)` route group with `AppLayout` wrapper component
+- Sidebar nav items defined in `src/components/layout/sidebar.tsx` - add new routes there
+- Use `next/image` instead of `<img>` to avoid ESLint warnings
 
 ---
 
@@ -37,4 +40,39 @@ Started: Sat Feb 28 06:24:15 PST 2026
   - The 9p filesystem mount doesn't support chmod/symlinks, affecting npm bin links and prisma engine downloads
   - Use `touch /tmp/fake-schema-engine && chmod +x /tmp/fake-schema-engine` before running Prisma CLI
   - Migration generation and database seeding require a running PostgreSQL instance
+---
+
+## 2026-02-28 - US-015
+- What was implemented:
+  - Collapsible sidebar with navigation items: Dashboard, Colaboradores, PDIs, Feedbacks, Notificações, Configurações (admin only)
+  - Fixed header with mobile hamburger menu, notification bell with badge, user avatar with initials fallback, dropdown menu (Meu Perfil, Sair)
+  - Active menu item highlighting based on current pathname
+  - Responsive design: sidebar hidden on mobile with overlay hamburger menu, visible on lg+ screens
+  - Light corporate theme via Tailwind CSS (gray-50 background, blue-700 active states)
+  - Root page redirects to /dashboard
+  - Route group `(dashboard)` with shared layout wrapping all authenticated pages
+  - Placeholder pages for all navigation targets
+- Files changed:
+  - `src/components/layout/sidebar.tsx` - Collapsible sidebar with nav items
+  - `src/components/layout/header.tsx` - Fixed header with user menu and notifications
+  - `src/components/layout/app-layout.tsx` - Main layout wrapper composing sidebar + header
+  - `src/components/layout/mobile-sidebar-overlay.tsx` - Mobile overlay for sidebar
+  - `src/app/(dashboard)/layout.tsx` - Dashboard route group layout
+  - `src/app/(dashboard)/dashboard/page.tsx` - Dashboard placeholder
+  - `src/app/(dashboard)/colaboradores/page.tsx` - Colaboradores placeholder
+  - `src/app/(dashboard)/pdis/page.tsx` - PDIs placeholder
+  - `src/app/(dashboard)/feedbacks/page.tsx` - Feedbacks placeholder
+  - `src/app/(dashboard)/notificacoes/page.tsx` - Notificações placeholder
+  - `src/app/(dashboard)/configuracoes/page.tsx` - Configurações placeholder
+  - `src/app/(dashboard)/perfil/page.tsx` - Perfil placeholder
+  - `src/app/page.tsx` - Redirect to /dashboard
+  - `src/app/layout.tsx` - Updated metadata and lang to pt-BR
+  - `src/app/globals.css` - Light corporate theme
+  - `package.json` - Added lucide-react dependency
+- **Learnings for future iterations:**
+  - Tailwind CSS v4 uses `@theme inline` block for CSS variables, not `theme.extend` in config
+  - Use `next/image` Image component instead of `<img>` tag for avatars to avoid ESLint no-img-element warning
+  - Route group `(dashboard)` doesn't add `/dashboard` to the URL - routes are `/dashboard`, `/colaboradores`, etc. directly
+  - Mock user data in `(dashboard)/layout.tsx` - replace with NextAuth session when auth stories are implemented
+  - The sidebar toggle state is client-side only (useState) - no persistence across page loads
 ---
