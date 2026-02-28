@@ -1,0 +1,156 @@
+"use server";
+
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { getAccessibleEmployeeIds } from "@/lib/access-control";
+
+export type CalendarEvent = {
+  id: string;
+  type: "pdi" | "feedback";
+  employeeName: string;
+  scheduledAt: Date;
+  status: string;
+  href: string;
+};
+
+export type CalendarFilters = {
+  organizationalUnitId?: string;
+  tipo?: "pdi" | "feedback" | "all";
+};
+
+/**
+ * Fetch calendar events (PDIs and Feedbacks) for a given month/year.
+ * Respects access control and supports optional filters.
+ */
+export async function getCalendarEvents(
+  month: number,
+  year: number,
+  filters?: CalendarFilters
+): Promise<CalendarEvent[]> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return [];
+  }
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  // Build date range for the requested month
+  const startOfMonth = new Date(year, month - 1, 1);
+  const endOfMonth = new Date(year, month, 0, 23, 59, 59, 999);
+
+  // Determine accessible employee IDs
+  let accessibleIds = await getAccessibleEmployeeIds(userId, role);
+
+  // If filtering by organizational unit, intersect with employees in that unit
+  if (filters?.organizationalUnitId) {
+    const hierarchies = await prisma.employeeHierarchy.findMany({
+      where: {
+        organizationalUnitId: filters.organizationalUnitId,
+        endDate: null,
+      },
+      select: { employeeId: true },
+    });
+    const unitEmployeeIds = hierarchies.map((h) => h.employeeId);
+
+    if (accessibleIds === "all") {
+      accessibleIds = unitEmployeeIds;
+    } else {
+      const accessibleSet = new Set(accessibleIds);
+      accessibleIds = unitEmployeeIds.filter((id) => accessibleSet.has(id));
+    }
+
+    // No accessible employees in this unit
+    if (accessibleIds.length === 0) return [];
+  }
+
+  // Build employee filter for Prisma queries
+  const employeeFilter =
+    accessibleIds === "all" ? {} : { employeeId: { in: accessibleIds } };
+
+  const tipo = filters?.tipo || "all";
+  const events: CalendarEvent[] = [];
+
+  // Fetch PDI events
+  if (tipo === "all" || tipo === "pdi") {
+    // Employees don't see scheduled PDIs (system-generated placeholders)
+    const pdiStatusFilter =
+      role === "employee"
+        ? { status: { notIn: ["scheduled" as const] } }
+        : {};
+
+    const pdis = await prisma.pDI.findMany({
+      where: {
+        ...employeeFilter,
+        ...pdiStatusFilter,
+        OR: [
+          { scheduledAt: { gte: startOfMonth, lte: endOfMonth } },
+          {
+            scheduledAt: null,
+            conductedAt: { gte: startOfMonth, lte: endOfMonth },
+          },
+        ],
+      },
+      include: {
+        employee: { select: { name: true } },
+      },
+      orderBy: { scheduledAt: "asc" },
+    });
+
+    for (const pdi of pdis) {
+      events.push({
+        id: pdi.id,
+        type: "pdi",
+        employeeName: pdi.employee.name,
+        scheduledAt: pdi.scheduledAt ?? pdi.conductedAt!,
+        status: pdi.status,
+        href: `/pdis/${pdi.id}`,
+      });
+    }
+  }
+
+  // Fetch Feedback events
+  if (tipo === "all" || tipo === "feedback") {
+    // Employees don't see scheduled or draft feedbacks
+    const feedbackStatusFilter =
+      role === "employee"
+        ? { status: "submitted" as const }
+        : {};
+
+    const feedbacks = await prisma.feedback.findMany({
+      where: {
+        ...employeeFilter,
+        ...feedbackStatusFilter,
+        OR: [
+          { scheduledAt: { gte: startOfMonth, lte: endOfMonth } },
+          {
+            scheduledAt: null,
+            conductedAt: { gte: startOfMonth, lte: endOfMonth },
+          },
+        ],
+      },
+      include: {
+        employee: { select: { name: true } },
+      },
+      orderBy: { scheduledAt: "asc" },
+    });
+
+    for (const fb of feedbacks) {
+      events.push({
+        id: fb.id,
+        type: "feedback",
+        employeeName: fb.employee.name,
+        scheduledAt: fb.scheduledAt ?? fb.conductedAt!,
+        status: fb.status,
+        href: `/feedbacks/${fb.id}`,
+      });
+    }
+  }
+
+  // Sort all events by date
+  events.sort(
+    (a, b) => new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime()
+  );
+
+  return events;
+}
