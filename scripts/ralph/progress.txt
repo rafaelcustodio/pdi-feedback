@@ -750,3 +750,26 @@ Started: Sat Feb 28 14:20:00 PST 2026
   - CalendarView already uses useSearchParams() to preserve params during month navigation - new filter params are automatically preserved
   - getAccessibleEmployeeIds() can return "all" string for admins - handle this case before array operations
 ---
+
+## 2026-02-28 14:48 - US-006
+- Implemented scheduled → draft status transition for both PDI and Feedback
+- PDI detail page now shows editable form for scheduled PDIs (same as drafts)
+- Feedback detail page already handled scheduled status — no changes needed
+- Added informational banner on both PDI and Feedback forms when status is "scheduled" with formatted date
+- Updated `updatePDI` server action: allows editing scheduled PDIs, transitions to draft on save
+- Updated `updateFeedback` server action: transitions scheduled → draft on save (non-submit)
+- Added `scheduledAt` to `PDIDetail` type and `getPDIById` return
+- Added `status` and `scheduledAt` to PDI form `initialData` interface
+- Files changed:
+  - src/app/(dashboard)/pdis/[id]/page.tsx (canEdit includes scheduled, pass status/scheduledAt to form)
+  - src/app/(dashboard)/pdis/actions.ts (PDIDetail type + getPDIById + updatePDI scheduled support)
+  - src/app/(dashboard)/feedbacks/actions.ts (updateFeedback scheduled → draft on save)
+  - src/components/pdi-form.tsx (banner + CalendarClock icon + initialData interface)
+  - src/components/feedback-form.tsx (banner + CalendarClock icon)
+- **Learnings for future iterations:**
+  - Feedback already had full scheduled status support (detail page, form buttons, cancel schedule action). PDI was the main gap.
+  - The status transition pattern: when saving (not activating/submitting), check if current status is "scheduled" and change to "draft"
+  - Use `CalendarClock` icon from lucide-react for scheduled event banners
+  - Date parsing for display: append `T00:00:00` to date-only strings to avoid timezone offset issues in `toLocaleDateString`
+  - PDI form didn't have status/scheduledAt in its interface — needed to add both for the banner to work
+---
