@@ -239,8 +239,8 @@
         "Typecheck passa"
       ],
       "priority": 14,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Notification dropdown in header with optimistic mark-as-read. Full notifications page with filter tabs (all/unread/read) and pagination. Auto-generates notifications for schedules due within 7 days and overdue PDI goals/schedules/feedback schedules. Uses messageKey pattern for idempotent notification creation."
     },
     {
       "id": "US-014",

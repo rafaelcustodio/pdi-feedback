@@ -24,6 +24,10 @@ Started: Sat Feb 28 06:24:15 PST 2026
 - Schedule recalculation: use `recalculatePDISchedule`/`recalculateFeedbackSchedule` from `src/lib/schedule-utils.ts` after completion/submission
 - PDISchedule/FeedbackSchedule: `prisma.pDISchedule` and `prisma.feedbackSchedule` - one active schedule per employee (isActive=true)
 - Competencies for PDI goals: predefined list in pdi-form.tsx (Liderança, Comunicação, etc.) - stored as string in DB
+- Notification model accessed as `prisma.notification` (lowercase) - similar to `prisma.feedback`
+- Notification deduplication: embed messageKey `[type_id_date]` in message, check `{ contains: messageKey }` before creating
+- Avoid `setState` in `useEffect` for prop syncing - ESLint `react-hooks/set-state-in-effect` rule - use `useMemo` with derived state instead
+- PDIGoal.dueDate is nullable (`DateTime?`) - always guard with null check or `{ not: null }` in Prisma where
 - Prisma v7 generated client output is at `src/generated/prisma/client` - import from `@/generated/prisma/client`
 - Prisma binary engines (binaries.prisma.sh) blocked by firewall - use `PRISMA_SCHEMA_ENGINE_BINARY=/tmp/fake-schema-engine` workaround for CLI commands (validate, generate)
 - npm install requires `--no-bin-links` and `--ignore-scripts` flags due to 9p filesystem (WSL2 mount) - then install prisma separately with scripts enabled
@@ -389,4 +393,30 @@ Started: Sat Feb 28 06:24:15 PST 2026
   - Auto-completion: after `updateGoalStatus`, check if ALL goals are completed; if so, set PDI status to "completed" and recalculate
   - The `checkAndCompletePDI` function reads all goals after the update to check completion - uses the updated goalId's new status directly to avoid race condition with the just-updated record
   - Schedule section is a separate component from EmployeeForm - decoupled save actions (employee data vs schedule data)
+---
+
+## 2026-02-28 - US-013
+- What was implemented:
+  - Server actions for notification management: `getNotifications` (paginated), `getRecentNotifications` (for header dropdown), `getUnreadNotificationCount`, `markNotificationAsRead`, `markAllNotificationsAsRead`, `generateScheduleNotifications`
+  - `NotificationDropdown` client component replacing the static bell icon in the header - shows last 10 notifications with mark-as-read and mark-all-as-read buttons, optimistic UI updates using `useMemo` + derived state from `readIds` Set
+  - Full notifications page (`/notificacoes`) with filter tabs (Todas/Não lidas/Lidas), paginated list, mark-as-read per item, and bulk mark-all-as-read
+  - `NotificationTable` client component with type badges (PDI=blue, Feedback=purple, Geral=gray), unread highlight, timestamps, pagination
+  - Automatic notification generation on page visit: checks PDISchedule, FeedbackSchedule, and PDIGoal due dates within 7 days or overdue
+  - Idempotent notification creation using `messageKey` pattern embedded in message text to prevent duplicates
+  - Dashboard layout now fetches real `unreadNotificationCount` and `recentNotifications` from DB and passes to `AppLayout`
+- Files changed:
+  - `src/app/(dashboard)/notificacoes/actions.ts` - New: all notification server actions
+  - `src/app/(dashboard)/notificacoes/page.tsx` - Updated from placeholder to full notification page with filters and pagination
+  - `src/components/notification-dropdown.tsx` - New: header notification dropdown with optimistic UI
+  - `src/components/notification-table.tsx` - New: notification list with filters and pagination
+  - `src/components/layout/header.tsx` - Replaced static bell link with NotificationDropdown component
+  - `src/components/layout/app-layout.tsx` - Added recentNotifications prop passthrough
+  - `src/app/(dashboard)/layout.tsx` - Fetches real notification count and recent notifications from DB
+- **Learnings for future iterations:**
+  - ESLint `react-hooks/set-state-in-effect` rule: avoid `setState` in `useEffect` for prop syncing - use `useMemo` with derived state instead
+  - Optimistic UI in client components: track local changes (e.g., `readIds` Set) separately from server props, derive the combined view with `useMemo`
+  - PDIGoal.dueDate is nullable (`DateTime?`) - always guard with `if (!goal.dueDate) continue` or `{ not: null }` in Prisma where
+  - Notification deduplication: embed a unique messageKey in the message text (e.g., `[pdi_schedule_{id}_{date}]`) and check with `{ contains: messageKey }` before creating
+  - `generateScheduleNotifications` runs on notification page visit as a lightweight trigger - for production, this should be a cron job
+  - Notification messages strip the messageKey from display using `message.replace(/\s*\[.*?\]\s*$/, "")`
 ---
