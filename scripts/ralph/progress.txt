@@ -845,3 +845,24 @@ Started: Sat Feb 28 14:20:00 PST 2026
   - `CalendarX2` icon from lucide-react is ideal for cancel event actions; `Calendar` for reschedule
   - `canRescheduleOrCancel` computed flag: mode=edit && scheduledAt exists && status is scheduled|draft
 ---
+
+## 2026-02-28 - US-010
+- What was implemented:
+  - Created `/api/cron/generate-events` endpoint for weekly calendar maintenance
+  - Processes all active PDISchedule and FeedbackSchedule records
+  - For each schedule, checks existing future `scheduled` records and fills gaps up to 12-month horizon
+  - Uses year-month key deduplication to avoid creating duplicate records for the same period
+  - Updates `nextDueDate` on each schedule to the earliest future scheduled record
+  - Skips inactive employees (isActive=false)
+  - Per-schedule try/catch for partial success — errors logged individually
+  - Returns JSON summary: `{ generated, checked, errors }`
+  - Protected by CRON_SECRET Bearer token (same pattern as existing cron routes)
+  - No middleware update needed — `/api/cron` path is already excluded from auth
+- Files changed:
+  - `src/app/api/cron/generate-events/route.ts` — New cron endpoint
+- **Learnings for future iterations:**
+  - Middleware already excludes all `/api/cron` paths via regex negative lookahead — no need to add new patterns
+  - For gap-filling (vs full regeneration), query existing future records and use Set of `year-month` keys to skip existing dates
+  - `generateScheduledEvents` in schedule-utils.ts does full delete+recreate; cron job takes gentler approach filling only gaps
+  - Inactive employees should be skipped in cron maintenance to avoid generating events for departed employees
+---
