@@ -730,3 +730,23 @@ Started: Sat Feb 28 14:20:00 PST 2026
   - Expand/collapse pattern for overflow events uses local state (`expandedDay`)
   - `useSearchParams()` in client component preserves existing URL params when navigating months
 ---
+
+## 2026-02-28 - US-005
+- What was implemented:
+  - CalendarFilters client component with Setor (OrganizationalUnit) and Tipo (PDI/Feedback/All) dropdowns
+  - getCalendarOrgUnits() server action that returns org units accessible to the current user (admin: all, manager/employee: units of their accessible employees)
+  - Filters applied via URL search params (?setor=xxx&tipo=pdi) for shareable links
+  - Event count displayed next to filters (e.g., "12 eventos em Março/2026")
+  - Filters persist across month navigation (URL params preserved by existing searchParams pattern)
+  - Page fetches events and org units in parallel using Promise.all
+- Files changed:
+  - `src/app/(dashboard)/calendario/actions.ts` - Added getCalendarOrgUnits() server action
+  - `src/app/(dashboard)/calendario/page.tsx` - Integrated CalendarFilters component, parallel data fetching
+  - `src/components/calendar-filters.tsx` - New client component with filter dropdowns and event count
+- **Learnings for future iterations:**
+  - EmployeeHierarchy.organizationalUnitId is required (not nullable) - don't use `{ not: null }` filter
+  - Use `include` with `select` to get related model fields from Prisma (not just `select` at top level for relations)
+  - `distinct: ["organizationalUnitId"]` in Prisma findMany helps deduplicate at DB level
+  - CalendarView already uses useSearchParams() to preserve params during month navigation - new filter params are automatically preserved
+  - getAccessibleEmployeeIds() can return "all" string for admins - handle this case before array operations
+---
