@@ -773,3 +773,51 @@ Started: Sat Feb 28 14:20:00 PST 2026
   - Date parsing for display: append `T00:00:00` to date-only strings to avoid timezone offset issues in `toLocaleDateString`
   - PDI form didn't have status/scheduledAt in its interface — needed to add both for the banner to work
 ---
+
+## 2026-02-28 - US-007
+- What was implemented:
+  - Updated PDI listing to include `scheduled` status for managers/admins
+  - Updated Feedback listing to include `scheduled` status filter dropdown for managers/admins
+  - Added `scheduledAt` field to `PDIListItem` type and mapped it in `getPDIs`
+  - Added status filter parameter to both `getPDIs` and `getFeedbacks` server actions
+  - Employees are excluded from seeing `scheduled` PDIs (added `status: { not: "scheduled" }` filter)
+  - Added `scheduled: "Agendado"` to PDI statusLabels/statusColors with gray badge
+  - Added "Data Agendada" column to PDI table showing `scheduledAt` date
+  - Added status filter dropdown to both PDI and Feedback tables (via URL search params `?status=xxx`)
+  - Updated PDI table to show pencil (edit) icon for both `draft` and `scheduled` status PDIs
+  - Updated ordering in PDI listing to include `scheduledAt` desc
+  - Passed `isEmployeeView` and `statusFilter` props from pages to table components
+- Files changed:
+  - `src/app/(dashboard)/pdis/actions.ts` - Added `scheduledAt` to PDIListItem, status filter param, employee exclusion
+  - `src/app/(dashboard)/pdis/page.tsx` - Added status search param, pass statusFilter and isEmployeeView to table
+  - `src/components/pdi-table.tsx` - Added scheduled status labels/colors, scheduledAt column, status filter dropdown
+  - `src/app/(dashboard)/feedbacks/actions.ts` - Added statusFilter param to getFeedbacks
+  - `src/app/(dashboard)/feedbacks/page.tsx` - Added status search param, pass statusFilter to table
+  - `src/components/feedback-table.tsx` - Added statusFilter prop, status filter dropdown for managers/admins
+- **Learnings for future iterations:**
+  - PDI table was missing `scheduled` in statusLabels/statusColors (unlike feedback-table which already had it)
+  - Feedback table already had `scheduled: "Agendado"` in statusLabels from a prior story
+  - URL search params pattern (`?status=xxx`) is the standard way to persist filters across page navigation
+  - Both tables follow same filter pattern: state + buildUrl() + handleXFilter() + select dropdown
+  - When adding status filter, also update the `buildUrl` function to include the new param
+---
+
+## 2026-02-28 - US-008
+- What was implemented:
+  - Added `ScheduledEvent` type and `upcomingScheduledEvents` field to `DashboardData`
+  - Updated `getDashboardData()` to query PDIs and Feedbacks with future `scheduledAt` and status `scheduled` or `draft`, sorted by date, limited to 7 items
+  - Added "Próximos Eventos" section to dashboard page with CalendarClock icon
+  - Each event shows type icon (PDI blue / Feedback green), employee name, scheduled date, and status badge
+  - Events with status "scheduled" (not prepared) show amber "Não preparado" badge with Clock icon
+  - Events with status "draft" show gray "Rascunho" badge
+  - "Ver calendário completo" link to /calendario in section header
+  - Existing cards (subordinados, PDIs pendentes, feedbacks pendentes) and "Próximos Vencimentos" section preserved
+- Files changed:
+  - `src/app/(dashboard)/dashboard/actions.ts` — added ScheduledEvent type, upcomingScheduledEvents query
+  - `src/app/(dashboard)/dashboard/page.tsx` — added Próximos Eventos section with status badges
+- **Learnings for future iterations:**
+  - Dashboard actions use `getPDIAccessFilter()` and `getFeedbackAccessFilter()` for access-controlled queries — these work with spread operator in Prisma where clause
+  - The `CalendarClock` and `Clock` icons from lucide-react are good for scheduled event contexts
+  - Dashboard sections follow pattern: rounded-xl card with border-b header and divide-y list items
+  - Status badges use inline-flex with rounded-full for pill style
+---
