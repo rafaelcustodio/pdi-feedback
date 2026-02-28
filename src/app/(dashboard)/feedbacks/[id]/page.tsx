@@ -47,6 +47,10 @@ export default async function FeedbackDetailPage({
               ? new Date(feedback.conductedAt).toISOString().split("T")[0]
               : "",
             createdAt: new Date(feedback.createdAt).toISOString(),
+            status: feedback.status,
+            scheduledAt: feedback.scheduledAt
+              ? new Date(feedback.scheduledAt).toISOString().split("T")[0]
+              : undefined,
           }}
         />
       </div>

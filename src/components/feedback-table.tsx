@@ -208,6 +208,11 @@ export function FeedbackTable({
                     >
                       {statusLabels[fb.status] ?? fb.status}
                     </span>
+                    {fb.status === "scheduled" && fb.scheduledAt && (
+                      <span className="ml-1.5 text-xs text-blue-600">
+                        {new Date(fb.scheduledAt).toLocaleDateString("pt-BR")}
+                      </span>
+                    )}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
                     {isEmployeeView && fb.status === "submitted"

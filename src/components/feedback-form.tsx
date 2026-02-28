@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Save, Send, ArrowLeft, Star } from "lucide-react";
+import { Save, Send, ArrowLeft, Star, Calendar, X } from "lucide-react";
 import Link from "next/link";
 import {
   createFeedback,
   updateFeedback,
+  scheduleFeedback,
+  cancelScheduleFeedback,
 } from "@/app/(dashboard)/feedbacks/actions";
 import type { SubordinateOption } from "@/app/(dashboard)/feedbacks/actions";
 
@@ -24,6 +26,8 @@ interface FeedbackFormProps {
     rating: number;
     conductedAt: string;
     createdAt?: string;
+    status?: string;
+    scheduledAt?: string;
   };
 }
 
@@ -84,6 +88,13 @@ export function FeedbackForm({
   const [rating, setRating] = useState(initialData?.rating ?? 0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [scheduleDate, setScheduleDate] = useState("");
+  const minScheduleDate = useMemo(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split("T")[0];
+  }, []);
 
   const canSubmit =
     (mode === "create" ? !!employeeId : true) &&
@@ -135,6 +146,76 @@ export function FeedbackForm({
   function handleSubmitForm(e: React.FormEvent) {
     e.preventDefault();
     handleSave(false);
+  }
+
+  async function handleSchedule() {
+    if (!scheduleDate) return;
+    setLoading(true);
+    setError(null);
+
+    // If in create mode or data hasn't been saved yet, save first as draft
+    if (mode === "create") {
+      const createResult = await createFeedback({
+        employeeId,
+        period,
+        content,
+        strengths,
+        improvements,
+        rating,
+        conductedAt,
+        submit: false,
+      });
+      if (!createResult.success || !createResult.id) {
+        setLoading(false);
+        setError(createResult.error ?? "Erro ao salvar rascunho antes de agendar");
+        return;
+      }
+      // Now schedule the newly created feedback
+      const result = await scheduleFeedback(createResult.id, scheduleDate);
+      setLoading(false);
+      if (result.success) {
+        router.push("/feedbacks");
+      } else {
+        setError(result.error ?? "Erro ao agendar");
+      }
+    } else {
+      // Save current changes first, then schedule
+      const saveResult = await updateFeedback(initialData!.id, {
+        period,
+        content,
+        strengths,
+        improvements,
+        rating,
+        conductedAt,
+        submit: false,
+      });
+      if (!saveResult.success) {
+        setLoading(false);
+        setError(saveResult.error ?? "Erro ao salvar antes de agendar");
+        return;
+      }
+      const result = await scheduleFeedback(initialData!.id, scheduleDate);
+      setLoading(false);
+      if (result.success) {
+        router.push("/feedbacks");
+      } else {
+        setError(result.error ?? "Erro ao agendar");
+      }
+    }
+    setShowScheduleModal(false);
+  }
+
+  async function handleCancelSchedule() {
+    if (!initialData?.id) return;
+    setLoading(true);
+    setError(null);
+    const result = await cancelScheduleFeedback(initialData.id);
+    setLoading(false);
+    if (result.success) {
+      router.push("/feedbacks");
+    } else {
+      setError(result.error ?? "Erro ao cancelar agendamento");
+    }
   }
 
   return (
@@ -336,13 +417,24 @@ export function FeedbackForm({
         </div>
       </div>
 
-      <div className="flex justify-end gap-3">
+      <div className="flex flex-wrap justify-end gap-3">
         <Link
           href="/feedbacks"
           className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
         >
           Cancelar
         </Link>
+        {initialData?.status === "scheduled" && (
+          <button
+            type="button"
+            onClick={handleCancelSchedule}
+            disabled={loading}
+            className="inline-flex items-center gap-2 rounded-md border border-red-300 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
+          >
+            <X size={16} />
+            Cancelar Agendamento
+          </button>
+        )}
         <button
           type="submit"
           disabled={loading || !period.trim() || !conductedAt || (mode === "create" && !employeeId)}
@@ -350,6 +442,20 @@ export function FeedbackForm({
         >
           <Save size={16} />
           {loading ? "Salvando..." : "Salvar Rascunho"}
+        </button>
+        <button
+          type="button"
+          onClick={() => setShowScheduleModal(true)}
+          disabled={loading || !canSubmit}
+          className="inline-flex items-center gap-2 rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-50"
+          title={
+            !canSubmit
+              ? "Preencha todos os campos obrigatórios para agendar"
+              : ""
+          }
+        >
+          <Calendar size={16} />
+          {loading ? "Agendando..." : "Agendar Submissão"}
         </button>
         <button
           type="button"
@@ -366,6 +472,60 @@ export function FeedbackForm({
           {loading ? "Submetendo..." : "Submeter Feedback"}
         </button>
       </div>
+
+      {/* Schedule Modal */}
+      {showScheduleModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-gray-900">
+              Agendar Submissão de Feedback
+            </h3>
+            <p className="mt-1 text-sm text-gray-600">
+              Selecione a data em que o feedback será automaticamente submetido ao colaborador.
+            </p>
+            <div className="mt-4">
+              <label
+                htmlFor="schedule-date"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
+                Data de submissão *
+              </label>
+              <input
+                id="schedule-date"
+                type="date"
+                value={scheduleDate}
+                onChange={(e) => setScheduleDate(e.target.value)}
+                min={minScheduleDate}
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                A data deve ser futura (a partir de amanhã).
+              </p>
+            </div>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowScheduleModal(false);
+                  setScheduleDate("");
+                }}
+                className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleSchedule}
+                disabled={!scheduleDate || loading}
+                className="inline-flex items-center gap-2 rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-50"
+              >
+                <Calendar size={16} />
+                {loading ? "Agendando..." : "Confirmar Agendamento"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </form>
   );
 }

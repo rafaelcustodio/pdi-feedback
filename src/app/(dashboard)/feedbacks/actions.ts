@@ -15,6 +15,7 @@ export type FeedbackListItem = {
   period: string;
   status: string;
   rating: number | null;
+  scheduledAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
   employeeName: string;
@@ -32,6 +33,7 @@ export type FeedbackDetail = {
   rating: number | null;
   status: string;
   conductedAt: Date | null;
+  scheduledAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
   employeeName: string;
@@ -137,6 +139,7 @@ export async function getFeedbacks(
       period: f.period,
       status: f.status,
       rating: f.rating,
+      scheduledAt: f.scheduledAt,
       createdAt: f.createdAt,
       updatedAt: f.updatedAt,
       employeeName: f.employee.name,
@@ -190,6 +193,7 @@ export async function getFeedbackById(
     rating: feedback.rating,
     status: feedback.status,
     conductedAt: feedback.conductedAt,
+    scheduledAt: feedback.scheduledAt,
     createdAt: feedback.createdAt,
     updatedAt: feedback.updatedAt,
     employeeName: feedback.employee.name,
@@ -435,4 +439,114 @@ export async function getAvailableYears(): Promise<number[]> {
   }
 
   return Array.from(years).sort((a, b) => b - a);
+}
+
+export async function scheduleFeedback(
+  id: string,
+  scheduledAt: string
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  const feedback = await prisma.feedback.findUnique({ where: { id } });
+  if (!feedback) {
+    return { success: false, error: "Feedback não encontrado" };
+  }
+
+  // Only the manager who created the feedback (or admin) can schedule
+  if (role !== "admin" && feedback.managerId !== userId) {
+    return { success: false, error: "Apenas o gestor que criou este feedback pode agendá-lo" };
+  }
+
+  // Can only schedule drafts and already-scheduled feedbacks
+  if (feedback.status !== "draft" && feedback.status !== "scheduled") {
+    return { success: false, error: "Apenas feedbacks em rascunho ou agendados podem ser agendados" };
+  }
+
+  // Validate all required fields for scheduling (same as submit)
+  if (!feedback.content?.trim()) {
+    return { success: false, error: "Conteúdo geral é obrigatório para agendar submissão" };
+  }
+  if (!feedback.strengths?.trim()) {
+    return { success: false, error: "Pontos fortes é obrigatório para agendar submissão" };
+  }
+  if (!feedback.improvements?.trim()) {
+    return { success: false, error: "Pontos de melhoria é obrigatório para agendar submissão" };
+  }
+  if (!feedback.rating || feedback.rating < 1 || feedback.rating > 5) {
+    return { success: false, error: "Avaliação (1-5) é obrigatória para agendar submissão" };
+  }
+  if (!feedback.conductedAt) {
+    return { success: false, error: "Data de realização é obrigatória para agendar submissão" };
+  }
+
+  // Validate scheduledAt is a future date
+  const scheduledDate = new Date(scheduledAt);
+  if (isNaN(scheduledDate.getTime())) {
+    return { success: false, error: "Data de agendamento inválida" };
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const scheduleDay = new Date(scheduledDate);
+  scheduleDay.setHours(0, 0, 0, 0);
+
+  if (scheduleDay <= today) {
+    return { success: false, error: "A data de agendamento deve ser uma data futura" };
+  }
+
+  await prisma.feedback.update({
+    where: { id },
+    data: {
+      status: "scheduled",
+      scheduledAt: scheduledDate,
+    },
+  });
+
+  revalidatePath("/feedbacks");
+  revalidatePath(`/feedbacks/${id}`);
+  return { success: true };
+}
+
+export async function cancelScheduleFeedback(
+  id: string
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  const feedback = await prisma.feedback.findUnique({ where: { id } });
+  if (!feedback) {
+    return { success: false, error: "Feedback não encontrado" };
+  }
+
+  // Only the manager who created the feedback (or admin) can cancel schedule
+  if (role !== "admin" && feedback.managerId !== userId) {
+    return { success: false, error: "Apenas o gestor que criou este feedback pode cancelar o agendamento" };
+  }
+
+  if (feedback.status !== "scheduled") {
+    return { success: false, error: "Apenas feedbacks agendados podem ter o agendamento cancelado" };
+  }
+
+  await prisma.feedback.update({
+    where: { id },
+    data: {
+      status: "draft",
+      scheduledAt: null,
+    },
+  });
+
+  revalidatePath("/feedbacks");
+  revalidatePath(`/feedbacks/${id}`);
+  return { success: true };
 }

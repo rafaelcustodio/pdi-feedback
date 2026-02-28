@@ -121,6 +121,16 @@ export function FeedbackReadOnly({ feedback }: FeedbackReadOnlyProps) {
                 })}
               </p>
             )}
+            {feedback.scheduledAt && (
+              <p>
+                Agendado para:{" "}
+                {new Date(feedback.scheduledAt).toLocaleDateString("pt-BR", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                })}
+              </p>
+            )}
             <p>
               Criado em:{" "}
               {new Date(feedback.createdAt).toLocaleDateString("pt-BR", {
