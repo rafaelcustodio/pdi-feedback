@@ -384,8 +384,8 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 22,
-      "passes": false,
-      "notes": "Update feedback-table.tsx and feedbacks/actions.ts. Employee filter already excludes draft (status === 'submitted'), just ensure 'scheduled' is also excluded. Add banner/alert at top of employee feedback list showing count of scheduled feedbacks. Update ordering to use conductedAt instead of createdAt."
+      "passes": true,
+      "notes": "Update feedback-table.tsx and feedbacks/actions.ts. Employee filter already excludes draft (status === 'submitted'), just ensure 'scheduled' is also excluded. Add banner/alert at top of employee feedback list showing count of scheduled feedbacks. Update ordering to use conductedAt instead of createdAt. Added getScheduledFeedbackCountForEmployee() for banner count. Date range filter (conductedAtFrom/conductedAtTo) added. Employee columns: period, conductedAt, submission date (updatedAt), manager, rating."
     },
     {
       "id": "US-023",

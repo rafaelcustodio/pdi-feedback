@@ -590,3 +590,23 @@ Started: Sat Feb 28 06:24:15 PST 2026
   - router.refresh() is needed after server action mutations when staying on the same page (not navigating away)
   - FeedbackTable can accept optional subordinates prop for the future feedback modal — only fetched for managers/admins
 ---
+
+## 2026-02-28 - US-022
+- What was implemented:
+  - Employee feedback list now excludes draft and scheduled feedbacks (only submitted visible)
+  - Added banner at top of employee feedback list showing count of scheduled feedbacks for future dates
+  - Employee feedback list now ordered by conductedAt (most recent first), fallback to createdAt
+  - Updated employee view columns: period, conductedAt (Data de Realização), submission date (Data de Submissão), manager, rating
+  - Added conductedAt date range filter (from/to date pickers) to feedback list for all users
+  - Added getScheduledFeedbackCountForEmployee() server action
+  - Updated getFeedbacks() with conductedAtFrom/conductedAtTo filter parameters
+- Files changed:
+  - `src/app/(dashboard)/feedbacks/actions.ts` - Added getScheduledFeedbackCountForEmployee, conductedAt range filters, employee ordering by conductedAt
+  - `src/app/(dashboard)/feedbacks/page.tsx` - New searchParams (conductedAtFrom, conductedAtTo), passes scheduledCount to FeedbackTable
+  - `src/components/feedback-table.tsx` - Scheduled banner, date range filter, employee-specific columns (conductedAt, submission date), status column only for managers
+- **Learnings for future iterations:**
+  - Employee view uses different columns than manager view - use isEmployeeView conditional rendering
+  - Prisma orderBy accepts array for multi-field sorting: `[{ conductedAt: "desc" }, { createdAt: "desc" }]`
+  - CalendarClock icon from lucide-react works well for scheduled/calendar banners
+  - For date range filtering, use separate gte/lte conditions in AND array (not combined in one object)
+---
