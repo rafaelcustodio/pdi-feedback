@@ -1,7 +1,13 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { getCalendarEvents } from "./actions";
+import { getCalendarEvents, getCalendarOrgUnits } from "./actions";
 import { CalendarView } from "@/components/calendar-view";
+import { CalendarFilters } from "@/components/calendar-filters";
+
+const MONTH_NAMES = [
+  "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+  "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
+];
 
 export default async function CalendarioPage({
   searchParams,
@@ -23,16 +29,21 @@ export default async function CalendarioPage({
   const setor = params.setor || undefined;
   const tipo = (params.tipo as "pdi" | "feedback" | "all") || "all";
 
-  const events = await getCalendarEvents(month, year, {
-    organizationalUnitId: setor,
-    tipo,
-  });
+  const [events, orgUnits] = await Promise.all([
+    getCalendarEvents(month, year, {
+      organizationalUnitId: setor,
+      tipo,
+    }),
+    getCalendarOrgUnits(),
+  ]);
 
   // Serialize dates for client component
   const serializedEvents = events.map((e) => ({
     ...e,
     scheduledAt: e.scheduledAt.toISOString(),
   }));
+
+  const monthLabel = `${MONTH_NAMES[month - 1]}/${year}`;
 
   return (
     <div className="space-y-6">
@@ -42,6 +53,12 @@ export default async function CalendarioPage({
           Visualize os PDIs e Feedbacks agendados em formato de calendário mensal.
         </p>
       </div>
+
+      <CalendarFilters
+        orgUnits={orgUnits}
+        eventCount={events.length}
+        monthLabel={monthLabel}
+      />
 
       <CalendarView
         events={serializedEvents}

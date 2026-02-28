@@ -154,3 +154,57 @@ export async function getCalendarEvents(
 
   return events;
 }
+
+/**
+ * Fetch organizational units accessible to the current user for calendar filters.
+ * Admin: all units. Manager: units where they have subordinates. Employee: own unit.
+ */
+export async function getCalendarOrgUnits(): Promise<
+  { id: string; name: string }[]
+> {
+  const session = await auth();
+  if (!session?.user?.id) return [];
+
+  const role = (session.user as { role?: string }).role || "employee";
+
+  if (role === "admin") {
+    const units = await prisma.organizationalUnit.findMany({
+      orderBy: { name: "asc" },
+      select: { id: true, name: true },
+    });
+    return units;
+  }
+
+  // For managers and employees: get units from their accessible employees' hierarchies
+  const accessibleIds = await getAccessibleEmployeeIds(session.user.id, role);
+  if (accessibleIds === "all") {
+    const units = await prisma.organizationalUnit.findMany({
+      orderBy: { name: "asc" },
+      select: { id: true, name: true },
+    });
+    return units;
+  }
+
+  const hierarchies = await prisma.employeeHierarchy.findMany({
+    where: {
+      employeeId: { in: accessibleIds },
+      endDate: null,
+    },
+    include: { organizationalUnit: { select: { id: true, name: true } } },
+    distinct: ["organizationalUnitId"],
+  });
+
+  // Deduplicate and sort
+  const seen = new Set<string>();
+  const unique: { id: string; name: string }[] = [];
+  for (const h of hierarchies) {
+    const u = h.organizationalUnit;
+    if (!seen.has(u.id)) {
+      seen.add(u.id);
+      unique.push({ id: u.id, name: u.name });
+    }
+  }
+  unique.sort((a, b) => a.name.localeCompare(b.name));
+
+  return unique;
+}
