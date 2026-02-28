@@ -17,6 +17,9 @@ Started: Sat Feb 28 06:24:15 PST 2026
 - Feedback access: employees see own submitted feedbacks, managers see subordinates, admins see all
 - Prisma WHERE composition: use `AND: [baseFilter, ...conditions]` array when combining multiple `OR` clauses - spreading `OR` overwrites previous `OR` keys
 - Dual-button save pattern: form submit = save draft, separate button = submit with full validation
+- PDI goals managed in transactions: delete removed, update existing, create new - use `prisma.$transaction` for atomicity
+- PDI route pattern: `/pdis` (list), `/pdis/novo` (create), `/pdis/[id]` (detail/edit) - same as feedback pattern
+- Competencies for PDI goals: predefined list in pdi-form.tsx (Liderança, Comunicação, etc.) - stored as string in DB
 - Prisma v7 generated client output is at `src/generated/prisma/client` - import from `@/generated/prisma/client`
 - Prisma binary engines (binaries.prisma.sh) blocked by firewall - use `PRISMA_SCHEMA_ENGINE_BINARY=/tmp/fake-schema-engine` workaround for CLI commands (validate, generate)
 - npm install requires `--no-bin-links` and `--ignore-scripts` flags due to 9p filesystem (WSL2 mount) - then install prisma separately with scripts enabled
@@ -305,4 +308,32 @@ Started: Sat Feb 28 06:24:15 PST 2026
   - `getAvailableYears()` extracts years from both `createdAt` (reliable date) and period string regex `/\b(20\d{2})\b/` (free-form text) to cover all cases
   - Employee view conditionally shows `updatedAt` as "Data de Submissão" for submitted feedbacks since there's no dedicated `submittedAt` column
   - Year filter searches both the `period` text field (contains year string) and `createdAt` date range to handle different period formats
+---
+
+## 2026-02-28 - US-010
+- What was implemented:
+  - Server actions for PDI CRUD (`getPDIs`, `getPDIById`, `getSubordinatesForPDI`, `createPDI`, `updatePDI`) with access control via `getPDIAccessFilter`
+  - PDI list page (`/pdis`) with search by employee name or period, pagination, status badges, goal progress column (completed/total)
+  - Create PDI page (`/pdis/novo`) with employee dropdown (subordinates only), period, and dynamic goals section
+  - Edit PDI page (`/pdis/[id]`) - shows edit form for draft PDIs (manager/admin only), read-only view with progress bar for active/completed PDIs
+  - PDI form component with dynamic goal management: add/remove goals, each with title, competency (dropdown), due date, description
+  - Dual save actions: "Salvar Rascunho" (saves as draft) and "Ativar PDI" (validates goals, sets status to active)
+  - Read-only view component (`PDIReadOnly`) with visual progress bar and goal status badges
+  - Goal updates use `prisma.$transaction` to atomically delete removed goals, update existing, and create new ones
+  - Predefined competency list: Liderança, Comunicação, Trabalho em Equipe, etc.
+- Files changed:
+  - `src/app/(dashboard)/pdis/actions.ts` - Server actions for PDI CRUD with access control
+  - `src/app/(dashboard)/pdis/page.tsx` - Updated from placeholder to full list page with search/pagination
+  - `src/app/(dashboard)/pdis/novo/page.tsx` - Create PDI page (managers/admins only)
+  - `src/app/(dashboard)/pdis/[id]/page.tsx` - View/edit PDI detail page
+  - `src/components/pdi-form.tsx` - Client component: create/edit form with dynamic goals
+  - `src/components/pdi-table.tsx` - Client component: PDI list table with search and pagination
+  - `src/components/pdi-read-only.tsx` - Client component: read-only PDI display with progress bar
+- **Learnings for future iterations:**
+  - PDI model accessed as `prisma.pDI` and PDIGoal as `prisma.pDIGoal` (camelCase of PascalCase model names)
+  - Goal CRUD within a PDI requires transactional updates: compare incoming goal IDs vs existing to determine deletes, updates, and creates
+  - Competency is a free-text field in the schema but the form uses a predefined dropdown - this can be extended without migration
+  - Draft → Active is the activation workflow; only drafts can be edited via the form
+  - PDI access: employees see own PDIs (any status), managers see subordinate PDIs, admins see all - simpler than feedback which has draft visibility rules
+  - Read-only view includes progress bar (% of completed goals) useful for tracking PDI completion
 ---

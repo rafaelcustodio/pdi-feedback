@@ -188,8 +188,8 @@
         "Typecheck passa"
       ],
       "priority": 11,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "PDI CRUD follows feedback pattern. Server actions with access control, PDI form with dynamic goals (add/remove), draft/active workflow. Competencies from predefined list. Goals managed in transactions for update (delete removed, update existing, create new). PDIReadOnly component for non-draft view with progress bar."
     },
     {
       "id": "US-011",
