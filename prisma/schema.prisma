@@ -93,6 +93,7 @@ model EmployeeHierarchy {
 
 enum PDIStatus {
   draft
+  scheduled
   active
   completed
   cancelled
@@ -112,6 +113,7 @@ model PDI {
   period          String
   frequencyMonths Int?
   conductedAt     DateTime?
+  scheduledAt     DateTime?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
@@ -124,6 +126,7 @@ model PDI {
   @@index([employeeId])
   @@index([managerId])
   @@index([status])
+  @@index([scheduledAt])
 }
 
 model PDIGoal {
@@ -201,6 +204,7 @@ model Feedback {
   @@index([employeeId])
   @@index([managerId])
   @@index([status])
+  @@index([scheduledAt])
 }
 
 // ============================================================
