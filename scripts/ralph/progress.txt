@@ -15,6 +15,7 @@ Started: Sat Feb 28 06:24:15 PST 2026
 - Prisma model `PDI` accessed as `prisma.pDI` (camelCase), `PDIGoal` as `prisma.pDIGoal`, etc.
 - Prisma model `Feedback` accessed as `prisma.feedback` (lowercase) - unlike `PDI` which is `prisma.pDI`
 - Feedback access: employees see own submitted feedbacks, managers see subordinates, admins see all
+- Prisma WHERE composition: use `AND: [baseFilter, ...conditions]` array when combining multiple `OR` clauses - spreading `OR` overwrites previous `OR` keys
 - Dual-button save pattern: form submit = save draft, separate button = submit with full validation
 - Prisma v7 generated client output is at `src/generated/prisma/client` - import from `@/generated/prisma/client`
 - Prisma binary engines (binaries.prisma.sh) blocked by firewall - use `PRISMA_SCHEMA_ENGINE_BINARY=/tmp/fake-schema-engine` workaround for CLI commands (validate, generate)
@@ -285,4 +286,23 @@ Started: Sat Feb 28 06:24:15 PST 2026
   - Dual-button save pattern: default form submit saves as draft, separate button calls `handleSave(true)` for submission with full validation
   - The `submit` flag in `createFeedback`/`updateFeedback` triggers server-side validation of all required fields
   - `getSubordinatesForFeedback()` reuses `getAccessibleEmployeeIds` to list valid employee targets, excluding self
+---
+
+## 2026-02-28 - US-009
+- What was implemented:
+  - Enhanced feedback list page with "Meus Feedbacks" title and description for employee role
+  - Year/period filter dropdown populated by `getAvailableYears()` server action that extracts years from both `createdAt` dates and period strings
+  - Employee view: hides "Colaborador" column (redundant - always self), shows "Data de Submissão" (using `updatedAt` for submitted feedbacks) instead of creation date
+  - Year filter uses `AND`-based query composition to prevent conflicts with employee access `OR` conditions
+  - Search + year filter can be combined simultaneously - both use `AND` array composition
+  - Clicking a feedback opens the existing `FeedbackReadOnly` component (read-only detail view)
+- Files changed:
+  - `src/app/(dashboard)/feedbacks/actions.ts` - Added `year` param to `getFeedbacks`, added `getAvailableYears()` action, refactored filter composition to use `AND` array
+  - `src/app/(dashboard)/feedbacks/page.tsx` - Added `year` searchParam, fetch available years, pass `isEmployeeView` and `year`/`availableYears` to table
+  - `src/components/feedback-table.tsx` - Added year dropdown filter, `isEmployeeView` prop for conditional columns/labels, centralized URL building in `buildUrl()` helper
+- **Learnings for future iterations:**
+  - When combining multiple `OR` conditions in Prisma `where` clauses, use `AND: [baseFilter, ...additionalConditions]` array pattern instead of spreading - spreading `OR` overwrites previous `OR` keys
+  - `getAvailableYears()` extracts years from both `createdAt` (reliable date) and period string regex `/\b(20\d{2})\b/` (free-form text) to cover all cases
+  - Employee view conditionally shows `updatedAt` as "Data de Submissão" for submitted feedbacks since there's no dedicated `submittedAt` column
+  - Year filter searches both the `period` text field (contains year string) and `createdAt` date range to handle different period formats
 ---

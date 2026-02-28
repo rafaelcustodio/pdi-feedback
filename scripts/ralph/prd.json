@@ -172,8 +172,8 @@
         "Typecheck passa"
       ],
       "priority": 10,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Enhanced feedback list page: employees see 'Meus Feedbacks' title with submission date, year filter dropdown, and read-only detail view. Year filter searches both period string and createdAt year. AND-based query composition prevents filter conflicts."
     },
     {
       "id": "US-010",
