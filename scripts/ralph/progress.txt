@@ -681,3 +681,21 @@ Started: Sat Feb 28 14:20:00 PST 2026
   - Existing future `scheduled` records are deleted before regeneration — safe to call multiple times
   - `removeScheduledEvents` only deletes records with `scheduledAt >= now` to preserve past records
 ---
+
+## 2026-02-28 - US-003
+- What was implemented:
+  - Server action `getCalendarEvents(month, year, filters?)` in `src/app/(dashboard)/calendario/actions.ts`
+  - Fetches PDIs and Feedbacks for a given month/year, using scheduledAt as primary date or conductedAt as fallback
+  - Returns normalized `CalendarEvent[]` with: id, type, employeeName, scheduledAt, status, href
+  - Access control via `getAccessibleEmployeeIds()`: admin sees all, manager sees subordinates, employee sees own
+  - Employee visibility rules: no scheduled PDIs, only submitted Feedbacks
+  - Optional filter by `organizationalUnitId` — intersects accessible employees with employees in the unit via EmployeeHierarchy
+  - Optional filter by `tipo` ('pdi' | 'feedback' | 'all')
+  - Results sorted by scheduledAt ascending
+- Files changed:
+  - `src/app/(dashboard)/calendario/actions.ts` — new file with getCalendarEvents server action and CalendarEvent/CalendarFilters types
+- **Learnings for future iterations:**
+  - Prisma WHERE with spread of multiple filters + OR for date range works when no keys overlap (employeeFilter has `employeeId`, statusFilter has `status`, OR for dates)
+  - EmployeeHierarchy with `endDate: null` gives current active assignments — use for org unit filtering
+  - Calendar date range: use `new Date(year, month - 1, 1)` for start and `new Date(year, month, 0, 23, 59, 59, 999)` for end of month
+---
