@@ -21,6 +21,8 @@ Started: Sat Feb 28 06:24:15 PST 2026
 - PDI route pattern: `/pdis` (list), `/pdis/novo` (create), `/pdis/[id]` (detail/edit with tracking) - same as feedback pattern
 - PDIEvidence accessed as `prisma.pDIEvidence`, PDIComment as `prisma.pDIComment`
 - Nested resource access control: fetch parent chain (e.g., evidence → goal → PDI) to verify employee/manager access
+- Schedule recalculation: use `recalculatePDISchedule`/`recalculateFeedbackSchedule` from `src/lib/schedule-utils.ts` after completion/submission
+- PDISchedule/FeedbackSchedule: `prisma.pDISchedule` and `prisma.feedbackSchedule` - one active schedule per employee (isActive=true)
 - Competencies for PDI goals: predefined list in pdi-form.tsx (Liderança, Comunicação, etc.) - stored as string in DB
 - Prisma v7 generated client output is at `src/generated/prisma/client` - import from `@/generated/prisma/client`
 - Prisma binary engines (binaries.prisma.sh) blocked by firewall - use `PRISMA_SCHEMA_ENGINE_BINARY=/tmp/fake-schema-engine` workaround for CLI commands (validate, generate)
@@ -362,4 +364,29 @@ Started: Sat Feb 28 06:24:15 PST 2026
   - Chat-style UI: use `justify-end` / `justify-start` flex alignment based on `authorId === userId` for message positioning
   - GoalCard expand/collapse pattern: `useState(false)` for expanded state, conditionally render detail section below the header
   - `revalidatePath` after mutations causes server component re-render, which refreshes all data including nested evidences and comments
+---
+
+## 2026-02-28 - US-012
+- What was implemented:
+  - Server actions `getEmployeeSchedules` and `saveEmployeeSchedules` in colaboradores/actions.ts for managing PDI and Feedback schedules
+  - `ScheduleSection` client component with frequency dropdowns (1, 2, 3, 6, 12 months) for PDI and Feedback, displaying next due dates
+  - Updated employee edit page (`/colaboradores/[id]`) to fetch and display schedule section below the employee form
+  - Shared utility `recalculatePDISchedule` and `recalculateFeedbackSchedule` in `src/lib/schedule-utils.ts`
+  - Auto-recalculation of PDI schedule when all goals are completed (auto-sets PDI status to "completed")
+  - Auto-recalculation of feedback schedule when a feedback is submitted (both create and update paths)
+  - Next due date calculated as: current date + frequency months
+- Files changed:
+  - `src/app/(dashboard)/colaboradores/actions.ts` - Added `getEmployeeSchedules`, `saveEmployeeSchedules`, `calculateNextDueDate` helper, `EmployeeSchedules` type
+  - `src/app/(dashboard)/colaboradores/[id]/page.tsx` - Added ScheduleSection, fetches schedules in parallel with employee data
+  - `src/components/schedule-section.tsx` - New client component for scheduling UI
+  - `src/lib/schedule-utils.ts` - New server utility for recalculating schedule dates
+  - `src/app/(dashboard)/pdis/actions.ts` - Added `checkAndCompletePDI` helper, imported `recalculatePDISchedule`, auto-completes PDI when all goals done
+  - `src/app/(dashboard)/feedbacks/actions.ts` - Imported and called `recalculateFeedbackSchedule` after feedback submission
+- **Learnings for future iterations:**
+  - PDISchedule and FeedbackSchedule are per-employee, one active schedule at a time (isActive=true filter)
+  - Schedule's `managerId` comes from the employee's current active hierarchy (EmployeeHierarchy where endDate=null)
+  - When frequency changes, recalculate next due date; when frequency stays the same, keep existing next due date
+  - Auto-completion: after `updateGoalStatus`, check if ALL goals are completed; if so, set PDI status to "completed" and recalculate
+  - The `checkAndCompletePDI` function reads all goals after the update to check completion - uses the updated goalId's new status directly to avoid race condition with the just-updated record
+  - Schedule section is a separate component from EmployeeForm - decoupled save actions (employee data vs schedule data)
 ---

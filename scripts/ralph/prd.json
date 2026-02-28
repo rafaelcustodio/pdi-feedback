@@ -221,8 +221,8 @@
         "Typecheck passa"
       ],
       "priority": 13,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Schedule management via employee edit page. Auto-recalculates next due date when PDI is completed (all goals done) or feedback is submitted. Uses recalculatePDISchedule/recalculateFeedbackSchedule from schedule-utils.ts."
     },
     {
       "id": "US-013",
