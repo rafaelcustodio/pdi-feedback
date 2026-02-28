@@ -14,6 +14,7 @@ export type PDIListItem = {
   id: string;
   period: string;
   status: string;
+  conductedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
   employeeName: string;
@@ -81,7 +82,9 @@ export type GoalInput = {
 export async function getPDIs(
   search: string = "",
   page: number = 1,
-  pageSize: number = 10
+  pageSize: number = 10,
+  conductedAtFrom: string = "",
+  conductedAtTo: string = ""
 ): Promise<{
   pdis: PDIListItem[];
   total: number;
@@ -111,6 +114,21 @@ export async function getPDIs(
     });
   }
 
+  // Filter by conductedAt date range
+  if (conductedAtFrom.trim()) {
+    const fromDate = new Date(conductedAtFrom.trim());
+    if (!isNaN(fromDate.getTime())) {
+      andConditions.push({ conductedAt: { gte: fromDate } });
+    }
+  }
+  if (conductedAtTo.trim()) {
+    const toDate = new Date(conductedAtTo.trim());
+    if (!isNaN(toDate.getTime())) {
+      toDate.setHours(23, 59, 59, 999);
+      andConditions.push({ conductedAt: { lte: toDate } });
+    }
+  }
+
   if (andConditions.length > 0) {
     whereClause = {
       AND: [whereClause, ...andConditions],
@@ -120,7 +138,7 @@ export async function getPDIs(
   const [pdis, total] = await Promise.all([
     prisma.pDI.findMany({
       where: whereClause,
-      orderBy: { createdAt: "desc" },
+      orderBy: [{ conductedAt: "desc" }, { createdAt: "desc" }],
       skip: (page - 1) * pageSize,
       take: pageSize,
       include: {
@@ -137,6 +155,7 @@ export async function getPDIs(
       id: p.id,
       period: p.period,
       status: p.status,
+      conductedAt: p.conductedAt,
       createdAt: p.createdAt,
       updatedAt: p.updatedAt,
       employeeName: p.employee.name,

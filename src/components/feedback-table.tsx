@@ -271,13 +271,11 @@ export function FeedbackTable({
                   Status
                 </th>
               )}
-              {isEmployeeView && (
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Data de Realização
-                </th>
-              )}
               <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                {isEmployeeView ? "Data de Submissão" : "Data"}
+                Data de Realização
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                {isEmployeeView ? "Data de Submissão" : "Data de Criação"}
               </th>
               <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
                 Ações
@@ -288,7 +286,7 @@ export function FeedbackTable({
             {feedbacks.length === 0 ? (
               <tr>
                 <td
-                  colSpan={isEmployeeView ? 6 : 7}
+                  colSpan={isEmployeeView ? 6 : 8}
                   className="px-4 py-8 text-center text-sm text-gray-500"
                 >
                   Nenhum feedback encontrado.
@@ -351,13 +349,11 @@ export function FeedbackTable({
                       )}
                     </td>
                   )}
-                  {isEmployeeView && (
-                    <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
-                      {fb.conductedAt
-                        ? new Date(fb.conductedAt).toLocaleDateString("pt-BR")
-                        : "—"}
-                    </td>
-                  )}
+                  <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
+                    {fb.conductedAt
+                      ? new Date(fb.conductedAt).toLocaleDateString("pt-BR")
+                      : "—"}
+                  </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
                     {isEmployeeView
                       ? new Date(fb.updatedAt).toLocaleDateString("pt-BR")

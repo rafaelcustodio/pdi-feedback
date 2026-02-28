@@ -19,6 +19,8 @@ interface PDITableProps {
   page: number;
   pageSize: number;
   search: string;
+  conductedAtFrom?: string;
+  conductedAtTo?: string;
   canCreate: boolean;
 }
 
@@ -42,17 +44,30 @@ export function PDITable({
   page,
   pageSize,
   search: initialSearch,
+  conductedAtFrom: initialConductedAtFrom = "",
+  conductedAtTo: initialConductedAtTo = "",
   canCreate,
 }: PDITableProps) {
   const [searchValue, setSearchValue] = useState(initialSearch);
+  const [conductedAtFromValue, setConductedAtFromValue] = useState(initialConductedAtFrom);
+  const [conductedAtToValue, setConductedAtToValue] = useState(initialConductedAtTo);
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
-  function buildUrl(overrides: { search?: string; page?: string }) {
+  function buildUrl(overrides: {
+    search?: string;
+    page?: string;
+    conductedAtFrom?: string;
+    conductedAtTo?: string;
+  }) {
     const params = new URLSearchParams();
     const s = overrides.search ?? searchValue;
     const p = overrides.page ?? "1";
+    const caFrom = overrides.conductedAtFrom ?? conductedAtFromValue;
+    const caTo = overrides.conductedAtTo ?? conductedAtToValue;
     if (s.trim()) params.set("search", s.trim());
+    if (caFrom) params.set("conductedAtFrom", caFrom);
+    if (caTo) params.set("conductedAtTo", caTo);
     params.set("page", p);
     return `/pdis?${params.toString()}`;
   }
@@ -60,6 +75,12 @@ export function PDITable({
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     window.location.href = buildUrl({ search: searchValue, page: "1" });
+  }
+
+  function handleConductedAtFilter(from: string, to: string) {
+    setConductedAtFromValue(from);
+    setConductedAtToValue(to);
+    window.location.href = buildUrl({ conductedAtFrom: from, conductedAtTo: to, page: "1" });
   }
 
   function goToPage(p: number) {
@@ -102,6 +123,33 @@ export function PDITable({
         )}
       </div>
 
+      {/* Date range filter for conductedAt */}
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-xs font-medium text-gray-500">Realizado de:</span>
+        <input
+          type="date"
+          value={conductedAtFromValue}
+          onChange={(e) => handleConductedAtFilter(e.target.value, conductedAtToValue)}
+          className="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        />
+        <span className="text-xs font-medium text-gray-500">até:</span>
+        <input
+          type="date"
+          value={conductedAtToValue}
+          onChange={(e) => handleConductedAtFilter(conductedAtFromValue, e.target.value)}
+          className="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        />
+        {(conductedAtFromValue || conductedAtToValue) && (
+          <button
+            type="button"
+            onClick={() => handleConductedAtFilter("", "")}
+            className="rounded-md px-2 py-1.5 text-xs text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+          >
+            Limpar
+          </button>
+        )}
+      </div>
+
       {/* Table */}
       <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
         <table className="min-w-full divide-y divide-gray-200">
@@ -123,7 +171,10 @@ export function PDITable({
                 Status
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                Data
+                Data de Realização
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                Data de Criação
               </th>
               <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
                 Ações
@@ -134,7 +185,7 @@ export function PDITable({
             {pdis.length === 0 ? (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={8}
                   className="px-4 py-8 text-center text-sm text-gray-500"
                 >
                   Nenhum PDI encontrado.
@@ -166,6 +217,11 @@ export function PDITable({
                     >
                       {statusLabels[pdi.status] ?? pdi.status}
                     </span>
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
+                    {pdi.conductedAt
+                      ? new Date(pdi.conductedAt).toLocaleDateString("pt-BR")
+                      : "—"}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
                     {new Date(pdi.createdAt).toLocaleDateString("pt-BR")}

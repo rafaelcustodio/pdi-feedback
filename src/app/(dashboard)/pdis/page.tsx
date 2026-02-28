@@ -6,7 +6,12 @@ import { PDITable } from "@/components/pdi-table";
 export default async function PDIsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; page?: string }>;
+  searchParams: Promise<{
+    search?: string;
+    page?: string;
+    conductedAtFrom?: string;
+    conductedAtTo?: string;
+  }>;
 }) {
   const session = await auth();
   if (!session?.user) {
@@ -16,9 +21,11 @@ export default async function PDIsPage({
   const role = session.user.role || "employee";
   const params = await searchParams;
   const search = params.search ?? "";
+  const conductedAtFrom = params.conductedAtFrom ?? "";
+  const conductedAtTo = params.conductedAtTo ?? "";
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
 
-  const data = await getPDIs(search, page, 10);
+  const data = await getPDIs(search, page, 10, conductedAtFrom, conductedAtTo);
 
   return (
     <div className="space-y-6">
@@ -39,6 +46,8 @@ export default async function PDIsPage({
         page={data.page}
         pageSize={data.pageSize}
         search={search}
+        conductedAtFrom={conductedAtFrom}
+        conductedAtTo={conductedAtTo}
         canCreate={role !== "employee"}
       />
     </div>
