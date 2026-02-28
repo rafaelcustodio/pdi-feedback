@@ -292,8 +292,8 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 17,
-      "passes": false,
-      "notes": "Update feedback-form.tsx, feedbacks/actions.ts, and feedback-read-only.tsx. The conductedAt field represents when the feedback session actually happened (filled by manager), while createdAt is automatic."
+      "passes": true,
+      "notes": "Update feedback-form.tsx, feedbacks/actions.ts, and feedback-read-only.tsx. The conductedAt field represents when the feedback session actually happened (filled by manager), while createdAt is automatic. conductedAt is required (date picker), createdAt shown read-only in edit mode. FeedbackReadOnly shows 'Realizado em' before 'Criado em'."
     },
     {
       "id": "US-018",

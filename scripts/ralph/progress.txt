@@ -484,3 +484,27 @@ Started: Sat Feb 28 06:24:15 PST 2026
   - All new fields are nullable so existing code continues to work without changes to existing queries
   - The `@rollup/rollup-linux-x64-gnu` package may need to be installed for vitest to run in this environment
 ---
+
+## 2026-02-28 20:47 - US-017
+- What was implemented: Added conductedAt (date of realization) field to feedback form, server actions, and read-only view
+  - Added `conductedAt` date picker (type="date", required) to `FeedbackForm` component after the Period field
+  - Added `createdAt` read-only display in edit mode showing when the feedback record was created
+  - Updated `FeedbackDetail` type to include `conductedAt: Date | null`
+  - Updated `getFeedbackById` to return `conductedAt` from the database
+  - Updated `createFeedback` server action to accept and validate `conductedAt` string, convert to Date, and save
+  - Updated `updateFeedback` server action to accept and validate `conductedAt` string, convert to Date, and save
+  - Updated `FeedbackReadOnly` component to show "Realizado em" (conductedAt) before "Criado em" (createdAt) in metadata section
+  - Updated feedback detail page to pass `conductedAt` (as YYYY-MM-DD string) and `createdAt` (as ISO string) to the form
+  - Editing still allowed for both 'draft' and 'scheduled' status (preserved existing behavior from US-016)
+  - Fixed update status logic: when not submitting, preserve the existing status (draft stays draft, scheduled stays scheduled)
+- Files changed:
+  - `src/app/(dashboard)/feedbacks/actions.ts` - Added conductedAt to FeedbackDetail type, getFeedbackById, createFeedback, updateFeedback
+  - `src/app/(dashboard)/feedbacks/[id]/page.tsx` - Pass conductedAt and createdAt to FeedbackForm initialData
+  - `src/components/feedback-form.tsx` - Added conductedAt date input, createdAt read-only display, updated form state and validation
+  - `src/components/feedback-read-only.tsx` - Added "Realizado em" display for conductedAt
+- **Learnings for future iterations:**
+  - Date picker fields use `type="date"` with `YYYY-MM-DD` string format for state management - convert to/from Date objects at the server action boundary
+  - When updating feedback status on save (not submit), preserve the existing status (`feedback.status`) rather than resetting to "draft" - this prevents scheduled feedbacks from reverting to draft on save
+  - The `conductedAt` field is required in the form (both for draft save and submit) as it represents when the feedback session actually happened
+  - `createdAt` is passed as ISO string from server component to client form for display purposes only
+---
