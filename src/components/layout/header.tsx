@@ -3,12 +3,17 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { signOut } from "next-auth/react";
-import { Bell, Menu, User, LogOut } from "lucide-react";
+import { Menu, User, LogOut } from "lucide-react";
+import {
+  NotificationDropdown,
+} from "@/components/notification-dropdown";
+import type { NotificationListItem } from "@/app/(dashboard)/notificacoes/actions";
 
 interface HeaderProps {
   userName: string;
   avatarUrl?: string | null;
   notificationCount?: number;
+  recentNotifications?: NotificationListItem[];
   onMenuToggle: () => void;
 }
 
@@ -16,6 +21,7 @@ export function Header({
   userName,
   avatarUrl,
   notificationCount = 0,
+  recentNotifications = [],
   onMenuToggle,
 }: HeaderProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -52,19 +58,11 @@ export function Header({
       </div>
 
       <div className="flex items-center gap-2">
-        {/* Notification bell */}
-        <a
-          href="/notificacoes"
-          className="relative rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-          aria-label="Notificações"
-        >
-          <Bell size={20} />
-          {notificationCount > 0 && (
-            <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
-              {notificationCount > 99 ? "99+" : notificationCount}
-            </span>
-          )}
-        </a>
+        {/* Notification dropdown */}
+        <NotificationDropdown
+          initialCount={notificationCount}
+          initialNotifications={recentNotifications}
+        />
 
         {/* User dropdown */}
         <div ref={dropdownRef} className="relative">

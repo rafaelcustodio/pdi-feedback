@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { Sidebar } from "./sidebar";
 import { Header } from "./header";
 import { MobileSidebarOverlay } from "./mobile-sidebar-overlay";
+import type { NotificationListItem } from "@/app/(dashboard)/notificacoes/actions";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -11,6 +12,7 @@ interface AppLayoutProps {
   avatarUrl?: string | null;
   userRole?: string;
   notificationCount?: number;
+  recentNotifications?: NotificationListItem[];
 }
 
 export function AppLayout({
@@ -19,6 +21,7 @@ export function AppLayout({
   avatarUrl,
   userRole = "employee",
   notificationCount = 0,
+  recentNotifications = [],
 }: AppLayoutProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -65,6 +68,7 @@ export function AppLayout({
           userName={userName}
           avatarUrl={avatarUrl}
           notificationCount={notificationCount}
+          recentNotifications={recentNotifications}
           onMenuToggle={toggleMobileMenu}
         />
       </div>
