@@ -94,3 +94,17 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - updateOnboardingFeedbacks only deletes scheduled onboarding feedbacks, preserves submitted ones
   - Employees only enter regular feedback cycle from first period starting after admissionDate + 90 days
 ---
+
+## 2026-03-01 03:25 PST - US-008
+- Implemented handleSectorTransfer and integrated with employee update flow
+- Files changed:
+  - `prisma/schema.prisma` — Added 'cancelled' to FeedbackStatus enum
+  - `prisma/migrations/20260301110000_add_cancelled_to_feedback_status/migration.sql` — ALTER TYPE migration
+  - `src/lib/sector-schedule-utils.ts` — Added handleSectorTransfer function
+  - `src/app/(dashboard)/colaboradores/actions.ts` — Integrated handleSectorTransfer into updateEmployee when orgUnit changes
+  - `src/lib/__tests__/effective-schedule.test.ts` — 3 new tests (9 total) for handleSectorTransfer
+- **Learnings for future iterations:**
+  - FeedbackStatus didn't have 'cancelled' — needed schema migration to add it
+  - handleSectorTransfer only cancels 'scheduled' status with future scheduledAt; onboarding feedbacks are preserved via isOnboarding: false filter
+  - Individual PDISchedule/FeedbackSchedule are NOT touched during transfer — they're preserved automatically
+---
