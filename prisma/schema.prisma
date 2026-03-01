@@ -45,8 +45,9 @@ model User {
   pdiSchedulesAsManager      PDISchedule[]      @relation("PDIScheduleManager")
 
   // Other relations
-  pdiComments   PDIComment[]
-  notifications Notification[]
+  pdiComments    PDIComment[]
+  pdiEvidences   PDIEvidence[]
+  notifications  Notification[]
 
   @@index([email])
   @@index([role])
@@ -149,13 +150,16 @@ model PDIGoal {
 model PDIEvidence {
   id          String   @id @default(cuid())
   goalId      String
+  authorId    String?
   description String
   fileUrl     String?
   createdAt   DateTime @default(now())
 
-  goal PDIGoal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  goal   PDIGoal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  author User?   @relation(fields: [authorId], references: [id])
 
   @@index([goalId])
+  @@index([authorId])
 }
 
 model PDIComment {

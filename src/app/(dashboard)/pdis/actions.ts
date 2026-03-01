@@ -26,6 +26,7 @@ export type PDIListItem = {
 
 export type EvidenceDetail = {
   id: string;
+  authorId: string | null;
   description: string;
   fileUrl: string | null;
   createdAt: Date;
@@ -246,6 +247,7 @@ export async function getPDIById(id: string): Promise<PDIDetail | null> {
       createdAt: g.createdAt,
       evidences: g.evidences.map((e) => ({
         id: e.id,
+        authorId: e.authorId,
         description: e.description,
         fileUrl: e.fileUrl,
         createdAt: e.createdAt,
@@ -521,6 +523,7 @@ export async function addEvidence(
   await prisma.pDIEvidence.create({
     data: {
       goalId,
+      authorId: userId,
       description: description.trim(),
     },
   });
@@ -742,6 +745,125 @@ export async function cancelScheduledPDI(
   revalidatePath("/pdis");
   revalidatePath(`/pdis/${id}`);
   revalidatePath("/calendario");
+  return { success: true };
+}
+
+export async function updateGoal(
+  goalId: string,
+  data: { title: string; description?: string; competency: string; dueDate?: string }
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  if (!data.title.trim()) {
+    return { success: false, error: "Título é obrigatório" };
+  }
+  if (!data.competency.trim()) {
+    return { success: false, error: "Competência é obrigatória" };
+  }
+
+  const goal = await prisma.pDIGoal.findUnique({
+    where: { id: goalId },
+    include: { pdi: true },
+  });
+
+  if (!goal) {
+    return { success: false, error: "Meta não encontrada" };
+  }
+
+  if (role !== "admin" && goal.pdi.managerId !== userId) {
+    return { success: false, error: "Apenas o gestor pode editar metas" };
+  }
+
+  await prisma.pDIGoal.update({
+    where: { id: goalId },
+    data: {
+      title: data.title.trim(),
+      description: data.description?.trim() || null,
+      competency: data.competency.trim(),
+      dueDate: data.dueDate ? new Date(data.dueDate) : null,
+    },
+  });
+
+  revalidatePath(`/pdis/${goal.pdi.id}`);
+  return { success: true };
+}
+
+export async function updateComment(
+  commentId: string,
+  content: string
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const userId = session.user.id;
+
+  if (!content.trim()) {
+    return { success: false, error: "Conteúdo é obrigatório" };
+  }
+
+  const comment = await prisma.pDIComment.findUnique({
+    where: { id: commentId },
+  });
+
+  if (!comment) {
+    return { success: false, error: "Comentário não encontrado" };
+  }
+
+  if (comment.authorId !== userId) {
+    return { success: false, error: "Você só pode editar seus próprios comentários" };
+  }
+
+  await prisma.pDIComment.update({
+    where: { id: commentId },
+    data: { content: content.trim() },
+  });
+
+  revalidatePath(`/pdis/${comment.pdiId}`);
+  return { success: true };
+}
+
+export async function updateEvidence(
+  evidenceId: string,
+  description: string
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const userId = session.user.id;
+
+  if (!description.trim()) {
+    return { success: false, error: "Descrição é obrigatória" };
+  }
+
+  const evidence = await prisma.pDIEvidence.findUnique({
+    where: { id: evidenceId },
+    include: { goal: { include: { pdi: true } } },
+  });
+
+  if (!evidence) {
+    return { success: false, error: "Evidência não encontrada" };
+  }
+
+  if (!evidence.authorId || evidence.authorId !== userId) {
+    return { success: false, error: "Você só pode editar suas próprias evidências" };
+  }
+
+  await prisma.pDIEvidence.update({
+    where: { id: evidenceId },
+    data: { description: description.trim() },
+  });
+
+  revalidatePath(`/pdis/${evidence.goal.pdi.id}`);
   return { success: true };
 }
 

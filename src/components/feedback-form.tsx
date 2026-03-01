@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Save, Send, ArrowLeft, Star, Calendar, X, CalendarClock, CalendarX2 } from "lucide-react";
+import { Save, Send, ArrowLeft, Star, Calendar, X, CalendarClock, CalendarX2, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import {
   createFeedback,
@@ -95,6 +95,8 @@ export function FeedbackForm({
   const [showRescheduleModal, setShowRescheduleModal] = useState(false);
   const [rescheduleDate, setRescheduleDate] = useState("");
   const [showCancelEventModal, setShowCancelEventModal] = useState(false);
+  const [showSubmitMenu, setShowSubmitMenu] = useState(false);
+  const submitMenuRef = useRef<HTMLDivElement>(null);
   const minScheduleDate = useMemo(() => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -115,6 +117,16 @@ export function FeedbackForm({
     !!improvements.trim() &&
     rating >= 1 &&
     rating <= 5;
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (submitMenuRef.current && !submitMenuRef.current.contains(e.target as Node)) {
+        setShowSubmitMenu(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   async function handleSave(submit: boolean) {
     setLoading(true);
@@ -258,7 +270,7 @@ export function FeedbackForm({
   }
 
   return (
-    <form onSubmit={handleSubmitForm} className="space-y-6">
+    <form onSubmit={handleSubmitForm} className="space-y-4">
       <div className="flex items-center gap-3">
         <Link
           href="/feedbacks"
@@ -301,254 +313,277 @@ export function FeedbackForm({
         </div>
       )}
 
-      <div className="rounded-lg border border-gray-200 bg-white p-6">
-        <div className="space-y-4">
-          {/* Employee selection (create mode only) */}
-          {mode === "create" && subordinates && (
+      <div className="rounded-lg border border-gray-200 bg-white p-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-[280px_1fr]">
+          {/* Left column — metadata */}
+          <div className="space-y-3">
+            {/* Employee selection (create mode only) */}
+            {mode === "create" && subordinates && (
+              <div>
+                <label
+                  htmlFor="fb-employee"
+                  className="mb-1 block text-sm font-medium text-gray-700"
+                >
+                  Colaborador *
+                </label>
+                <select
+                  id="fb-employee"
+                  value={employeeId}
+                  onChange={(e) => setEmployeeId(e.target.value)}
+                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  required
+                  disabled={loading}
+                >
+                  <option value="">Selecione um colaborador</option>
+                  {subordinates.map((sub) => (
+                    <option key={sub.id} value={sub.id}>
+                      {sub.name} ({sub.email})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* Employee name (edit mode - read only) */}
+            {mode === "edit" && initialData && (
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">
+                  Colaborador
+                </label>
+                <p className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700">
+                  {initialData.employeeName}
+                </p>
+              </div>
+            )}
+
+            {/* Period */}
             <div>
               <label
-                htmlFor="fb-employee"
+                htmlFor="fb-period"
                 className="mb-1 block text-sm font-medium text-gray-700"
               >
-                Colaborador *
+                Período *
               </label>
-              <select
-                id="fb-employee"
-                value={employeeId}
-                onChange={(e) => setEmployeeId(e.target.value)}
+              <input
+                id="fb-period"
+                type="text"
+                value={period}
+                onChange={(e) => setPeriod(e.target.value)}
+                placeholder="Ex: Janeiro 2026, Q1 2026"
                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 required
                 disabled={loading}
+              />
+            </div>
+
+            {/* Conducted At */}
+            <div>
+              <label
+                htmlFor="fb-conducted-at"
+                className="mb-1 block text-sm font-medium text-gray-700"
               >
-                <option value="">Selecione um colaborador</option>
-                {subordinates.map((sub) => (
-                  <option key={sub.id} value={sub.id}>
-                    {sub.name} ({sub.email})
-                  </option>
-                ))}
-              </select>
+                Data de Realização
+              </label>
+              <input
+                id="fb-conducted-at"
+                type="date"
+                value={conductedAt}
+                onChange={(e) => setConductedAt(e.target.value)}
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                disabled={loading}
+              />
             </div>
-          )}
 
-          {/* Employee name (edit mode - read only) */}
-          {mode === "edit" && initialData && (
+            {/* Created At (edit mode only - read only info) */}
+            {mode === "edit" && initialData?.createdAt && (
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">
+                  Data de Criação
+                </label>
+                <p className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700">
+                  {new Date(initialData.createdAt).toLocaleDateString("pt-BR", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </p>
+              </div>
+            )}
+
+            {/* Rating */}
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">
-                Colaborador
+                Avaliação *
               </label>
-              <p className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700">
-                {initialData.employeeName}
-              </p>
+              <StarRating
+                value={rating}
+                onChange={setRating}
+                disabled={loading}
+              />
             </div>
-          )}
-
-          {/* Period */}
-          <div>
-            <label
-              htmlFor="fb-period"
-              className="mb-1 block text-sm font-medium text-gray-700"
-            >
-              Período *
-            </label>
-            <input
-              id="fb-period"
-              type="text"
-              value={period}
-              onChange={(e) => setPeriod(e.target.value)}
-              placeholder="Ex: Janeiro 2026, Q1 2026, 1º Semestre 2026"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              required
-              disabled={loading}
-            />
           </div>
 
-          {/* Conducted At */}
-          <div>
-            <label
-              htmlFor="fb-conducted-at"
-              className="mb-1 block text-sm font-medium text-gray-700"
-            >
-              Data de Realização *
-            </label>
-            <input
-              id="fb-conducted-at"
-              type="date"
-              value={conductedAt}
-              onChange={(e) => setConductedAt(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              required
-              disabled={loading}
-            />
-            <p className="mt-1 text-xs text-gray-500">
-              Data em que a sessão de feedback foi realizada.
-            </p>
-          </div>
-
-          {/* Created At (edit mode only - read only info) */}
-          {mode === "edit" && initialData?.createdAt && (
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                Data de Criação
+          {/* Right column — textareas */}
+          <div className="divide-y divide-gray-100">
+            {/* Strengths */}
+            <div className="pb-3">
+              <label
+                htmlFor="fb-strengths"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
+                Pontos Fortes *
               </label>
-              <p className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700">
-                {new Date(initialData.createdAt).toLocaleDateString("pt-BR", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </p>
+              <textarea
+                id="fb-strengths"
+                value={strengths}
+                onChange={(e) => setStrengths(e.target.value)}
+                placeholder="Descreva os pontos fortes do colaborador neste período..."
+                rows={3}
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                disabled={loading}
+              />
             </div>
-          )}
 
-          {/* Rating */}
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              Avaliação *
-            </label>
-            <StarRating
-              value={rating}
-              onChange={setRating}
-              disabled={loading}
-            />
-          </div>
+            {/* Improvements */}
+            <div className="py-3">
+              <label
+                htmlFor="fb-improvements"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
+                Pontos de Melhoria *
+              </label>
+              <textarea
+                id="fb-improvements"
+                value={improvements}
+                onChange={(e) => setImprovements(e.target.value)}
+                placeholder="Descreva os pontos que o colaborador pode melhorar..."
+                rows={3}
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                disabled={loading}
+              />
+            </div>
 
-          {/* Strengths */}
-          <div>
-            <label
-              htmlFor="fb-strengths"
-              className="mb-1 block text-sm font-medium text-gray-700"
-            >
-              Pontos Fortes *
-            </label>
-            <textarea
-              id="fb-strengths"
-              value={strengths}
-              onChange={(e) => setStrengths(e.target.value)}
-              placeholder="Descreva os pontos fortes do colaborador neste período..."
-              rows={4}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              disabled={loading}
-            />
-          </div>
-
-          {/* Improvements */}
-          <div>
-            <label
-              htmlFor="fb-improvements"
-              className="mb-1 block text-sm font-medium text-gray-700"
-            >
-              Pontos de Melhoria *
-            </label>
-            <textarea
-              id="fb-improvements"
-              value={improvements}
-              onChange={(e) => setImprovements(e.target.value)}
-              placeholder="Descreva os pontos que o colaborador pode melhorar..."
-              rows={4}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              disabled={loading}
-            />
-          </div>
-
-          {/* Content */}
-          <div>
-            <label
-              htmlFor="fb-content"
-              className="mb-1 block text-sm font-medium text-gray-700"
-            >
-              Conteúdo Geral *
-            </label>
-            <textarea
-              id="fb-content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Comentários gerais sobre o desempenho do colaborador..."
-              rows={4}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              disabled={loading}
-            />
+            {/* Content */}
+            <div className="pt-3">
+              <label
+                htmlFor="fb-content"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
+                Conteúdo Geral *
+              </label>
+              <textarea
+                id="fb-content"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder="Comentários gerais sobre o desempenho do colaborador..."
+                rows={3}
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                disabled={loading}
+              />
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-wrap justify-end gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <Link
           href="/feedbacks"
           className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
         >
           Cancelar
         </Link>
-        {canRescheduleOrCancel && (
-          <>
+        <div className="flex flex-wrap items-center gap-3">
+          {canRescheduleOrCancel && (
+            <>
+              <button
+                type="button"
+                onClick={() => setShowCancelEventModal(true)}
+                disabled={loading}
+                className="inline-flex items-center gap-2 rounded-md border border-red-300 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
+              >
+                <CalendarX2 size={16} />
+                Cancelar Evento
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowRescheduleModal(true)}
+                disabled={loading}
+                className="inline-flex items-center gap-2 rounded-md border border-orange-300 px-4 py-2 text-sm font-medium text-orange-700 hover:bg-orange-50 disabled:opacity-50"
+              >
+                <Calendar size={16} />
+                Reagendar
+              </button>
+            </>
+          )}
+          {initialData?.status === "scheduled" && !canRescheduleOrCancel && (
             <button
               type="button"
-              onClick={() => setShowCancelEventModal(true)}
+              onClick={handleCancelSchedule}
               disabled={loading}
               className="inline-flex items-center gap-2 rounded-md border border-red-300 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
             >
-              <CalendarX2 size={16} />
-              Cancelar Evento
+              <X size={16} />
+              Cancelar Agendamento
             </button>
-            <button
-              type="button"
-              onClick={() => setShowRescheduleModal(true)}
-              disabled={loading}
-              className="inline-flex items-center gap-2 rounded-md border border-orange-300 px-4 py-2 text-sm font-medium text-orange-700 hover:bg-orange-50 disabled:opacity-50"
-            >
-              <Calendar size={16} />
-              Reagendar
-            </button>
-          </>
-        )}
-        {initialData?.status === "scheduled" && !canRescheduleOrCancel && (
+          )}
           <button
-            type="button"
-            onClick={handleCancelSchedule}
-            disabled={loading}
-            className="inline-flex items-center gap-2 rounded-md border border-red-300 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
+            type="submit"
+            disabled={loading || !period.trim() || (mode === "create" && !employeeId)}
+            className="inline-flex items-center gap-2 rounded-md bg-gray-600 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 disabled:opacity-50"
           >
-            <X size={16} />
-            Cancelar Agendamento
+            <Save size={16} />
+            {loading ? "Salvando..." : "Salvar Rascunho"}
           </button>
-        )}
-        <button
-          type="submit"
-          disabled={loading || !period.trim() || !conductedAt || (mode === "create" && !employeeId)}
-          className="inline-flex items-center gap-2 rounded-md bg-gray-600 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 disabled:opacity-50"
-        >
-          <Save size={16} />
-          {loading ? "Salvando..." : "Salvar Rascunho"}
-        </button>
-        <button
-          type="button"
-          onClick={() => setShowScheduleModal(true)}
-          disabled={loading || !canSubmit}
-          className="inline-flex items-center gap-2 rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-50"
-          title={
-            !canSubmit
-              ? "Preencha todos os campos obrigatórios para agendar"
-              : ""
-          }
-        >
-          <Calendar size={16} />
-          {loading ? "Agendando..." : "Agendar Submissão"}
-        </button>
-        <button
-          type="button"
-          onClick={() => handleSave(true)}
-          disabled={loading || !canSubmit}
-          className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-          title={
-            !canSubmit
-              ? "Preencha todos os campos obrigatórios para submeter"
-              : ""
-          }
-        >
-          <Send size={16} />
-          {loading ? "Submetendo..." : "Submeter Feedback"}
-        </button>
+
+          {/* Split button: Submeter Feedback | ▾ */}
+          <div ref={submitMenuRef} className="relative">
+            <div className="flex">
+              <button
+                type="button"
+                onClick={() => handleSave(true)}
+                disabled={loading || !canSubmit}
+                className="inline-flex items-center gap-2 rounded-l-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                title={!canSubmit ? "Preencha todos os campos obrigatórios" : ""}
+              >
+                <Send size={16} />
+                {loading ? "Submetendo..." : "Submeter Feedback"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowSubmitMenu((v) => !v)}
+                disabled={loading || !canSubmit}
+                className="inline-flex items-center rounded-r-md border-l border-blue-500 bg-blue-600 px-2 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
+                aria-label="Mais opções de submissão"
+              >
+                <ChevronDown size={14} />
+              </button>
+            </div>
+            {showSubmitMenu && (
+              <div className="absolute right-0 z-10 mt-1 w-52 rounded-md border border-gray-200 bg-white shadow-lg">
+                <button
+                  type="button"
+                  onClick={() => { setShowSubmitMenu(false); handleSave(true); }}
+                  disabled={loading || !canSubmit}
+                  className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                >
+                  <Send size={14} />
+                  Submeter agora
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setShowSubmitMenu(false); setShowScheduleModal(true); }}
+                  disabled={loading || !canSubmit}
+                  className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                >
+                  <Calendar size={14} />
+                  Agendar submissão
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Schedule Modal */}

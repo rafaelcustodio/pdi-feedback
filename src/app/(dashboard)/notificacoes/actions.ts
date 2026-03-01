@@ -305,6 +305,5 @@ export async function generateScheduleNotifications(): Promise<{
     }
   }
 
-  revalidatePath("/notificacoes");
   return { created };
 }

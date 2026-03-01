@@ -4,8 +4,6 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { computeSubordinates } from "@/lib/hierarchy-utils";
 
-export { computeSubordinates } from "@/lib/hierarchy-utils";
-export type { HierarchyEntry } from "@/lib/hierarchy-utils";
 
 /**
  * DB-backed function: returns all direct and indirect subordinate IDs

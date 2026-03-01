@@ -185,7 +185,7 @@ export function PDIForm({
   }
 
   return (
-    <form onSubmit={handleSubmitForm} className="space-y-6">
+    <form onSubmit={handleSubmitForm} className="space-y-4">
       <div className="flex items-center gap-3">
         <Link
           href="/pdis"
@@ -229,11 +229,11 @@ export function PDIForm({
       )}
 
       {/* Basic Info */}
-      <div className="rounded-lg border border-gray-200 bg-white p-6">
-        <h2 className="mb-4 text-lg font-medium text-gray-900">
+      <div className="rounded-lg border border-gray-200 bg-white p-4">
+        <h2 className="mb-3 text-lg font-medium text-gray-900">
           Informações Gerais
         </h2>
-        <div className="space-y-4">
+        <div className="space-y-3">
           {/* Employee selection (create mode only) */}
           {mode === "create" && subordinates && (
             <div>
@@ -273,48 +273,50 @@ export function PDIForm({
             </div>
           )}
 
-          {/* Period */}
-          <div>
-            <label
-              htmlFor="pdi-period"
-              className="mb-1 block text-sm font-medium text-gray-700"
-            >
-              Período *
-            </label>
-            <input
-              id="pdi-period"
-              type="text"
-              value={period}
-              onChange={(e) => setPeriod(e.target.value)}
-              placeholder="Ex: 1º Semestre 2026, Q1 2026, Janeiro-Junho 2026"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              required
-              disabled={loading}
-            />
-          </div>
+          {/* Period + Conducted At - 2 columns */}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {/* Period */}
+            <div>
+              <label
+                htmlFor="pdi-period"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
+                Período *
+              </label>
+              <input
+                id="pdi-period"
+                type="text"
+                value={period}
+                onChange={(e) => setPeriod(e.target.value)}
+                placeholder="Ex: 1º Semestre 2026, Q1 2026"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                required
+                disabled={loading}
+              />
+            </div>
 
-          {/* Conducted At */}
-          <div>
-            <label
-              htmlFor="pdi-conducted-at"
-              className="mb-1 block text-sm font-medium text-gray-700"
-            >
-              Data de realização *
-            </label>
-            <input
-              id="pdi-conducted-at"
-              type="date"
-              value={conductedAt}
-              onChange={(e) => setConductedAt(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              required
-              disabled={loading}
-            />
+            {/* Conducted At */}
+            <div>
+              <label
+                htmlFor="pdi-conducted-at"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
+                Data de realização
+              </label>
+              <input
+                id="pdi-conducted-at"
+                type="date"
+                value={conductedAt}
+                onChange={(e) => setConductedAt(e.target.value)}
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                disabled={loading}
+              />
+            </div>
           </div>
 
           {/* Created At (read-only, edit mode only) */}
           {mode === "edit" && initialData?.createdAt && (
-            <div>
+            <div className="sm:w-1/2">
               <label className="mb-1 block text-sm font-medium text-gray-700">
                 Data de criação
               </label>
@@ -333,8 +335,8 @@ export function PDIForm({
       </div>
 
       {/* Goals Section */}
-      <div className="rounded-lg border border-gray-200 bg-white p-6">
-        <div className="mb-4 flex items-center justify-between">
+      <div className="rounded-lg border border-gray-200 bg-white p-4">
+        <div className="mb-3 flex items-center justify-between">
           <h2 className="text-lg font-medium text-gray-900">
             Metas ({goals.length})
           </h2>
@@ -349,13 +351,13 @@ export function PDIForm({
           </button>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           {goals.map((goal, index) => (
             <div
               key={index}
-              className="rounded-lg border border-gray-200 bg-gray-50 p-4"
+              className="rounded-lg border border-gray-200 bg-gray-50 p-3"
             >
-              <div className="mb-3 flex items-center justify-between">
+              <div className="mb-2 flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-700">
                   Meta {index + 1}
                 </span>
@@ -372,7 +374,7 @@ export function PDIForm({
                 )}
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid gap-2 sm:grid-cols-2">
                 {/* Title */}
                 <div className="sm:col-span-2">
                   <label
@@ -465,57 +467,59 @@ export function PDIForm({
       </div>
 
       {/* Action Buttons */}
-      <div className="flex flex-wrap justify-end gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <Link
           href="/pdis"
           className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
         >
           Cancelar
         </Link>
-        {canRescheduleOrCancel && (
-          <>
-            <button
-              type="button"
-              onClick={() => setShowCancelModal(true)}
-              disabled={loading}
-              className="inline-flex items-center gap-2 rounded-md border border-red-300 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
-            >
-              <CalendarX2 size={16} />
-              Cancelar Evento
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowRescheduleModal(true)}
-              disabled={loading}
-              className="inline-flex items-center gap-2 rounded-md border border-orange-300 px-4 py-2 text-sm font-medium text-orange-700 hover:bg-orange-50 disabled:opacity-50"
-            >
-              <Calendar size={16} />
-              Reagendar
-            </button>
-          </>
-        )}
-        <button
-          type="submit"
-          disabled={loading || !period.trim() || !conductedAt || (mode === "create" && !employeeId)}
-          className="inline-flex items-center gap-2 rounded-md bg-gray-600 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 disabled:opacity-50"
-        >
-          <Save size={16} />
-          {loading ? "Salvando..." : "Salvar Rascunho"}
-        </button>
-        <button
-          type="button"
-          onClick={() => handleSave(true)}
-          disabled={loading || !canActivate}
-          className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-          title={
-            !canActivate
-              ? "Preencha todos os campos e adicione pelo menos uma meta com título e competência para ativar"
-              : ""
-          }
-        >
-          <Play size={16} />
-          {loading ? "Ativando..." : "Ativar PDI"}
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          {canRescheduleOrCancel && (
+            <>
+              <button
+                type="button"
+                onClick={() => setShowCancelModal(true)}
+                disabled={loading}
+                className="inline-flex items-center gap-2 rounded-md border border-red-300 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
+              >
+                <CalendarX2 size={16} />
+                Cancelar Evento
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowRescheduleModal(true)}
+                disabled={loading}
+                className="inline-flex items-center gap-2 rounded-md border border-orange-300 px-4 py-2 text-sm font-medium text-orange-700 hover:bg-orange-50 disabled:opacity-50"
+              >
+                <Calendar size={16} />
+                Reagendar
+              </button>
+            </>
+          )}
+          <button
+            type="submit"
+            disabled={loading || !period.trim() || (mode === "create" && !employeeId)}
+            className="inline-flex items-center gap-2 rounded-md bg-gray-600 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 disabled:opacity-50"
+          >
+            <Save size={16} />
+            {loading ? "Salvando..." : "Salvar Rascunho"}
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSave(true)}
+            disabled={loading || !canActivate}
+            className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+            title={
+              !canActivate
+                ? "Preencha todos os campos e adicione pelo menos uma meta com título e competência para ativar"
+                : ""
+            }
+          >
+            <Play size={16} />
+            {loading ? "Ativando..." : "Ativar PDI"}
+          </button>
+        </div>
       </div>
 
       {/* Reschedule Modal */}

@@ -4,7 +4,6 @@ import { useState, useCallback } from "react";
 import { Sidebar } from "./sidebar";
 import { Header } from "./header";
 import { MobileSidebarOverlay } from "./mobile-sidebar-overlay";
-import type { NotificationListItem } from "@/app/(dashboard)/notificacoes/actions";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -12,7 +11,6 @@ interface AppLayoutProps {
   avatarUrl?: string | null;
   userRole?: string;
   notificationCount?: number;
-  recentNotifications?: NotificationListItem[];
 }
 
 export function AppLayout({
@@ -21,7 +19,6 @@ export function AppLayout({
   avatarUrl,
   userRole = "employee",
   notificationCount = 0,
-  recentNotifications = [],
 }: AppLayoutProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -39,13 +36,16 @@ export function AppLayout({
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div style={{ background: "var(--bg-body)" }} className="min-h-screen">
       {/* Desktop sidebar */}
       <div className="hidden lg:block">
         <Sidebar
           collapsed={sidebarCollapsed}
           onToggle={toggleSidebar}
           userRole={userRole}
+          userName={userName}
+          avatarUrl={avatarUrl}
+          notificationCount={notificationCount}
         />
       </div>
 
@@ -55,27 +55,18 @@ export function AppLayout({
           collapsed={false}
           onToggle={closeMobileMenu}
           userRole={userRole}
-        />
-      </MobileSidebarOverlay>
-
-      {/* Header */}
-      <div
-        className={`transition-all duration-300 ${
-          sidebarCollapsed ? "lg:pl-16" : "lg:pl-64"
-        }`}
-      >
-        <Header
           userName={userName}
           avatarUrl={avatarUrl}
           notificationCount={notificationCount}
-          recentNotifications={recentNotifications}
-          onMenuToggle={toggleMobileMenu}
         />
-      </div>
+      </MobileSidebarOverlay>
+
+      {/* Mobile header */}
+      <Header onMenuToggle={toggleMobileMenu} />
 
       {/* Main content */}
       <main
-        className={`pt-16 transition-all duration-300 ${
+        className={`pt-16 transition-all duration-300 lg:pt-0 ${
           sidebarCollapsed ? "lg:pl-16" : "lg:pl-64"
         }`}
       >

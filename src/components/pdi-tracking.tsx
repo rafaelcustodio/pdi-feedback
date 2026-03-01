@@ -14,13 +14,30 @@ import {
   Clock,
   Circle,
   XCircle,
+  Pencil,
 } from "lucide-react";
 import type { PDIDetail } from "@/app/(dashboard)/pdis/actions";
 import {
   addEvidence,
   addComment,
   updateGoalStatus,
+  updateGoal,
+  updateComment,
+  updateEvidence,
 } from "@/app/(dashboard)/pdis/actions";
+
+const COMPETENCIES = [
+  "Liderança",
+  "Comunicação",
+  "Trabalho em Equipe",
+  "Resolução de Problemas",
+  "Gestão de Tempo",
+  "Inovação",
+  "Conhecimento Técnico",
+  "Relacionamento Interpessoal",
+  "Orientação a Resultados",
+  "Adaptabilidade",
+];
 
 const statusLabels: Record<string, string> = {
   draft: "Rascunho",
@@ -136,6 +153,7 @@ export function PDITracking({ pdi, userId, userRole }: PDITrackingProps) {
                 isEmployee={isEmployee}
                 isManager={isManager}
                 pdiStatus={pdi.status}
+                userId={userId}
               />
             ))}
           </div>
@@ -174,17 +192,32 @@ function GoalCard({
   isEmployee,
   isManager,
   pdiStatus,
+  userId,
 }: {
   goal: PDIDetail["goals"][number];
   isEmployee: boolean;
   isManager: boolean;
   pdiStatus: string;
+  userId: string;
 }) {
   const [expanded, setExpanded] = useState(false);
   const [showEvidenceForm, setShowEvidenceForm] = useState(false);
   const [evidenceDesc, setEvidenceDesc] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Goal editing state
+  const [editingGoal, setEditingGoal] = useState(false);
+  const [editTitle, setEditTitle] = useState(goal.title);
+  const [editDesc, setEditDesc] = useState(goal.description ?? "");
+  const [editCompetency, setEditCompetency] = useState(goal.competency);
+  const [editDueDate, setEditDueDate] = useState(
+    goal.dueDate ? new Date(goal.dueDate).toISOString().split("T")[0] : ""
+  );
+
+  // Evidence editing state
+  const [editingEvidenceId, setEditingEvidenceId] = useState<string | null>(null);
+  const [editingEvidenceText, setEditingEvidenceText] = useState("");
 
   const StatusIcon = goalStatusIcons[goal.status] ?? Circle;
   const isActive = pdiStatus === "active";
@@ -212,6 +245,35 @@ function GoalCard({
       setShowEvidenceForm(false);
     } else {
       setError(result.error ?? "Erro ao adicionar evidência");
+    }
+  }
+
+  async function handleUpdateGoal() {
+    setLoading(true);
+    setError(null);
+    const result = await updateGoal(goal.id, {
+      title: editTitle.trim(),
+      description: editDesc,
+      competency: editCompetency,
+      dueDate: editDueDate || undefined,
+    });
+    setLoading(false);
+    if (result.success) {
+      setEditingGoal(false);
+    } else {
+      setError(result.error ?? "Erro ao salvar meta");
+    }
+  }
+
+  async function handleUpdateEvidence(evidenceId: string) {
+    setLoading(true);
+    setError(null);
+    const result = await updateEvidence(evidenceId, editingEvidenceText);
+    setLoading(false);
+    if (result.success) {
+      setEditingEvidenceId(null);
+    } else {
+      setError(result.error ?? "Erro ao salvar evidência");
     }
   }
 
@@ -262,6 +324,19 @@ function GoalCard({
             </div>
           </div>
           <div className="flex items-center gap-2">
+            {isManager && isActive && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setExpanded(true);
+                  setEditingGoal(true);
+                }}
+                className="rounded p-1 text-gray-400 hover:text-blue-600"
+                title="Editar meta"
+              >
+                <Pencil size={14} />
+              </button>
+            )}
             <span
               className={`inline-flex whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium ${
                 goalStatusColors[goal.status] ?? "bg-gray-100 text-gray-600"
@@ -284,6 +359,83 @@ function GoalCard({
           {error && (
             <div className="mb-3 rounded-md border border-red-200 bg-red-50 p-2 text-sm text-red-700">
               {error}
+            </div>
+          )}
+
+          {/* Goal Edit Form */}
+          {editingGoal && (
+            <div className="mb-4 rounded-md border border-blue-200 bg-blue-50 p-4">
+              <p className="mb-3 text-xs font-medium text-blue-700">Editar Meta</p>
+              <div className="space-y-3">
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-700">
+                    Título *
+                  </label>
+                  <input
+                    type="text"
+                    value={editTitle}
+                    onChange={(e) => setEditTitle(e.target.value)}
+                    className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    disabled={loading}
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-700">
+                    Competência *
+                  </label>
+                  <select
+                    value={editCompetency}
+                    onChange={(e) => setEditCompetency(e.target.value)}
+                    className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    disabled={loading}
+                  >
+                    <option value="">Selecione...</option>
+                    {COMPETENCIES.map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-700">
+                    Prazo
+                  </label>
+                  <input
+                    type="date"
+                    value={editDueDate}
+                    onChange={(e) => setEditDueDate(e.target.value)}
+                    className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    disabled={loading}
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-700">
+                    Descrição
+                  </label>
+                  <textarea
+                    value={editDesc}
+                    onChange={(e) => setEditDesc(e.target.value)}
+                    rows={3}
+                    className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    disabled={loading}
+                  />
+                </div>
+              </div>
+              <div className="mt-3 flex justify-end gap-2">
+                <button
+                  onClick={() => setEditingGoal(false)}
+                  disabled={loading}
+                  className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleUpdateGoal}
+                  disabled={loading || !editTitle.trim() || !editCompetency.trim()}
+                  className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                >
+                  {loading ? "Salvando..." : "Salvar"}
+                </button>
+              </div>
             </div>
           )}
 
@@ -346,16 +498,60 @@ function GoalCard({
                     key={ev.id}
                     className="rounded-md border border-gray-200 bg-white p-3"
                   >
-                    <p className="text-sm text-gray-700">{ev.description}</p>
-                    <p className="mt-1 text-xs text-gray-400">
-                      {new Date(ev.createdAt).toLocaleDateString("pt-BR", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </p>
+                    {editingEvidenceId === ev.id ? (
+                      <>
+                        <textarea
+                          value={editingEvidenceText}
+                          onChange={(e) => setEditingEvidenceText(e.target.value)}
+                          rows={3}
+                          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          disabled={loading}
+                        />
+                        <div className="mt-2 flex justify-end gap-2">
+                          <button
+                            onClick={() => setEditingEvidenceId(null)}
+                            disabled={loading}
+                            className="rounded-md border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                          >
+                            Cancelar
+                          </button>
+                          <button
+                            onClick={() => handleUpdateEvidence(ev.id)}
+                            disabled={loading || !editingEvidenceText.trim()}
+                            className="rounded-md bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                          >
+                            {loading ? "Salvando..." : "Salvar"}
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-sm text-gray-700">{ev.description}</p>
+                        <div className="mt-1 flex items-center justify-between">
+                          <p className="text-xs text-gray-400">
+                            {new Date(ev.createdAt).toLocaleDateString("pt-BR", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </p>
+                          {ev.authorId === userId && (
+                            <button
+                              onClick={() => {
+                                setEditingEvidenceId(ev.id);
+                                setEditingEvidenceText(ev.description);
+                              }}
+                              className="rounded p-0.5 text-gray-400 hover:text-blue-600"
+                              title="Editar evidência"
+                            >
+                              <Pencil size={12} />
+                            </button>
+                          )}
+                        </div>
+                      </>
+                    )}
                   </div>
                 ))}
               </div>
@@ -432,6 +628,8 @@ function CommentsSection({
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [editingCommentText, setEditingCommentText] = useState("");
   const commentsEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -449,6 +647,18 @@ function CommentsSection({
       setContent("");
     } else {
       setError(result.error ?? "Erro ao enviar comentário");
+    }
+  }
+
+  async function handleUpdateComment(commentId: string) {
+    setLoading(true);
+    setError(null);
+    const result = await updateComment(commentId, editingCommentText);
+    setLoading(false);
+    if (result.success) {
+      setEditingCommentId(null);
+    } else {
+      setError(result.error ?? "Erro ao editar comentário");
     }
   }
 
@@ -482,18 +692,62 @@ function CommentsSection({
                   <p className="text-xs font-medium">
                     {isOwn ? "Você" : comment.authorName}
                   </p>
-                  <p className="mt-0.5 whitespace-pre-wrap text-sm">
-                    {comment.content}
-                  </p>
-                  <p className="mt-1 text-xs text-gray-400">
-                    {new Date(comment.createdAt).toLocaleDateString("pt-BR", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </p>
+                  {editingCommentId === comment.id ? (
+                    <div className="mt-1">
+                      <textarea
+                        value={editingCommentText}
+                        onChange={(e) => setEditingCommentText(e.target.value)}
+                        rows={3}
+                        className="w-full rounded-md border border-gray-300 px-2 py-1 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        disabled={loading}
+                      />
+                      <div className="mt-1 flex justify-end gap-2">
+                        <button
+                          onClick={() => setEditingCommentId(null)}
+                          disabled={loading}
+                          className="rounded px-2 py-0.5 text-xs text-gray-600 hover:bg-gray-200 disabled:opacity-50"
+                        >
+                          Cancelar
+                        </button>
+                        <button
+                          onClick={() => handleUpdateComment(comment.id)}
+                          disabled={loading || !editingCommentText.trim()}
+                          className="rounded bg-blue-600 px-2 py-0.5 text-xs text-white hover:bg-blue-700 disabled:opacity-50"
+                        >
+                          {loading ? "..." : "Salvar"}
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="mt-0.5 whitespace-pre-wrap text-sm">
+                        {comment.content}
+                      </p>
+                      <div className="mt-1 flex items-center justify-between gap-2">
+                        <p className="text-xs text-gray-400">
+                          {new Date(comment.createdAt).toLocaleDateString("pt-BR", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </p>
+                        {isOwn && (
+                          <button
+                            onClick={() => {
+                              setEditingCommentId(comment.id);
+                              setEditingCommentText(comment.content);
+                            }}
+                            className="rounded p-0.5 text-gray-400 hover:text-blue-600"
+                            title="Editar comentário"
+                          >
+                            <Pencil size={11} />
+                          </button>
+                        )}
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             );

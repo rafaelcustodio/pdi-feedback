@@ -1,10 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { AppLayout } from "@/components/layout/app-layout";
-import {
-  getUnreadNotificationCount,
-  getRecentNotifications,
-} from "@/app/(dashboard)/notificacoes/actions";
+import { getUnreadNotificationCount } from "@/app/(dashboard)/notificacoes/actions";
 
 export default async function DashboardLayout({
   children,
@@ -17,10 +14,7 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
-  const [notificationCount, recentNotifications] = await Promise.all([
-    getUnreadNotificationCount(),
-    getRecentNotifications(10),
-  ]);
+  const notificationCount = await getUnreadNotificationCount();
 
   return (
     <AppLayout
@@ -28,7 +22,6 @@ export default async function DashboardLayout({
       avatarUrl={session.user.image ?? null}
       userRole={session.user.role}
       notificationCount={notificationCount}
-      recentNotifications={recentNotifications}
     >
       {children}
     </AppLayout>
