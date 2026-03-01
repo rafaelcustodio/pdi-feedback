@@ -108,3 +108,15 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - handleSectorTransfer only cancels 'scheduled' status with future scheduledAt; onboarding feedbacks are preserved via isOnboarding: false filter
   - Individual PDISchedule/FeedbackSchedule are NOT touched during transfer — they're preserved automatically
 ---
+
+## 2026-03-01 03:28 PST - US-009
+- Implemented admin UI for sector recurrence configuration
+- Files changed:
+  - `src/components/sector-schedule-config.tsx` — New component: lists org units with PDI/Feedback configs, modal to edit
+  - `src/app/(dashboard)/configuracoes/actions.ts` — Added getAllSectorSchedules action and SectorScheduleSummary type
+  - `src/app/(dashboard)/configuracoes/page.tsx` — Added SectorScheduleConfig section
+- **Learnings for future iterations:**
+  - Modal pattern: fixed inset-0 z-50 bg-black/50, max-w-md inner container
+  - SectorScheduleSummary fetches all units with joined sectorSchedules in one query
+  - Date serialization: server passes Date objects, client uses .toISOString().slice(0,10)
+---
