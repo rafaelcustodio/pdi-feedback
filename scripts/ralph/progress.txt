@@ -145,3 +145,10 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - URL search params persist filters via router.replace
   - Periods fetched dynamically via getUnitPeriods which uses calculatePeriods from sector config
 ---
+
+## 2026-03-01 03:36 PST - US-012
+- Enhanced compliance table with badges, progress bar, counters, filters
+- Files changed:
+  - `src/components/programacao-panel.tsx` — Added progress bar, counters, status filter, "Programar Eventos" button, onboarding badges, yellow highlight for not_scheduled
+  - `src/app/(dashboard)/programacao/actions.ts` — Added isOnboarding/onboardingLabel to ComplianceEmployee
+---
