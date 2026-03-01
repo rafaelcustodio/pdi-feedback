@@ -159,3 +159,10 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - `src/components/program-events-wizard.tsx` — New wizard: employee selection, perDay/direction config, dryRun preview, date editing with snap-to-business-day, confirm
   - `src/components/programacao-panel.tsx` — Integrated real wizard, auto-refreshes compliance after creation
 ---
+
+## 2026-03-01 03:40 PST - US-014
+- Added progress indicators to sector listing with sort and navigation
+- Files changed:
+  - `src/components/sector-schedule-config.tsx` — ProgressIndicator component, sort by completion, Link to /programacao
+  - `src/app/(dashboard)/configuracoes/actions.ts` — getAllSectorSchedules now includes pdiProgress/feedbackProgress, getFrequencyLabel exported
+---
