@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { CalendarCheck, CalendarPlus } from "lucide-react";
 import type { AccessibleUnit, PeriodOption, ComplianceEmployee } from "@/app/(dashboard)/programacao/actions";
 import { getUnitPeriods, getSectorComplianceStatus } from "@/app/(dashboard)/programacao/actions";
+import { ProgramEventsWizard } from "./program-events-wizard";
 
 type StatusFilter = "all" | "not_scheduled" | "scheduled" | "done";
 
@@ -340,25 +341,32 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
         </div>
       )}
 
-      {/* Wizard placeholder - implemented in US-013 */}
-      {showWizard && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-            <h3 className="text-lg font-semibold text-gray-900">Programar Eventos</h3>
-            <p className="mt-2 text-sm text-gray-600">
-              Wizard de programação será implementado na próxima etapa.
-            </p>
-            <div className="mt-4 flex justify-end">
-              <button
-                onClick={() => setShowWizard(false)}
-                className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-              >
-                Fechar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Event Programming Wizard */}
+      {showWizard && unitId && selectedPeriod && (() => {
+        const period = periods.find((p) => p.label === selectedPeriod);
+        if (!period) return null;
+        const notScheduled = employees.filter((e) => e.status === "not_scheduled");
+        return (
+          <ProgramEventsWizard
+            unitId={unitId}
+            type={type}
+            periodStart={period.start}
+            periodEnd={period.end}
+            notScheduledEmployees={notScheduled}
+            onClose={() => setShowWizard(false)}
+            onComplete={() => {
+              // Refresh compliance data
+              const p = periods.find((pp) => pp.label === selectedPeriod);
+              if (p) {
+                getSectorComplianceStatus(unitId, new Date(p.start), new Date(p.end), type)
+                  .then((result) => {
+                    if (result.success && result.data) setEmployees(result.data);
+                  });
+              }
+            }}
+          />
+        );
+      })()}
     </div>
   );
 }
