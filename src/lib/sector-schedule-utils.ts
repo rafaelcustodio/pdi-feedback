@@ -264,3 +264,114 @@ export async function getEffectiveSchedule(
     isActive: sectorSchedule.isActive,
   };
 }
+
+/**
+ * Create onboarding feedbacks at 45 and 90 days after admission.
+ * Only creates if no onboarding feedbacks already exist for the employee.
+ */
+export async function createOnboardingFeedbacks(
+  employeeId: string,
+  admissionDate: Date,
+  managerId: string
+): Promise<void> {
+  const d45 = new Date(admissionDate);
+  d45.setDate(d45.getDate() + 45);
+
+  const d90 = new Date(admissionDate);
+  d90.setDate(d90.getDate() + 90);
+
+  // Check if onboarding feedbacks already exist
+  const existing = await prisma.feedback.findMany({
+    where: { employeeId, isOnboarding: true },
+  });
+
+  if (existing.length === 0) {
+    await prisma.feedback.createMany({
+      data: [
+        {
+          employeeId,
+          managerId,
+          status: "scheduled",
+          period: "Onboarding 45d",
+          scheduledAt: d45,
+          isOnboarding: true,
+        },
+        {
+          employeeId,
+          managerId,
+          status: "scheduled",
+          period: "Onboarding 90d",
+          scheduledAt: d90,
+          isOnboarding: true,
+        },
+      ],
+    });
+  }
+}
+
+/**
+ * Update onboarding feedbacks when admission date changes.
+ * Removes pending (scheduled) onboarding feedbacks and recreates with new dates.
+ * Already submitted feedbacks are not affected.
+ */
+export async function updateOnboardingFeedbacks(
+  employeeId: string,
+  admissionDate: Date,
+  managerId: string
+): Promise<void> {
+  // Delete only scheduled onboarding feedbacks
+  await prisma.feedback.deleteMany({
+    where: {
+      employeeId,
+      isOnboarding: true,
+      status: "scheduled",
+    },
+  });
+
+  // Check if any submitted onboarding feedbacks remain
+  const remaining = await prisma.feedback.findMany({
+    where: { employeeId, isOnboarding: true },
+  });
+
+  const has45d = remaining.some((f) => f.period === "Onboarding 45d");
+  const has90d = remaining.some((f) => f.period === "Onboarding 90d");
+
+  const d45 = new Date(admissionDate);
+  d45.setDate(d45.getDate() + 45);
+  const d90 = new Date(admissionDate);
+  d90.setDate(d90.getDate() + 90);
+
+  const toCreate: Array<{
+    employeeId: string;
+    managerId: string;
+    status: "scheduled";
+    period: string;
+    scheduledAt: Date;
+    isOnboarding: true;
+  }> = [];
+
+  if (!has45d) {
+    toCreate.push({
+      employeeId,
+      managerId,
+      status: "scheduled",
+      period: "Onboarding 45d",
+      scheduledAt: d45,
+      isOnboarding: true,
+    });
+  }
+  if (!has90d) {
+    toCreate.push({
+      employeeId,
+      managerId,
+      status: "scheduled",
+      period: "Onboarding 90d",
+      scheduledAt: d90,
+      isOnboarding: true,
+    });
+  }
+
+  if (toCreate.length > 0) {
+    await prisma.feedback.createMany({ data: toCreate });
+  }
+}

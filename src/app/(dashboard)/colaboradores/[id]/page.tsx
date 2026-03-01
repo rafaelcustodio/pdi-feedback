@@ -37,6 +37,7 @@ export default async function EditarColaboradorPage({
           role: employee.role,
           orgUnitId: employee.hierarchy?.organizationalUnitId,
           managerId: employee.hierarchy?.managerId,
+          admissionDate: employee.admissionDate?.toISOString().slice(0, 10),
         }}
       />
       <ScheduleSection

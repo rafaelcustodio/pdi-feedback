@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { generateScheduledEvents, removeScheduledEvents } from "@/lib/schedule-utils";
+import { createOnboardingFeedbacks, updateOnboardingFeedbacks } from "@/lib/sector-schedule-utils";
 
 export type EmployeeListItem = {
   id: string;
@@ -23,6 +24,7 @@ export type EmployeeDetail = {
   role: string;
   isActive: boolean;
   avatarUrl: string | null;
+  admissionDate: Date | null;
   createdAt: Date;
   hierarchy: {
     id: string;
@@ -140,6 +142,7 @@ export async function getEmployeeById(
     role: user.role,
     isActive: user.isActive,
     avatarUrl: user.avatarUrl,
+    admissionDate: user.admissionDate,
     createdAt: user.createdAt,
     hierarchy: activeHierarchy
       ? {
@@ -216,6 +219,7 @@ export async function createEmployee(data: {
   password?: string;
   orgUnitId?: string;
   managerId?: string;
+  admissionDate?: string;
 }): Promise<{ success: boolean; error?: string; id?: string }> {
   const session = await requireAdmin();
   if (!session) {
@@ -259,6 +263,7 @@ export async function createEmployee(data: {
       email: trimmedEmail,
       role: data.role as "admin" | "manager" | "employee",
       password: hashedPassword,
+      admissionDate: data.admissionDate ? new Date(data.admissionDate) : null,
     },
   });
 
@@ -271,6 +276,15 @@ export async function createEmployee(data: {
         organizationalUnitId: data.orgUnitId,
       },
     });
+
+    // Create onboarding feedbacks if admission date provided
+    if (data.admissionDate) {
+      await createOnboardingFeedbacks(
+        user.id,
+        new Date(data.admissionDate),
+        data.managerId
+      );
+    }
   }
 
   revalidatePath("/colaboradores");
@@ -285,6 +299,7 @@ export async function updateEmployee(
     role: string;
     orgUnitId?: string;
     managerId?: string;
+    admissionDate?: string;
   }
 ): Promise<{ success: boolean; error?: string }> {
   const session = await requireAdmin();
@@ -321,12 +336,17 @@ export async function updateEmployee(
   }
 
   // Update user fields
+  const newAdmissionDate = data.admissionDate ? new Date(data.admissionDate) : null;
+  const admissionChanged =
+    newAdmissionDate?.getTime() !== user.admissionDate?.getTime();
+
   await prisma.user.update({
     where: { id },
     data: {
       name: trimmedName,
       email: trimmedEmail,
       role: data.role as "admin" | "manager" | "employee",
+      admissionDate: newAdmissionDate,
     },
   });
 
@@ -369,6 +389,11 @@ export async function updateEmployee(
         data: { endDate: new Date() },
       });
     }
+  }
+
+  // Handle onboarding feedbacks when admission date changes
+  if (admissionChanged && newAdmissionDate && data.managerId) {
+    await updateOnboardingFeedbacks(id, newAdmissionDate, data.managerId);
   }
 
   revalidatePath("/colaboradores");

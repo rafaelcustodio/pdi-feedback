@@ -45,7 +45,7 @@ export async function getSectorComplianceStatus(
     },
     include: {
       employee: {
-        select: { id: true, name: true, role: true },
+        select: { id: true, name: true, role: true, admissionDate: true },
       },
     },
   });
@@ -60,6 +60,16 @@ export async function getSectorComplianceStatus(
   for (const emp of employees) {
     const schedule = await getEffectiveSchedule(emp.employeeId, type);
     if (schedule && schedule.isActive) {
+      // For feedback: exclude employees still in onboarding period
+      // Employee only enters regular sector feedback cycle from the first
+      // complete period that starts after admissionDate + 90 days
+      if (type === "feedback" && emp.employee.admissionDate) {
+        const onboardingEnd = new Date(emp.employee.admissionDate);
+        onboardingEnd.setDate(onboardingEnd.getDate() + 90);
+        if (periodStart < onboardingEnd) {
+          continue; // Still in onboarding, skip regular cycle
+        }
+      }
       employeesWithSchedule.push(emp);
     }
   }
@@ -186,18 +196,25 @@ export async function programEvents(params: {
     const hasAccess = await canAccessEmployee(userId, role, empId);
     if (!hasAccess) continue;
 
-    // Get the employee's current manager
+    // Get the employee's current manager and admission date
     const hierarchy = await prisma.employeeHierarchy.findFirst({
       where: { employeeId: empId, endDate: null },
-      include: { employee: { select: { name: true } } },
+      include: { employee: { select: { name: true, admissionDate: true } } },
     });
-    if (hierarchy) {
-      accessibleEmployees.push({
-        id: empId,
-        name: hierarchy.employee.name,
-        managerId: hierarchy.managerId,
-      });
+    if (!hierarchy) continue;
+
+    // For feedback: skip employees still in onboarding (admissionDate + 90d > periodStart)
+    if (params.type === "feedback" && hierarchy.employee.admissionDate) {
+      const onboardingEnd = new Date(hierarchy.employee.admissionDate);
+      onboardingEnd.setDate(onboardingEnd.getDate() + 90);
+      if (params.periodStart < onboardingEnd) continue;
     }
+
+    accessibleEmployees.push({
+      id: empId,
+      name: hierarchy.employee.name,
+      managerId: hierarchy.managerId,
+    });
   }
 
   // Calculate business days in the period
