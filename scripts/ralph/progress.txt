@@ -80,3 +80,17 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - Uses canAccessEmployee for per-employee access verification
   - Gets managerId from current EmployeeHierarchy entry for each employee
 ---
+
+## 2026-03-01 03:23 PST - US-007
+- Implemented onboarding feedbacks (45d/90d) and admissionDate field in UI
+- Files changed:
+  - `src/lib/sector-schedule-utils.ts` — Added createOnboardingFeedbacks, updateOnboardingFeedbacks
+  - `src/components/employee-form.tsx` — Added admissionDate state, date input, passes to create/update
+  - `src/app/(dashboard)/colaboradores/actions.ts` — createEmployee/updateEmployee handle admissionDate, EmployeeDetail includes admissionDate
+  - `src/app/(dashboard)/colaboradores/[id]/page.tsx` — Passes admissionDate in initialData to EmployeeForm
+  - `src/app/(dashboard)/programacao/actions.ts` — getSectorComplianceStatus and programEvents filter out employees in onboarding period (admissionDate+90d > periodStart)
+- **Learnings for future iterations:**
+  - Onboarding feedbacks use isOnboarding=true flag and period "Onboarding 45d"/"Onboarding 90d"
+  - updateOnboardingFeedbacks only deletes scheduled onboarding feedbacks, preserves submitted ones
+  - Employees only enter regular feedback cycle from first period starting after admissionDate + 90 days
+---
