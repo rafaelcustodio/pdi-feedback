@@ -69,3 +69,14 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - Delete is a soft-delete setting `isActive = false`
   - Only admin role can execute these actions
 ---
+
+## 2026-03-01 03:17 PST - US-006
+- Implemented programEvents server action with dryRun preview support
+- Files changed:
+  - `src/app/(dashboard)/programacao/actions.ts` — Added programEvents with dryRun, duplicate checking, batch PDI/Feedback creation
+- **Learnings for future iterations:**
+  - programEvents checks for existing events in the period before creating, returning skipped count
+  - dryRun=true returns the distribution preview without creating records
+  - Uses canAccessEmployee for per-employee access verification
+  - Gets managerId from current EmployeeHierarchy entry for each employee
+---

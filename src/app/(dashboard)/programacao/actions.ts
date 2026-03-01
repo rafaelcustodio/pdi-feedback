@@ -2,8 +2,13 @@
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getAccessibleEmployeeIds } from "@/lib/access-control";
-import { getEffectiveSchedule } from "@/lib/sector-schedule-utils";
+import { revalidatePath } from "next/cache";
+import { getAccessibleEmployeeIds, canAccessEmployee } from "@/lib/access-control";
+import {
+  getEffectiveSchedule,
+  getBusinessDays,
+  distributeEvents,
+} from "@/lib/sector-schedule-utils";
 
 export interface ComplianceEmployee {
   employeeId: string;
@@ -133,4 +138,168 @@ export async function getSectorComplianceStatus(
   }
 
   return { success: true, data: result };
+}
+
+const MONTH_ABBR_PT = [
+  "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
+  "Jul", "Ago", "Set", "Out", "Nov", "Dez",
+];
+
+function formatPeriod(date: Date): string {
+  return `${MONTH_ABBR_PT[date.getMonth()]}/${date.getFullYear()}`;
+}
+
+export interface ProgramEventsResult {
+  success: boolean;
+  error?: string;
+  created: number;
+  skipped: number;
+  events: Array<{ employeeId: string; employeeName: string; scheduledDate: Date }>;
+}
+
+export async function programEvents(params: {
+  unitId: string;
+  type: "pdi" | "feedback";
+  periodStart: Date;
+  periodEnd: Date;
+  employeeIds: string[];
+  perDay: 1 | 2;
+  direction: "end-to-start" | "last-month-start";
+  dryRun?: boolean;
+}): Promise<ProgramEventsResult> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado", created: 0, skipped: 0, events: [] };
+  }
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  // Only manager or admin can program events
+  if (role === "employee") {
+    return { success: false, error: "Apenas gestores e admins podem programar eventos", created: 0, skipped: 0, events: [] };
+  }
+
+  // Verify access to each employee
+  const accessibleEmployees: { id: string; name: string; managerId: string }[] = [];
+  for (const empId of params.employeeIds) {
+    const hasAccess = await canAccessEmployee(userId, role, empId);
+    if (!hasAccess) continue;
+
+    // Get the employee's current manager
+    const hierarchy = await prisma.employeeHierarchy.findFirst({
+      where: { employeeId: empId, endDate: null },
+      include: { employee: { select: { name: true } } },
+    });
+    if (hierarchy) {
+      accessibleEmployees.push({
+        id: empId,
+        name: hierarchy.employee.name,
+        managerId: hierarchy.managerId,
+      });
+    }
+  }
+
+  // Calculate business days in the period
+  const businessDays = getBusinessDays(params.periodStart, params.periodEnd);
+
+  // Distribute events
+  const distributed = distributeEvents(
+    accessibleEmployees.map((e) => ({ id: e.id, name: e.name })),
+    businessDays,
+    params.perDay,
+    params.direction
+  );
+
+  // Check for existing events and skip duplicates
+  const eventsToCreate: typeof distributed = [];
+  let skipped = 0;
+
+  for (const event of distributed) {
+    const emp = accessibleEmployees.find((e) => e.id === event.employeeId)!;
+
+    if (params.type === "pdi") {
+      const existing = await prisma.pDI.findFirst({
+        where: {
+          employeeId: event.employeeId,
+          OR: [
+            { scheduledAt: { gte: params.periodStart, lte: params.periodEnd } },
+            { conductedAt: { gte: params.periodStart, lte: params.periodEnd } },
+          ],
+          status: { in: ["scheduled", "draft", "active", "completed"] },
+        },
+      });
+      if (existing) {
+        skipped++;
+        continue;
+      }
+    } else {
+      const existing = await prisma.feedback.findFirst({
+        where: {
+          employeeId: event.employeeId,
+          OR: [
+            { scheduledAt: { gte: params.periodStart, lte: params.periodEnd } },
+            { conductedAt: { gte: params.periodStart, lte: params.periodEnd } },
+          ],
+          status: { in: ["scheduled", "draft", "submitted"] },
+        },
+      });
+      if (existing) {
+        skipped++;
+        continue;
+      }
+    }
+
+    eventsToCreate.push(event);
+  }
+
+  // If dry run, return preview without creating
+  if (params.dryRun) {
+    return {
+      success: true,
+      created: eventsToCreate.length,
+      skipped,
+      events: eventsToCreate,
+    };
+  }
+
+  // Create the events
+  for (const event of eventsToCreate) {
+    const emp = accessibleEmployees.find((e) => e.id === event.employeeId)!;
+    const period = formatPeriod(event.scheduledDate);
+
+    if (params.type === "pdi") {
+      await prisma.pDI.create({
+        data: {
+          employeeId: event.employeeId,
+          managerId: emp.managerId,
+          status: "scheduled",
+          period,
+          scheduledAt: event.scheduledDate,
+        },
+      });
+    } else {
+      await prisma.feedback.create({
+        data: {
+          employeeId: event.employeeId,
+          managerId: emp.managerId,
+          status: "scheduled",
+          period,
+          scheduledAt: event.scheduledDate,
+        },
+      });
+    }
+  }
+
+  revalidatePath("/programacao");
+  revalidatePath("/pdis");
+  revalidatePath("/feedbacks");
+  revalidatePath("/calendario");
+
+  return {
+    success: true,
+    created: eventsToCreate.length,
+    skipped,
+    events: eventsToCreate,
+  };
 }
