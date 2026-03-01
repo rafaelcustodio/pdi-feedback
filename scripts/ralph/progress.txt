@@ -184,3 +184,19 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - calculatePeriods + getCurrentPeriod from sector-schedule-utils reused for period detection
   - Inline helpers (getEligible, countCompliance) keep the cron self-contained without new exports
 ---
+
+## 2026-03-01 03:47 PST - US-016
+- Updated cron generate-events to skip employees under sector configuration
+- Files changed:
+  - `src/app/api/cron/generate-events/route.ts` — Pre-loads employee→unit mapping and active sector schedules, skips employees with sector config
+  - `scripts/ralph/prd.json` — Marked US-016 as passing
+- **Implementation approach:**
+  - Pre-loads all active EmployeeHierarchy and SectorSchedule records upfront for O(1) lookups
+  - Uses a Set of `${unitId}_${type}` keys for fast sector schedule detection
+  - `hasSectorSchedule(employeeId, type)` helper checks if employee's unit has active sector config
+  - Skipped employees increment `skippedBySector` counter in response JSON
+  - Backward compatible: employees with only individual schedules (no sector config) continue generating normally
+- **Learnings for future iterations:**
+  - Pre-loading lookup maps avoids N+1 queries in the cron loop — efficient for large datasets
+  - The design is defensive: even if an individual schedule is active alongside sector config, sector takes precedence for auto-generation
+---
