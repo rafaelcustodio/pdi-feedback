@@ -2,9 +2,11 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { CalendarCheck } from "lucide-react";
+import { CalendarCheck, CalendarPlus } from "lucide-react";
 import type { AccessibleUnit, PeriodOption, ComplianceEmployee } from "@/app/(dashboard)/programacao/actions";
 import { getUnitPeriods, getSectorComplianceStatus } from "@/app/(dashboard)/programacao/actions";
+
+type StatusFilter = "all" | "not_scheduled" | "scheduled" | "done";
 
 interface ProgramacaoPanelProps {
   units: AccessibleUnit[];
@@ -26,8 +28,9 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
   const [loading, setLoading] = useState(false);
   const [loadingPeriods, setLoadingPeriods] = useState(false);
   const [noConfig, setNoConfig] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [showWizard, setShowWizard] = useState(false);
 
-  // Update URL when filters change
   const updateUrl = useCallback(
     (unit: string, t: string, period: string) => {
       const params = new URLSearchParams();
@@ -39,7 +42,6 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
     [router]
   );
 
-  // Fetch periods when unit or type changes
   useEffect(() => {
     if (!unitId) {
       setPeriods([]);
@@ -59,7 +61,6 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
         setSelectedPeriod("");
         setEmployees([]);
       } else {
-        // Select the initial period from URL or the current period
         const existing = result.find((p) => p.label === initialPeriod);
         const now = new Date();
         const currentPeriod = result.find(
@@ -74,7 +75,6 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [unitId, type]);
 
-  // Fetch compliance data when period changes
   useEffect(() => {
     if (!unitId || !selectedPeriod || periods.length === 0) {
       setEmployees([]);
@@ -102,14 +102,20 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [unitId, selectedPeriod, type, periods]);
 
-  const selectedUnit = units.find((u) => u.id === unitId);
+  const notScheduledCount = employees.filter((e) => e.status === "not_scheduled").length;
+  const scheduledCount = employees.filter((e) => e.status === "scheduled").length;
+  const doneCount = employees.filter((e) => e.status === "done").length;
+  const total = employees.length;
+
+  const filteredEmployees = statusFilter === "all"
+    ? employees
+    : employees.filter((e) => e.status === statusFilter);
 
   return (
     <div className="space-y-4">
       {/* Filters */}
       <div className="rounded-lg border border-gray-200 bg-white p-4">
         <div className="grid gap-4 sm:grid-cols-3">
-          {/* Unit selector */}
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">
               Unidade Organizacional
@@ -132,7 +138,6 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
             </select>
           </div>
 
-          {/* Type toggle */}
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">
               Tipo
@@ -163,7 +168,6 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
             </div>
           </div>
 
-          {/* Period selector */}
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">
               Período
@@ -189,7 +193,6 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
         </div>
       </div>
 
-      {/* No configuration message */}
       {noConfig && unitId && (
         <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center">
           <CalendarCheck className="mx-auto mb-3 text-gray-400" size={40} />
@@ -202,61 +205,133 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
         </div>
       )}
 
-      {/* Loading */}
       {loading && (
         <div className="py-8 text-center text-sm text-gray-500">
           Carregando...
         </div>
       )}
 
-      {/* Compliance data placeholder - will be populated by US-012 */}
       {!loading && !noConfig && employees.length > 0 && (
-        <div className="rounded-lg border border-gray-200 bg-white">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-gray-100 bg-gray-50">
-                  <th className="px-4 py-3 text-left font-medium text-gray-600">Nome</th>
-                  <th className="px-4 py-3 text-left font-medium text-gray-600">Cargo</th>
-                  <th className="px-4 py-3 text-left font-medium text-gray-600">Status</th>
-                  <th className="px-4 py-3 text-left font-medium text-gray-600">Data</th>
-                  <th className="px-4 py-3 text-left font-medium text-gray-600">Ação</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50">
-                {employees.map((emp) => (
-                  <tr key={emp.employeeId}>
-                    <td className="px-4 py-3 font-medium text-gray-800">{emp.employeeName}</td>
-                    <td className="px-4 py-3 text-gray-600">{emp.position}</td>
-                    <td className="px-4 py-3">
-                      <StatusBadge status={emp.status} />
-                    </td>
-                    <td className="px-4 py-3 text-gray-600">
-                      {emp.eventDate
-                        ? new Date(emp.eventDate).toLocaleDateString("pt-BR")
-                        : "—"}
-                    </td>
-                    <td className="px-4 py-3">
-                      {emp.eventHref ? (
-                        <a
-                          href={emp.eventHref}
-                          className="text-sm text-blue-600 hover:underline"
-                        >
-                          Ver
-                        </a>
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
-                    </td>
+        <div className="space-y-4">
+          {/* Progress bar and counters */}
+          <div className="rounded-lg border border-gray-200 bg-white p-4">
+            <div className="mb-3 flex h-3 overflow-hidden rounded-full bg-gray-100">
+              {doneCount > 0 && (
+                <div
+                  className="bg-green-500 transition-all"
+                  style={{ width: `${(doneCount / total) * 100}%` }}
+                />
+              )}
+              {scheduledCount > 0 && (
+                <div
+                  className="bg-blue-500 transition-all"
+                  style={{ width: `${(scheduledCount / total) * 100}%` }}
+                />
+              )}
+              {notScheduledCount > 0 && (
+                <div
+                  className="bg-gray-300 transition-all"
+                  style={{ width: `${(notScheduledCount / total) * 100}%` }}
+                />
+              )}
+            </div>
+
+            <p className="text-sm text-gray-600">
+              <span className="font-medium text-gray-400">{notScheduledCount} não programados</span>
+              {" / "}
+              <span className="font-medium text-blue-600">{scheduledCount} programados</span>
+              {" / "}
+              <span className="font-medium text-green-600">{doneCount} realizados</span>
+              {" de "}
+              <span className="font-medium text-gray-800">{total} total</span>
+            </p>
+          </div>
+
+          {/* Filter and action bar */}
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
+                className="rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                <option value="all">Todos</option>
+                <option value="not_scheduled">Não programado</option>
+                <option value="scheduled">Programado</option>
+                <option value="done">Realizado</option>
+              </select>
+            </div>
+
+            {notScheduledCount > 0 && (
+              <button
+                type="button"
+                onClick={() => setShowWizard(true)}
+                className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              >
+                <CalendarPlus size={16} />
+                Programar Eventos
+              </button>
+            )}
+          </div>
+
+          {/* Table */}
+          <div className="rounded-lg border border-gray-200 bg-white">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-100 bg-gray-50">
+                    <th className="px-4 py-3 text-left font-medium text-gray-600">Nome</th>
+                    <th className="px-4 py-3 text-left font-medium text-gray-600">Cargo</th>
+                    <th className="px-4 py-3 text-left font-medium text-gray-600">Status</th>
+                    <th className="px-4 py-3 text-left font-medium text-gray-600">Data</th>
+                    <th className="px-4 py-3 text-left font-medium text-gray-600">Ação</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {filteredEmployees.map((emp) => (
+                    <tr
+                      key={emp.employeeId}
+                      className={
+                        emp.status === "not_scheduled" ? "bg-yellow-50/50" : ""
+                      }
+                    >
+                      <td className="px-4 py-3 font-medium text-gray-800">
+                        {emp.employeeName}
+                      </td>
+                      <td className="px-4 py-3 text-gray-600">{emp.position}</td>
+                      <td className="px-4 py-3">
+                        <StatusBadge
+                          status={emp.status}
+                          isOnboarding={emp.isOnboarding}
+                          onboardingLabel={emp.onboardingLabel}
+                        />
+                      </td>
+                      <td className="px-4 py-3 text-gray-600">
+                        {emp.eventDate
+                          ? new Date(emp.eventDate).toLocaleDateString("pt-BR")
+                          : "—"}
+                      </td>
+                      <td className="px-4 py-3">
+                        {emp.eventHref ? (
+                          <a
+                            href={emp.eventHref}
+                            className="text-sm text-blue-600 hover:underline"
+                          >
+                            Ver
+                          </a>
+                        ) : (
+                          <span className="text-gray-400">—</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
 
-      {/* Empty state when no employees */}
       {!loading && !noConfig && unitId && selectedPeriod && employees.length === 0 && (
         <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center">
           <p className="text-sm text-gray-500">
@@ -264,11 +339,47 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
           </p>
         </div>
       )}
+
+      {/* Wizard placeholder - implemented in US-013 */}
+      {showWizard && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-gray-900">Programar Eventos</h3>
+            <p className="mt-2 text-sm text-gray-600">
+              Wizard de programação será implementado na próxima etapa.
+            </p>
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => setShowWizard(false)}
+                className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-function StatusBadge({ status }: { status: string }) {
+function StatusBadge({
+  status,
+  isOnboarding,
+  onboardingLabel,
+}: {
+  status: string;
+  isOnboarding?: boolean;
+  onboardingLabel?: string;
+}) {
+  if (isOnboarding && onboardingLabel) {
+    return (
+      <span className="inline-flex rounded-full bg-purple-100 px-2.5 py-0.5 text-xs font-medium text-purple-800">
+        {onboardingLabel}
+      </span>
+    );
+  }
+
   switch (status) {
     case "done":
       return (

@@ -19,6 +19,8 @@ export interface ComplianceEmployee {
   eventDate?: Date;
   eventId?: string;
   eventHref?: string;
+  isOnboarding?: boolean;
+  onboardingLabel?: string;
 }
 
 export async function getSectorComplianceStatus(
@@ -136,6 +138,8 @@ export async function getSectorComplianceStatus(
           eventDate: feedback.conductedAt ?? feedback.scheduledAt ?? undefined,
           eventId: feedback.id,
           eventHref: `/feedbacks/${feedback.id}`,
+          isOnboarding: feedback.isOnboarding,
+          onboardingLabel: feedback.isOnboarding ? feedback.period : undefined,
         });
       } else {
         result.push({
