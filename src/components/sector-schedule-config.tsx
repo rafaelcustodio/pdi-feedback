@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { Calendar, Settings, X, Save } from "lucide-react";
-import type { SectorScheduleSummary } from "@/app/(dashboard)/configuracoes/actions";
-import { saveSectorSchedule, deleteSectorSchedule } from "@/app/(dashboard)/configuracoes/actions";
+import Link from "next/link";
+import type { SectorScheduleSummary, SectorProgressInfo } from "@/app/(dashboard)/configuracoes/actions";
+import { saveSectorSchedule, deleteSectorSchedule, getFrequencyLabel } from "@/app/(dashboard)/configuracoes/actions";
 
 const FREQUENCY_OPTIONS = [
   { value: "", label: "Não configurado" },
@@ -14,9 +15,26 @@ const FREQUENCY_OPTIONS = [
   { value: "12", label: "Anual (12 meses)" },
 ];
 
-function frequencyLabel(months: number): string {
-  const opt = FREQUENCY_OPTIONS.find((o) => o.value === String(months));
-  return opt?.label ?? `${months} meses`;
+function sortByProgress(a: SectorScheduleSummary, b: SectorScheduleSummary): number {
+  // Units with lower completion go first
+  const aProgress = getCompletionRate(a);
+  const bProgress = getCompletionRate(b);
+  return aProgress - bProgress;
+}
+
+function getCompletionRate(unit: SectorScheduleSummary): number {
+  let total = 0;
+  let done = 0;
+  if (unit.pdiProgress) {
+    total += unit.pdiProgress.total;
+    done += unit.pdiProgress.done;
+  }
+  if (unit.feedbackProgress) {
+    total += unit.feedbackProgress.total;
+    done += unit.feedbackProgress.done;
+  }
+  if (total === 0) return 1; // No config = full (put at end)
+  return done / total;
 }
 
 interface SectorScheduleConfigProps {
@@ -134,37 +152,55 @@ export function SectorScheduleConfig({ schedules }: SectorScheduleConfigProps) {
         </p>
       ) : (
         <div className="divide-y divide-gray-100">
-          {schedules.map((unit) => (
-            <div
-              key={unit.unitId}
-              className="flex items-center justify-between gap-4 py-3"
-            >
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-gray-800">
-                  {unit.unitName}
-                </p>
-                <div className="mt-0.5 flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-gray-500">
-                  <span>
-                    PDI:{" "}
-                    {unit.pdi
-                      ? frequencyLabel(unit.pdi.frequencyMonths)
-                      : "Não configurado"}
-                  </span>
-                  <span>
-                    Feedback:{" "}
-                    {unit.feedback
-                      ? frequencyLabel(unit.feedback.frequencyMonths)
-                      : "Não configurado"}
-                  </span>
-                </div>
+          {[...schedules].sort(sortByProgress).map((unit) => (
+            <div key={unit.unitId} className="py-3">
+              <div className="flex items-center justify-between gap-4">
+                <Link
+                  href={`/programacao?unit=${unit.unitId}`}
+                  className="min-w-0 flex-1 hover:opacity-80"
+                >
+                  <p className="text-sm font-medium text-gray-800">
+                    {unit.unitName}
+                  </p>
+                  <div className="mt-0.5 flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-gray-500">
+                    <span>
+                      PDI:{" "}
+                      {unit.pdi
+                        ? getFrequencyLabel(unit.pdi.frequencyMonths)
+                        : "Não configurado"}
+                    </span>
+                    <span>
+                      Feedback:{" "}
+                      {unit.feedback
+                        ? getFrequencyLabel(unit.feedback.frequencyMonths)
+                        : "Não configurado"}
+                    </span>
+                  </div>
+                </Link>
+                <button
+                  onClick={() => openConfig(unit)}
+                  className="inline-flex shrink-0 items-center gap-1 rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  <Settings size={14} />
+                  Configurar
+                </button>
               </div>
-              <button
-                onClick={() => openConfig(unit)}
-                className="inline-flex shrink-0 items-center gap-1 rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
-              >
-                <Settings size={14} />
-                Configurar
-              </button>
+
+              {/* Progress indicators */}
+              {(unit.pdiProgress || unit.feedbackProgress) && (
+                <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                  {unit.pdiProgress && (
+                    <ProgressIndicator label="PDI" progress={unit.pdiProgress} />
+                  )}
+                  {unit.feedbackProgress && (
+                    <ProgressIndicator label="Feedback" progress={unit.feedbackProgress} />
+                  )}
+                </div>
+              )}
+
+              {!unit.pdi && !unit.feedback && (
+                <p className="mt-1 text-xs text-gray-400">Não configurado</p>
+              )}
             </div>
           ))}
         </div>
@@ -290,6 +326,38 @@ export function SectorScheduleConfig({ schedules }: SectorScheduleConfigProps) {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function ProgressIndicator({ label, progress }: { label: string; progress: SectorProgressInfo }) {
+  const scheduled = progress.total - progress.notScheduled - progress.done;
+  return (
+    <div>
+      <div className="mb-1 flex items-center justify-between">
+        <span className="text-xs font-medium text-gray-600">
+          {label}: {progress.done}/{progress.total} realizados
+        </span>
+        {progress.notScheduled > 0 && (
+          <span className="inline-flex rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-medium text-orange-700">
+            {progress.notScheduled} não programados
+          </span>
+        )}
+      </div>
+      <div className="flex h-1.5 overflow-hidden rounded-full bg-gray-100">
+        {progress.done > 0 && (
+          <div
+            className="bg-green-500"
+            style={{ width: `${(progress.done / progress.total) * 100}%` }}
+          />
+        )}
+        {scheduled > 0 && (
+          <div
+            className="bg-blue-500"
+            style={{ width: `${(scheduled / progress.total) * 100}%` }}
+          />
+        )}
+      </div>
     </div>
   );
 }

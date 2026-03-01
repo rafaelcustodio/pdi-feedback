@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { calculatePeriods, getCurrentPeriod } from "@/lib/sector-schedule-utils";
 
 export type OrgUnitNode = {
   id: string;
@@ -257,12 +258,32 @@ export async function saveSectorSchedule(params: {
   return { success: true };
 }
 
+export type SectorProgressInfo = {
+  total: number;
+  done: number;
+  notScheduled: number;
+};
+
 export type SectorScheduleSummary = {
   unitId: string;
   unitName: string;
   pdi: { frequencyMonths: number; startDate: Date; isActive: boolean } | null;
   feedback: { frequencyMonths: number; startDate: Date; isActive: boolean } | null;
+  pdiProgress: SectorProgressInfo | null;
+  feedbackProgress: SectorProgressInfo | null;
 };
+
+const FREQ_LABELS: Record<number, string> = {
+  1: "Mensal",
+  2: "Bimestral",
+  3: "Trimestral",
+  6: "Semestral",
+  12: "Anual",
+};
+
+export function getFrequencyLabel(months: number): string {
+  return FREQ_LABELS[months] ?? `${months} meses`;
+}
 
 export async function getAllSectorSchedules(): Promise<SectorScheduleSummary[]> {
   const session = await auth();
@@ -274,24 +295,88 @@ export async function getAllSectorSchedules(): Promise<SectorScheduleSummary[]> 
     orderBy: { name: "asc" },
     include: {
       sectorSchedules: true,
+      employeeHierarchies: {
+        where: { endDate: null },
+        select: { employeeId: true },
+      },
     },
   });
 
-  return units.map((unit) => {
-    const pdi = unit.sectorSchedules.find((s) => s.type === "pdi" && s.isActive);
-    const feedback = unit.sectorSchedules.find((s) => s.type === "feedback" && s.isActive);
+  const now = new Date();
+  const results: SectorScheduleSummary[] = [];
 
-    return {
+  for (const unit of units) {
+    const pdiSched = unit.sectorSchedules.find((s) => s.type === "pdi" && s.isActive);
+    const fbSched = unit.sectorSchedules.find((s) => s.type === "feedback" && s.isActive);
+    const employeeIds = unit.employeeHierarchies.map((h) => h.employeeId);
+    const total = employeeIds.length;
+
+    let pdiProgress: SectorProgressInfo | null = null;
+    let feedbackProgress: SectorProgressInfo | null = null;
+
+    if (pdiSched && total > 0) {
+      const periods = calculatePeriods(pdiSched.frequencyMonths, pdiSched.startDate);
+      const currentP = getCurrentPeriod(periods, now);
+      if (currentP) {
+        const pdis = await prisma.pDI.findMany({
+          where: {
+            employeeId: { in: employeeIds },
+            OR: [
+              { scheduledAt: { gte: currentP.start, lte: currentP.end } },
+              { conductedAt: { gte: currentP.start, lte: currentP.end } },
+            ],
+          },
+          select: { employeeId: true, status: true },
+        });
+        const doneIds = new Set(pdis.filter((p) => p.status === "active" || p.status === "completed").map((p) => p.employeeId));
+        const scheduledIds = new Set(pdis.map((p) => p.employeeId));
+        pdiProgress = {
+          total,
+          done: doneIds.size,
+          notScheduled: total - scheduledIds.size,
+        };
+      }
+    }
+
+    if (fbSched && total > 0) {
+      const periods = calculatePeriods(fbSched.frequencyMonths, fbSched.startDate);
+      const currentP = getCurrentPeriod(periods, now);
+      if (currentP) {
+        const fbs = await prisma.feedback.findMany({
+          where: {
+            employeeId: { in: employeeIds },
+            OR: [
+              { scheduledAt: { gte: currentP.start, lte: currentP.end } },
+              { conductedAt: { gte: currentP.start, lte: currentP.end } },
+            ],
+          },
+          select: { employeeId: true, status: true },
+        });
+        const doneIds = new Set(fbs.filter((f) => f.status === "submitted").map((f) => f.employeeId));
+        const scheduledIds = new Set(fbs.map((f) => f.employeeId));
+        feedbackProgress = {
+          total,
+          done: doneIds.size,
+          notScheduled: total - scheduledIds.size,
+        };
+      }
+    }
+
+    results.push({
       unitId: unit.id,
       unitName: unit.name,
-      pdi: pdi
-        ? { frequencyMonths: pdi.frequencyMonths, startDate: pdi.startDate, isActive: pdi.isActive }
+      pdi: pdiSched
+        ? { frequencyMonths: pdiSched.frequencyMonths, startDate: pdiSched.startDate, isActive: pdiSched.isActive }
         : null,
-      feedback: feedback
-        ? { frequencyMonths: feedback.frequencyMonths, startDate: feedback.startDate, isActive: feedback.isActive }
+      feedback: fbSched
+        ? { frequencyMonths: fbSched.frequencyMonths, startDate: fbSched.startDate, isActive: fbSched.isActive }
         : null,
-    };
-  });
+      pdiProgress,
+      feedbackProgress,
+    });
+  }
+
+  return results;
 }
 
 export async function deleteSectorSchedule(
