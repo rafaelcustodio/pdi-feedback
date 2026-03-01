@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { Save, Calendar } from "lucide-react";
-import { saveEmployeeSchedules } from "@/app/(dashboard)/colaboradores/actions";
+import { saveEmployeeSchedules, toggleIndividualSchedule } from "@/app/(dashboard)/colaboradores/actions";
+import type { SectorScheduleInfo } from "@/app/(dashboard)/colaboradores/actions";
 
 const FREQUENCY_OPTIONS = [
   { value: "", label: "Nenhum" },
@@ -12,6 +13,11 @@ const FREQUENCY_OPTIONS = [
   { value: "6", label: "Semestral (6 meses)" },
   { value: "12", label: "Anual (12 meses)" },
 ];
+
+function frequencyLabel(months: number): string {
+  const opt = FREQUENCY_OPTIONS.find((o) => o.value === String(months));
+  return opt?.label ?? `${months} meses`;
+}
 
 function formatDate(date: Date | string | null): string {
   if (!date) return "—";
@@ -29,6 +35,7 @@ interface ScheduleSectionProps {
   initialPdiNextDueDate: Date | string | null;
   initialFeedbackFrequency: number | null;
   initialFeedbackNextDueDate: Date | string | null;
+  sectorSchedule?: SectorScheduleInfo;
 }
 
 export function ScheduleSection({
@@ -37,7 +44,12 @@ export function ScheduleSection({
   initialPdiNextDueDate,
   initialFeedbackFrequency,
   initialFeedbackNextDueDate,
+  sectorSchedule,
 }: ScheduleSectionProps) {
+  const hasIndividual = initialPdiFrequency !== null || initialFeedbackFrequency !== null;
+  const hasSector = !!(sectorSchedule?.pdi || sectorSchedule?.feedback);
+
+  const [useIndividual, setUseIndividual] = useState(hasIndividual);
   const [pdiFrequency, setPdiFrequency] = useState(
     initialPdiFrequency?.toString() ?? ""
   );
@@ -48,11 +60,34 @@ export function ScheduleSection({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  // Track next due dates for display (updated after save)
   const [pdiNextDueDate, setPdiNextDueDate] = useState(initialPdiNextDueDate);
   const [feedbackNextDueDate, setFeedbackNextDueDate] = useState(
     initialFeedbackNextDueDate
   );
+
+  async function handleToggle() {
+    const newValue = !useIndividual;
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
+
+    if (!newValue) {
+      // Deactivating individual schedule
+      const result = await toggleIndividualSchedule(employeeId, false);
+      if (!result.success) {
+        setError(result.error ?? "Erro ao desativar configuração individual");
+        setLoading(false);
+        return;
+      }
+      setPdiFrequency("");
+      setFeedbackFrequency("");
+      setPdiNextDueDate(null);
+      setFeedbackNextDueDate(null);
+    }
+
+    setUseIndividual(newValue);
+    setLoading(false);
+  }
 
   async function handleSave() {
     setLoading(true);
@@ -70,7 +105,6 @@ export function ScheduleSection({
 
     if (result.success) {
       setSuccess(true);
-      // Calculate and display the new next due dates
       if (pdiFrequency) {
         const next = new Date();
         next.setMonth(next.getMonth() + parseInt(pdiFrequency, 10));
@@ -118,81 +152,138 @@ export function ScheduleSection({
         </div>
       )}
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        {/* PDI Frequency */}
-        <div>
-          <label
-            htmlFor="pdi-frequency"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
-            Frequência do PDI
-          </label>
-          <select
-            id="pdi-frequency"
-            value={pdiFrequency}
-            onChange={(e) => setPdiFrequency(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            disabled={loading}
-          >
-            {FREQUENCY_OPTIONS.map((opt) => (
-              <option key={`pdi-${opt.value}`} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-          {pdiNextDueDate && (
-            <p className="mt-1 text-xs text-gray-500">
-              Próxima data prevista:{" "}
-              <span className="font-medium text-gray-700">
-                {formatDate(pdiNextDueDate)}
-              </span>
-            </p>
-          )}
-        </div>
-
-        {/* Feedback Frequency */}
-        <div>
-          <label
-            htmlFor="feedback-frequency"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
-            Frequência do Feedback
-          </label>
-          <select
-            id="feedback-frequency"
-            value={feedbackFrequency}
-            onChange={(e) => setFeedbackFrequency(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            disabled={loading}
-          >
-            {FREQUENCY_OPTIONS.map((opt) => (
-              <option key={`fb-${opt.value}`} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-          {feedbackNextDueDate && (
-            <p className="mt-1 text-xs text-gray-500">
-              Próxima data prevista:{" "}
-              <span className="font-medium text-gray-700">
-                {formatDate(feedbackNextDueDate)}
-              </span>
-            </p>
-          )}
-        </div>
-      </div>
-
-      <div className="mt-4 flex justify-end">
+      {/* Toggle for individual vs sector */}
+      <div className="mb-4 flex items-center gap-3">
         <button
           type="button"
-          onClick={handleSave}
+          role="switch"
+          aria-checked={useIndividual}
+          onClick={handleToggle}
           disabled={loading}
-          className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+          className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 ${
+            useIndividual ? "bg-blue-600" : "bg-gray-200"
+          }`}
         >
-          <Save size={16} />
-          {loading ? "Salvando..." : "Salvar Agendamento"}
+          <span
+            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+              useIndividual ? "translate-x-5" : "translate-x-0"
+            }`}
+          />
         </button>
+        <span className="text-sm font-medium text-gray-700">
+          Usar configuração personalizada
+        </span>
       </div>
+
+      {useIndividual ? (
+        /* Individual schedule editing */
+        <>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label
+                htmlFor="pdi-frequency"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
+                Frequência do PDI
+              </label>
+              <select
+                id="pdi-frequency"
+                value={pdiFrequency}
+                onChange={(e) => setPdiFrequency(e.target.value)}
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                disabled={loading}
+              >
+                {FREQUENCY_OPTIONS.map((opt) => (
+                  <option key={`pdi-${opt.value}`} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+              {pdiNextDueDate && (
+                <p className="mt-1 text-xs text-gray-500">
+                  Próxima data prevista:{" "}
+                  <span className="font-medium text-gray-700">
+                    {formatDate(pdiNextDueDate)}
+                  </span>
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label
+                htmlFor="feedback-frequency"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
+                Frequência do Feedback
+              </label>
+              <select
+                id="feedback-frequency"
+                value={feedbackFrequency}
+                onChange={(e) => setFeedbackFrequency(e.target.value)}
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                disabled={loading}
+              >
+                {FREQUENCY_OPTIONS.map((opt) => (
+                  <option key={`fb-${opt.value}`} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+              {feedbackNextDueDate && (
+                <p className="mt-1 text-xs text-gray-500">
+                  Próxima data prevista:{" "}
+                  <span className="font-medium text-gray-700">
+                    {formatDate(feedbackNextDueDate)}
+                  </span>
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="mt-4 flex justify-end">
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={loading}
+              className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+            >
+              <Save size={16} />
+              {loading ? "Salvando..." : "Salvar Agendamento"}
+            </button>
+          </div>
+        </>
+      ) : (
+        /* Sector schedule read-only display */
+        <div className="rounded-md border border-gray-100 bg-gray-50 p-4">
+          {hasSector ? (
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <p className="text-sm font-medium text-gray-700">Frequência do PDI</p>
+                <p className="mt-0.5 text-sm text-gray-600">
+                  {sectorSchedule?.pdi
+                    ? frequencyLabel(sectorSchedule.pdi.frequencyMonths)
+                    : "Não configurado no setor"}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-700">Frequência do Feedback</p>
+                <p className="mt-0.5 text-sm text-gray-600">
+                  {sectorSchedule?.feedback
+                    ? frequencyLabel(sectorSchedule.feedback.frequencyMonths)
+                    : "Não configurado no setor"}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <p className="text-sm text-gray-500">
+              Setor sem configuração de recorrência.
+            </p>
+          )}
+          <p className="mt-2 text-xs text-gray-400">
+            Configuração herdada do setor. Ative o toggle acima para personalizar.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

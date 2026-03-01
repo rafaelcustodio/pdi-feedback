@@ -719,3 +719,70 @@ export async function getEmployeeHierarchyTree(
 
   return [root];
 }
+
+// ============================================================
+// US-010: Sector schedule info for individual override toggle
+// ============================================================
+
+export type SectorScheduleInfo = {
+  pdi: { frequencyMonths: number; startDate: Date } | null;
+  feedback: { frequencyMonths: number; startDate: Date } | null;
+};
+
+export async function getEmployeeSectorSchedule(
+  employeeId: string
+): Promise<SectorScheduleInfo> {
+  const session = await requireAdmin();
+  if (!session) return { pdi: null, feedback: null };
+
+  const hierarchy = await prisma.employeeHierarchy.findFirst({
+    where: { employeeId, endDate: null },
+    select: { organizationalUnitId: true },
+  });
+
+  if (!hierarchy) return { pdi: null, feedback: null };
+
+  const schedules = await prisma.sectorSchedule.findMany({
+    where: {
+      organizationalUnitId: hierarchy.organizationalUnitId,
+      isActive: true,
+    },
+  });
+
+  const pdi = schedules.find((s) => s.type === "pdi");
+  const feedback = schedules.find((s) => s.type === "feedback");
+
+  return {
+    pdi: pdi ? { frequencyMonths: pdi.frequencyMonths, startDate: pdi.startDate } : null,
+    feedback: feedback ? { frequencyMonths: feedback.frequencyMonths, startDate: feedback.startDate } : null,
+  };
+}
+
+export async function toggleIndividualSchedule(
+  employeeId: string,
+  useIndividual: boolean
+): Promise<{ success: boolean; error?: string }> {
+  const session = await requireAdmin();
+  if (!session) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  if (!useIndividual) {
+    // Deactivate individual schedules
+    await prisma.pDISchedule.updateMany({
+      where: { employeeId, isActive: true },
+      data: { isActive: false },
+    });
+    await prisma.feedbackSchedule.updateMany({
+      where: { employeeId, isActive: true },
+      data: { isActive: false },
+    });
+    // Remove future scheduled events created by individual schedule
+    await removeScheduledEvents(employeeId, "pdi");
+    await removeScheduledEvents(employeeId, "feedback");
+  }
+  // When toggling ON, user will use the existing save flow to configure
+
+  revalidatePath(`/colaboradores/${employeeId}`);
+  return { success: true };
+}
