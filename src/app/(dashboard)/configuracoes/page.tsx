@@ -1,8 +1,9 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { getOrganizationalUnits } from "./actions";
+import { getOrganizationalUnits, getAllSectorSchedules } from "./actions";
 import { OrgUnitTree } from "@/components/org-unit-tree";
 import { OrgUnitForm } from "@/components/org-unit-form";
+import { SectorScheduleConfig } from "@/components/sector-schedule-config";
 
 export default async function ConfiguracoesPage() {
   const session = await auth();
@@ -11,7 +12,10 @@ export default async function ConfiguracoesPage() {
     redirect("/dashboard");
   }
 
-  const { tree, flat } = await getOrganizationalUnits();
+  const [{ tree, flat }, sectorSchedules] = await Promise.all([
+    getOrganizationalUnits(),
+    getAllSectorSchedules(),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -32,6 +36,9 @@ export default async function ConfiguracoesPage() {
         </h2>
         <OrgUnitTree nodes={tree} />
       </div>
+
+      {/* Sector Schedule Configuration */}
+      <SectorScheduleConfig schedules={sectorSchedules} />
     </div>
   );
 }

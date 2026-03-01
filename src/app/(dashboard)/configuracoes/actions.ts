@@ -257,6 +257,43 @@ export async function saveSectorSchedule(params: {
   return { success: true };
 }
 
+export type SectorScheduleSummary = {
+  unitId: string;
+  unitName: string;
+  pdi: { frequencyMonths: number; startDate: Date; isActive: boolean } | null;
+  feedback: { frequencyMonths: number; startDate: Date; isActive: boolean } | null;
+};
+
+export async function getAllSectorSchedules(): Promise<SectorScheduleSummary[]> {
+  const session = await auth();
+  if (!session?.user || session.user.role !== "admin") {
+    throw new Error("Acesso não autorizado");
+  }
+
+  const units = await prisma.organizationalUnit.findMany({
+    orderBy: { name: "asc" },
+    include: {
+      sectorSchedules: true,
+    },
+  });
+
+  return units.map((unit) => {
+    const pdi = unit.sectorSchedules.find((s) => s.type === "pdi" && s.isActive);
+    const feedback = unit.sectorSchedules.find((s) => s.type === "feedback" && s.isActive);
+
+    return {
+      unitId: unit.id,
+      unitName: unit.name,
+      pdi: pdi
+        ? { frequencyMonths: pdi.frequencyMonths, startDate: pdi.startDate, isActive: pdi.isActive }
+        : null,
+      feedback: feedback
+        ? { frequencyMonths: feedback.frequencyMonths, startDate: feedback.startDate, isActive: feedback.isActive }
+        : null,
+    };
+  });
+}
+
 export async function deleteSectorSchedule(
   unitId: string,
   type: "pdi" | "feedback"
