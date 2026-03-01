@@ -120,3 +120,15 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - SectorScheduleSummary fetches all units with joined sectorSchedules in one query
   - Date serialization: server passes Date objects, client uses .toISOString().slice(0,10)
 ---
+
+## 2026-03-01 03:31 PST - US-010
+- Implemented individual override toggle in employee schedule tab
+- Files changed:
+  - `src/components/schedule-section.tsx` — Rewrote to support toggle: individual (editable) vs sector (read-only)
+  - `src/app/(dashboard)/colaboradores/actions.ts` — Added getEmployeeSectorSchedule, toggleIndividualSchedule, SectorScheduleInfo type
+  - `src/app/(dashboard)/colaboradores/[id]/page.tsx` — Fetches sectorSchedule and passes to ScheduleSection
+- **Learnings for future iterations:**
+  - Toggle is a button with role="switch" and aria-checked for accessibility
+  - Deactivating individual schedule uses updateMany + removeScheduledEvents
+  - sectorSchedule prop is optional for backward compat; hasSector derived from prop presence
+---
