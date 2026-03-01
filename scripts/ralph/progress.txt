@@ -59,3 +59,13 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - Mock prisma with vi.mock("@/lib/prisma") for unit testing DB-dependent functions
   - getSectorComplianceStatus filters employees by access control AND effective schedule before checking events
 ---
+
+## 2026-03-01 03:16 PST - US-005
+- Implemented SectorSchedule CRUD server actions
+- Files changed:
+  - `src/app/(dashboard)/configuracoes/actions.ts` — Added getSectorSchedules, saveSectorSchedule, deleteSectorSchedule
+- **Learnings for future iterations:**
+  - SectorSchedule uses `upsert` with compound unique key `(organizationalUnitId, type)` for save
+  - Delete is a soft-delete setting `isActive = false`
+  - Only admin role can execute these actions
+---

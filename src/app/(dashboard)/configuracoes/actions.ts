@@ -172,3 +172,108 @@ export async function deleteOrganizationalUnit(
   revalidatePath("/configuracoes");
   return { success: true };
 }
+
+// ============================================================
+// SectorSchedule CRUD
+// ============================================================
+
+export type SectorScheduleData = {
+  id: string;
+  type: "pdi" | "feedback";
+  frequencyMonths: number;
+  startDate: Date;
+  isActive: boolean;
+};
+
+const VALID_FREQUENCIES = [1, 2, 3, 6, 12];
+
+export async function getSectorSchedules(
+  unitId: string
+): Promise<{ pdi: SectorScheduleData | null; feedback: SectorScheduleData | null }> {
+  const session = await auth();
+  if (!session?.user || session.user.role !== "admin") {
+    throw new Error("Acesso não autorizado");
+  }
+
+  const schedules = await prisma.sectorSchedule.findMany({
+    where: { organizationalUnitId: unitId },
+  });
+
+  const pdi = schedules.find((s) => s.type === "pdi");
+  const feedback = schedules.find((s) => s.type === "feedback");
+
+  return {
+    pdi: pdi
+      ? { id: pdi.id, type: "pdi", frequencyMonths: pdi.frequencyMonths, startDate: pdi.startDate, isActive: pdi.isActive }
+      : null,
+    feedback: feedback
+      ? { id: feedback.id, type: "feedback", frequencyMonths: feedback.frequencyMonths, startDate: feedback.startDate, isActive: feedback.isActive }
+      : null,
+  };
+}
+
+export async function saveSectorSchedule(params: {
+  unitId: string;
+  type: "pdi" | "feedback";
+  frequencyMonths: number;
+  startDate: Date;
+  isActive: boolean;
+}): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user || session.user.role !== "admin") {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  if (!VALID_FREQUENCIES.includes(params.frequencyMonths)) {
+    return { success: false, error: "Frequência inválida. Use 1, 2, 3, 6 ou 12." };
+  }
+
+  if (!params.startDate) {
+    return { success: false, error: "Data de início é obrigatória." };
+  }
+
+  await prisma.sectorSchedule.upsert({
+    where: {
+      organizationalUnitId_type: {
+        organizationalUnitId: params.unitId,
+        type: params.type,
+      },
+    },
+    create: {
+      organizationalUnitId: params.unitId,
+      type: params.type,
+      frequencyMonths: params.frequencyMonths,
+      startDate: params.startDate,
+      isActive: params.isActive,
+    },
+    update: {
+      frequencyMonths: params.frequencyMonths,
+      startDate: params.startDate,
+      isActive: params.isActive,
+    },
+  });
+
+  revalidatePath("/configuracoes");
+  return { success: true };
+}
+
+export async function deleteSectorSchedule(
+  unitId: string,
+  type: "pdi" | "feedback"
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user || session.user.role !== "admin") {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  await prisma.sectorSchedule.updateMany({
+    where: {
+      organizationalUnitId: unitId,
+      type,
+    },
+    data: { isActive: false },
+  });
+
+  revalidatePath("/configuracoes");
+  return { success: true };
+}
