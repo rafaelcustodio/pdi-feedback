@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { generateScheduledEvents, removeScheduledEvents } from "@/lib/schedule-utils";
-import { createOnboardingFeedbacks, updateOnboardingFeedbacks } from "@/lib/sector-schedule-utils";
+import { createOnboardingFeedbacks, updateOnboardingFeedbacks, handleSectorTransfer } from "@/lib/sector-schedule-utils";
 
 export type EmployeeListItem = {
   id: string;
@@ -362,6 +362,11 @@ export async function updateEmployee(
       currentHierarchy.organizationalUnitId !== data.orgUnitId;
 
     if (needsUpdate) {
+      // If organizational unit changed, handle sector transfer (cancel future scheduled events)
+      if (currentHierarchy && currentHierarchy.organizationalUnitId !== data.orgUnitId) {
+        await handleSectorTransfer(id, data.orgUnitId);
+      }
+
       // Close current hierarchy
       if (currentHierarchy) {
         await prisma.employeeHierarchy.update({

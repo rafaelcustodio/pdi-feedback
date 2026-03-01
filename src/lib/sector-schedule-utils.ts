@@ -375,3 +375,41 @@ export async function updateOnboardingFeedbacks(
     await prisma.feedback.createMany({ data: toCreate });
   }
 }
+
+/**
+ * Handle sector transfer for an employee.
+ * Cancels future scheduled PDIs and Feedbacks (except onboarding).
+ * Individual schedules (PDISchedule/FeedbackSchedule) are preserved.
+ */
+export async function handleSectorTransfer(
+  employeeId: string,
+  _newUnitId: string
+): Promise<{ cancelledPdis: number; cancelledFeedbacks: number }> {
+  const now = new Date();
+
+  // Cancel future scheduled PDIs
+  const cancelledPdis = await prisma.pDI.updateMany({
+    where: {
+      employeeId,
+      status: "scheduled",
+      scheduledAt: { gt: now },
+    },
+    data: { status: "cancelled" },
+  });
+
+  // Cancel future scheduled Feedbacks (except onboarding)
+  const cancelledFeedbacks = await prisma.feedback.updateMany({
+    where: {
+      employeeId,
+      status: "scheduled",
+      scheduledAt: { gt: now },
+      isOnboarding: false,
+    },
+    data: { status: "cancelled" },
+  });
+
+  return {
+    cancelledPdis: cancelledPdis.count,
+    cancelledFeedbacks: cancelledFeedbacks.count,
+  };
+}

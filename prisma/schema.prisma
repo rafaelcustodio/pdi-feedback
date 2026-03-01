@@ -207,6 +207,7 @@ enum FeedbackStatus {
   draft
   scheduled
   submitted
+  cancelled
 }
 
 model Feedback {

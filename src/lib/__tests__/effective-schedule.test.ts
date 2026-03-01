@@ -7,10 +7,12 @@ vi.mock("@/lib/prisma", () => ({
     feedbackSchedule: { findFirst: vi.fn() },
     employeeHierarchy: { findFirst: vi.fn() },
     sectorSchedule: { findUnique: vi.fn() },
+    pDI: { updateMany: vi.fn() },
+    feedback: { updateMany: vi.fn(), findMany: vi.fn(), createMany: vi.fn(), deleteMany: vi.fn() },
   },
 }));
 
-import { getEffectiveSchedule } from "../sector-schedule-utils";
+import { getEffectiveSchedule, handleSectorTransfer } from "../sector-schedule-utils";
 import { prisma } from "@/lib/prisma";
 
 const mockPrisma = prisma as unknown as {
@@ -18,6 +20,8 @@ const mockPrisma = prisma as unknown as {
   feedbackSchedule: { findFirst: ReturnType<typeof vi.fn> };
   employeeHierarchy: { findFirst: ReturnType<typeof vi.fn> };
   sectorSchedule: { findUnique: ReturnType<typeof vi.fn> };
+  pDI: { updateMany: ReturnType<typeof vi.fn> };
+  feedback: { updateMany: ReturnType<typeof vi.fn>; findMany: ReturnType<typeof vi.fn>; createMany: ReturnType<typeof vi.fn>; deleteMany: ReturnType<typeof vi.fn> };
 };
 
 describe("getEffectiveSchedule", () => {
@@ -123,5 +127,60 @@ describe("getEffectiveSchedule", () => {
 
     const result = await getEffectiveSchedule("e1", "pdi");
     expect(result).toBeNull();
+  });
+});
+
+describe("handleSectorTransfer", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("cancels future scheduled PDIs and non-onboarding feedbacks", async () => {
+    mockPrisma.pDI.updateMany.mockResolvedValue({ count: 2 });
+    mockPrisma.feedback.updateMany.mockResolvedValue({ count: 1 });
+
+    const result = await handleSectorTransfer("e1", "new-unit");
+
+    expect(result).toEqual({ cancelledPdis: 2, cancelledFeedbacks: 1 });
+
+    // Verify PDI cancellation query
+    expect(mockPrisma.pDI.updateMany).toHaveBeenCalledWith({
+      where: {
+        employeeId: "e1",
+        status: "scheduled",
+        scheduledAt: { gt: expect.any(Date) },
+      },
+      data: { status: "cancelled" },
+    });
+
+    // Verify Feedback cancellation excludes onboarding
+    expect(mockPrisma.feedback.updateMany).toHaveBeenCalledWith({
+      where: {
+        employeeId: "e1",
+        status: "scheduled",
+        scheduledAt: { gt: expect.any(Date) },
+        isOnboarding: false,
+      },
+      data: { status: "cancelled" },
+    });
+  });
+
+  it("returns zero counts when no events to cancel", async () => {
+    mockPrisma.pDI.updateMany.mockResolvedValue({ count: 0 });
+    mockPrisma.feedback.updateMany.mockResolvedValue({ count: 0 });
+
+    const result = await handleSectorTransfer("e1", "new-unit");
+    expect(result).toEqual({ cancelledPdis: 0, cancelledFeedbacks: 0 });
+  });
+
+  it("preserves onboarding feedbacks (only cancels non-onboarding)", async () => {
+    mockPrisma.pDI.updateMany.mockResolvedValue({ count: 0 });
+    mockPrisma.feedback.updateMany.mockResolvedValue({ count: 3 });
+
+    await handleSectorTransfer("e1", "new-unit");
+
+    // The isOnboarding: false filter ensures onboarding feedbacks are untouched
+    const feedbackCall = mockPrisma.feedback.updateMany.mock.calls[0][0];
+    expect(feedbackCall.where.isOnboarding).toBe(false);
   });
 });
