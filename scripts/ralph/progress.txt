@@ -34,3 +34,15 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - Cross-year periods use format "Dez/2025-Fev/2026", same-year use "Jan-Mar/2026", monthly use "Mar/2026"
   - The `new Date(year, month, 0)` trick gets the last day of the previous month
 ---
+
+## 2026-03-01 03:11 PST - US-003
+- Implemented getBusinessDays, snapToBusinessDay, distributeEvents utility functions
+- Files changed:
+  - `src/lib/sector-schedule-utils.ts` — Added DistributedEvent interface, getBusinessDays, snapToBusinessDay, distributeEvents
+  - `src/lib/__tests__/sector-schedule-utils.test.ts` — 12 new tests (23 total) for business days and distribution
+  - `scripts/ralph/prd.json` — Marked US-003 as passing
+- **Learnings for future iterations:**
+  - distributeEvents wraps around if more employees than days (modulo indexing)
+  - 'end-to-start' reverses the day array; 'last-month-start' reorders from first business day of last month
+  - getDay(): 0=Sun, 1=Mon, ..., 5=Fri, 6=Sat
+---

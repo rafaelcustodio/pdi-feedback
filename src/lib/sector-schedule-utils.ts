@@ -93,3 +93,103 @@ export function getCurrentPeriod(periods: Period[], now?: Date): Period | undefi
   const ref = now ?? new Date();
   return periods.find((p) => ref >= p.start && ref <= p.end);
 }
+
+export interface DistributedEvent {
+  employeeId: string;
+  employeeName: string;
+  scheduledDate: Date;
+}
+
+/**
+ * Get all business days (Mon-Fri) in a date range (inclusive).
+ */
+export function getBusinessDays(startDate: Date, endDate: Date): Date[] {
+  const days: Date[] = [];
+  const current = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+  const end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+
+  while (current <= end) {
+    const dow = current.getDay();
+    if (dow >= 1 && dow <= 5) {
+      days.push(new Date(current));
+    }
+    current.setDate(current.getDate() + 1);
+  }
+
+  return days;
+}
+
+/**
+ * If date falls on Sat/Sun, snap to the following Monday.
+ */
+export function snapToBusinessDay(date: Date): Date {
+  const d = new Date(date);
+  const dow = d.getDay();
+  if (dow === 0) {
+    d.setDate(d.getDate() + 1); // Sunday → Monday
+  } else if (dow === 6) {
+    d.setDate(d.getDate() + 2); // Saturday → Monday
+  }
+  return d;
+}
+
+/**
+ * Distribute employees across business days.
+ * @param employees - Array of { id, name }
+ * @param businessDays - Array of available business day dates (sorted ascending)
+ * @param perDay - 1 or 2 employees per day
+ * @param direction - 'end-to-start' fills from last day backward; 'last-month-start' fills from first day of last month forward
+ */
+export function distributeEvents(
+  employees: { id: string; name: string }[],
+  businessDays: Date[],
+  perDay: 1 | 2,
+  direction: "end-to-start" | "last-month-start"
+): DistributedEvent[] {
+  if (employees.length === 0 || businessDays.length === 0) return [];
+
+  let orderedDays: Date[];
+
+  if (direction === "end-to-start") {
+    orderedDays = [...businessDays].reverse();
+  } else {
+    // last-month-start: find the first business day of the last month in the range
+    const lastDay = businessDays[businessDays.length - 1];
+    const lastMonth = lastDay.getMonth();
+    const lastYear = lastDay.getFullYear();
+    const lastMonthStartIdx = businessDays.findIndex(
+      (d) => d.getMonth() === lastMonth && d.getFullYear() === lastYear
+    );
+    // Reorder: last month days first, then wrap around
+    orderedDays = [
+      ...businessDays.slice(lastMonthStartIdx),
+      ...businessDays.slice(0, lastMonthStartIdx),
+    ];
+  }
+
+  const events: DistributedEvent[] = [];
+  let dayIdx = 0;
+  let slotsUsedOnCurrentDay = 0;
+
+  for (const emp of employees) {
+    // Wrap around if we run out of days
+    const wrappedIdx = dayIdx % orderedDays.length;
+
+    events.push({
+      employeeId: emp.id,
+      employeeName: emp.name,
+      scheduledDate: orderedDays[wrappedIdx],
+    });
+
+    slotsUsedOnCurrentDay++;
+    if (slotsUsedOnCurrentDay >= perDay) {
+      slotsUsedOnCurrentDay = 0;
+      dayIdx++;
+    }
+  }
+
+  // Sort by date ascending
+  events.sort((a, b) => a.scheduledDate.getTime() - b.scheduledDate.getTime());
+
+  return events;
+}

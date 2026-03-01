@@ -2,6 +2,9 @@ import { describe, it, expect } from "vitest";
 import {
   calculatePeriods,
   getCurrentPeriod,
+  getBusinessDays,
+  snapToBusinessDay,
+  distributeEvents,
 } from "../sector-schedule-utils";
 
 describe("calculatePeriods", () => {
@@ -115,5 +118,112 @@ describe("getCurrentPeriod", () => {
     const current = getCurrentPeriod(periods, new Date(2026, 2, 31)); // Mar 31
     expect(current).toBeDefined();
     expect(current!.label).toBe("Jan-Mar/2026");
+  });
+});
+
+describe("getBusinessDays", () => {
+  it("returns only Mon-Fri dates in range", () => {
+    // Mar 2-6, 2026 is Mon-Fri
+    const days = getBusinessDays(new Date(2026, 2, 2), new Date(2026, 2, 8)); // Mon-Sun
+    expect(days.length).toBe(5);
+    expect(days[0].getDay()).toBe(1); // Monday
+    expect(days[4].getDay()).toBe(5); // Friday
+  });
+
+  it("excludes weekends", () => {
+    // Mar 7 is Sat, Mar 8 is Sun
+    const days = getBusinessDays(new Date(2026, 2, 7), new Date(2026, 2, 8));
+    expect(days.length).toBe(0);
+  });
+
+  it("handles single-day range", () => {
+    const days = getBusinessDays(new Date(2026, 2, 2), new Date(2026, 2, 2)); // Monday
+    expect(days.length).toBe(1);
+  });
+});
+
+describe("snapToBusinessDay", () => {
+  it("returns same date for weekdays", () => {
+    const wed = new Date(2026, 2, 4); // Wednesday
+    expect(snapToBusinessDay(wed).getDate()).toBe(4);
+  });
+
+  it("snaps Saturday to Monday", () => {
+    const sat = new Date(2026, 2, 7); // Saturday
+    const result = snapToBusinessDay(sat);
+    expect(result.getDay()).toBe(1); // Monday
+    expect(result.getDate()).toBe(9);
+  });
+
+  it("snaps Sunday to Monday", () => {
+    const sun = new Date(2026, 2, 8); // Sunday
+    const result = snapToBusinessDay(sun);
+    expect(result.getDay()).toBe(1); // Monday
+    expect(result.getDate()).toBe(9);
+  });
+});
+
+describe("distributeEvents", () => {
+  const employees = [
+    { id: "e1", name: "Alice" },
+    { id: "e2", name: "Bob" },
+    { id: "e3", name: "Carol" },
+    { id: "e4", name: "Dave" },
+  ];
+
+  // Mar 2-6, 2026: Mon-Fri (5 business days)
+  const businessDays = getBusinessDays(new Date(2026, 2, 2), new Date(2026, 2, 31));
+
+  it("distributes end-to-start with perDay=1", () => {
+    const events = distributeEvents(employees, businessDays, 1, "end-to-start");
+    expect(events.length).toBe(4);
+    // Last business day in March is Mar 31 (Tue), then 30 (Mon), 27 (Fri), 26 (Thu)
+    expect(events[0].employeeName).toBeDefined();
+    // Events should be sorted by date ascending
+    for (let i = 1; i < events.length; i++) {
+      expect(events[i].scheduledDate.getTime()).toBeGreaterThanOrEqual(
+        events[i - 1].scheduledDate.getTime()
+      );
+    }
+  });
+
+  it("distributes end-to-start with perDay=2", () => {
+    const events = distributeEvents(employees, businessDays, 2, "end-to-start");
+    expect(events.length).toBe(4);
+    // With perDay=2, 2 employees per day → 4 employees use 2 days
+    const dateSet = new Set(events.map((e) => e.scheduledDate.getTime()));
+    expect(dateSet.size).toBe(2);
+  });
+
+  it("distributes last-month-start with perDay=1", () => {
+    // Use a 2-month range to test last-month behavior
+    const twoMonthDays = getBusinessDays(new Date(2026, 1, 2), new Date(2026, 2, 31));
+    const events = distributeEvents(employees, twoMonthDays, 1, "last-month-start");
+    expect(events.length).toBe(4);
+    // Should fill from first business day of March (last month in range)
+    const marchDays = twoMonthDays.filter((d) => d.getMonth() === 2);
+    for (const ev of events) {
+      expect(ev.scheduledDate.getMonth()).toBe(2); // All in March
+    }
+  });
+
+  it("handles more employees than days by wrapping", () => {
+    // Only 2 business days
+    const twoDays = getBusinessDays(new Date(2026, 2, 2), new Date(2026, 2, 3)); // Mon-Tue
+    const events = distributeEvents(employees, twoDays, 1, "end-to-start");
+    expect(events.length).toBe(4);
+    // 4 employees, 2 days → wraps around
+    const dateSet = new Set(events.map((e) => e.scheduledDate.getTime()));
+    expect(dateSet.size).toBe(2);
+  });
+
+  it("returns empty for empty employees", () => {
+    const events = distributeEvents([], businessDays, 1, "end-to-start");
+    expect(events.length).toBe(0);
+  });
+
+  it("returns empty for empty business days", () => {
+    const events = distributeEvents(employees, [], 1, "end-to-start");
+    expect(events.length).toBe(0);
   });
 });
