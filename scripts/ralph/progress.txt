@@ -21,3 +21,16 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - No PostgreSQL client available in container — migrations can't be applied directly; SQL file is created for when DB is available
   - Register manual migrations in `_prisma_migrations` table when applying
 ---
+
+## 2026-03-01 03:08 PST - US-002
+- Implemented calculatePeriods and getCurrentPeriod utility functions
+- Files changed:
+  - `src/lib/sector-schedule-utils.ts` — New file with calculatePeriods, getCurrentPeriod, Period interface
+  - `src/lib/__tests__/sector-schedule-utils.test.ts` — 11 tests covering all frequencies (1,2,3,6,12), edge cases
+  - `scripts/ralph/prd.json` — Marked US-002 as passing
+- **Learnings for future iterations:**
+  - Portuguese month abbreviations array `MONTH_ABBR_PT` already exists in `src/lib/schedule-utils.ts` — duplicated in sector-schedule-utils for independence
+  - Period grid extends backwards from startDate to cover full range (1 year back + current year)
+  - Cross-year periods use format "Dez/2025-Fev/2026", same-year use "Jan-Mar/2026", monthly use "Mar/2026"
+  - The `new Date(year, month, 0)` trick gets the last day of the previous month
+---
