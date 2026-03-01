@@ -152,3 +152,10 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - `src/components/programacao-panel.tsx` — Added progress bar, counters, status filter, "Programar Eventos" button, onboarding badges, yellow highlight for not_scheduled
   - `src/app/(dashboard)/programacao/actions.ts` — Added isOnboarding/onboardingLabel to ComplianceEmployee
 ---
+
+## 2026-03-01 03:38 PST - US-013
+- Implemented event programming wizard with preview and confirmation
+- Files changed:
+  - `src/components/program-events-wizard.tsx` — New wizard: employee selection, perDay/direction config, dryRun preview, date editing with snap-to-business-day, confirm
+  - `src/components/programacao-panel.tsx` — Integrated real wizard, auto-refreshes compliance after creation
+---
