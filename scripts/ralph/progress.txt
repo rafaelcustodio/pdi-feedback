@@ -166,3 +166,21 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - `src/components/sector-schedule-config.tsx` — ProgressIndicator component, sort by completion, Link to /programacao
   - `src/app/(dashboard)/configuracoes/actions.ts` — getAllSectorSchedules now includes pdiProgress/feedbackProgress, getFrequencyLabel exported
 ---
+
+## 2026-03-01 03:45 PST - US-015
+- Implemented sector cycle notifications in cron email-reminders
+- Files changed:
+  - `src/app/api/cron/email-reminders/route.ts` — Added Step 1.5: sector cycle notifications with 3 phases
+- **Three notification phases:**
+  - Phase 1 (period_start): First 7 days of period — notifies managers about employees awaiting scheduling
+  - Phase 2 (approaching_end): Last 7 days of period — notifies about pending (not scheduled + scheduled but not done)
+  - Phase 3 (period_ended): Within 7 days after period ends — notifies about period closed with N pendencies
+- Idempotent via messageKey: `sector_reminder_[unitId]_[periodLabel]_[type]_[phase]`
+- Uses existing notification types pdi_reminder/feedback_reminder
+- Onboarding employees filtered out for feedback type (admissionDate + 90d check)
+- Notifications picked up by existing email consolidation in Step 2/3
+- **Learnings for future iterations:**
+  - The cron has a natural flow: Step 1 creates notifications, Step 2 groups unsent ones, Step 3 sends emails — new notifications just slot into Step 1
+  - calculatePeriods + getCurrentPeriod from sector-schedule-utils reused for period detection
+  - Inline helpers (getEligible, countCompliance) keep the cron self-contained without new exports
+---
