@@ -46,3 +46,16 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - 'end-to-start' reverses the day array; 'last-month-start' reorders from first business day of last month
   - getDay(): 0=Sun, 1=Mon, ..., 5=Fri, 6=Sat
 ---
+
+## 2026-03-01 03:14 PST - US-004
+- Implemented getEffectiveSchedule helper and getSectorComplianceStatus server action
+- Files changed:
+  - `src/lib/sector-schedule-utils.ts` — Added getEffectiveSchedule (individual → sector fallback), EffectiveSchedule interface
+  - `src/app/(dashboard)/programacao/actions.ts` — New file with getSectorComplianceStatus server action
+  - `src/lib/__tests__/effective-schedule.test.ts` — 6 tests with mocked prisma for getEffectiveSchedule
+  - `scripts/ralph/prd.json` — Marked US-004 as passing
+- **Learnings for future iterations:**
+  - getEffectiveSchedule checks individual PDISchedule/FeedbackSchedule first, then falls back to SectorSchedule via EmployeeHierarchy
+  - Mock prisma with vi.mock("@/lib/prisma") for unit testing DB-dependent functions
+  - getSectorComplianceStatus filters employees by access control AND effective schedule before checking events
+---

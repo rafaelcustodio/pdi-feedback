@@ -1,3 +1,5 @@
+import { prisma } from "@/lib/prisma";
+
 const MONTH_ABBR_PT = [
   "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
   "Jul", "Ago", "Set", "Out", "Nov", "Dez",
@@ -192,4 +194,73 @@ export function distributeEvents(
   events.sort((a, b) => a.scheduledDate.getTime() - b.scheduledDate.getTime());
 
   return events;
+}
+
+export interface EffectiveSchedule {
+  source: "individual" | "sector";
+  frequencyMonths: number;
+  startDate: Date;
+  isActive: boolean;
+}
+
+/**
+ * Get the effective schedule configuration for an employee.
+ * Returns the individual schedule if it exists and is active, otherwise the sector schedule.
+ */
+export async function getEffectiveSchedule(
+  employeeId: string,
+  type: "pdi" | "feedback"
+): Promise<EffectiveSchedule | null> {
+  // Check for individual schedule first
+  if (type === "pdi") {
+    const individual = await prisma.pDISchedule.findFirst({
+      where: { employeeId, isActive: true },
+    });
+    if (individual) {
+      return {
+        source: "individual",
+        frequencyMonths: individual.frequencyMonths,
+        startDate: individual.nextDueDate,
+        isActive: true,
+      };
+    }
+  } else {
+    const individual = await prisma.feedbackSchedule.findFirst({
+      where: { employeeId, isActive: true },
+    });
+    if (individual) {
+      return {
+        source: "individual",
+        frequencyMonths: individual.frequencyMonths,
+        startDate: individual.nextDueDate,
+        isActive: true,
+      };
+    }
+  }
+
+  // Fall back to sector schedule via user's organizational unit
+  const hierarchy = await prisma.employeeHierarchy.findFirst({
+    where: { employeeId, endDate: null },
+    select: { organizationalUnitId: true },
+  });
+
+  if (!hierarchy) return null;
+
+  const sectorSchedule = await prisma.sectorSchedule.findUnique({
+    where: {
+      organizationalUnitId_type: {
+        organizationalUnitId: hierarchy.organizationalUnitId,
+        type,
+      },
+    },
+  });
+
+  if (!sectorSchedule || !sectorSchedule.isActive) return null;
+
+  return {
+    source: "sector",
+    frequencyMonths: sectorSchedule.frequencyMonths,
+    startDate: sectorSchedule.startDate,
+    isActive: sectorSchedule.isActive,
+  };
 }
