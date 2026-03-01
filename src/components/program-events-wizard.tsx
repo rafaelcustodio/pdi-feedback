@@ -4,7 +4,7 @@ import { useState } from "react";
 import { X, Eye, Check } from "lucide-react";
 import { programEvents } from "@/app/(dashboard)/programacao/actions";
 import type { ComplianceEmployee } from "@/app/(dashboard)/programacao/actions";
-import { snapToBusinessDay } from "@/lib/sector-schedule-utils";
+import { snapToBusinessDay } from "@/lib/sector-schedule-pure-utils";
 
 interface ProgramEventsWizardProps {
   unitId: string;

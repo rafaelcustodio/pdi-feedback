@@ -1,4 +1,4 @@
-import { PrismaClient, UserRole, PDIStatus, GoalStatus, FeedbackStatus } from "../src/generated/prisma/client";
+import { PrismaClient, UserRole } from "../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { hash } from "bcryptjs";
 
@@ -10,7 +10,9 @@ const prisma = new PrismaClient({
 async function main() {
   console.log("Seeding database...");
 
-  // Clean existing data
+  // ============================================================
+  // Clean existing data (FK-safe order)
+  // ============================================================
   await prisma.notification.deleteMany();
   await prisma.pDISchedule.deleteMany();
   await prisma.feedbackSchedule.deleteMany();
@@ -20,311 +22,369 @@ async function main() {
   await prisma.pDIGoal.deleteMany();
   await prisma.pDI.deleteMany();
   await prisma.employeeHierarchy.deleteMany();
+  await prisma.sectorSchedule.deleteMany();
   await prisma.organizationalUnit.deleteMany();
   await prisma.user.deleteMany();
 
-  const passwordHash = await hash("senha123", 10);
+  const pw = await hash("senha123", 10);
 
   // ============================================================
-  // Users (3-level hierarchy: Director -> Managers -> Employees)
+  // Users
   // ============================================================
 
-  // Admin user (not linked to hierarchy - has full access)
+  // Admin (acesso total, fora da hierarquia)
   await prisma.user.create({
     data: {
       name: "Ana Silva",
-      email: "ana.silva@empresa.com",
-      password: passwordHash,
+      email: "admin@empresa.com",
+      password: pw,
       role: UserRole.admin,
     },
   });
 
-  const director = await prisma.user.create({
+  // CEO
+  const ceo = await prisma.user.create({
+    data: {
+      name: "Renata Duarte",
+      email: "ceo@empresa.com",
+      password: pw,
+      role: UserRole.manager,
+    },
+  });
+
+  // Diretores
+  const dirTech = await prisma.user.create({
     data: {
       name: "Carlos Oliveira",
       email: "carlos.oliveira@empresa.com",
-      password: passwordHash,
+      password: pw,
       role: UserRole.manager,
     },
   });
 
-  const managerTech = await prisma.user.create({
+  const dirQual = await prisma.user.create({
     data: {
-      name: "Mariana Santos",
-      email: "mariana.santos@empresa.com",
-      password: passwordHash,
+      name: "Fernanda Lima",
+      email: "fernanda.lima@empresa.com",
+      password: pw,
       role: UserRole.manager,
     },
   });
 
-  const managerHR = await prisma.user.create({
+  const dirCS = await prisma.user.create({
     data: {
-      name: "Roberto Lima",
-      email: "roberto.lima@empresa.com",
-      password: passwordHash,
+      name: "Marcelo Santos",
+      email: "marcelo.santos@empresa.com",
+      password: pw,
       role: UserRole.manager,
     },
   });
 
-  const devSenior = await prisma.user.create({
+  const dirPS = await prisma.user.create({
     data: {
-      name: "Fernanda Costa",
-      email: "fernanda.costa@empresa.com",
-      password: passwordHash,
-      role: UserRole.employee,
+      name: "Patricia Souza",
+      email: "patricia.souza@empresa.com",
+      password: pw,
+      role: UserRole.manager,
     },
   });
 
-  const devJunior = await prisma.user.create({
+  // Coordenadores
+  const coordDev = await prisma.user.create({
     data: {
-      name: "Lucas Pereira",
-      email: "lucas.pereira@empresa.com",
-      password: passwordHash,
-      role: UserRole.employee,
+      name: "Bruno Costa",
+      email: "coord.dev@empresa.com",
+      password: pw,
+      role: UserRole.manager,
     },
   });
 
-  const hrAnalyst = await prisma.user.create({
+  const coordProd = await prisma.user.create({
     data: {
       name: "Juliana Ferreira",
-      email: "juliana.ferreira@empresa.com",
-      password: passwordHash,
-      role: UserRole.employee,
+      email: "coord.produto@empresa.com",
+      password: pw,
+      role: UserRole.manager,
     },
   });
 
+  const coordDesign = await prisma.user.create({
+    data: {
+      name: "Rafael Alves",
+      email: "coord.design@empresa.com",
+      password: pw,
+      role: UserRole.manager,
+    },
+  });
+
+  const coordSup = await prisma.user.create({
+    data: {
+      name: "Camila Rocha",
+      email: "coord.suporte@empresa.com",
+      password: pw,
+      role: UserRole.manager,
+    },
+  });
+
+  const coordQual = await prisma.user.create({
+    data: {
+      name: "Diego Martins",
+      email: "coord.qualidade@empresa.com",
+      password: pw,
+      role: UserRole.manager,
+    },
+  });
+
+  const coordCS = await prisma.user.create({
+    data: {
+      name: "Leticia Carvalho",
+      email: "coord.cs@empresa.com",
+      password: pw,
+      role: UserRole.manager,
+    },
+  });
+
+  const coordCom = await prisma.user.create({
+    data: {
+      name: "Paulo Ribeiro",
+      email: "coord.comercial@empresa.com",
+      password: pw,
+      role: UserRole.manager,
+    },
+  });
+
+  const coordPS = await prisma.user.create({
+    data: {
+      name: "Vanessa Cruz",
+      email: "coord.ps@empresa.com",
+      password: pw,
+      role: UserRole.manager,
+    },
+  });
+
+  // Funcionários genéricos (3 por setor, 8 setores = 24)
+  const funcionarios: { id: string }[] = [];
+  for (let i = 1; i <= 24; i++) {
+    const f = await prisma.user.create({
+      data: {
+        name: `Funcionário ${i}`,
+        email: `funcionario${i}@empresa.com`,
+        password: pw,
+        role: UserRole.employee,
+      },
+    });
+    funcionarios.push(f);
+  }
+  const f = (i: number) => funcionarios[i - 1]; // helper 1-based
+
   // ============================================================
-  // Organizational Units
+  // Unidades Organizacionais
+  //
+  // Estrutura:
+  //   Empresa
+  //   ├── Diretoria           ← CEO gerencia diretores aqui
+  //   ├── TechProd            ← Dir Tech gerencia coordenadores aqui
+  //   │   ├── Desenvolvimento ← Coord Dev gerencia funcionários aqui
+  //   │   ├── Produto
+  //   │   └── Design
+  //   ├── QualSup             ← Dir Qual gerencia coordenadores aqui
+  //   │   ├── Suporte
+  //   │   └── Qualidade
+  //   ├── CSCOM               ← Dir CS gerencia coordenadores aqui
+  //   │   ├── CS
+  //   │   └── Comercial
+  //   └── PS Liderança        ← Dir PS gerencia coordenador aqui
+  //       └── PS
   // ============================================================
 
   const empresa = await prisma.organizationalUnit.create({
-    data: { name: "Empresa ACME" },
+    data: { name: "Empresa" },
   });
 
-  const techDept = await prisma.organizationalUnit.create({
-    data: { name: "Tecnologia", parentId: empresa.id },
+  const unDiretoria = await prisma.organizationalUnit.create({
+    data: { name: "Diretoria", parentId: empresa.id },
   });
 
-  const hrDept = await prisma.organizationalUnit.create({
-    data: { name: "Recursos Humanos", parentId: empresa.id },
+  // Grupo TechProd
+  const unTechProd = await prisma.organizationalUnit.create({
+    data: { name: "TechProd", parentId: empresa.id },
+  });
+  const unDesenvolvimento = await prisma.organizationalUnit.create({
+    data: { name: "Desenvolvimento", parentId: unTechProd.id },
+  });
+  const unProduto = await prisma.organizationalUnit.create({
+    data: { name: "Produto", parentId: unTechProd.id },
+  });
+  const unDesign = await prisma.organizationalUnit.create({
+    data: { name: "Design", parentId: unTechProd.id },
   });
 
-  const devTeam = await prisma.organizationalUnit.create({
-    data: { name: "Desenvolvimento", parentId: techDept.id },
+  // Grupo QualSup
+  const unQualSup = await prisma.organizationalUnit.create({
+    data: { name: "QualSup", parentId: empresa.id },
+  });
+  const unSuporte = await prisma.organizationalUnit.create({
+    data: { name: "Suporte", parentId: unQualSup.id },
+  });
+  const unQualidade = await prisma.organizationalUnit.create({
+    data: { name: "Qualidade", parentId: unQualSup.id },
+  });
+
+  // Grupo CSCOM
+  const unCSCOM = await prisma.organizationalUnit.create({
+    data: { name: "CSCOM", parentId: empresa.id },
+  });
+  const unCS = await prisma.organizationalUnit.create({
+    data: { name: "CS", parentId: unCSCOM.id },
+  });
+  const unComercial = await prisma.organizationalUnit.create({
+    data: { name: "Comercial", parentId: unCSCOM.id },
+  });
+
+  // Grupo PS
+  const unPSLideranca = await prisma.organizationalUnit.create({
+    data: { name: "PS Liderança", parentId: empresa.id },
+  });
+  const unPS = await prisma.organizationalUnit.create({
+    data: { name: "PS", parentId: unPSLideranca.id },
   });
 
   // ============================================================
-  // Employee Hierarchy (3 levels)
-  // Level 1: Director (Carlos) manages Managers
-  // Level 2: Managers (Mariana, Roberto) manage Employees
-  // Level 3: Employees (Fernanda, Lucas, Juliana)
+  // Sector Schedules
+  //
+  // Unidades intermediárias (diretor → coordenador):
+  //   PDI mensal (1m) + Feedback trimestral (3m)
+  //
+  // Unidades folha (coordenador → funcionário):
+  //   PDI bimestral (2m) + Feedback trimestral (3m)
   // ============================================================
 
+  const startDate = new Date("2026-01-01");
+
+  const intermediateUnits = [
+    unDiretoria,   // CEO → Diretores
+    unTechProd,    // Dir Tech → Coords (Dev, Produto, Design)
+    unQualSup,     // Dir Qual → Coords (Suporte, Qualidade)
+    unCSCOM,       // Dir CS → Coords (CS, Comercial)
+    unPSLideranca, // Dir PS → Coord PS
+  ];
+
+  const leafUnits = [
+    unDesenvolvimento,
+    unProduto,
+    unDesign,
+    unSuporte,
+    unQualidade,
+    unCS,
+    unComercial,
+    unPS,
+  ];
+
+  for (const unit of intermediateUnits) {
+    await prisma.sectorSchedule.createMany({
+      data: [
+        { organizationalUnitId: unit.id, type: "pdi", frequencyMonths: 1, startDate, isActive: true },
+        { organizationalUnitId: unit.id, type: "feedback", frequencyMonths: 3, startDate, isActive: true },
+      ],
+    });
+  }
+
+  for (const unit of leafUnits) {
+    await prisma.sectorSchedule.createMany({
+      data: [
+        { organizationalUnitId: unit.id, type: "pdi", frequencyMonths: 2, startDate, isActive: true },
+        { organizationalUnitId: unit.id, type: "feedback", frequencyMonths: 3, startDate, isActive: true },
+      ],
+    });
+  }
+
+  // ============================================================
+  // Employee Hierarchy
+  // ============================================================
+
+  // Diretores → CEO (na unidade Diretoria)
   await prisma.employeeHierarchy.createMany({
     data: [
-      // Director manages Tech Manager
-      {
-        employeeId: managerTech.id,
-        managerId: director.id,
-        organizationalUnitId: techDept.id,
-      },
-      // Director manages HR Manager
-      {
-        employeeId: managerHR.id,
-        managerId: director.id,
-        organizationalUnitId: hrDept.id,
-      },
-      // Tech Manager manages developers
-      {
-        employeeId: devSenior.id,
-        managerId: managerTech.id,
-        organizationalUnitId: devTeam.id,
-      },
-      {
-        employeeId: devJunior.id,
-        managerId: managerTech.id,
-        organizationalUnitId: devTeam.id,
-      },
-      // HR Manager manages HR analyst
-      {
-        employeeId: hrAnalyst.id,
-        managerId: managerHR.id,
-        organizationalUnitId: hrDept.id,
-      },
+      { employeeId: dirTech.id,  managerId: ceo.id, organizationalUnitId: unDiretoria.id },
+      { employeeId: dirQual.id,  managerId: ceo.id, organizationalUnitId: unDiretoria.id },
+      { employeeId: dirCS.id,    managerId: ceo.id, organizationalUnitId: unDiretoria.id },
+      { employeeId: dirPS.id,    managerId: ceo.id, organizationalUnitId: unDiretoria.id },
     ],
   });
 
-  // ============================================================
-  // Sample PDI
-  // ============================================================
-
-  const pdi = await prisma.pDI.create({
-    data: {
-      employeeId: devJunior.id,
-      managerId: managerTech.id,
-      status: PDIStatus.active,
-      period: "2026-S1",
-      frequencyMonths: 6,
-      conductedAt: new Date("2026-01-15"),
-    },
-  });
-
-  await prisma.pDIGoal.createMany({
+  // Coordenadores → Diretores (nas unidades intermediárias)
+  await prisma.employeeHierarchy.createMany({
     data: [
-      {
-        pdiId: pdi.id,
-        title: "Aprender TypeScript avançado",
-        description: "Estudar generics, utility types e design patterns em TypeScript",
-        competency: "Conhecimento Técnico",
-        status: GoalStatus.in_progress,
-        dueDate: new Date("2026-06-30"),
-      },
-      {
-        pdiId: pdi.id,
-        title: "Melhorar comunicação em reuniões",
-        description: "Participar ativamente das dailies e apresentar nas retrospectivas",
-        competency: "Comunicação",
-        status: GoalStatus.pending,
-        dueDate: new Date("2026-06-30"),
-      },
-      {
-        pdiId: pdi.id,
-        title: "Contribuir com code reviews",
-        description: "Realizar pelo menos 3 code reviews por semana",
-        competency: "Trabalho em Equipe",
-        status: GoalStatus.pending,
-        dueDate: new Date("2026-04-30"),
-      },
+      { employeeId: coordDev.id,    managerId: dirTech.id, organizationalUnitId: unTechProd.id },
+      { employeeId: coordProd.id,   managerId: dirTech.id, organizationalUnitId: unTechProd.id },
+      { employeeId: coordDesign.id, managerId: dirTech.id, organizationalUnitId: unTechProd.id },
+      { employeeId: coordSup.id,    managerId: dirQual.id, organizationalUnitId: unQualSup.id },
+      { employeeId: coordQual.id,   managerId: dirQual.id, organizationalUnitId: unQualSup.id },
+      { employeeId: coordCS.id,     managerId: dirCS.id,   organizationalUnitId: unCSCOM.id },
+      { employeeId: coordCom.id,    managerId: dirCS.id,   organizationalUnitId: unCSCOM.id },
+      { employeeId: coordPS.id,     managerId: dirPS.id,   organizationalUnitId: unPSLideranca.id },
     ],
   });
 
-  await prisma.pDIComment.create({
-    data: {
-      pdiId: pdi.id,
-      authorId: managerTech.id,
-      content: "Lucas, vamos focar primeiro na meta de TypeScript. Posso indicar alguns cursos.",
-    },
-  });
-
-  // ============================================================
-  // Sample Feedback
-  // ============================================================
-
-  await prisma.feedback.create({
-    data: {
-      employeeId: devSenior.id,
-      managerId: managerTech.id,
-      period: "2025-S2",
-      content: "Fernanda demonstrou excelente desempenho no último semestre.",
-      strengths: "Liderança técnica, qualidade de código, mentoria de júniors",
-      improvements: "Documentação de decisões arquiteturais, delegação de tarefas",
-      rating: 4,
-      status: FeedbackStatus.submitted,
-      frequencyMonths: 6,
-      conductedAt: new Date("2025-12-10"),
-    },
-  });
-
-  await prisma.feedback.create({
-    data: {
-      employeeId: devJunior.id,
-      managerId: managerTech.id,
-      period: "2025-S2",
-      content: "Lucas está evoluindo bem, mas precisa melhorar em algumas áreas.",
-      strengths: "Proatividade, vontade de aprender, boa relação com a equipe",
-      improvements: "Aprofundar conhecimentos em TypeScript, melhorar estimativas de prazo",
-      rating: 3,
-      status: FeedbackStatus.draft,
-      frequencyMonths: 6,
-      conductedAt: new Date("2026-01-20"),
-    },
-  });
-
-  // Scheduled feedback (manager filled in advance, auto-submits on scheduled date)
-  await prisma.feedback.create({
-    data: {
-      employeeId: hrAnalyst.id,
-      managerId: managerHR.id,
-      period: "2026-S1",
-      content: "Juliana tem se destacado na organização de processos seletivos.",
-      strengths: "Organização, comunicação interpessoal, proatividade",
-      improvements: "Conhecimento em análise de dados de RH, uso de ferramentas de BI",
-      rating: 4,
-      status: FeedbackStatus.scheduled,
-      frequencyMonths: 6,
-      conductedAt: new Date("2026-02-25"),
-      scheduledAt: new Date("2026-03-15"),
-    },
-  });
-
-  // ============================================================
-  // Sample Schedules
-  // ============================================================
-
-  await prisma.feedbackSchedule.createMany({
+  // Funcionários → Coordenadores (nas unidades folha)
+  await prisma.employeeHierarchy.createMany({
     data: [
-      {
-        employeeId: devSenior.id,
-        managerId: managerTech.id,
-        frequencyMonths: 6,
-        nextDueDate: new Date("2026-06-30"),
-        isActive: true,
-      },
-      {
-        employeeId: devJunior.id,
-        managerId: managerTech.id,
-        frequencyMonths: 3,
-        nextDueDate: new Date("2026-03-31"),
-        isActive: true,
-      },
-    ],
-  });
-
-  await prisma.pDISchedule.createMany({
-    data: [
-      {
-        employeeId: devJunior.id,
-        managerId: managerTech.id,
-        frequencyMonths: 6,
-        nextDueDate: new Date("2026-06-30"),
-        isActive: true,
-      },
+      // Desenvolvimento: func 1, 2, 3
+      { employeeId: f(1).id,  managerId: coordDev.id,    organizationalUnitId: unDesenvolvimento.id },
+      { employeeId: f(2).id,  managerId: coordDev.id,    organizationalUnitId: unDesenvolvimento.id },
+      { employeeId: f(3).id,  managerId: coordDev.id,    organizationalUnitId: unDesenvolvimento.id },
+      // Produto: func 4, 5, 6
+      { employeeId: f(4).id,  managerId: coordProd.id,   organizationalUnitId: unProduto.id },
+      { employeeId: f(5).id,  managerId: coordProd.id,   organizationalUnitId: unProduto.id },
+      { employeeId: f(6).id,  managerId: coordProd.id,   organizationalUnitId: unProduto.id },
+      // Design: func 7, 8, 9
+      { employeeId: f(7).id,  managerId: coordDesign.id, organizationalUnitId: unDesign.id },
+      { employeeId: f(8).id,  managerId: coordDesign.id, organizationalUnitId: unDesign.id },
+      { employeeId: f(9).id,  managerId: coordDesign.id, organizationalUnitId: unDesign.id },
+      // Suporte: func 10, 11, 12
+      { employeeId: f(10).id, managerId: coordSup.id,    organizationalUnitId: unSuporte.id },
+      { employeeId: f(11).id, managerId: coordSup.id,    organizationalUnitId: unSuporte.id },
+      { employeeId: f(12).id, managerId: coordSup.id,    organizationalUnitId: unSuporte.id },
+      // Qualidade: func 13, 14, 15
+      { employeeId: f(13).id, managerId: coordQual.id,   organizationalUnitId: unQualidade.id },
+      { employeeId: f(14).id, managerId: coordQual.id,   organizationalUnitId: unQualidade.id },
+      { employeeId: f(15).id, managerId: coordQual.id,   organizationalUnitId: unQualidade.id },
+      // CS: func 16, 17, 18
+      { employeeId: f(16).id, managerId: coordCS.id,     organizationalUnitId: unCS.id },
+      { employeeId: f(17).id, managerId: coordCS.id,     organizationalUnitId: unCS.id },
+      { employeeId: f(18).id, managerId: coordCS.id,     organizationalUnitId: unCS.id },
+      // Comercial: func 19, 20, 21
+      { employeeId: f(19).id, managerId: coordCom.id,    organizationalUnitId: unComercial.id },
+      { employeeId: f(20).id, managerId: coordCom.id,    organizationalUnitId: unComercial.id },
+      { employeeId: f(21).id, managerId: coordCom.id,    organizationalUnitId: unComercial.id },
+      // PS: func 22, 23, 24
+      { employeeId: f(22).id, managerId: coordPS.id,     organizationalUnitId: unPS.id },
+      { employeeId: f(23).id, managerId: coordPS.id,     organizationalUnitId: unPS.id },
+      { employeeId: f(24).id, managerId: coordPS.id,     organizationalUnitId: unPS.id },
     ],
   });
 
   // ============================================================
-  // Sample Notifications
+  // Summary
   // ============================================================
-
-  await prisma.notification.createMany({
-    data: [
-      {
-        userId: managerTech.id,
-        type: "feedback_reminder",
-        title: "Feedback pendente",
-        message: "O feedback de Lucas Pereira para o período 2025-S2 ainda está em rascunho.",
-        isRead: false,
-        emailSent: false,
-      },
-      {
-        userId: managerTech.id,
-        type: "pdi_reminder",
-        title: "PDI próximo do vencimento",
-        message: "A meta 'Contribuir com code reviews' de Lucas Pereira vence em 30/04/2026.",
-        isRead: false,
-        emailSent: true,
-      },
-    ],
-  });
+  const userCount      = await prisma.user.count();
+  const unitCount      = await prisma.organizationalUnit.count();
+  const hierCount      = await prisma.employeeHierarchy.count();
+  const scheduleCount  = await prisma.sectorSchedule.count();
 
   console.log("Seed completed successfully!");
-  console.log(`  Users created: 7`);
-  console.log(`  Org units created: 4`);
-  console.log(`  Hierarchies created: 5`);
-  console.log(`  PDIs created: 1 (with 3 goals, conductedAt set)`);
-  console.log(`  Feedbacks created: 3 (submitted w/ conductedAt, draft w/ conductedAt, scheduled w/ scheduledAt)`);
-  console.log(`  Schedules created: 3`);
-  console.log(`  Notifications created: 2`);
+  console.log(`  Usuários:              ${userCount}  (1 admin, 1 CEO, 4 diretores, 8 coordenadores, 24 funcionários)`);
+  console.log(`  Unidades org:          ${unitCount}  (1 raiz, 1 diretoria, 4 intermediárias, 8 setores folha)`);
+  console.log(`  Hierarquias:           ${hierCount}  (4 dir→CEO, 8 coord→dir, 24 func→coord)`);
+  console.log(`  Agendamentos de setor: ${scheduleCount}  (PDI+Feedback por unidade, mensal/bimestral/trimestral)`);
+  console.log("");
+  console.log("  Senha padrão: senha123");
+  console.log("  Logins de exemplo:");
+  console.log("    admin@empresa.com  (admin)");
+  console.log("    ceo@empresa.com    (CEO — gerencia diretores)");
+  console.log("    carlos.oliveira@empresa.com  (Diretor TechProd — Dev, Produto, Design)");
+  console.log("    coord.dev@empresa.com        (Coord Desenvolvimento)");
+  console.log("    funcionario1@empresa.com     (Funcionário 1 — Desenvolvimento)");
 }
 
 main()

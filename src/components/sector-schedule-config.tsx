@@ -4,7 +4,8 @@ import { useState } from "react";
 import { Calendar, Settings, X, Save } from "lucide-react";
 import Link from "next/link";
 import type { SectorScheduleSummary, SectorProgressInfo } from "@/app/(dashboard)/configuracoes/actions";
-import { saveSectorSchedule, deleteSectorSchedule, getFrequencyLabel } from "@/app/(dashboard)/configuracoes/actions";
+import { saveSectorSchedule, deleteSectorSchedule } from "@/app/(dashboard)/configuracoes/actions";
+import { getFrequencyLabel } from "@/lib/sector-schedule-pure-utils";
 
 const FREQUENCY_OPTIONS = [
   { value: "", label: "Não configurado" },

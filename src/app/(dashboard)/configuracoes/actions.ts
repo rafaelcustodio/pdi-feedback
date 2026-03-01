@@ -273,17 +273,6 @@ export type SectorScheduleSummary = {
   feedbackProgress: SectorProgressInfo | null;
 };
 
-const FREQ_LABELS: Record<number, string> = {
-  1: "Mensal",
-  2: "Bimestral",
-  3: "Trimestral",
-  6: "Semestral",
-  12: "Anual",
-};
-
-export function getFrequencyLabel(months: number): string {
-  return FREQ_LABELS[months] ?? `${months} meses`;
-}
 
 export async function getAllSectorSchedules(): Promise<SectorScheduleSummary[]> {
   const session = await auth();
