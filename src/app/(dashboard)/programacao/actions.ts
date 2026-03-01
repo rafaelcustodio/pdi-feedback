@@ -8,6 +8,7 @@ import {
   getEffectiveSchedule,
   getBusinessDays,
   distributeEvents,
+  calculatePeriods,
 } from "@/lib/sector-schedule-utils";
 
 export interface ComplianceEmployee {
@@ -319,4 +320,84 @@ export async function programEvents(params: {
     skipped,
     events: eventsToCreate,
   };
+}
+
+// ============================================================
+// US-011: Accessible org units and periods for the scheduling panel
+// ============================================================
+
+export interface AccessibleUnit {
+  id: string;
+  name: string;
+  hasPdiSchedule: boolean;
+  hasFeedbackSchedule: boolean;
+}
+
+export async function getAccessibleUnits(): Promise<AccessibleUnit[]> {
+  const session = await auth();
+  if (!session?.user?.id) return [];
+
+  const role = (session.user as { role?: string }).role || "employee";
+  if (role === "employee") return [];
+
+  let units: { id: string; name: string; sectorSchedules: { type: string; isActive: boolean }[] }[];
+
+  if (role === "admin") {
+    units = await prisma.organizationalUnit.findMany({
+      orderBy: { name: "asc" },
+      include: { sectorSchedules: { where: { isActive: true } } },
+    });
+  } else {
+    // Manager: get units where they manage employees
+    const managedHierarchies = await prisma.employeeHierarchy.findMany({
+      where: { managerId: session.user.id, endDate: null },
+      select: { organizationalUnitId: true },
+    });
+    const unitIds = [...new Set(managedHierarchies.map((h) => h.organizationalUnitId))];
+    units = await prisma.organizationalUnit.findMany({
+      where: { id: { in: unitIds } },
+      orderBy: { name: "asc" },
+      include: { sectorSchedules: { where: { isActive: true } } },
+    });
+  }
+
+  return units.map((u) => ({
+    id: u.id,
+    name: u.name,
+    hasPdiSchedule: u.sectorSchedules.some((s) => s.type === "pdi"),
+    hasFeedbackSchedule: u.sectorSchedules.some((s) => s.type === "feedback"),
+  }));
+}
+
+export interface PeriodOption {
+  label: string;
+  start: string; // ISO string for URL serialization
+  end: string;
+}
+
+export async function getUnitPeriods(
+  unitId: string,
+  type: "pdi" | "feedback"
+): Promise<PeriodOption[]> {
+  const session = await auth();
+  if (!session?.user?.id) return [];
+
+  const sectorSchedule = await prisma.sectorSchedule.findUnique({
+    where: {
+      organizationalUnitId_type: {
+        organizationalUnitId: unitId,
+        type,
+      },
+    },
+  });
+
+  if (!sectorSchedule || !sectorSchedule.isActive) return [];
+
+  const periods = calculatePeriods(sectorSchedule.frequencyMonths, sectorSchedule.startDate);
+
+  return periods.map((p) => ({
+    label: p.label,
+    start: p.start.toISOString(),
+    end: p.end.toISOString(),
+  }));
 }

@@ -8,6 +8,7 @@ import { useState, useRef, useEffect } from "react";
 import {
   LayoutDashboard,
   Calendar,
+  CalendarCheck,
   Users,
   ClipboardList,
   MessageSquare,
@@ -33,11 +34,12 @@ interface SidebarProps {
 }
 
 const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/calendario", label: "Calendário", icon: Calendar },
-  { href: "/colaboradores", label: "Colaboradores", icon: Users },
-  { href: "/pdis", label: "PDIs", icon: ClipboardList },
-  { href: "/feedbacks", label: "Feedbacks", icon: MessageSquare },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, roles: null },
+  { href: "/calendario", label: "Calendário", icon: Calendar, roles: null },
+  { href: "/colaboradores", label: "Colaboradores", icon: Users, roles: null },
+  { href: "/pdis", label: "PDIs", icon: ClipboardList, roles: null },
+  { href: "/feedbacks", label: "Feedbacks", icon: MessageSquare, roles: null },
+  { href: "/programacao", label: "Programação", icon: CalendarCheck, roles: ["admin", "manager"] as string[] },
 ];
 
 function Tooltip({
@@ -176,7 +178,7 @@ export function Sidebar({
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-2 py-3">
         <ul className="space-y-0.5">
-          {navItems.map((item) => {
+          {navItems.filter((item) => !item.roles || (userRole && item.roles.includes(userRole))).map((item) => {
             const active = isActive(item.href);
             const Icon = item.icon;
             const link = (
