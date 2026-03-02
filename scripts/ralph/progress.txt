@@ -7,6 +7,9 @@ Started: Mon Mar  2 11:01:25 PST 2026
 - Use `DISTINCT ON` with `ORDER BY` for "pick best per group" queries in PostgreSQL
 - Prisma 7 uses TypeScript-based generated client in `src/generated/prisma/` - schema model changes require `prisma generate`, but database-only changes (indexes) don't affect the generated client
 - Pre-existing lint errors on main: theme-provider setState-in-effect error, unused vars in programacao/actions.ts, pdi-tracking.tsx, sector-schedule-utils
+- PDIs use continuous model (one active per employee); check `status: "active"` not date ranges for duplicates
+- Use Prisma error code P2002 for unique constraint violations; pattern: `error.code === "P2002"` with `typeof error === "object" && "code" in error`
+- `evaluationMode` on User controls PDI vs Feedback; filter at Prisma query level with nested `employee: { evaluationMode: type }`
 ---
 
 ## 2026-03-02 - US-001
