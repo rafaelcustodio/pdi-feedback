@@ -32,6 +32,9 @@ export type EmployeeListItem = {
   createdAt: Date;
   orgUnit: string | null;
   managerName: string | null;
+  jobTitle: string | null;
+  phone: string | null;
+  evaluationMode: string;
 };
 
 export type EmployeeDetail = {
@@ -133,6 +136,9 @@ export async function getEmployees(
         createdAt: u.createdAt,
         orgUnit: activeHierarchy?.organizationalUnit.name ?? null,
         managerName: activeHierarchy?.manager.name ?? null,
+        jobTitle: (u as Record<string, unknown>).jobTitle as string | null,
+        phone: (u as Record<string, unknown>).phone as string | null,
+        evaluationMode: ((u as Record<string, unknown>).evaluationMode as string) ?? "feedback",
       };
     }),
     total,
