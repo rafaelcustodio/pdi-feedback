@@ -120,6 +120,15 @@ export function EmployeeTable({
               <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 Papel
               </th>
+              <th className="hidden px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 lg:table-cell">
+                Cargo
+              </th>
+              <th className="hidden px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 md:table-cell">
+                Telefone
+              </th>
+              <th className="hidden px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 md:table-cell">
+                Modo
+              </th>
               <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 Unidade
               </th>
@@ -138,7 +147,7 @@ export function EmployeeTable({
             {employees.length === 0 ? (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={10}
                   className="px-4 py-8 text-center text-sm text-gray-500"
                 >
                   Nenhum colaborador encontrado.
@@ -167,6 +176,23 @@ export function EmployeeTable({
                       }`}
                     >
                       {roleLabels[emp.role] ?? emp.role}
+                    </span>
+                  </td>
+                  <td className="hidden whitespace-nowrap px-4 py-3 text-sm text-gray-600 lg:table-cell">
+                    {emp.jobTitle ?? "—"}
+                  </td>
+                  <td className="hidden whitespace-nowrap px-4 py-3 text-sm text-gray-600 md:table-cell">
+                    {emp.phone ?? "—"}
+                  </td>
+                  <td className="hidden whitespace-nowrap px-4 py-3 text-sm md:table-cell">
+                    <span
+                      className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
+                        emp.evaluationMode === "pdi"
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-green-100 text-green-700"
+                      }`}
+                    >
+                      {emp.evaluationMode === "pdi" ? "PDI" : "Feedback"}
                     </span>
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">

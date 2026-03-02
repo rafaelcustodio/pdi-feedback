@@ -89,21 +89,21 @@ export async function getSectorComplianceStatus(
         where: {
           employeeId: employee.id,
           OR: [
-            { scheduledAt: { gte: periodStart, lte: periodEnd } },
+            { createdAt: { gte: periodStart, lte: periodEnd } },
             { conductedAt: { gte: periodStart, lte: periodEnd } },
           ],
         },
-        orderBy: { scheduledAt: "desc" },
+        orderBy: { createdAt: "desc" },
       });
 
       if (pdi) {
-        const isDone = pdi.status === "active" || pdi.status === "completed";
+        const isDone = pdi.status === "active" && pdi.conductedAt != null;
         result.push({
           employeeId: employee.id,
           employeeName: employee.name,
           position: employee.role,
           status: isDone ? "done" : "scheduled",
-          eventDate: pdi.conductedAt ?? pdi.scheduledAt ?? undefined,
+          eventDate: pdi.conductedAt ?? pdi.createdAt ?? undefined,
           eventId: pdi.id,
           eventHref: `/pdis/${pdi.id}`,
         });
@@ -245,10 +245,10 @@ export async function programEvents(params: {
         where: {
           employeeId: event.employeeId,
           OR: [
-            { scheduledAt: { gte: params.periodStart, lte: params.periodEnd } },
+            { createdAt: { gte: params.periodStart, lte: params.periodEnd } },
             { conductedAt: { gte: params.periodStart, lte: params.periodEnd } },
           ],
-          status: { in: ["scheduled", "draft", "active", "completed"] },
+          status: { in: ["active", "cancelled"] },
         },
       });
       if (existing) {
@@ -295,9 +295,7 @@ export async function programEvents(params: {
         data: {
           employeeId: event.employeeId,
           managerId: emp.managerId,
-          status: "scheduled",
-          period,
-          scheduledAt: event.scheduledDate,
+          status: "active",
         },
       });
     } else {

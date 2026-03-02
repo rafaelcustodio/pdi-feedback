@@ -3,8 +3,25 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { generateScheduledEvents, removeScheduledEvents } from "@/lib/schedule-utils";
+import { generateScheduledFeedbackEvents, removeScheduledFeedbackEvents } from "@/lib/schedule-utils";
 import { createOnboardingFeedbacks, updateOnboardingFeedbacks, handleSectorTransfer } from "@/lib/sector-schedule-utils";
+
+function validateCPF(cpf: string): boolean {
+  const digits = cpf.replace(/\D/g, "");
+  if (digits.length !== 11) return false;
+  if (/^(\d)\1{10}$/.test(digits)) return false;
+  let sum = 0;
+  for (let i = 0; i < 9; i++) sum += parseInt(digits[i]) * (10 - i);
+  let check = 11 - (sum % 11);
+  if (check >= 10) check = 0;
+  if (parseInt(digits[9]) !== check) return false;
+  sum = 0;
+  for (let i = 0; i < 10; i++) sum += parseInt(digits[i]) * (11 - i);
+  check = 11 - (sum % 11);
+  if (check >= 10) check = 0;
+  if (parseInt(digits[10]) !== check) return false;
+  return true;
+}
 
 export type EmployeeListItem = {
   id: string;
@@ -15,6 +32,9 @@ export type EmployeeListItem = {
   createdAt: Date;
   orgUnit: string | null;
   managerName: string | null;
+  jobTitle: string | null;
+  phone: string | null;
+  evaluationMode: string;
 };
 
 export type EmployeeDetail = {
@@ -22,9 +42,18 @@ export type EmployeeDetail = {
   name: string;
   email: string;
   role: string;
+  evaluationMode: string;
   isActive: boolean;
   avatarUrl: string | null;
   admissionDate: Date | null;
+  phone: string | null;
+  cpf: string | null;
+  birthDate: Date | null;
+  jobTitle: string | null;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  zipCode: string | null;
   createdAt: Date;
   hierarchy: {
     id: string;
@@ -107,6 +136,9 @@ export async function getEmployees(
         createdAt: u.createdAt,
         orgUnit: activeHierarchy?.organizationalUnit.name ?? null,
         managerName: activeHierarchy?.manager.name ?? null,
+        jobTitle: (u as Record<string, unknown>).jobTitle as string | null,
+        phone: (u as Record<string, unknown>).phone as string | null,
+        evaluationMode: ((u as Record<string, unknown>).evaluationMode as string) ?? "feedback",
       };
     }),
     total,
@@ -140,9 +172,18 @@ export async function getEmployeeById(
     name: user.name,
     email: user.email,
     role: user.role,
+    evaluationMode: user.evaluationMode,
     isActive: user.isActive,
     avatarUrl: user.avatarUrl,
     admissionDate: user.admissionDate,
+    phone: user.phone ?? null,
+    cpf: user.cpf ?? null,
+    birthDate: user.birthDate ?? null,
+    jobTitle: user.jobTitle ?? null,
+    address: user.address ?? null,
+    city: user.city ?? null,
+    state: user.state ?? null,
+    zipCode: user.zipCode ?? null,
     createdAt: user.createdAt,
     hierarchy: activeHierarchy
       ? {
@@ -216,10 +257,19 @@ export async function createEmployee(data: {
   name: string;
   email: string;
   role: string;
+  evaluationMode?: string;
   password?: string;
   orgUnitId?: string;
   managerId?: string;
   admissionDate?: string;
+  phone?: string;
+  cpf?: string;
+  birthDate?: string;
+  jobTitle?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
 }): Promise<{ success: boolean; error?: string; id?: string }> {
   const session = await requireAdmin();
   if (!session) {
@@ -250,6 +300,21 @@ export async function createEmployee(data: {
     return { success: false, error: "Papel inválido" };
   }
 
+  // Validate evaluationMode
+  const validEvaluationModes = ["pdi", "feedback"];
+  const evaluationMode = data.evaluationMode ?? "feedback";
+  if (!validEvaluationModes.includes(evaluationMode)) {
+    return { success: false, error: "Modo de avaliação inválido" };
+  }
+
+  // Validate CPF if provided
+  if (data.cpf) {
+    const cpfDigits = data.cpf.replace(/\D/g, "");
+    if (cpfDigits && !validateCPF(cpfDigits)) {
+      return { success: false, error: "CPF inválido" };
+    }
+  }
+
   // Hash password if provided
   let hashedPassword: string | null = null;
   if (data.password) {
@@ -257,13 +322,24 @@ export async function createEmployee(data: {
     hashedPassword = await hash(data.password, 10);
   }
 
+  const cpfClean = data.cpf?.replace(/\D/g, "") || null;
+
   const user = await prisma.user.create({
     data: {
       name: trimmedName,
       email: trimmedEmail,
       role: data.role as "admin" | "manager" | "employee",
+      evaluationMode: evaluationMode as "pdi" | "feedback",
       password: hashedPassword,
       admissionDate: data.admissionDate ? new Date(data.admissionDate) : null,
+      phone: data.phone?.trim() || null,
+      cpf: cpfClean || null,
+      birthDate: data.birthDate ? new Date(data.birthDate) : null,
+      jobTitle: data.jobTitle?.trim() || null,
+      address: data.address?.trim() || null,
+      city: data.city?.trim() || null,
+      state: data.state?.trim() || null,
+      zipCode: data.zipCode?.replace(/\D/g, "") || null,
     },
   });
 
@@ -297,9 +373,18 @@ export async function updateEmployee(
     name: string;
     email: string;
     role: string;
+    evaluationMode?: string;
     orgUnitId?: string;
     managerId?: string;
     admissionDate?: string;
+    phone?: string;
+    cpf?: string;
+    birthDate?: string;
+    jobTitle?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
   }
 ): Promise<{ success: boolean; error?: string }> {
   const session = await requireAdmin();
@@ -335,10 +420,27 @@ export async function updateEmployee(
     return { success: false, error: "Papel inválido" };
   }
 
+  // Validate evaluationMode
+  const validEvaluationModes = ["pdi", "feedback"];
+  const evaluationMode = data.evaluationMode ?? "feedback";
+  if (!validEvaluationModes.includes(evaluationMode)) {
+    return { success: false, error: "Modo de avaliação inválido" };
+  }
+
+  // Validate CPF if provided
+  if (data.cpf) {
+    const cpfDigits = data.cpf.replace(/\D/g, "");
+    if (cpfDigits && !validateCPF(cpfDigits)) {
+      return { success: false, error: "CPF inválido" };
+    }
+  }
+
   // Update user fields
   const newAdmissionDate = data.admissionDate ? new Date(data.admissionDate) : null;
   const admissionChanged =
     newAdmissionDate?.getTime() !== user.admissionDate?.getTime();
+
+  const cpfClean = data.cpf?.replace(/\D/g, "") || null;
 
   await prisma.user.update({
     where: { id },
@@ -346,7 +448,16 @@ export async function updateEmployee(
       name: trimmedName,
       email: trimmedEmail,
       role: data.role as "admin" | "manager" | "employee",
+      evaluationMode: evaluationMode as "pdi" | "feedback",
       admissionDate: newAdmissionDate,
+      phone: data.phone?.trim() || null,
+      cpf: cpfClean || null,
+      birthDate: data.birthDate ? new Date(data.birthDate) : null,
+      jobTitle: data.jobTitle?.trim() || null,
+      address: data.address?.trim() || null,
+      city: data.city?.trim() || null,
+      state: data.state?.trim() || null,
+      zipCode: data.zipCode?.replace(/\D/g, "") || null,
     },
   });
 
@@ -470,9 +581,6 @@ export async function reactivateEmployee(
 // ============================================================
 
 export type EmployeeSchedules = {
-  pdiFrequency: number | null;
-  pdiNextDueDate: Date | null;
-  pdiScheduleId: string | null;
   feedbackFrequency: number | null;
   feedbackNextDueDate: Date | null;
   feedbackScheduleId: string | null;
@@ -484,30 +592,18 @@ export async function getEmployeeSchedules(
   const session = await requireAdmin();
   if (!session) {
     return {
-      pdiFrequency: null,
-      pdiNextDueDate: null,
-      pdiScheduleId: null,
       feedbackFrequency: null,
       feedbackNextDueDate: null,
       feedbackScheduleId: null,
     };
   }
 
-  const [pdiSchedule, feedbackSchedule] = await Promise.all([
-    prisma.pDISchedule.findFirst({
-      where: { employeeId, isActive: true },
-      orderBy: { nextDueDate: "asc" },
-    }),
-    prisma.feedbackSchedule.findFirst({
-      where: { employeeId, isActive: true },
-      orderBy: { nextDueDate: "asc" },
-    }),
-  ]);
+  const feedbackSchedule = await prisma.feedbackSchedule.findFirst({
+    where: { employeeId, isActive: true },
+    orderBy: { nextDueDate: "asc" },
+  });
 
   return {
-    pdiFrequency: pdiSchedule?.frequencyMonths ?? null,
-    pdiNextDueDate: pdiSchedule?.nextDueDate ?? null,
-    pdiScheduleId: pdiSchedule?.id ?? null,
     feedbackFrequency: feedbackSchedule?.frequencyMonths ?? null,
     feedbackNextDueDate: feedbackSchedule?.nextDueDate ?? null,
     feedbackScheduleId: feedbackSchedule?.id ?? null,
@@ -524,7 +620,6 @@ function calculateNextDueDate(frequencyMonths: number): Date {
 export async function saveEmployeeSchedules(
   employeeId: string,
   data: {
-    pdiFrequency: number | null;
     feedbackFrequency: number | null;
   }
 ): Promise<{ success: boolean; error?: string }> {
@@ -535,9 +630,6 @@ export async function saveEmployeeSchedules(
 
   const validFrequencies = [1, 2, 3, 6, 12];
 
-  if (data.pdiFrequency !== null && !validFrequencies.includes(data.pdiFrequency)) {
-    return { success: false, error: "Frequência de PDI inválida" };
-  }
   if (data.feedbackFrequency !== null && !validFrequencies.includes(data.feedbackFrequency)) {
     return { success: false, error: "Frequência de feedback inválida" };
   }
@@ -552,48 +644,6 @@ export async function saveEmployeeSchedules(
   }
 
   const managerId = hierarchy.managerId;
-
-  // Handle PDI schedule
-  const existingPdiSchedule = await prisma.pDISchedule.findFirst({
-    where: { employeeId, isActive: true },
-  });
-
-  if (data.pdiFrequency !== null) {
-    if (existingPdiSchedule) {
-      // Update existing
-      await prisma.pDISchedule.update({
-        where: { id: existingPdiSchedule.id },
-        data: {
-          frequencyMonths: data.pdiFrequency,
-          managerId,
-          nextDueDate:
-            existingPdiSchedule.frequencyMonths !== data.pdiFrequency
-              ? calculateNextDueDate(data.pdiFrequency)
-              : existingPdiSchedule.nextDueDate,
-        },
-      });
-    } else {
-      // Create new
-      await prisma.pDISchedule.create({
-        data: {
-          employeeId,
-          managerId,
-          frequencyMonths: data.pdiFrequency,
-          nextDueDate: calculateNextDueDate(data.pdiFrequency),
-        },
-      });
-    }
-    // Generate scheduled PDI events for the next 12 months
-    await generateScheduledEvents(employeeId, "pdi", data.pdiFrequency, managerId);
-  } else if (existingPdiSchedule) {
-    // Deactivate
-    await prisma.pDISchedule.update({
-      where: { id: existingPdiSchedule.id },
-      data: { isActive: false },
-    });
-    // Remove future scheduled PDI events
-    await removeScheduledEvents(employeeId, "pdi");
-  }
 
   // Handle Feedback schedule
   const existingFeedbackSchedule = await prisma.feedbackSchedule.findFirst({
@@ -624,14 +674,14 @@ export async function saveEmployeeSchedules(
       });
     }
     // Generate scheduled Feedback events for the next 12 months
-    await generateScheduledEvents(employeeId, "feedback", data.feedbackFrequency, managerId);
+    await generateScheduledFeedbackEvents(employeeId, data.feedbackFrequency, managerId);
   } else if (existingFeedbackSchedule) {
     await prisma.feedbackSchedule.update({
       where: { id: existingFeedbackSchedule.id },
       data: { isActive: false },
     });
     // Remove future scheduled Feedback events
-    await removeScheduledEvents(employeeId, "feedback");
+    await removeScheduledFeedbackEvents(employeeId);
   }
 
   revalidatePath(`/colaboradores/${employeeId}`);
@@ -768,18 +818,13 @@ export async function toggleIndividualSchedule(
   }
 
   if (!useIndividual) {
-    // Deactivate individual schedules
-    await prisma.pDISchedule.updateMany({
-      where: { employeeId, isActive: true },
-      data: { isActive: false },
-    });
+    // Deactivate individual feedback schedules
     await prisma.feedbackSchedule.updateMany({
       where: { employeeId, isActive: true },
       data: { isActive: false },
     });
-    // Remove future scheduled events created by individual schedule
-    await removeScheduledEvents(employeeId, "pdi");
-    await removeScheduledEvents(employeeId, "feedback");
+    // Remove future scheduled feedback events
+    await removeScheduledFeedbackEvents(employeeId);
   }
   // When toggling ON, user will use the existing save flow to configure
 

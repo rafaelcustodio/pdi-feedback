@@ -17,20 +17,8 @@ export async function getEffectiveSchedule(
   employeeId: string,
   type: "pdi" | "feedback"
 ): Promise<import("./sector-schedule-pure-utils").EffectiveSchedule | null> {
-  // Check for individual schedule first
-  if (type === "pdi") {
-    const individual = await prisma.pDISchedule.findFirst({
-      where: { employeeId, isActive: true },
-    });
-    if (individual) {
-      return {
-        source: "individual",
-        frequencyMonths: individual.frequencyMonths,
-        startDate: individual.nextDueDate,
-        isActive: true,
-      };
-    }
-  } else {
+  // Check for individual feedback schedule
+  if (type === "feedback") {
     const individual = await prisma.feedbackSchedule.findFirst({
       where: { employeeId, isActive: true },
     });
@@ -190,18 +178,8 @@ export async function updateOnboardingFeedbacks(
 export async function handleSectorTransfer(
   employeeId: string,
   _newUnitId: string
-): Promise<{ cancelledPdis: number; cancelledFeedbacks: number }> {
+): Promise<{ cancelledFeedbacks: number }> {
   const now = new Date();
-
-  // Cancel future scheduled PDIs
-  const cancelledPdis = await prisma.pDI.updateMany({
-    where: {
-      employeeId,
-      status: "scheduled",
-      scheduledAt: { gt: now },
-    },
-    data: { status: "cancelled" },
-  });
 
   // Cancel future scheduled Feedbacks (except onboarding)
   const cancelledFeedbacks = await prisma.feedback.updateMany({
@@ -215,7 +193,6 @@ export async function handleSectorTransfer(
   });
 
   return {
-    cancelledPdis: cancelledPdis.count,
     cancelledFeedbacks: cancelledFeedbacks.count,
   };
 }

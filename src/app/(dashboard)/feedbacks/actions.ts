@@ -89,6 +89,9 @@ export async function getFeedbacks(
   // Build additional filters as AND conditions
   const andConditions: Record<string, unknown>[] = [];
 
+  // Only show feedbacks for employees with evaluationMode='feedback'
+  andConditions.push({ employee: { evaluationMode: "feedback" } });
+
   // Filter by year (on period field or createdAt year)
   if (year.trim()) {
     const yearNum = parseInt(year.trim(), 10);
@@ -247,7 +250,7 @@ export async function getSubordinatesForFeedback(): Promise<SubordinateOption[]>
 
   if (accessible === "all") {
     return prisma.user.findMany({
-      where: { isActive: true, id: { not: userId } },
+      where: { isActive: true, id: { not: userId }, evaluationMode: "feedback" },
       select: { id: true, name: true, email: true },
       orderBy: { name: "asc" },
     });
@@ -258,7 +261,7 @@ export async function getSubordinatesForFeedback(): Promise<SubordinateOption[]>
   if (subordinateIds.length === 0) return [];
 
   return prisma.user.findMany({
-    where: { id: { in: subordinateIds }, isActive: true },
+    where: { id: { in: subordinateIds }, isActive: true, evaluationMode: "feedback" },
     select: { id: true, name: true, email: true },
     orderBy: { name: "asc" },
   });
@@ -455,7 +458,9 @@ export async function getAvailableYears(): Promise<number[]> {
   }
 
   const feedbacks = await prisma.feedback.findMany({
-    where: whereClause,
+    where: {
+      AND: [whereClause, { employee: { evaluationMode: "feedback" } }],
+    },
     select: { createdAt: true, period: true },
     orderBy: { createdAt: "desc" },
   });

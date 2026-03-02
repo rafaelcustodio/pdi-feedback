@@ -153,52 +153,6 @@ export async function generateScheduleNotifications(): Promise<{
 
   let created = 0;
 
-  // Get all active PDI schedules with upcoming or overdue dates
-  const pdiSchedules = await prisma.pDISchedule.findMany({
-    where: {
-      isActive: true,
-      nextDueDate: { lte: sevenDaysFromNow },
-    },
-    include: {
-      manager: { select: { id: true, name: true } },
-      employee: { select: { id: true, name: true } },
-    },
-  });
-
-  for (const schedule of pdiSchedules) {
-    const isOverdue = schedule.nextDueDate <= now;
-    const dueDateStr = schedule.nextDueDate.toLocaleDateString("pt-BR");
-    const messageKey = `pdi_schedule_${schedule.id}_${dueDateStr}`;
-
-    // Check for existing notification to avoid duplicates
-    const existing = await prisma.notification.findFirst({
-      where: {
-        userId: schedule.managerId,
-        type: "pdi_reminder",
-        message: { contains: messageKey },
-      },
-    });
-
-    if (!existing) {
-      const title = isOverdue
-        ? `PDI atrasado - ${schedule.employee.name}`
-        : `PDI próximo do vencimento - ${schedule.employee.name}`;
-      const message = isOverdue
-        ? `O PDI de ${schedule.employee.name} estava previsto para ${dueDateStr} e está atrasado. [${messageKey}]`
-        : `O PDI de ${schedule.employee.name} vence em ${dueDateStr}. [${messageKey}]`;
-
-      await prisma.notification.create({
-        data: {
-          userId: schedule.managerId,
-          type: "pdi_reminder",
-          title,
-          message,
-        },
-      });
-      created++;
-    }
-  }
-
   // Get all active Feedback schedules with upcoming or overdue dates
   const feedbackSchedules = await prisma.feedbackSchedule.findMany({
     where: {
@@ -289,8 +243,8 @@ export async function generateScheduleNotifications(): Promise<{
           ? `Meta de PDI atrasada${isEmployee ? "" : ` - ${employeeName}`}`
           : `Meta de PDI próxima do vencimento${isEmployee ? "" : ` - ${employeeName}`}`;
         const message = isOverdue
-          ? `A meta "${goal.title}" ${isEmployee ? "do seu PDI" : `do PDI de ${employeeName}`} estava prevista para ${dueDateStr} e está atrasada. [${messageKey}]`
-          : `A meta "${goal.title}" ${isEmployee ? "do seu PDI" : `do PDI de ${employeeName}`} vence em ${dueDateStr}. [${messageKey}]`;
+          ? `A meta "${goal.developmentObjective}" ${isEmployee ? "do seu PDI" : `do PDI de ${employeeName}`} estava prevista para ${dueDateStr} e está atrasada. [${messageKey}]`
+          : `A meta "${goal.developmentObjective}" ${isEmployee ? "do seu PDI" : `do PDI de ${employeeName}`} vence em ${dueDateStr}. [${messageKey}]`;
 
         await prisma.notification.create({
           data: {

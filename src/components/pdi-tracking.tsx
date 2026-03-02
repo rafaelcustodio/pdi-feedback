@@ -16,7 +16,7 @@ import {
   XCircle,
   Pencil,
 } from "lucide-react";
-import type { PDIDetail } from "@/app/(dashboard)/pdis/actions";
+import type { PDIDetail, GoalInput, FollowUpDetail } from "@/app/(dashboard)/pdis/actions";
 import {
   addEvidence,
   addComment,
@@ -24,32 +24,19 @@ import {
   updateGoal,
   updateComment,
   updateEvidence,
+  addGoal as addGoalAction,
+  scheduleFollowUp,
+  completeFollowUp,
+  cancelFollowUp,
 } from "@/app/(dashboard)/pdis/actions";
 
-const COMPETENCIES = [
-  "Liderança",
-  "Comunicação",
-  "Trabalho em Equipe",
-  "Resolução de Problemas",
-  "Gestão de Tempo",
-  "Inovação",
-  "Conhecimento Técnico",
-  "Relacionamento Interpessoal",
-  "Orientação a Resultados",
-  "Adaptabilidade",
-];
-
 const statusLabels: Record<string, string> = {
-  draft: "Rascunho",
   active: "Ativo",
-  completed: "Concluído",
   cancelled: "Cancelado",
 };
 
 const statusColors: Record<string, string> = {
-  draft: "bg-yellow-100 text-yellow-700",
   active: "bg-blue-100 text-blue-700",
-  completed: "bg-green-100 text-green-700",
   cancelled: "bg-gray-100 text-gray-500",
 };
 
@@ -89,6 +76,13 @@ export function PDITracking({ pdi, userId, userRole }: PDITrackingProps) {
       ? Math.round((completedGoals / pdi.goals.length) * 100)
       : 0;
 
+  // Separate active and completed goals
+  const activeGoals = pdi.goals.filter((g) => g.status !== "completed");
+  const doneGoals = pdi.goals.filter((g) => g.status === "completed");
+
+  const [showAddGoal, setShowAddGoal] = useState(false);
+  const [showCompleted, setShowCompleted] = useState(false);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -113,7 +107,7 @@ export function PDITracking({ pdi, userId, userRole }: PDITrackingProps) {
             </span>
           </div>
           <p className="mt-1 text-sm text-gray-600">
-            Período: {pdi.period} | Gestor: {pdi.managerName}
+            Gestor: {pdi.managerName}
           </p>
         </div>
       </div>
@@ -136,17 +130,40 @@ export function PDITracking({ pdi, userId, userRole }: PDITrackingProps) {
         </div>
       )}
 
-      {/* Goals */}
+      {/* Goals - Active/In Progress */}
       <div className="rounded-lg border border-gray-200 bg-white p-6">
-        <h2 className="mb-4 text-lg font-medium text-gray-900">
-          Metas ({pdi.goals.length})
-        </h2>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-lg font-medium text-gray-900">
+            Metas ({pdi.goals.length})
+          </h2>
+          {isManager && pdi.status === "active" && (
+            <button
+              onClick={() => setShowAddGoal(!showAddGoal)}
+              className="inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
+            >
+              <Plus size={14} />
+              Nova Meta
+            </button>
+          )}
+        </div>
 
-        {pdi.goals.length === 0 ? (
+        {/* Add Goal Form */}
+        {showAddGoal && (
+          <AddGoalForm
+            pdiId={pdi.id}
+            employeeId={pdi.employeeId}
+            employeeName={pdi.employeeName}
+            managerId={pdi.managerId}
+            managerName={pdi.managerName}
+            onClose={() => setShowAddGoal(false)}
+          />
+        )}
+
+        {activeGoals.length === 0 && doneGoals.length === 0 ? (
           <p className="text-sm text-gray-500">Nenhuma meta cadastrada.</p>
         ) : (
           <div className="space-y-4">
-            {pdi.goals.map((goal) => (
+            {activeGoals.map((goal) => (
               <GoalCard
                 key={goal.id}
                 goal={goal}
@@ -154,11 +171,55 @@ export function PDITracking({ pdi, userId, userRole }: PDITrackingProps) {
                 isManager={isManager}
                 pdiStatus={pdi.status}
                 userId={userId}
+                employeeId={pdi.employeeId}
+                managerId={pdi.managerId}
+                employeeName={pdi.employeeName}
+                managerName={pdi.managerName}
               />
             ))}
           </div>
         )}
+
+        {/* Completed Goals - Collapsed */}
+        {doneGoals.length > 0 && (
+          <div className="mt-4">
+            <button
+              onClick={() => setShowCompleted(!showCompleted)}
+              className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-700"
+            >
+              {showCompleted ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              Metas concluídas ({doneGoals.length})
+            </button>
+            {showCompleted && (
+              <div className="mt-3 space-y-3">
+                {doneGoals.map((goal) => (
+                  <GoalCard
+                    key={goal.id}
+                    goal={goal}
+                    isEmployee={isEmployee}
+                    isManager={isManager}
+                    pdiStatus={pdi.status}
+                    userId={userId}
+                    employeeId={pdi.employeeId}
+                    managerId={pdi.managerId}
+                    employeeName={pdi.employeeName}
+                    managerName={pdi.managerName}
+                    defaultCollapsed
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
+
+      {/* Follow-Ups Section */}
+      <FollowUpsSection
+        pdiId={pdi.id}
+        followUps={pdi.followUps}
+        isManager={isManager}
+        pdiStatus={pdi.status}
+      />
 
       {/* Comments Section */}
       <CommentsSection
@@ -184,6 +245,170 @@ export function PDITracking({ pdi, userId, userRole }: PDITrackingProps) {
 }
 
 // ============================================================
+// Add Goal Form (for continuous model)
+// ============================================================
+
+function AddGoalForm({
+  pdiId,
+  employeeId,
+  employeeName,
+  managerId,
+  managerName,
+  onClose,
+}: {
+  pdiId: string;
+  employeeId: string;
+  employeeName: string;
+  managerId: string;
+  managerName: string;
+  onClose: () => void;
+}) {
+  const [objective, setObjective] = useState("");
+  const [actions, setActions] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [expectedResults, setExpectedResults] = useState("");
+  const [responsibleId, setResponsibleId] = useState("");
+  const [successMetrics, setSuccessMetrics] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!objective.trim()) return;
+    setLoading(true);
+    setError(null);
+    const result = await addGoalAction(pdiId, {
+      developmentObjective: objective,
+      actions,
+      status: "pending",
+      dueDate,
+      startDate: startDate || undefined,
+      expectedResults: expectedResults || undefined,
+      responsibleId: responsibleId || undefined,
+      successMetrics: successMetrics || undefined,
+    });
+    setLoading(false);
+    if (result.success) {
+      onClose();
+    } else {
+      setError(result.error ?? "Erro ao adicionar meta");
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
+      <p className="mb-3 text-sm font-medium text-blue-800">Nova Meta</p>
+      {error && (
+        <div className="mb-3 rounded-md border border-red-200 bg-red-50 p-2 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="sm:col-span-2">
+          <label className="mb-1 block text-xs font-medium text-gray-700">
+            Objetivo de Desenvolvimento *
+          </label>
+          <input
+            type="text"
+            value={objective}
+            onChange={(e) => setObjective(e.target.value)}
+            placeholder="Ex: Concluir certificação AWS"
+            className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            disabled={loading}
+            required
+          />
+        </div>
+        <div className="sm:col-span-2">
+          <label className="mb-1 block text-xs font-medium text-gray-700">
+            Ações / Atividades
+          </label>
+          <textarea
+            value={actions}
+            onChange={(e) => setActions(e.target.value)}
+            rows={2}
+            placeholder="Detalhes sobre as ações..."
+            className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            disabled={loading}
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-gray-700">Início</label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            disabled={loading}
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-gray-700">Prazo Final</label>
+          <input
+            type="date"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+            className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            disabled={loading}
+          />
+        </div>
+        <div className="sm:col-span-2">
+          <label className="mb-1 block text-xs font-medium text-gray-700">Resultados Esperados</label>
+          <textarea
+            value={expectedResults}
+            onChange={(e) => setExpectedResults(e.target.value)}
+            rows={2}
+            className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            disabled={loading}
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-gray-700">Responsável</label>
+          <select
+            value={responsibleId}
+            onChange={(e) => setResponsibleId(e.target.value)}
+            className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            disabled={loading}
+          >
+            <option value="">Selecione</option>
+            <option value={employeeId}>{employeeName} (Colaborador)</option>
+            <option value={managerId}>{managerName} (Gestor)</option>
+          </select>
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-gray-700">Métricas de Sucesso</label>
+          <input
+            type="text"
+            value={successMetrics}
+            onChange={(e) => setSuccessMetrics(e.target.value)}
+            placeholder="Ex: Nota >= 80%"
+            className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            disabled={loading}
+          />
+        </div>
+      </div>
+      <div className="mt-3 flex justify-end gap-2">
+        <button
+          type="button"
+          onClick={onClose}
+          disabled={loading}
+          className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          disabled={loading || !objective.trim()}
+          className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+        >
+          {loading ? "Salvando..." : "Adicionar Meta"}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+// ============================================================
 // Goal Card with status management and evidence
 // ============================================================
 
@@ -193,14 +418,24 @@ function GoalCard({
   isManager,
   pdiStatus,
   userId,
+  employeeId,
+  managerId,
+  employeeName,
+  managerName,
+  defaultCollapsed = false,
 }: {
   goal: PDIDetail["goals"][number];
   isEmployee: boolean;
   isManager: boolean;
   pdiStatus: string;
   userId: string;
+  employeeId: string;
+  managerId: string;
+  employeeName: string;
+  managerName: string;
+  defaultCollapsed?: boolean;
 }) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(!defaultCollapsed ? false : false);
   const [showEvidenceForm, setShowEvidenceForm] = useState(false);
   const [evidenceDesc, setEvidenceDesc] = useState("");
   const [loading, setLoading] = useState(false);
@@ -208,12 +443,21 @@ function GoalCard({
 
   // Goal editing state
   const [editingGoal, setEditingGoal] = useState(false);
-  const [editTitle, setEditTitle] = useState(goal.title);
-  const [editDesc, setEditDesc] = useState(goal.description ?? "");
-  const [editCompetency, setEditCompetency] = useState(goal.competency);
+  const [editObjective, setEditObjective] = useState(goal.developmentObjective);
+  const [editActions, setEditActions] = useState(goal.actions ?? "");
   const [editDueDate, setEditDueDate] = useState(
     goal.dueDate ? new Date(goal.dueDate).toISOString().split("T")[0] : ""
   );
+  const [editStartDate, setEditStartDate] = useState(
+    goal.startDate ? new Date(goal.startDate).toISOString().split("T")[0] : ""
+  );
+  const [editExpectedResults, setEditExpectedResults] = useState(goal.expectedResults ?? "");
+  const [editResponsibleId, setEditResponsibleId] = useState(goal.responsibleId ?? "");
+  const [editSuccessMetrics, setEditSuccessMetrics] = useState(goal.successMetrics ?? "");
+  const [editCompletedAt, setEditCompletedAt] = useState(
+    goal.completedAt ? new Date(goal.completedAt).toISOString().split("T")[0] : ""
+  );
+  const [editAchievedResults, setEditAchievedResults] = useState(goal.achievedResults ?? "");
 
   // Evidence editing state
   const [editingEvidenceId, setEditingEvidenceId] = useState<string | null>(null);
@@ -252,10 +496,15 @@ function GoalCard({
     setLoading(true);
     setError(null);
     const result = await updateGoal(goal.id, {
-      title: editTitle.trim(),
-      description: editDesc,
-      competency: editCompetency,
+      developmentObjective: editObjective.trim(),
+      actions: editActions,
       dueDate: editDueDate || undefined,
+      startDate: editStartDate || undefined,
+      expectedResults: editExpectedResults || undefined,
+      responsibleId: editResponsibleId || undefined,
+      successMetrics: editSuccessMetrics || undefined,
+      completedAt: editCompletedAt || undefined,
+      achievedResults: editAchievedResults || undefined,
     });
     setLoading(false);
     if (result.success) {
@@ -297,17 +546,14 @@ function GoalCard({
                       : "text-gray-400"
                 }
               />
-              <h3 className="font-medium text-gray-900">{goal.title}</h3>
+              <h3 className="font-medium text-gray-900">{goal.developmentObjective}</h3>
             </div>
-            {goal.description && (
+            {goal.actions && (
               <p className="mt-1 pl-6 text-sm text-gray-600">
-                {goal.description}
+                {goal.actions}
               </p>
             )}
             <div className="mt-2 flex flex-wrap items-center gap-3 pl-6 text-xs text-gray-500">
-              <span className="rounded bg-gray-200 px-2 py-0.5">
-                {goal.competency}
-              </span>
               {goal.dueDate && (
                 <span className="inline-flex items-center gap-1">
                   <Calendar size={12} />
@@ -366,38 +612,46 @@ function GoalCard({
           {editingGoal && (
             <div className="mb-4 rounded-md border border-blue-200 bg-blue-50 p-4">
               <p className="mb-3 text-xs font-medium text-blue-700">Editar Meta</p>
-              <div className="space-y-3">
-                <div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="sm:col-span-2">
                   <label className="mb-1 block text-xs font-medium text-gray-700">
-                    Título *
+                    Objetivo de Desenvolvimento *
                   </label>
                   <input
                     type="text"
-                    value={editTitle}
-                    onChange={(e) => setEditTitle(e.target.value)}
+                    value={editObjective}
+                    onChange={(e) => setEditObjective(e.target.value)}
+                    className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    disabled={loading}
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="mb-1 block text-xs font-medium text-gray-700">
+                    Ações / Atividades
+                  </label>
+                  <textarea
+                    value={editActions}
+                    onChange={(e) => setEditActions(e.target.value)}
+                    rows={2}
                     className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     disabled={loading}
                   />
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-gray-700">
-                    Competência *
+                    Início
                   </label>
-                  <select
-                    value={editCompetency}
-                    onChange={(e) => setEditCompetency(e.target.value)}
+                  <input
+                    type="date"
+                    value={editStartDate}
+                    onChange={(e) => setEditStartDate(e.target.value)}
                     className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     disabled={loading}
-                  >
-                    <option value="">Selecione...</option>
-                    {COMPETENCIES.map((c) => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
+                  />
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-gray-700">
-                    Prazo
+                    Prazo Final
                   </label>
                   <input
                     type="date"
@@ -407,16 +661,70 @@ function GoalCard({
                     disabled={loading}
                   />
                 </div>
-                <div>
+                <div className="sm:col-span-2">
                   <label className="mb-1 block text-xs font-medium text-gray-700">
-                    Descrição
+                    Resultados Esperados
                   </label>
                   <textarea
-                    value={editDesc}
-                    onChange={(e) => setEditDesc(e.target.value)}
-                    rows={3}
+                    value={editExpectedResults}
+                    onChange={(e) => setEditExpectedResults(e.target.value)}
+                    rows={2}
+                    placeholder="Descreva os resultados esperados..."
                     className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     disabled={loading}
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-700">
+                    Responsável
+                  </label>
+                  <select
+                    value={editResponsibleId}
+                    onChange={(e) => setEditResponsibleId(e.target.value)}
+                    className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    disabled={loading}
+                  >
+                    <option value="">Selecione</option>
+                    <option value={employeeId}>{employeeName} (Colaborador)</option>
+                    <option value={managerId}>{managerName} (Gestor)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-700">
+                    Métricas de Sucesso
+                  </label>
+                  <input
+                    type="text"
+                    value={editSuccessMetrics}
+                    onChange={(e) => setEditSuccessMetrics(e.target.value)}
+                    placeholder="Ex: Nota >= 80% no exame"
+                    className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    disabled={loading}
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-700">
+                    Término
+                  </label>
+                  <input
+                    type="date"
+                    value={editCompletedAt}
+                    onChange={(e) => setEditCompletedAt(e.target.value)}
+                    className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400"
+                    disabled={loading || goal.status !== "completed"}
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-700">
+                    Resultados Obtidos
+                  </label>
+                  <input
+                    type="text"
+                    value={editAchievedResults}
+                    onChange={(e) => setEditAchievedResults(e.target.value)}
+                    placeholder="Descreva os resultados obtidos..."
+                    className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400"
+                    disabled={loading || goal.status !== "completed"}
                   />
                 </div>
               </div>
@@ -430,7 +738,7 @@ function GoalCard({
                 </button>
                 <button
                   onClick={handleUpdateGoal}
-                  disabled={loading || !editTitle.trim() || !editCompetency.trim()}
+                  disabled={loading || !editObjective.trim()}
                   className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
                 >
                   {loading ? "Salvando..." : "Salvar"}
@@ -606,6 +914,321 @@ function GoalCard({
               )}
             </div>
           )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================
+// Follow-Ups Section
+// ============================================================
+
+const followUpStatusLabels: Record<string, string> = {
+  scheduled: "Agendado",
+  completed: "Realizado",
+  cancelled: "Cancelado",
+};
+
+const followUpStatusColors: Record<string, string> = {
+  scheduled: "bg-yellow-100 text-yellow-700",
+  completed: "bg-green-100 text-green-700",
+  cancelled: "bg-gray-100 text-gray-500",
+};
+
+function FollowUpsSection({
+  pdiId,
+  followUps,
+  isManager,
+  pdiStatus,
+}: {
+  pdiId: string;
+  followUps: FollowUpDetail[];
+  isManager: boolean;
+  pdiStatus: string;
+}) {
+  const [showScheduleForm, setShowScheduleForm] = useState(false);
+  const [scheduleDate, setScheduleDate] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Complete follow-up modal state
+  const [completingId, setCompletingId] = useState<string | null>(null);
+  const [completeNotes, setCompleteNotes] = useState("");
+  const [completeConductedAt, setCompleteConductedAt] = useState("");
+
+  const isActive = pdiStatus === "active";
+
+  // Separate scheduled (future) and done/cancelled
+  const scheduledFollowUps = followUps.filter((f) => f.status === "scheduled");
+  const pastFollowUps = followUps.filter((f) => f.status !== "scheduled");
+
+  async function handleSchedule() {
+    if (!scheduleDate) return;
+    setLoading(true);
+    setError(null);
+    const result = await scheduleFollowUp(pdiId, scheduleDate);
+    setLoading(false);
+    if (result.success) {
+      setShowScheduleForm(false);
+      setScheduleDate("");
+    } else {
+      setError(result.error ?? "Erro ao agendar acompanhamento");
+    }
+  }
+
+  async function handleComplete() {
+    if (!completingId) return;
+    setLoading(true);
+    setError(null);
+    const result = await completeFollowUp(
+      completingId,
+      completeNotes,
+      completeConductedAt || new Date().toISOString()
+    );
+    setLoading(false);
+    if (result.success) {
+      setCompletingId(null);
+      setCompleteNotes("");
+      setCompleteConductedAt("");
+    } else {
+      setError(result.error ?? "Erro ao completar acompanhamento");
+    }
+  }
+
+  async function handleCancel(followUpId: string) {
+    setLoading(true);
+    setError(null);
+    const result = await cancelFollowUp(followUpId);
+    setLoading(false);
+    if (!result.success) {
+      setError(result.error ?? "Erro ao cancelar acompanhamento");
+    }
+  }
+
+  return (
+    <div className="rounded-lg border border-gray-200 bg-white p-6">
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-lg font-medium text-gray-900">
+          Acompanhamentos ({followUps.length})
+        </h2>
+        {isManager && isActive && (
+          <button
+            onClick={() => setShowScheduleForm(!showScheduleForm)}
+            className="inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
+          >
+            <Calendar size={14} />
+            Agendar Acompanhamento
+          </button>
+        )}
+      </div>
+
+      {error && (
+        <div className="mb-3 rounded-md border border-red-200 bg-red-50 p-2 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
+      {/* Schedule Form */}
+      {showScheduleForm && (
+        <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
+          <p className="mb-3 text-sm font-medium text-blue-800">
+            Agendar Novo Acompanhamento
+          </p>
+          <div className="flex items-end gap-3">
+            <div className="flex-1">
+              <label className="mb-1 block text-xs font-medium text-gray-700">
+                Data do Acompanhamento *
+              </label>
+              <input
+                type="date"
+                value={scheduleDate}
+                onChange={(e) => setScheduleDate(e.target.value)}
+                className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                disabled={loading}
+              />
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  setShowScheduleForm(false);
+                  setScheduleDate("");
+                }}
+                disabled={loading}
+                className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSchedule}
+                disabled={loading || !scheduleDate}
+                className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              >
+                {loading ? "Agendando..." : "Agendar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Complete Follow-Up Modal */}
+      {completingId && (
+        <div className="mb-4 rounded-lg border border-green-200 bg-green-50 p-4">
+          <p className="mb-3 text-sm font-medium text-green-800">
+            Registrar Acompanhamento Realizado
+          </p>
+          <div className="grid gap-3">
+            <div>
+              <label className="mb-1 block text-xs font-medium text-gray-700">
+                Data de Realização
+              </label>
+              <input
+                type="date"
+                value={completeConductedAt}
+                onChange={(e) => setCompleteConductedAt(e.target.value)}
+                className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                disabled={loading}
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-medium text-gray-700">
+                Observações
+              </label>
+              <textarea
+                value={completeNotes}
+                onChange={(e) => setCompleteNotes(e.target.value)}
+                rows={3}
+                placeholder="Observações sobre o acompanhamento..."
+                className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                disabled={loading}
+              />
+            </div>
+          </div>
+          <div className="mt-3 flex justify-end gap-2">
+            <button
+              onClick={() => {
+                setCompletingId(null);
+                setCompleteNotes("");
+                setCompleteConductedAt("");
+              }}
+              disabled={loading}
+              className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={handleComplete}
+              disabled={loading}
+              className="rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-50"
+            >
+              {loading ? "Salvando..." : "Marcar Realizado"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Follow-Ups List */}
+      {followUps.length === 0 ? (
+        <p className="text-sm text-gray-500">
+          Nenhum acompanhamento agendado.
+        </p>
+      ) : (
+        <div className="space-y-3">
+          {/* Scheduled follow-ups first */}
+          {scheduledFollowUps.map((fu) => (
+            <div
+              key={fu.id}
+              className="flex items-center justify-between rounded-md border border-yellow-200 bg-yellow-50 p-3"
+            >
+              <div className="flex items-center gap-3">
+                <Calendar size={16} className="text-yellow-600" />
+                <div>
+                  <p className="text-sm font-medium text-gray-900">
+                    {new Date(fu.scheduledAt).toLocaleDateString("pt-BR", {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </p>
+                  <span
+                    className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${followUpStatusColors[fu.status]}`}
+                  >
+                    {followUpStatusLabels[fu.status]}
+                  </span>
+                </div>
+              </div>
+              {isManager && (
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setCompletingId(fu.id);
+                      setCompleteConductedAt(
+                        new Date().toISOString().split("T")[0]
+                      );
+                    }}
+                    disabled={loading}
+                    className="inline-flex items-center gap-1 rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-50"
+                  >
+                    <CheckCircle2 size={12} />
+                    Realizar
+                  </button>
+                  <button
+                    onClick={() => handleCancel(fu.id)}
+                    disabled={loading}
+                    className="inline-flex items-center gap-1 rounded-md bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-100 disabled:opacity-50"
+                  >
+                    <XCircle size={12} />
+                    Cancelar
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+
+          {/* Past follow-ups (completed / cancelled) */}
+          {pastFollowUps.map((fu) => (
+            <div
+              key={fu.id}
+              className={`rounded-md border p-3 ${
+                fu.status === "completed"
+                  ? "border-green-200 bg-green-50"
+                  : "border-gray-200 bg-gray-50"
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  {fu.status === "completed" ? (
+                    <CheckCircle2 size={16} className="text-green-600" />
+                  ) : (
+                    <XCircle size={16} className="text-gray-400" />
+                  )}
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">
+                      {fu.conductedAt
+                        ? new Date(fu.conductedAt).toLocaleDateString("pt-BR", {
+                            day: "2-digit",
+                            month: "long",
+                            year: "numeric",
+                          })
+                        : new Date(fu.scheduledAt).toLocaleDateString("pt-BR", {
+                            day: "2-digit",
+                            month: "long",
+                            year: "numeric",
+                          })}
+                    </p>
+                    <span
+                      className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${followUpStatusColors[fu.status]}`}
+                    >
+                      {followUpStatusLabels[fu.status]}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              {fu.notes && (
+                <p className="mt-2 pl-7 text-sm text-gray-600">{fu.notes}</p>
+              )}
+            </div>
+          ))}
         </div>
       )}
     </div>

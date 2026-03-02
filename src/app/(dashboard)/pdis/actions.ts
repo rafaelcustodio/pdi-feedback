@@ -8,14 +8,10 @@ import {
   getPDIAccessFilter,
   canAccessEmployee,
 } from "@/lib/access-control";
-import { recalculatePDISchedule } from "@/lib/schedule-utils";
-
 export type PDIListItem = {
   id: string;
-  period: string;
   status: string;
   conductedAt: Date | null;
-  scheduledAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
   employeeName: string;
@@ -34,11 +30,16 @@ export type EvidenceDetail = {
 
 export type GoalDetail = {
   id: string;
-  title: string;
-  description: string | null;
-  competency: string;
+  developmentObjective: string;
+  actions: string | null;
   status: string;
   dueDate: Date | null;
+  startDate: Date | null;
+  expectedResults: string | null;
+  responsibleId: string | null;
+  completedAt: Date | null;
+  successMetrics: string | null;
+  achievedResults: string | null;
   createdAt: Date;
   evidences: EvidenceDetail[];
 };
@@ -55,16 +56,15 @@ export type PDIDetail = {
   id: string;
   employeeId: string;
   managerId: string;
-  period: string;
   status: string;
   conductedAt: Date | null;
-  scheduledAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
   employeeName: string;
   managerName: string;
   goals: GoalDetail[];
   comments: CommentDetail[];
+  followUps: FollowUpDetail[];
 };
 
 export type SubordinateOption = {
@@ -75,11 +75,16 @@ export type SubordinateOption = {
 
 export type GoalInput = {
   id?: string;
-  title: string;
-  description: string;
-  competency: string;
+  developmentObjective: string;
+  actions: string;
   status: string;
   dueDate: string;
+  startDate?: string;
+  expectedResults?: string;
+  responsibleId?: string;
+  completedAt?: string;
+  successMetrics?: string;
+  achievedResults?: string;
 };
 
 export async function getPDIs(
@@ -109,21 +114,20 @@ export async function getPDIs(
 
   const andConditions: Record<string, unknown>[] = [];
 
-  // Employees should NOT see scheduled PDIs
-  if (role === "employee") {
-    andConditions.push({ status: { not: "scheduled" } });
-  }
+  // Only show PDIs for employees with evaluationMode='pdi'
+  andConditions.push({ employee: { evaluationMode: "pdi" } });
 
-  // Status filter
+  // Default to active-only in continuous model (unless explicitly filtering)
   if (statusFilter.trim()) {
     andConditions.push({ status: statusFilter.trim() });
+  } else {
+    andConditions.push({ status: "active" });
   }
 
   if (search.trim()) {
     andConditions.push({
       OR: [
         { employee: { name: { contains: search.trim(), mode: "insensitive" as const } } },
-        { period: { contains: search.trim(), mode: "insensitive" as const } },
       ],
     });
   }
@@ -152,7 +156,7 @@ export async function getPDIs(
   const [pdis, total] = await Promise.all([
     prisma.pDI.findMany({
       where: whereClause,
-      orderBy: [{ scheduledAt: "desc" }, { conductedAt: "desc" }, { createdAt: "desc" }],
+      orderBy: [{ conductedAt: "desc" }, { createdAt: "desc" }],
       skip: (page - 1) * pageSize,
       take: pageSize,
       include: {
@@ -167,10 +171,8 @@ export async function getPDIs(
   return {
     pdis: pdis.map((p) => ({
       id: p.id,
-      period: p.period,
       status: p.status,
       conductedAt: p.conductedAt,
-      scheduledAt: p.scheduledAt,
       createdAt: p.createdAt,
       updatedAt: p.updatedAt,
       employeeName: p.employee.name,
@@ -208,6 +210,9 @@ export async function getPDIById(id: string): Promise<PDIDetail | null> {
           author: { select: { name: true } },
         },
       },
+      followUps: {
+        orderBy: { scheduledAt: "asc" },
+      },
     },
   });
 
@@ -229,21 +234,24 @@ export async function getPDIById(id: string): Promise<PDIDetail | null> {
     id: pdi.id,
     employeeId: pdi.employeeId,
     managerId: pdi.managerId,
-    period: pdi.period,
     status: pdi.status,
     conductedAt: pdi.conductedAt,
-    scheduledAt: pdi.scheduledAt,
     createdAt: pdi.createdAt,
     updatedAt: pdi.updatedAt,
     employeeName: pdi.employee.name,
     managerName: pdi.manager.name,
     goals: pdi.goals.map((g) => ({
       id: g.id,
-      title: g.title,
-      description: g.description,
-      competency: g.competency,
+      developmentObjective: g.developmentObjective,
+      actions: g.actions,
       status: g.status,
       dueDate: g.dueDate,
+      startDate: g.startDate,
+      expectedResults: g.expectedResults,
+      responsibleId: g.responsibleId,
+      completedAt: g.completedAt,
+      successMetrics: g.successMetrics,
+      achievedResults: g.achievedResults,
       createdAt: g.createdAt,
       evidences: g.evidences.map((e) => ({
         id: e.id,
@@ -259,6 +267,15 @@ export async function getPDIById(id: string): Promise<PDIDetail | null> {
       authorName: c.author.name,
       content: c.content,
       createdAt: c.createdAt,
+    })),
+    followUps: (pdi.followUps ?? []).map((f: FollowUpDetail) => ({
+      id: f.id,
+      pdiId: f.pdiId,
+      scheduledAt: f.scheduledAt,
+      conductedAt: f.conductedAt,
+      notes: f.notes,
+      status: f.status,
+      createdAt: f.createdAt,
     })),
   };
 }
@@ -276,7 +293,7 @@ export async function getSubordinatesForPDI(): Promise<SubordinateOption[]> {
 
   if (accessible === "all") {
     return prisma.user.findMany({
-      where: { isActive: true, id: { not: userId } },
+      where: { isActive: true, id: { not: userId }, evaluationMode: "pdi" },
       select: { id: true, name: true, email: true },
       orderBy: { name: "asc" },
     });
@@ -286,19 +303,20 @@ export async function getSubordinatesForPDI(): Promise<SubordinateOption[]> {
   if (subordinateIds.length === 0) return [];
 
   return prisma.user.findMany({
-    where: { id: { in: subordinateIds }, isActive: true },
+    where: { id: { in: subordinateIds }, isActive: true, evaluationMode: "pdi" },
     select: { id: true, name: true, email: true },
     orderBy: { name: "asc" },
   });
 }
 
-export async function createPDI(data: {
-  employeeId: string;
-  period: string;
-  conductedAt?: string;
-  goals: GoalInput[];
-  activate?: boolean;
-}): Promise<{ success: boolean; error?: string; id?: string }> {
+/**
+ * Get or create the active PDI for an employee (continuous model).
+ * In the continuous model, each employee has at most one active PDI.
+ * If none exists, one is created automatically.
+ */
+export async function getOrCreatePDI(
+  employeeId: string
+): Promise<{ success: boolean; error?: string; pdi?: PDIDetail }> {
   const session = await auth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
@@ -307,70 +325,179 @@ export async function createPDI(data: {
   const userId = session.user.id;
   const role = (session.user as { role?: string }).role || "employee";
 
-  if (role === "employee") {
-    return { success: false, error: "Apenas gestores podem criar PDIs" };
-  }
-
-  const hasAccess = await canAccessEmployee(userId, role, data.employeeId);
+  const hasAccess = await canAccessEmployee(userId, role, employeeId);
   if (!hasAccess) {
     return { success: false, error: "Você não tem acesso a este colaborador" };
   }
 
-  if (!data.period.trim()) {
-    return { success: false, error: "Período é obrigatório" };
-  }
+  const pdiInclude = {
+    employee: { select: { name: true } },
+    manager: { select: { name: true } },
+    goals: {
+      orderBy: { createdAt: "asc" as const },
+      include: { evidences: { orderBy: { createdAt: "desc" as const } } },
+    },
+    comments: {
+      orderBy: { createdAt: "asc" as const },
+      include: { author: { select: { name: true } } },
+    },
+    followUps: {
+      orderBy: { scheduledAt: "asc" as const },
+    },
+  };
 
-  if (data.activate && !data.conductedAt) {
-    return { success: false, error: "Data de realização é obrigatória para ativar o PDI" };
-  }
+  // Find existing active PDI
+  let pdi = await prisma.pDI.findFirst({
+    where: { employeeId, status: "active" },
+    include: pdiInclude,
+  });
 
-  if (data.activate && data.goals.length === 0) {
-    return { success: false, error: "Adicione pelo menos uma meta para ativar o PDI" };
-  }
-
-  if (data.activate) {
-    for (const goal of data.goals) {
-      if (!goal.title.trim()) {
-        return { success: false, error: "Todas as metas devem ter um título" };
-      }
-      if (!goal.competency.trim()) {
-        return { success: false, error: "Todas as metas devem ter uma competência" };
-      }
+  // If none exists, create one
+  if (!pdi) {
+    if (role === "employee") {
+      return { success: false, error: "Apenas gestores podem criar PDIs" };
     }
+
+    // Get manager for this employee from hierarchy
+    const hierarchy = await prisma.employeeHierarchy.findFirst({
+      where: { employeeId, endDate: null },
+    });
+    const managerId = hierarchy?.managerId ?? userId;
+
+    const created = await prisma.pDI.create({
+      data: {
+        employeeId,
+        managerId,
+        status: "active",
+      },
+      include: pdiInclude,
+    });
+    pdi = created;
+    revalidatePath("/pdis");
   }
 
-  const pdi = await prisma.pDI.create({
+  return {
+    success: true,
+    pdi: {
+      id: pdi.id,
+      employeeId: pdi.employeeId,
+      managerId: pdi.managerId,
+      status: pdi.status,
+      conductedAt: pdi.conductedAt,
+      createdAt: pdi.createdAt,
+      updatedAt: pdi.updatedAt,
+      employeeName: pdi.employee.name,
+      managerName: pdi.manager.name,
+      goals: pdi.goals.map((g) => ({
+        id: g.id,
+        developmentObjective: g.developmentObjective,
+        actions: g.actions,
+        status: g.status,
+        dueDate: g.dueDate,
+        startDate: g.startDate,
+        expectedResults: g.expectedResults,
+        responsibleId: g.responsibleId,
+        completedAt: g.completedAt,
+        successMetrics: g.successMetrics,
+        achievedResults: g.achievedResults,
+        createdAt: g.createdAt,
+        evidences: g.evidences.map((e) => ({
+          id: e.id,
+          authorId: e.authorId,
+          description: e.description,
+          fileUrl: e.fileUrl,
+          createdAt: e.createdAt,
+        })),
+      })),
+      comments: pdi.comments.map((c) => ({
+        id: c.id,
+        authorId: c.authorId,
+        authorName: c.author.name,
+        content: c.content,
+        createdAt: c.createdAt,
+      })),
+      followUps: (pdi.followUps ?? []).map((f: FollowUpDetail) => ({
+        id: f.id,
+        pdiId: f.pdiId,
+        scheduledAt: f.scheduledAt,
+        conductedAt: f.conductedAt,
+        notes: f.notes,
+        status: f.status,
+        createdAt: f.createdAt,
+      })),
+    },
+  };
+}
+
+/**
+ * Add a single goal to an existing PDI (continuous model).
+ */
+export async function addGoal(
+  pdiId: string,
+  data: GoalInput
+): Promise<{ success: boolean; error?: string; goalId?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  const pdi = await prisma.pDI.findUnique({ where: { id: pdiId } });
+  if (!pdi) {
+    return { success: false, error: "PDI não encontrado" };
+  }
+
+  if (pdi.status === "cancelled") {
+    return { success: false, error: "Não é possível adicionar metas a PDIs cancelados" };
+  }
+
+  if (role !== "admin" && pdi.managerId !== userId) {
+    return { success: false, error: "Apenas o gestor pode adicionar metas" };
+  }
+
+  if (!data.developmentObjective.trim()) {
+    return { success: false, error: "Objetivo de desenvolvimento é obrigatório" };
+  }
+
+  // Validate goal-level constraints
+  if (data.completedAt && data.status !== "completed") {
+    return { success: false, error: "Término só pode ser preenchido quando status é 'Concluída'" };
+  }
+  if (data.achievedResults && data.status !== "completed") {
+    return { success: false, error: "Resultados Obtidos só pode ser preenchido quando status é 'Concluída'" };
+  }
+  if (data.responsibleId && data.responsibleId !== pdi.employeeId && data.responsibleId !== userId) {
+    return { success: false, error: "Responsável deve ser o colaborador ou o gestor do PDI" };
+  }
+
+  const goal = await prisma.pDIGoal.create({
     data: {
-      employeeId: data.employeeId,
-      managerId: userId,
-      period: data.period.trim(),
-      conductedAt: data.conductedAt ? new Date(data.conductedAt) : null,
-      status: data.activate ? "active" : "draft",
-      goals: {
-        create: data.goals
-          .filter((g) => g.title.trim())
-          .map((g) => ({
-            title: g.title.trim(),
-            description: g.description.trim() || null,
-            competency: g.competency.trim(),
-            status: "pending" as const,
-            dueDate: g.dueDate ? new Date(g.dueDate) : null,
-          })),
-      },
+      pdiId,
+      developmentObjective: data.developmentObjective.trim(),
+      actions: data.actions?.trim() || null,
+      status: (data.status as "pending" | "in_progress" | "completed") || "pending",
+      dueDate: data.dueDate ? new Date(data.dueDate) : null,
+      startDate: data.startDate ? new Date(data.startDate) : null,
+      expectedResults: data.expectedResults?.trim() || null,
+      responsibleId: data.responsibleId || null,
+      completedAt: data.completedAt ? new Date(data.completedAt) : null,
+      successMetrics: data.successMetrics?.trim() || null,
+      achievedResults: data.achievedResults?.trim() || null,
     },
   });
 
+  revalidatePath(`/pdis/${pdiId}`);
   revalidatePath("/pdis");
-  return { success: true, id: pdi.id };
+  return { success: true, goalId: goal.id };
 }
 
 export async function updatePDI(
   id: string,
   data: {
-    period: string;
     conductedAt?: string;
     goals: GoalInput[];
-    activate?: boolean;
   }
 ): Promise<{ success: boolean; error?: string }> {
   const session = await auth();
@@ -393,30 +520,20 @@ export async function updatePDI(
     return { success: false, error: "Apenas o gestor que criou este PDI pode editá-lo" };
   }
 
-  if (pdi.status !== "draft" && pdi.status !== "scheduled") {
-    return { success: false, error: "Apenas PDIs em rascunho ou agendados podem ser editados" };
+  if (pdi.status === "cancelled") {
+    return { success: false, error: "PDIs cancelados não podem ser editados" };
   }
 
-  if (!data.period.trim()) {
-    return { success: false, error: "Período é obrigatório" };
-  }
-
-  if (data.activate && !data.conductedAt) {
-    return { success: false, error: "Data de realização é obrigatória para ativar o PDI" };
-  }
-
-  if (data.activate && data.goals.length === 0) {
-    return { success: false, error: "Adicione pelo menos uma meta para ativar o PDI" };
-  }
-
-  if (data.activate) {
-    for (const goal of data.goals) {
-      if (!goal.title.trim()) {
-        return { success: false, error: "Todas as metas devem ter um título" };
-      }
-      if (!goal.competency.trim()) {
-        return { success: false, error: "Todas as metas devem ter uma competência" };
-      }
+  // Validate goal-level constraints
+  for (const goal of data.goals) {
+    if (goal.completedAt && goal.status !== "completed") {
+      return { success: false, error: "Término só pode ser preenchido quando status é 'Concluída'" };
+    }
+    if (goal.achievedResults && goal.status !== "completed") {
+      return { success: false, error: "Resultados Obtidos só pode ser preenchido quando status é 'Concluída'" };
+    }
+    if (goal.responsibleId && goal.responsibleId !== pdi.employeeId && goal.responsibleId !== userId) {
+      return { success: false, error: "Responsável deve ser o colaborador ou o gestor do PDI" };
     }
   }
 
@@ -441,10 +558,15 @@ export async function updatePDI(
       await tx.pDIGoal.update({
         where: { id: goal.id },
         data: {
-          title: goal.title.trim(),
-          description: goal.description.trim() || null,
-          competency: goal.competency.trim(),
+          developmentObjective: goal.developmentObjective.trim(),
+          actions: goal.actions.trim() || null,
           dueDate: goal.dueDate ? new Date(goal.dueDate) : null,
+          startDate: goal.startDate ? new Date(goal.startDate) : null,
+          expectedResults: goal.expectedResults?.trim() || null,
+          responsibleId: goal.responsibleId || null,
+          completedAt: goal.completedAt ? new Date(goal.completedAt) : null,
+          successMetrics: goal.successMetrics?.trim() || null,
+          achievedResults: goal.achievedResults?.trim() || null,
         },
       });
     }
@@ -453,14 +575,19 @@ export async function updatePDI(
     if (goalsToCreate.length > 0) {
       await tx.pDIGoal.createMany({
         data: goalsToCreate
-          .filter((g) => g.title.trim())
+          .filter((g) => g.developmentObjective.trim())
           .map((g) => ({
             pdiId: id,
-            title: g.title.trim(),
-            description: g.description.trim() || null,
-            competency: g.competency.trim(),
+            developmentObjective: g.developmentObjective.trim(),
+            actions: g.actions.trim() || null,
             status: "pending" as const,
             dueDate: g.dueDate ? new Date(g.dueDate) : null,
+            startDate: g.startDate ? new Date(g.startDate) : null,
+            expectedResults: g.expectedResults?.trim() || null,
+            responsibleId: g.responsibleId || null,
+            completedAt: g.completedAt ? new Date(g.completedAt) : null,
+            successMetrics: g.successMetrics?.trim() || null,
+            achievedResults: g.achievedResults?.trim() || null,
           })),
       });
     }
@@ -469,9 +596,7 @@ export async function updatePDI(
     await tx.pDI.update({
       where: { id },
       data: {
-        period: data.period.trim(),
         conductedAt: data.conductedAt ? new Date(data.conductedAt) : null,
-        status: data.activate ? "active" : (pdi.status === "scheduled" ? "draft" : pdi.status),
       },
     });
   });
@@ -602,7 +727,6 @@ export async function updateGoalStatus(
       where: { id: goalId },
       data: { status: newStatus },
     });
-    await checkAndCompletePDI(pdi.id, pdi.employeeId, goalId, newStatus);
     revalidatePath(`/pdis/${pdi.id}`);
     return { success: true };
   }
@@ -613,7 +737,6 @@ export async function updateGoalStatus(
       where: { id: goalId },
       data: { status: newStatus },
     });
-    await checkAndCompletePDI(pdi.id, pdi.employeeId, goalId, newStatus);
     revalidatePath(`/pdis/${pdi.id}`);
     return { success: true };
   }
@@ -621,136 +744,20 @@ export async function updateGoalStatus(
   return { success: false, error: "Acesso não autorizado" };
 }
 
-export async function reschedulePDI(
-  id: string,
-  newDate: string
-): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return { success: false, error: "Acesso não autorizado" };
-  }
-
-  const userId = session.user.id;
-  const role = (session.user as { role?: string }).role || "employee";
-
-  const pdi = await prisma.pDI.findUnique({
-    where: { id },
-    include: { employee: { select: { name: true } }, manager: { select: { name: true } } },
-  });
-  if (!pdi) {
-    return { success: false, error: "PDI não encontrado" };
-  }
-
-  if (role !== "admin" && pdi.managerId !== userId) {
-    return { success: false, error: "Acesso não autorizado" };
-  }
-
-  if (pdi.status !== "scheduled" && pdi.status !== "draft") {
-    return { success: false, error: "Apenas PDIs agendados ou em rascunho podem ser reagendados" };
-  }
-
-  const scheduledDate = new Date(newDate);
-  if (isNaN(scheduledDate.getTime())) {
-    return { success: false, error: "Data inválida" };
-  }
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const scheduleDay = new Date(scheduledDate);
-  scheduleDay.setHours(0, 0, 0, 0);
-
-  if (scheduleDay <= today) {
-    return { success: false, error: "A data deve ser uma data futura" };
-  }
-
-  await prisma.pDI.update({
-    where: { id },
-    data: { scheduledAt: scheduledDate },
-  });
-
-  // Notify employee
-  const dateStr = scheduledDate.toLocaleDateString("pt-BR");
-  await prisma.notification.create({
-    data: {
-      userId: pdi.employeeId,
-      type: "general",
-      title: "PDI reagendado",
-      message: `Seu PDI com ${pdi.manager.name} foi reagendado para ${dateStr}. [pdi_reschedule_${id}]`,
-    },
-  });
-
-  revalidatePath("/pdis");
-  revalidatePath(`/pdis/${id}`);
-  revalidatePath("/calendario");
-  return { success: true };
-}
-
-export async function cancelScheduledPDI(
-  id: string
-): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return { success: false, error: "Acesso não autorizado" };
-  }
-
-  const userId = session.user.id;
-  const role = (session.user as { role?: string }).role || "employee";
-
-  const pdi = await prisma.pDI.findUnique({
-    where: { id },
-    include: {
-      employee: { select: { name: true } },
-      manager: { select: { name: true } },
-      goals: { select: { id: true } },
-    },
-  });
-  if (!pdi) {
-    return { success: false, error: "PDI não encontrado" };
-  }
-
-  if (role !== "admin" && pdi.managerId !== userId) {
-    return { success: false, error: "Acesso não autorizado" };
-  }
-
-  if (pdi.status !== "scheduled" && pdi.status !== "draft") {
-    return { success: false, error: "Apenas PDIs agendados ou em rascunho podem ser cancelados" };
-  }
-
-  const hasContent = pdi.goals.length > 0;
-
-  if (pdi.status === "scheduled" && !hasContent) {
-    // Delete the record entirely if it's scheduled with no content
-    await prisma.pDI.delete({ where: { id } });
-  } else {
-    // Has content (draft or scheduled with goals) — mark as cancelled
-    await prisma.pDI.update({
-      where: { id },
-      data: { status: "cancelled" },
-    });
-  }
-
-  // Notify employee
-  const dateStr = pdi.scheduledAt
-    ? pdi.scheduledAt.toLocaleDateString("pt-BR")
-    : "";
-  await prisma.notification.create({
-    data: {
-      userId: pdi.employeeId,
-      type: "general",
-      title: "PDI cancelado",
-      message: `O PDI${dateStr ? ` agendado para ${dateStr}` : ""} com ${pdi.manager.name} foi cancelado. [pdi_cancel_${id}]`,
-    },
-  });
-
-  revalidatePath("/pdis");
-  revalidatePath(`/pdis/${id}`);
-  revalidatePath("/calendario");
-  return { success: true };
-}
 
 export async function updateGoal(
   goalId: string,
-  data: { title: string; description?: string; competency: string; dueDate?: string }
+  data: {
+    developmentObjective: string;
+    actions?: string;
+    dueDate?: string;
+    startDate?: string;
+    expectedResults?: string;
+    responsibleId?: string;
+    completedAt?: string;
+    successMetrics?: string;
+    achievedResults?: string;
+  }
 ): Promise<{ success: boolean; error?: string }> {
   const session = await auth();
   if (!session?.user?.id) {
@@ -760,11 +767,8 @@ export async function updateGoal(
   const userId = session.user.id;
   const role = (session.user as { role?: string }).role || "employee";
 
-  if (!data.title.trim()) {
-    return { success: false, error: "Título é obrigatório" };
-  }
-  if (!data.competency.trim()) {
-    return { success: false, error: "Competência é obrigatória" };
+  if (!data.developmentObjective.trim()) {
+    return { success: false, error: "Objetivo de desenvolvimento é obrigatório" };
   }
 
   const goal = await prisma.pDIGoal.findUnique({
@@ -780,13 +784,32 @@ export async function updateGoal(
     return { success: false, error: "Apenas o gestor pode editar metas" };
   }
 
+  // Validate completedAt/achievedResults only allowed when completed
+  const effectiveStatus = goal.status;
+  if (data.completedAt && effectiveStatus !== "completed") {
+    return { success: false, error: "Término só pode ser preenchido quando status é 'Concluída'" };
+  }
+  if (data.achievedResults && effectiveStatus !== "completed") {
+    return { success: false, error: "Resultados Obtidos só pode ser preenchido quando status é 'Concluída'" };
+  }
+
+  // Validate responsibleId
+  if (data.responsibleId && data.responsibleId !== goal.pdi.employeeId && data.responsibleId !== goal.pdi.managerId) {
+    return { success: false, error: "Responsável deve ser o colaborador ou o gestor do PDI" };
+  }
+
   await prisma.pDIGoal.update({
     where: { id: goalId },
     data: {
-      title: data.title.trim(),
-      description: data.description?.trim() || null,
-      competency: data.competency.trim(),
+      developmentObjective: data.developmentObjective.trim(),
+      actions: data.actions?.trim() || null,
       dueDate: data.dueDate ? new Date(data.dueDate) : null,
+      startDate: data.startDate ? new Date(data.startDate) : null,
+      expectedResults: data.expectedResults?.trim() || null,
+      responsibleId: data.responsibleId || null,
+      completedAt: data.completedAt ? new Date(data.completedAt) : null,
+      successMetrics: data.successMetrics?.trim() || null,
+      achievedResults: data.achievedResults?.trim() || null,
     },
   });
 
@@ -867,33 +890,171 @@ export async function updateEvidence(
   return { success: true };
 }
 
-/**
- * After updating a goal status, check if ALL goals of the PDI are completed.
- * If so, mark the PDI as completed and recalculate the PDI schedule.
- */
-async function checkAndCompletePDI(
-  pdiId: string,
-  employeeId: string,
-  updatedGoalId: string,
-  updatedGoalStatus: string
-): Promise<void> {
-  // Only check if the goal was just marked as completed
-  if (updatedGoalStatus !== "completed") return;
+// ============================================================
+// PDI Follow-Ups (US-014)
+// ============================================================
 
-  const allGoals = await prisma.pDIGoal.findMany({
+export type FollowUpDetail = {
+  id: string;
+  pdiId: string;
+  scheduledAt: Date;
+  conductedAt: Date | null;
+  notes: string | null;
+  status: string;
+  createdAt: Date;
+};
+
+export async function getFollowUps(
+  pdiId: string
+): Promise<{ success: boolean; error?: string; followUps?: FollowUpDetail[] }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  const pdi = await prisma.pDI.findUnique({ where: { id: pdiId } });
+  if (!pdi) return { success: false, error: "PDI não encontrado" };
+
+  // Check access
+  if (role !== "admin" && pdi.managerId !== userId && pdi.employeeId !== userId) {
+    const hasAccess = await canAccessEmployee(userId, role, pdi.employeeId);
+    if (!hasAccess) return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const followUps = await prisma.pDIFollowUp.findMany({
     where: { pdiId },
-    select: { id: true, status: true },
+    orderBy: { scheduledAt: "asc" },
   });
 
-  const allCompleted = allGoals.every(
-    (g) => g.id === updatedGoalId ? true : g.status === "completed"
-  );
-
-  if (allCompleted) {
-    await prisma.pDI.update({
-      where: { id: pdiId },
-      data: { status: "completed" },
-    });
-    await recalculatePDISchedule(employeeId);
-  }
+  return {
+    success: true,
+    followUps: followUps.map((f: FollowUpDetail) => ({
+      id: f.id,
+      pdiId: f.pdiId,
+      scheduledAt: f.scheduledAt,
+      conductedAt: f.conductedAt,
+      notes: f.notes,
+      status: f.status,
+      createdAt: f.createdAt,
+    })),
+  };
 }
+
+export async function scheduleFollowUp(
+  pdiId: string,
+  scheduledAt: string
+): Promise<{ success: boolean; error?: string; id?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  const pdi = await prisma.pDI.findUnique({ where: { id: pdiId } });
+  if (!pdi) return { success: false, error: "PDI não encontrado" };
+
+  // Only manager or admin can schedule follow-ups
+  if (role !== "admin" && pdi.managerId !== userId) {
+    return { success: false, error: "Apenas o gestor ou admin pode agendar acompanhamentos" };
+  }
+
+  const date = new Date(scheduledAt);
+  if (isNaN(date.getTime())) {
+    return { success: false, error: "Data inválida" };
+  }
+
+  const followUp = await prisma.pDIFollowUp.create({
+    data: {
+      pdiId,
+      scheduledAt: date,
+      status: "scheduled",
+    },
+  });
+
+  revalidatePath(`/pdis/${pdiId}`);
+  return { success: true, id: followUp.id };
+}
+
+export async function completeFollowUp(
+  followUpId: string,
+  notes: string,
+  conductedAt: string
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  const followUp = await prisma.pDIFollowUp.findUnique({
+    where: { id: followUpId },
+    include: { pdi: true },
+  });
+
+  if (!followUp) return { success: false, error: "Acompanhamento não encontrado" };
+
+  if (role !== "admin" && followUp.pdi.managerId !== userId) {
+    return { success: false, error: "Apenas o gestor ou admin pode completar acompanhamentos" };
+  }
+
+  if (followUp.status !== "scheduled") {
+    return { success: false, error: "Apenas acompanhamentos agendados podem ser completados" };
+  }
+
+  const date = conductedAt ? new Date(conductedAt) : new Date();
+
+  await prisma.pDIFollowUp.update({
+    where: { id: followUpId },
+    data: {
+      status: "completed",
+      conductedAt: date,
+      notes: notes?.trim() || null,
+    },
+  });
+
+  revalidatePath(`/pdis/${followUp.pdiId}`);
+  return { success: true };
+}
+
+export async function cancelFollowUp(
+  followUpId: string
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  const followUp = await prisma.pDIFollowUp.findUnique({
+    where: { id: followUpId },
+    include: { pdi: true },
+  });
+
+  if (!followUp) return { success: false, error: "Acompanhamento não encontrado" };
+
+  if (role !== "admin" && followUp.pdi.managerId !== userId) {
+    return { success: false, error: "Apenas o gestor ou admin pode cancelar acompanhamentos" };
+  }
+
+  if (followUp.status !== "scheduled") {
+    return { success: false, error: "Apenas acompanhamentos agendados podem ser cancelados" };
+  }
+
+  await prisma.pDIFollowUp.update({
+    where: { id: followUpId },
+    data: { status: "cancelled" },
+  });
+
+  revalidatePath(`/pdis/${followUp.pdiId}`);
+  return { success: true };
+}
+

@@ -36,15 +36,22 @@ export default async function EditarColaboradorPage({
           name: employee.name,
           email: employee.email,
           role: employee.role,
+          evaluationMode: employee.evaluationMode,
           orgUnitId: employee.hierarchy?.organizationalUnitId,
           managerId: employee.hierarchy?.managerId,
           admissionDate: employee.admissionDate?.toISOString().slice(0, 10),
+          phone: employee.phone ?? undefined,
+          cpf: employee.cpf ?? undefined,
+          birthDate: employee.birthDate?.toISOString().slice(0, 10),
+          jobTitle: employee.jobTitle ?? undefined,
+          address: employee.address ?? undefined,
+          city: employee.city ?? undefined,
+          state: employee.state ?? undefined,
+          zipCode: employee.zipCode ?? undefined,
         }}
       />
       <ScheduleSection
         employeeId={employee.id}
-        initialPdiFrequency={schedules.pdiFrequency}
-        initialPdiNextDueDate={schedules.pdiNextDueDate}
         initialFeedbackFrequency={schedules.feedbackFrequency}
         initialFeedbackNextDueDate={schedules.feedbackNextDueDate}
         sectorSchedule={sectorSchedule}

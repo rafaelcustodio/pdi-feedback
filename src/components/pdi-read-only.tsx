@@ -5,16 +5,12 @@ import { ArrowLeft, Target, Calendar } from "lucide-react";
 import type { PDIDetail } from "@/app/(dashboard)/pdis/actions";
 
 const statusLabels: Record<string, string> = {
-  draft: "Rascunho",
   active: "Ativo",
-  completed: "Concluído",
   cancelled: "Cancelado",
 };
 
 const statusColors: Record<string, string> = {
-  draft: "bg-yellow-100 text-yellow-700",
   active: "bg-blue-100 text-blue-700",
-  completed: "bg-green-100 text-green-700",
   cancelled: "bg-gray-100 text-gray-500",
 };
 
@@ -60,7 +56,7 @@ export function PDIReadOnly({ pdi }: { pdi: PDIDetail }) {
             </span>
           </div>
           <p className="mt-1 text-sm text-gray-600">
-            Período: {pdi.period} | Gestor: {pdi.managerName}
+            Gestor: {pdi.managerName}
           </p>
         </div>
       </div>
@@ -103,18 +99,15 @@ export function PDIReadOnly({ pdi }: { pdi: PDIDetail }) {
                     <div className="flex items-center gap-2">
                       <Target size={14} className="text-gray-400" />
                       <h3 className="font-medium text-gray-900">
-                        {goal.title}
+                        {goal.developmentObjective}
                       </h3>
                     </div>
-                    {goal.description && (
+                    {goal.actions && (
                       <p className="mt-1 text-sm text-gray-600">
-                        {goal.description}
+                        {goal.actions}
                       </p>
                     )}
                     <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-gray-500">
-                      <span className="rounded bg-gray-200 px-2 py-0.5">
-                        {goal.competency}
-                      </span>
                       {goal.dueDate && (
                         <span className="inline-flex items-center gap-1">
                           <Calendar size={12} />

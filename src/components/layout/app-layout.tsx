@@ -10,6 +10,7 @@ interface AppLayoutProps {
   userName?: string;
   avatarUrl?: string | null;
   userRole?: string;
+  evaluationMode?: string;
   notificationCount?: number;
 }
 
@@ -18,6 +19,7 @@ export function AppLayout({
   userName = "Usuário",
   avatarUrl,
   userRole = "employee",
+  evaluationMode = "feedback",
   notificationCount = 0,
 }: AppLayoutProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -43,6 +45,7 @@ export function AppLayout({
           collapsed={sidebarCollapsed}
           onToggle={toggleSidebar}
           userRole={userRole}
+          evaluationMode={evaluationMode}
           userName={userName}
           avatarUrl={avatarUrl}
           notificationCount={notificationCount}
@@ -55,6 +58,7 @@ export function AppLayout({
           collapsed={false}
           onToggle={closeMobileMenu}
           userRole={userRole}
+          evaluationMode={evaluationMode}
           userName={userName}
           avatarUrl={avatarUrl}
           notificationCount={notificationCount}

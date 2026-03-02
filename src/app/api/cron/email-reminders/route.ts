@@ -45,56 +45,12 @@ export async function GET(request: Request) {
     // (same logic as generateScheduleNotifications but without auth)
     // -------------------------------------------------------
 
-    // PDI Schedules
-    const pdiSchedules = await prisma.pDISchedule.findMany({
-      where: {
-        isActive: true,
-        nextDueDate: { lte: sevenDaysFromNow },
-      },
-      include: {
-        manager: { select: { id: true, name: true } },
-        employee: { select: { id: true, name: true } },
-      },
-    });
-
-    for (const schedule of pdiSchedules) {
-      const isOverdue = schedule.nextDueDate <= now;
-      const dueDateStr = schedule.nextDueDate.toLocaleDateString("pt-BR");
-      const messageKey = `pdi_schedule_${schedule.id}_${dueDateStr}`;
-
-      const existing = await prisma.notification.findFirst({
-        where: {
-          userId: schedule.managerId,
-          type: "pdi_reminder",
-          message: { contains: messageKey },
-        },
-      });
-
-      if (!existing) {
-        const title = isOverdue
-          ? `PDI atrasado - ${schedule.employee.name}`
-          : `PDI próximo do vencimento - ${schedule.employee.name}`;
-        const message = isOverdue
-          ? `O PDI de ${schedule.employee.name} estava previsto para ${dueDateStr} e está atrasado. [${messageKey}]`
-          : `O PDI de ${schedule.employee.name} vence em ${dueDateStr}. [${messageKey}]`;
-
-        await prisma.notification.create({
-          data: {
-            userId: schedule.managerId,
-            type: "pdi_reminder",
-            title,
-            message,
-          },
-        });
-        notificationsCreated++;
-      }
-    }
-
     // Feedback Schedules
     const feedbackSchedules = await prisma.feedbackSchedule.findMany({
       where: {
         isActive: true,
         nextDueDate: { lte: sevenDaysFromNow },
+        employee: { evaluationMode: "feedback" },
       },
       include: {
         manager: { select: { id: true, name: true } },
@@ -140,7 +96,7 @@ export async function GET(request: Request) {
       where: {
         status: { not: "completed" },
         dueDate: { not: null, lte: sevenDaysFromNow },
-        pdi: { status: "active" },
+        pdi: { status: "active", employee: { evaluationMode: "pdi" } },
       },
       include: {
         pdi: {
@@ -179,8 +135,8 @@ export async function GET(request: Request) {
             ? `Meta de PDI atrasada${isEmployee ? "" : ` - ${employeeName}`}`
             : `Meta de PDI próxima do vencimento${isEmployee ? "" : ` - ${employeeName}`}`;
           const message = isOverdue
-            ? `A meta "${goal.title}" ${isEmployee ? "do seu PDI" : `do PDI de ${employeeName}`} estava prevista para ${dueDateStr} e está atrasada. [${messageKey}]`
-            : `A meta "${goal.title}" ${isEmployee ? "do seu PDI" : `do PDI de ${employeeName}`} vence em ${dueDateStr}. [${messageKey}]`;
+            ? `A meta "${goal.developmentObjective}" ${isEmployee ? "do seu PDI" : `do PDI de ${employeeName}`} estava prevista para ${dueDateStr} e está atrasada. [${messageKey}]`
+            : `A meta "${goal.developmentObjective}" ${isEmployee ? "do seu PDI" : `do PDI de ${employeeName}`} vence em ${dueDateStr}. [${messageKey}]`;
 
           await prisma.notification.create({
             data: {
@@ -200,6 +156,7 @@ export async function GET(request: Request) {
       where: {
         status: "draft",
         scheduledAt: { not: null, lte: sevenDaysFromNow },
+        employee: { evaluationMode: "feedback" },
       },
       include: {
         manager: { select: { id: true, name: true } },
@@ -241,6 +198,52 @@ export async function GET(request: Request) {
       }
     }
 
+    // PDI Follow-Up reminders (scheduled within next 2 days)
+    const twoDaysFromNow = new Date(now);
+    twoDaysFromNow.setDate(twoDaysFromNow.getDate() + 2);
+
+    const upcomingFollowUps = await prisma.pDIFollowUp.findMany({
+      where: {
+        status: "scheduled",
+        scheduledAt: { gte: now, lte: twoDaysFromNow },
+      },
+      include: {
+        pdi: {
+          select: {
+            managerId: true,
+            employeeId: true,
+            employee: { select: { name: true } },
+          },
+        },
+      },
+    });
+
+    for (const followUp of upcomingFollowUps) {
+      const scheduledStr = new Date(followUp.scheduledAt).toLocaleDateString("pt-BR");
+      const messageKey = `pdi_followup_${followUp.id}_${scheduledStr}`;
+
+      const existing = await prisma.notification.findFirst({
+        where: {
+          userId: followUp.pdi.managerId,
+          type: "pdi_reminder",
+          message: { contains: messageKey },
+        },
+      });
+
+      if (!existing) {
+        const employeeName = followUp.pdi.employee.name;
+        await prisma.notification.create({
+          data: {
+            userId: followUp.pdi.managerId,
+            type: "pdi_reminder",
+            title: `Acompanhamento de PDI agendado - ${employeeName}`,
+            message: `O acompanhamento de PDI de ${employeeName} está agendado para ${scheduledStr}. [${messageKey}]`,
+          },
+        });
+        notificationsCreated++;
+      }
+    }
+
     // -------------------------------------------------------
     // Step 1.5: Sector cycle notifications
     // -------------------------------------------------------
@@ -260,9 +263,13 @@ export async function GET(request: Request) {
       const periods = calculatePeriods(schedule.frequencyMonths, schedule.startDate);
       const currentPeriod = getCurrentPeriod(periods);
 
-      // Get active employees in this unit
+      // Get active employees in this unit filtered by evaluationMode
       const hierarchies = await prisma.employeeHierarchy.findMany({
-        where: { organizationalUnitId: unitId, endDate: null },
+        where: {
+          organizationalUnitId: unitId,
+          endDate: null,
+          employee: { evaluationMode: type },
+        },
         select: {
           employeeId: true,
           managerId: true,
@@ -297,14 +304,14 @@ export async function GET(request: Request) {
               where: {
                 employeeId: h.employeeId,
                 OR: [
-                  { scheduledAt: { gte: periodStart, lte: periodEnd } },
+                  { createdAt: { gte: periodStart, lte: periodEnd } },
                   { conductedAt: { gte: periodStart, lte: periodEnd } },
                 ],
               },
-              orderBy: { scheduledAt: "desc" },
+              orderBy: { createdAt: "desc" },
             });
             if (!pdi) notScheduled++;
-            else if (pdi.status === "active" || pdi.status === "completed") done++;
+            else if (pdi.status === "active" && pdi.conductedAt) done++;
             else scheduled++;
           } else {
             const feedback = await prisma.feedback.findFirst({

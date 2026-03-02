@@ -200,3 +200,249 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - Pre-loading lookup maps avoids N+1 queries in the cron loop — efficient for large datasets
   - The design is defensive: even if an individual schedule is active alongside sector config, sector takes precedence for auto-generation
 ---
+
+## Codebase Patterns (Updated 2026-03-02)
+- Prisma schema engine binary cannot be downloaded in this environment (network restriction to binaries.prisma.sh). Generated client files must be updated manually after schema changes: update `enums.ts`, `models/User.ts`, `commonInputTypes.ts`, `internal/prismaNamespace.ts`, and `internal/class.ts` (inlineSchema).
+- When adding a new enum field to a model, update ALL type definitions in the generated model file: aggregate types (Min/Max/Count), where filters, create inputs, update inputs, orderBy, scalars in $Payload, and FieldRef. Also add corresponding filter types in `commonInputTypes.ts` and field ref types in `prismaNamespace.ts`.
+
+---
+
+## 2026-03-02T16:35 - US-001 (reestruturacao-pdi-colaborador)
+- What was implemented: Added `EvaluationMode` enum (`pdi`, `feedback`) and `evaluationMode` field with default `feedback` to the User model in schema.prisma. Created migration SQL. Manually updated generated Prisma client files to include new types.
+- Files changed:
+  - `prisma/schema.prisma` — Added EvaluationMode enum, evaluationMode field on User, index
+  - `prisma/migrations/20260302120000_add_evaluation_mode/migration.sql` — Migration SQL
+  - `src/generated/prisma/enums.ts` — Added EvaluationMode const and type
+  - `src/generated/prisma/models/User.ts` — Added evaluationMode to all User type definitions
+  - `src/generated/prisma/commonInputTypes.ts` — Added filter types for EvaluationMode
+  - `src/generated/prisma/internal/prismaNamespace.ts` — Added field ref types
+  - `src/generated/prisma/internal/class.ts` — Updated inlineSchema
+- **Learnings for future iterations:**
+  - Prisma binaries server (binaries.prisma.sh) is unreachable. Use manual approach for schema changes.
+  - The inlineSchema in `class.ts` must match the current schema for runtime Prisma operations.
+  - For enum fields, the pattern is: add enum to schema, add to enums.ts, add filter/nested filter/aggregates filter types to commonInputTypes.ts, add field ref types to prismaNamespace.ts, add field to all User type definitions in User.ts, add FieldUpdateOperationsInput type in User.ts.
+---
+
+## 2026-03-02T16:44 - US-002 (reestruturacao-pdi-colaborador)
+- What was implemented: Added "Modo de Avaliação" dropdown to employee form with Feedback (default) and PDI options. Updated server actions to accept, validate, and save evaluationMode on create and update.
+- Files changed:
+  - `src/components/employee-form.tsx` — Added evaluationMode state, dropdown UI, and inclusion in create/update calls
+  - `src/app/(dashboard)/colaboradores/actions.ts` — Added evaluationMode to createEmployee/updateEmployee params, validation, and prisma calls. Added evaluationMode to EmployeeDetail type and getEmployeeById return.
+  - `src/app/(dashboard)/colaboradores/[id]/page.tsx` — Passes evaluationMode in initialData to EmployeeForm
+- **Learnings for future iterations:**
+  - Employee form follows pattern: state → form field → submit calls. Add new fields in all three places.
+  - Server actions validate with allowlist pattern: define validValues array, check with includes().
+  - EmployeeDetail type must be updated when adding fields to User, since the edit page passes it as initialData.
+---
+
+## 2026-03-02T16:49 - US-003 (reestruturacao-pdi-colaborador)
+- What was implemented: Added evaluationMode to JWT token and session. Updated sidebar to filter PDIs/Feedbacks based on evaluationMode (employees see only their mode; admin/manager see both).
+- Files changed:
+  - `src/types/next-auth.d.ts` — Added evaluationMode to User, Session, and JWT interfaces
+  - `src/lib/auth.ts` — Added evaluationMode to credentials return, JWT callback (credentials + SSO), session callback
+  - `src/app/(dashboard)/layout.tsx` — Pass evaluationMode from session to AppLayout
+  - `src/components/layout/app-layout.tsx` — Accept and pass evaluationMode to Sidebar
+  - `src/components/layout/sidebar.tsx` — Added evaluationMode prop, added evaluationModes filter to navItems, updated filter logic
+- **Learnings for future iterations:**
+  - JWT/session augmentation: update `src/types/next-auth.d.ts` for both `next-auth` and `next-auth/jwt` modules
+  - Auth chain: authorize() → jwt() → session() → layout → AppLayout → Sidebar. Each step must pass the new field.
+  - Sidebar filtering: `roles` controls role-based visibility, `evaluationModes` controls mode-based visibility. Admin/manager bypass evaluationModes filter.
+---
+
+## 2026-03-02T16:53 - US-004 (reestruturacao-pdi-colaborador)
+- What was implemented: Added evaluationMode filters to all PDI and Feedback listing queries and employee selection dropdowns.
+- Files changed:
+  - `src/app/(dashboard)/pdis/actions.ts` — Added `{ employee: { evaluationMode: "pdi" } }` to getPDIs andConditions; added `evaluationMode: "pdi"` to getSubordinatesForPDI where clauses
+  - `src/app/(dashboard)/feedbacks/actions.ts` — Added `{ employee: { evaluationMode: "feedback" } }` to getFeedbacks andConditions and getAvailableYears; added `evaluationMode: "feedback"` to getSubordinatesForFeedback where clauses
+- **Learnings for future iterations:**
+  - For filtering on related model fields in Prisma, use nested object syntax: `{ employee: { evaluationMode: "pdi" } }`
+  - The andConditions pattern allows adding filters incrementally without restructuring existing where logic
+  - Both getSubordinatesForPDI and getSubordinatesForFeedback have two code paths (all vs filtered IDs) - must update both
+---
+
+## 2026-03-02T16:57 - US-005 (reestruturacao-pdi-colaborador)
+- What was implemented: Added evaluationMode filters to both cron jobs (generate-events and email-reminders).
+- Files changed:
+  - `src/app/api/cron/generate-events/route.ts` — PDI schedules filter by `employee.evaluationMode: "pdi"`, Feedback schedules by `employee.evaluationMode: "feedback"`
+  - `src/app/api/cron/email-reminders/route.ts` — 5 query updates: PDI schedules, Feedback schedules, PDI goals (nested via pdi.employee), draft feedbacks, and sector hierarchy queries filter by evaluationMode matching the schedule type
+- **Learnings for future iterations:**
+  - Prisma nested relation filter syntax: `{ employee: { evaluationMode: "pdi" } }` works in where clause
+  - For PDIGoal, use `pdi: { employee: { evaluationMode: "pdi" } }` for deep nesting
+  - Sector cycle notifications use a dynamic type variable - can directly pass `employee: { evaluationMode: type }` since type matches the enum values
+---
+
+## 2026-03-02T17:17 - US-006 (reestruturacao-pdi-colaborador)
+- What was implemented: Restructured PDIGoal schema with new detailed fields for professional development tracking. Renamed `title` → `developmentObjective`, `description` → `actions`, removed `competency`, added 6 new fields: `startDate`, `expectedResults`, `responsibleId` (FK to User), `completedAt`, `successMetrics`, `achievedResults`. Updated all application code references.
+- Files changed:
+  - `prisma/schema.prisma` — Restructured PDIGoal model, added GoalResponsible relation on User
+  - `prisma/migrations/20260302140000_restructure_pdi_goal/migration.sql` — RENAME COLUMN + DROP COLUMN + ADD COLUMN migration
+  - `src/app/(dashboard)/pdis/actions.ts` — Updated GoalDetail/GoalInput types, createPDI/updatePDI/updateGoal to use new fields
+  - `src/components/pdi-form.tsx` — Removed COMPETENCIES, updated form to use developmentObjective/actions
+  - `src/components/pdi-tracking.tsx` — Removed COMPETENCIES, updated GoalCard display/edit
+  - `src/components/pdi-read-only.tsx` — Updated goal display fields
+  - `src/app/(dashboard)/pdis/[id]/page.tsx` — Updated goal mapping
+  - `src/app/(dashboard)/dashboard/actions.ts` — goal.title → goal.developmentObjective
+  - `src/app/api/cron/email-reminders/route.ts` — goal.title → goal.developmentObjective
+  - `src/app/(dashboard)/notificacoes/actions.ts` — goal.title → goal.developmentObjective (mechanical rename)
+  - `src/generated/prisma/` — Manually updated PDIGoal.ts, prismaNamespace.ts, prismaNamespaceBrowser.ts, class.ts
+- **Learnings for future iterations:**
+  - Use Python scripts for mass replacements in large generated files (PDIGoal.ts is 700+ lines)
+  - DMMF metadata in class.ts uses escaped quotes (`\"`) — replacement scripts must use escaped patterns
+  - The interned strings array on line 37 of class.ts is indexed positionally — never remove entries, only add
+  - Migration uses RENAME COLUMN to preserve data, not DROP+ADD
+  - notificacoes/actions.ts is "protected" but mechanical field renames are allowed
+---
+
+## 2026-03-02T17:20 - US-007 (reestruturacao-pdi-colaborador)
+- What was implemented: Updated PDI server actions to handle all new PDIGoal fields with proper server-side validation.
+- Files changed:
+  - `src/app/(dashboard)/pdis/actions.ts` — Expanded GoalInput type, updated createPDI/updatePDI/updateGoal with new fields and validations
+- **Key validations added:**
+  - completedAt and achievedResults only accepted when goal status='completed'
+  - responsibleId validated against employeeId or managerId of the PDI
+  - All new fields (startDate, expectedResults, responsibleId, completedAt, successMetrics, achievedResults) persisted in create/update operations
+---
+
+## 2026-03-02T18:50 - US-014 (reestruturacao-pdi-colaborador)
+- What was implemented: Added server actions for PDIFollowUp CRUD: scheduleFollowUp, completeFollowUp, cancelFollowUp, getFollowUps.
+- Files changed:
+  - `src/app/(dashboard)/pdis/actions.ts` — Added 4 follow-up actions with FollowUpDetail type
+  - `src/lib/prisma.ts` — Extended PrismaClient type with pDIFollowUp property
+  - `src/generated/prisma/internal/class.ts` — Added pDIFollowUp getter to PrismaClient class
+---
+
+## 2026-03-02T18:40 - US-013 (reestruturacao-pdi-colaborador)
+- What was implemented: Added PDIFollowUp model and FollowUpStatus enum to schema. Created migration, updated generated Prisma client.
+- Files changed:
+  - `prisma/schema.prisma` — Added FollowUpStatus enum, PDIFollowUp model, followUps relation on PDI
+  - `prisma/migrations/20260302170000_add_pdi_followup/migration.sql` — CREATE TYPE, CREATE TABLE, CREATE INDEX, ADD FK
+  - `src/generated/prisma/enums.ts` — Added FollowUpStatus
+  - `src/generated/prisma/models/PDIFollowUp.ts` — New model type file
+  - `src/generated/prisma/internal/class.ts` — Updated inlineSchema
+---
+
+## 2026-03-02T18:30 - US-012 (reestruturacao-pdi-colaborador)
+- What was implemented: Updated PDI UI for continuous model. Removed manual PDI creation UI, added "Nova Meta" button in tracking view, completed goals shown collapsed.
+- Files changed:
+  - `src/app/(dashboard)/pdis/page.tsx` — Removed canCreate/isEmployeeView props
+  - `src/app/(dashboard)/pdis/novo/page.tsx` — Simplified to redirect to /pdis
+  - `src/components/pdi-table.tsx` — Removed "Novo PDI" button, Plus import, canCreate prop
+  - `src/components/pdi-tracking.tsx` — Added AddGoalForm component, "Nova Meta" button, completed goals collapsed section, defaultCollapsed prop on GoalCard
+---
+
+## 2026-03-02T18:20 - US-011 (reestruturacao-pdi-colaborador)
+- What was implemented: Updated PDI server actions for continuous model. Added getOrCreatePDI and addGoal actions, removed manual createPDI, defaulted listing to active-only.
+- Files changed:
+  - `src/app/(dashboard)/pdis/actions.ts` — Added getOrCreatePDI(employeeId), addGoal(pdiId, data); removed createPDI; getPDIs defaults to status: "active"
+  - `src/app/(dashboard)/pdis/novo/page.tsx` — Simplified to redirect to /pdis (manual creation removed)
+  - `src/components/pdi-form.tsx` — Simplified to edit-only mode, removed create mode, employee selector, SubordinateOption import
+- **Key design decisions:**
+  - getOrCreatePDI finds active PDI or creates one with managerId from EmployeeHierarchy
+  - addGoal validates goal constraints (completedAt/achievedResults only when completed, responsibleId must be employee or manager)
+  - PDIForm kept for edit mode but no longer used directly — US-012 will overhaul the UI
+---
+
+## 2026-03-02T18:10 - US-010 (reestruturacao-pdi-colaborador)
+- What was implemented: Created idempotent SQL migration to consolidate multiple PDIs per employee into a single active PDI.
+- Files changed:
+  - `prisma/migrations/20260302160000_consolidate_pdis_per_employee/migration.sql` — 3-step consolidation: reparent goals, reparent comments, cancel non-keeper PDIs
+- **Migration approach:**
+  - Uses `DISTINCT ON ("employeeId") ... ORDER BY "employeeId", "updatedAt" DESC` to select keeper (most recently updated active PDI)
+  - Step 1: UPDATE PDIGoal.pdiId from non-keeper to keeper
+  - Step 2: UPDATE PDIComment.pdiId from non-keeper to keeper
+  - Step 3: UPDATE PDI.status = 'cancelled' for non-keeper active PDIs
+  - Idempotent: after first run, no non-keeper active PDIs remain, so subsequent runs are no-ops
+  - PDIEvidence is not touched directly — it's linked to PDIGoal, so reparenting goals automatically carries evidences
+---
+
+## 2026-03-02T18:00 - US-009 (reestruturacao-pdi-colaborador)
+- What was implemented: Simplified PDI to continuous model. Removed period, frequencyMonths, scheduledAt from PDI. Reduced PDIStatus to active/cancelled. Removed PDISchedule model entirely. Updated all ~20 files referencing old PDI schema.
+- Files changed:
+  - `prisma/schema.prisma` — Removed PDISchedule model, reduced PDIStatus enum, removed PDI fields
+  - `prisma/migrations/20260302150000_simplify_pdi_continuous/migration.sql` — Drop PDISchedule, update statuses, remove columns/enum values
+  - `src/generated/prisma/enums.ts` — PDIStatus = active | cancelled only
+  - `src/generated/prisma/client.ts` — Removed PDISchedule export
+  - `src/generated/prisma/browser.ts` — Removed PDISchedule export
+  - `src/generated/prisma/models.ts` — Removed PDISchedule re-export
+  - `src/generated/prisma/models/PDI.ts` — Removed period, frequencyMonths, scheduledAt from create/update types
+  - `src/components/pdi-read-only.tsx` — Removed draft/completed status, period display
+  - `src/components/pdi-table.tsx` — Removed period/scheduledAt columns, simplified status options
+  - `src/components/pdi-form.tsx` — Removed period/status references for old values
+  - `src/components/pdi-tracking.tsx` — Removed old status references
+  - `src/components/schedule-section.tsx` — Removed all PDI frequency props, state, form fields
+  - `src/app/(dashboard)/dashboard/actions.ts` — Removed PDISchedule queries, simplified pending PDI filter
+  - `src/app/(dashboard)/colaboradores/actions.ts` — Removed PDI schedule CRUD, renamed schedule functions
+  - `src/app/(dashboard)/colaboradores/[id]/page.tsx` — Removed PDI frequency props
+  - `src/app/(dashboard)/notificacoes/actions.ts` — Removed PDISchedule notification block
+  - `src/app/(dashboard)/configuracoes/actions.ts` — Updated PDI compliance to use createdAt/conductedAt
+  - `src/app/(dashboard)/calendario/actions.ts` — Rewrote PDI query for continuous model
+  - `src/app/(dashboard)/programacao/actions.ts` — Updated PDI compliance/creation for continuous model
+  - `src/app/(dashboard)/pdis/actions.ts` — Removed period from create input
+  - `src/app/api/cron/generate-events/route.ts` — Removed entire PDI schedule processing block
+  - `src/app/api/cron/email-reminders/route.ts` — Removed PDI schedule notifications, updated sector compliance
+  - `src/lib/schedule-utils.ts` — Removed all PDI functions, renamed to feedback-only
+  - `src/lib/sector-schedule-utils.ts` — PDI type falls through to sector only, handleSectorTransfer only cancels feedbacks
+  - `src/lib/__tests__/effective-schedule.test.ts` — Updated 3 tests for continuous PDI model
+- **Learnings for future iterations:**
+  - When removing a model (PDISchedule), must trace ALL references across server actions, crons, components, tests, and generated types
+  - PDI in continuous model: always active or cancelled, no scheduling mechanism, uses createdAt/conductedAt instead of scheduledAt
+  - handleSectorTransfer only cancels feedbacks now (PDIs are continuous, not scheduled)
+  - Generated Prisma types in models/PDI.ts affect typecheck when app code creates PDIs — must update create/update input types
+---
+
+## 2026-03-02T19:30 - US-017 (reestruturacao-pdi-colaborador)
+- What was implemented: Added 8 HR fields to User model: phone, cpf (unique), birthDate, jobTitle, address, city, state, zipCode.
+- Files changed:
+  - `prisma/schema.prisma` — Added 8 fields to User model
+  - `prisma/migrations/20260302180000_add_hr_fields_to_user/migration.sql` — ALTER TABLE ADD COLUMN + unique index on cpf
+  - `src/generated/prisma/models/User.ts` — Added fields to $UserPayload scalars, Min/Max/Count aggregates, create/update input types
+  - `src/generated/prisma/internal/class.ts` — Updated inlineSchema, added field names to interned strings
+---
+
+## 2026-03-02T19:25 - US-016 (reestruturacao-pdi-colaborador)
+- What was implemented: Added PDI follow-up reminders to cron email-reminders. Queries scheduled follow-ups within next 2 days, creates pdi_reminder notifications for the PDI manager, idempotent via messageKey.
+- Files changed:
+  - `src/app/api/cron/email-reminders/route.ts` — Added follow-up reminder block between existing PDI goal reminders and sector cycle notifications
+- **Implementation approach:**
+  - Queries `pDIFollowUp.findMany` with `status: "scheduled"` and `scheduledAt` between now and now+2 days
+  - Includes PDI relation with managerId, employeeId, employee name
+  - MessageKey pattern: `pdi_followup_${followUpId}_${dateStr}` for idempotency
+  - Creates notification with type `pdi_reminder` for the PDI's manager
+  - Notifications flow into existing Step 2/3 for email consolidation
+---
+
+## 2026-03-02T19:20 - US-015 (reestruturacao-pdi-colaborador)
+- What was implemented: Added follow-up UI to PDI tracking view. FollowUpsSection component with schedule, complete, and cancel functionality. Updated generated Prisma types for followUps relation on PDI.
+- Files changed:
+  - `src/components/pdi-tracking.tsx` — Added FollowUpsSection component with: schedule form (date picker), complete form (date + notes), cancel button, list split by scheduled vs past. Imported follow-up actions.
+  - `src/app/(dashboard)/pdis/actions.ts` — Added followUps to PDIDetail type, getPDIById and getOrCreatePDI include followUps relation
+  - `src/generated/prisma/models/PDI.ts` — Added followUps to PDIInclude and $PDIPayload, added PDI$followUpsArgs type, removed old scalar fields (period, frequencyMonths, scheduledAt)
+  - `src/generated/prisma/models/PDIFollowUp.ts` — Added $PDIFollowUpPayload type
+- **Learnings for future iterations:**
+  - Generated Prisma types need $Payload type with objects and scalars sections, and include types with model-specific args
+  - The PDI$followUpsArgs pattern follows PDI$commentsArgs — same structure for each relation
+---
+
+## 2026-03-02T20:10 - US-019 (reestruturacao-pdi-colaborador)
+- What was implemented: Added Cargo, Telefone, and Modo columns to employee listing table with responsive design and evaluation mode badge.
+- Files changed:
+  - `src/app/(dashboard)/colaboradores/actions.ts` — Added jobTitle, phone, evaluationMode to EmployeeListItem type and getEmployees return mapping
+  - `src/components/employee-table.tsx` — Added 3 new columns (Cargo, Telefone, Modo) with responsive hiding (hidden on sm, visible md/lg), Modo badge: PDI=blue, Feedback=green
+---
+
+## 2026-03-02T20:00 - US-018 (reestruturacao-pdi-colaborador)
+- What was implemented: Updated employee form with HR fields (CPF, phone, birth date, job title, address, city, state, zip). Added input masks, CPF validation, Brazilian UF dropdown.
+- Files changed:
+  - `src/app/(dashboard)/colaboradores/actions.ts` — Added validateCPF, HR fields to EmployeeDetail, createEmployee, updateEmployee
+  - `src/components/employee-form.tsx` — Added maskCPF/maskPhone/maskZip, UF_OPTIONS, "Dados Pessoais" section with all HR fields
+  - `src/app/(dashboard)/colaboradores/[id]/page.tsx` — Passes HR fields in initialData to EmployeeForm
+---
+
+## 2026-03-02T17:24 - US-008 (reestruturacao-pdi-colaborador)
+- What was implemented: Updated PDI form and tracking components to display and edit all new PDIGoal fields. Added responsible dropdown showing only employee and manager. completedAt/achievedResults disabled when status != completed.
+- Files changed:
+  - `src/components/pdi-form.tsx` — Added managerId/managerName props, expanded goal form with all new fields (startDate, expectedResults, responsibleId dropdown, successMetrics, completedAt, achievedResults), disabled logic for completed-only fields
+  - `src/components/pdi-tracking.tsx` — Added PDI context props to GoalCard, expanded edit form with all new fields, responsible dropdown, disabled logic
+  - `src/app/(dashboard)/pdis/[id]/page.tsx` — Pass managerId/managerName and new goal fields to PDIForm
+  - `src/app/(dashboard)/pdis/novo/page.tsx` — Pass managerId/managerName from session to PDIForm
+---

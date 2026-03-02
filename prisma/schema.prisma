@@ -17,6 +17,11 @@ enum UserRole {
   employee
 }
 
+enum EvaluationMode {
+  pdi
+  feedback
+}
+
 enum ScheduleType {
   pdi
   feedback
@@ -28,11 +33,20 @@ model User {
   email       String    @unique
   password    String?
   role        UserRole  @default(employee)
+  evaluationMode EvaluationMode @default(feedback)
   avatarUrl   String?
   ssoProvider String?
   ssoId       String?
   isActive    Boolean   @default(true)
   admissionDate DateTime?
+  phone       String?
+  cpf         String?   @unique
+  birthDate   DateTime?
+  jobTitle    String?
+  address     String?
+  city        String?
+  state       String?
+  zipCode     String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -41,22 +55,22 @@ model User {
   pdisAsEmployee      PDI[]               @relation("PDIEmployee")
   feedbacksReceived   Feedback[]          @relation("FeedbackEmployee")
   feedbackSchedulesAsEmployee FeedbackSchedule[] @relation("FeedbackScheduleEmployee")
-  pdiSchedulesAsEmployee      PDISchedule[]      @relation("PDIScheduleEmployee")
 
   // Relations as manager
   managerHierarchies  EmployeeHierarchy[] @relation("Manager")
   pdisAsManager       PDI[]               @relation("PDIManager")
   feedbacksGiven      Feedback[]          @relation("FeedbackManager")
   feedbackSchedulesAsManager FeedbackSchedule[] @relation("FeedbackScheduleManager")
-  pdiSchedulesAsManager      PDISchedule[]      @relation("PDIScheduleManager")
 
   // Other relations
-  pdiComments    PDIComment[]
-  pdiEvidences   PDIEvidence[]
-  notifications  Notification[]
+  pdiComments         PDIComment[]
+  pdiEvidences        PDIEvidence[]
+  goalResponsibilities PDIGoal[]     @relation("GoalResponsible")
+  notifications       Notification[]
 
   @@index([email])
   @@index([role])
+  @@index([evaluationMode])
 }
 
 // ============================================================
@@ -116,10 +130,7 @@ model EmployeeHierarchy {
 // ============================================================
 
 enum PDIStatus {
-  draft
-  scheduled
   active
-  completed
   cancelled
 }
 
@@ -129,45 +140,69 @@ enum GoalStatus {
   completed
 }
 
+enum FollowUpStatus {
+  scheduled
+  completed
+  cancelled
+}
+
 model PDI {
   id              String    @id @default(cuid())
   employeeId      String
   managerId       String
-  status          PDIStatus @default(draft)
-  period          String
-  frequencyMonths Int?
+  status          PDIStatus @default(active)
   conductedAt     DateTime?
-  scheduledAt     DateTime?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  employee User @relation("PDIEmployee", fields: [employeeId], references: [id])
-  manager  User @relation("PDIManager", fields: [managerId], references: [id])
+  employee  User @relation("PDIEmployee", fields: [employeeId], references: [id])
+  manager   User @relation("PDIManager", fields: [managerId], references: [id])
 
-  goals    PDIGoal[]
-  comments PDIComment[]
+  goals     PDIGoal[]
+  comments  PDIComment[]
+  followUps PDIFollowUp[]
 
   @@index([employeeId])
   @@index([managerId])
   @@index([status])
-  @@index([scheduledAt])
+}
+
+model PDIFollowUp {
+  id          String         @id @default(cuid())
+  pdiId       String
+  scheduledAt DateTime
+  conductedAt DateTime?
+  notes       String?
+  status      FollowUpStatus @default(scheduled)
+  createdAt   DateTime       @default(now())
+
+  pdi PDI @relation(fields: [pdiId], references: [id], onDelete: Cascade)
+
+  @@index([pdiId])
 }
 
 model PDIGoal {
-  id          String     @id @default(cuid())
-  pdiId       String
-  title       String
-  description String?
-  competency  String
-  status      GoalStatus @default(pending)
-  dueDate     DateTime?
-  createdAt   DateTime   @default(now())
+  id                   String     @id @default(cuid())
+  pdiId                String
+  developmentObjective String
+  actions              String?
+  status               GoalStatus @default(pending)
+  dueDate              DateTime?
+  startDate            DateTime?
+  expectedResults      String?
+  responsibleId        String?
+  completedAt          DateTime?
+  successMetrics       String?
+  achievedResults      String?
+  createdAt            DateTime   @default(now())
 
-  pdi       PDI           @relation(fields: [pdiId], references: [id], onDelete: Cascade)
-  evidences PDIEvidence[]
+  pdi         PDI           @relation(fields: [pdiId], references: [id], onDelete: Cascade)
+  responsible User?         @relation("GoalResponsible", fields: [responsibleId], references: [id])
+  evidences   PDIEvidence[]
 
   @@index([pdiId])
   @@index([status])
+  @@index([responsibleId])
 }
 
 model PDIEvidence {
@@ -256,21 +291,6 @@ model FeedbackSchedule {
   @@index([nextDueDate])
 }
 
-model PDISchedule {
-  id              String   @id @default(cuid())
-  employeeId      String
-  managerId       String
-  frequencyMonths Int
-  nextDueDate     DateTime
-  isActive        Boolean  @default(true)
-
-  employee User @relation("PDIScheduleEmployee", fields: [employeeId], references: [id])
-  manager  User @relation("PDIScheduleManager", fields: [managerId], references: [id])
-
-  @@index([employeeId])
-  @@index([managerId])
-  @@index([nextDueDate])
-}
 
 // ============================================================
 // Notifications

@@ -51,8 +51,6 @@ export default async function PDIsPage({
         conductedAtFrom={conductedAtFrom}
         conductedAtTo={conductedAtTo}
         statusFilter={statusFilter}
-        canCreate={role !== "employee"}
-        isEmployeeView={role === "employee"}
       />
     </div>
   );

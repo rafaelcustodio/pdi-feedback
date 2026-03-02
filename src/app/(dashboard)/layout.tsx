@@ -21,6 +21,7 @@ export default async function DashboardLayout({
       userName={session.user.name}
       avatarUrl={session.user.image ?? null}
       userRole={session.user.role}
+      evaluationMode={session.user.evaluationMode}
       notificationCount={notificationCount}
     >
       {children}

@@ -37,6 +37,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           name: user.name,
           email: user.email,
           role: user.role,
+          evaluationMode: user.evaluationMode,
           image: user.avatarUrl,
         };
       },
@@ -108,15 +109,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (user && account?.provider === "credentials") {
         token.id = user.id;
         token.role = (user as { role?: string }).role;
+        token.evaluationMode = (user as { evaluationMode?: string }).evaluationMode ?? "feedback";
       }
       if (account?.provider === "microsoft-entra-id") {
-        // Fetch the database user to get id and role
+        // Fetch the database user to get id, role, and evaluationMode
         const dbUser = await prisma.user.findUnique({
           where: { email: token.email as string },
         });
         if (dbUser) {
           token.id = dbUser.id;
           token.role = dbUser.role;
+          token.evaluationMode = dbUser.evaluationMode;
         }
       }
       return token;
@@ -125,6 +128,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (session.user) {
         session.user.id = token.id as string;
         (session.user as { role?: string }).role = token.role as string;
+        (session.user as { evaluationMode?: string }).evaluationMode = token.evaluationMode as string;
       }
       return session;
     },

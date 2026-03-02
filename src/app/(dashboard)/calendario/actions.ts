@@ -73,28 +73,22 @@ export async function getCalendarEvents(
 
   // Fetch PDI events
   if (tipo === "all" || tipo === "pdi") {
-    // Employees don't see scheduled PDIs (system-generated placeholders)
-    const pdiStatusFilter =
-      role === "employee"
-        ? { status: { notIn: ["scheduled" as const] } }
-        : {};
-
     const pdis = await prisma.pDI.findMany({
       where: {
         ...employeeFilter,
-        ...pdiStatusFilter,
+        status: "active",
         OR: [
-          { scheduledAt: { gte: startOfMonth, lte: endOfMonth } },
+          { conductedAt: { gte: startOfMonth, lte: endOfMonth } },
           {
-            scheduledAt: null,
-            conductedAt: { gte: startOfMonth, lte: endOfMonth },
+            conductedAt: null,
+            createdAt: { gte: startOfMonth, lte: endOfMonth },
           },
         ],
       },
       include: {
         employee: { select: { name: true } },
       },
-      orderBy: { scheduledAt: "asc" },
+      orderBy: { createdAt: "asc" },
     });
 
     for (const pdi of pdis) {
@@ -102,7 +96,7 @@ export async function getCalendarEvents(
         id: pdi.id,
         type: "pdi",
         employeeName: pdi.employee.name,
-        scheduledAt: pdi.scheduledAt ?? pdi.conductedAt!,
+        scheduledAt: pdi.conductedAt ?? pdi.createdAt,
         status: pdi.status,
         href: `/pdis/${pdi.id}`,
       });
