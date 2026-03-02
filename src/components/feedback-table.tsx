@@ -7,7 +7,6 @@ import {
   Search,
   ChevronLeft,
   ChevronRight,
-  Plus,
   Eye,
   Pencil,
   Star,
@@ -248,13 +247,6 @@ export function FeedbackTable({
               <CalendarPlus size={16} />
               Agendar Feedback Futuro
             </button>
-            <Link
-              href="/feedbacks/novo"
-              className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-            >
-              <Plus size={16} />
-              Novo Feedback
-            </Link>
           </div>
         )}
       </div>
@@ -515,7 +507,7 @@ export function FeedbackTable({
                   htmlFor="future-date"
                   className="mb-1 block text-sm font-medium text-gray-700"
                 >
-                  Data prevista para preenchimento *
+                  Data de programação *
                 </label>
                 <input
                   id="future-date"
@@ -526,9 +518,6 @@ export function FeedbackTable({
                   className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
                   disabled={futureLoading}
                 />
-                <p className="mt-1 text-xs text-gray-500">
-                  Você receberá um lembrete 7 dias antes e na data agendada.
-                </p>
               </div>
             </div>
 
