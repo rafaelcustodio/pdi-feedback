@@ -234,3 +234,17 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - Server actions validate with allowlist pattern: define validValues array, check with includes().
   - EmployeeDetail type must be updated when adding fields to User, since the edit page passes it as initialData.
 ---
+
+## 2026-03-02T16:49 - US-003 (reestruturacao-pdi-colaborador)
+- What was implemented: Added evaluationMode to JWT token and session. Updated sidebar to filter PDIs/Feedbacks based on evaluationMode (employees see only their mode; admin/manager see both).
+- Files changed:
+  - `src/types/next-auth.d.ts` — Added evaluationMode to User, Session, and JWT interfaces
+  - `src/lib/auth.ts` — Added evaluationMode to credentials return, JWT callback (credentials + SSO), session callback
+  - `src/app/(dashboard)/layout.tsx` — Pass evaluationMode from session to AppLayout
+  - `src/components/layout/app-layout.tsx` — Accept and pass evaluationMode to Sidebar
+  - `src/components/layout/sidebar.tsx` — Added evaluationMode prop, added evaluationModes filter to navItems, updated filter logic
+- **Learnings for future iterations:**
+  - JWT/session augmentation: update `src/types/next-auth.d.ts` for both `next-auth` and `next-auth/jwt` modules
+  - Auth chain: authorize() → jwt() → session() → layout → AppLayout → Sidebar. Each step must pass the new field.
+  - Sidebar filtering: `roles` controls role-based visibility, `evaluationModes` controls mode-based visibility. Admin/manager bypass evaluationModes filter.
+---

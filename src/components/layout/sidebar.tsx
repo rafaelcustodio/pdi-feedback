@@ -28,18 +28,19 @@ interface SidebarProps {
   collapsed: boolean;
   onToggle: () => void;
   userRole?: string;
+  evaluationMode?: string;
   userName?: string;
   avatarUrl?: string | null;
   notificationCount?: number;
 }
 
 const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, roles: null },
-  { href: "/calendario", label: "Calendário", icon: Calendar, roles: null },
-  { href: "/colaboradores", label: "Colaboradores", icon: Users, roles: null },
-  { href: "/pdis", label: "PDIs", icon: ClipboardList, roles: null },
-  { href: "/feedbacks", label: "Feedbacks", icon: MessageSquare, roles: null },
-  { href: "/programacao", label: "Programação", icon: CalendarCheck, roles: ["admin", "manager"] as string[] },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, roles: null, evaluationModes: null },
+  { href: "/calendario", label: "Calendário", icon: Calendar, roles: null, evaluationModes: null },
+  { href: "/colaboradores", label: "Colaboradores", icon: Users, roles: null, evaluationModes: null },
+  { href: "/pdis", label: "PDIs", icon: ClipboardList, roles: null, evaluationModes: ["pdi"] as string[] },
+  { href: "/feedbacks", label: "Feedbacks", icon: MessageSquare, roles: null, evaluationModes: ["feedback"] as string[] },
+  { href: "/programacao", label: "Programação", icon: CalendarCheck, roles: ["admin", "manager"] as string[], evaluationModes: null },
 ];
 
 function Tooltip({
@@ -77,6 +78,7 @@ export function Sidebar({
   collapsed,
   onToggle,
   userRole,
+  evaluationMode = "feedback",
   userName = "Usuário",
   avatarUrl,
   notificationCount = 0,
@@ -178,7 +180,15 @@ export function Sidebar({
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-2 py-3">
         <ul className="space-y-0.5">
-          {navItems.filter((item) => !item.roles || (userRole && item.roles.includes(userRole))).map((item) => {
+          {navItems.filter((item) => {
+            // Role-based filtering
+            if (item.roles && (!userRole || !item.roles.includes(userRole))) return false;
+            // EvaluationMode filtering: admins/managers see both; employees see only their mode
+            if (item.evaluationModes && userRole !== "admin" && userRole !== "manager") {
+              if (!item.evaluationModes.includes(evaluationMode)) return false;
+            }
+            return true;
+          }).map((item) => {
             const active = isActive(item.href);
             const Icon = item.icon;
             const link = (
