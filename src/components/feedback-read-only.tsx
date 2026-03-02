@@ -118,6 +118,7 @@ export function FeedbackReadOnly({ feedback }: FeedbackReadOnlyProps) {
                   day: "2-digit",
                   month: "2-digit",
                   year: "numeric",
+                  timeZone: "UTC",
                 })}
               </p>
             )}
@@ -128,6 +129,7 @@ export function FeedbackReadOnly({ feedback }: FeedbackReadOnlyProps) {
                   day: "2-digit",
                   month: "2-digit",
                   year: "numeric",
+                  timeZone: "UTC",
                 })}
               </p>
             )}

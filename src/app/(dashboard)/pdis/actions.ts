@@ -1087,3 +1087,36 @@ export async function cancelFollowUp(
   return { success: true };
 }
 
+export async function cancelPDI(
+  pdiId: string
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  const pdi = await prisma.pDI.findUnique({ where: { id: pdiId } });
+  if (!pdi) {
+    return { success: false, error: "PDI não encontrado" };
+  }
+
+  if (role !== "admin" && pdi.managerId !== userId) {
+    return { success: false, error: "Apenas o gestor responsável pode cancelar este PDI" };
+  }
+
+  if (pdi.status === "cancelled") {
+    return { success: false, error: "PDI já está cancelado" };
+  }
+
+  await prisma.pDI.update({
+    where: { id: pdiId },
+    data: { status: "cancelled" },
+  });
+
+  revalidatePath(`/pdis/${pdiId}`);
+  revalidatePath("/pdis");
+  return { success: true };
+}

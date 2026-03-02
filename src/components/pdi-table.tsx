@@ -229,7 +229,7 @@ export function PDITable({
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
                     {pdi.conductedAt
-                      ? new Date(pdi.conductedAt).toLocaleDateString("pt-BR")
+                      ? new Date(pdi.conductedAt).toLocaleDateString("pt-BR", { timeZone: "UTC" })
                       : "—"}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-right">

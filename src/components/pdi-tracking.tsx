@@ -28,6 +28,7 @@ import {
   scheduleFollowUp,
   completeFollowUp,
   cancelFollowUp,
+  cancelPDI,
 } from "@/app/(dashboard)/pdis/actions";
 
 const statusLabels: Record<string, string> = {
@@ -82,6 +83,21 @@ export function PDITracking({ pdi, userId, userRole }: PDITrackingProps) {
 
   const [showAddGoal, setShowAddGoal] = useState(false);
   const [showCompleted, setShowCompleted] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const [cancelError, setCancelError] = useState<string | null>(null);
+
+  async function handleCancelPDI() {
+    setCancelLoading(true);
+    setCancelError(null);
+    const result = await cancelPDI(pdi.id);
+    setCancelLoading(false);
+    if (result.success) {
+      setShowCancelModal(false);
+    } else {
+      setCancelError(result.error ?? "Erro ao cancelar PDI");
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -110,7 +126,56 @@ export function PDITracking({ pdi, userId, userRole }: PDITrackingProps) {
             Gestor: {pdi.managerName}
           </p>
         </div>
+        {isManager && pdi.status === "active" && (
+          <button
+            onClick={() => setShowCancelModal(true)}
+            className="inline-flex items-center gap-1.5 rounded-md border border-red-300 px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50"
+          >
+            <XCircle size={14} />
+            Cancelar PDI
+          </button>
+        )}
       </div>
+
+      {/* Cancel PDI Modal */}
+      {showCancelModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <h3 className="mb-2 text-base font-semibold text-gray-900">
+              Cancelar PDI?
+            </h3>
+            <p className="mb-4 text-sm text-gray-600">
+              Esta ação não pode ser desfeita. O PDI de{" "}
+              <span className="font-medium">{pdi.employeeName}</span> será
+              marcado como cancelado e não poderá mais ser editado.
+            </p>
+            {cancelError && (
+              <div className="mb-3 rounded-md border border-red-200 bg-red-50 p-2 text-sm text-red-700">
+                {cancelError}
+              </div>
+            )}
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => {
+                  setShowCancelModal(false);
+                  setCancelError(null);
+                }}
+                disabled={cancelLoading}
+                className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              >
+                Voltar
+              </button>
+              <button
+                onClick={handleCancelPDI}
+                disabled={cancelLoading}
+                className="rounded-md bg-red-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
+              >
+                {cancelLoading ? "Cancelando..." : "Sim, cancelar PDI"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Progress Bar */}
       {pdi.goals.length > 0 && (
@@ -233,7 +298,7 @@ export function PDITracking({ pdi, userId, userRole }: PDITrackingProps) {
         {pdi.conductedAt && (
           <>
             Realizado em{" "}
-            {new Date(pdi.conductedAt).toLocaleDateString("pt-BR")} |{" "}
+            {new Date(pdi.conductedAt).toLocaleDateString("pt-BR", { timeZone: "UTC" })} |{" "}
           </>
         )}
         Criado em {new Date(pdi.createdAt).toLocaleDateString("pt-BR")} |
@@ -557,7 +622,7 @@ function GoalCard({
               {goal.dueDate && (
                 <span className="inline-flex items-center gap-1">
                   <Calendar size={12} />
-                  {new Date(goal.dueDate).toLocaleDateString("pt-BR")}
+                  {new Date(goal.dueDate).toLocaleDateString("pt-BR", { timeZone: "UTC" })}
                 </span>
               )}
               {goal.evidences.length > 0 && (
@@ -605,6 +670,76 @@ function GoalCard({
           {error && (
             <div className="mb-3 rounded-md border border-red-200 bg-red-50 p-2 text-sm text-red-700">
               {error}
+            </div>
+          )}
+
+          {/* Goal Details (read-only) */}
+          {!editingGoal && (
+            <div className="mb-4 grid gap-3 sm:grid-cols-2">
+              {goal.actions && (
+                <div className="sm:col-span-2">
+                  <p className="mb-0.5 text-xs font-medium text-gray-500">Ações / Atividades</p>
+                  <p className="text-sm text-gray-800 whitespace-pre-wrap">{goal.actions}</p>
+                </div>
+              )}
+              {(goal.startDate || goal.dueDate) && (
+                <>
+                  {goal.startDate && (
+                    <div>
+                      <p className="mb-0.5 text-xs font-medium text-gray-500">Início</p>
+                      <p className="text-sm text-gray-800">
+                        {new Date(goal.startDate).toLocaleDateString("pt-BR", { timeZone: "UTC" })}
+                      </p>
+                    </div>
+                  )}
+                  {goal.dueDate && (
+                    <div>
+                      <p className="mb-0.5 text-xs font-medium text-gray-500">Prazo Final</p>
+                      <p className="text-sm text-gray-800">
+                        {new Date(goal.dueDate).toLocaleDateString("pt-BR", { timeZone: "UTC" })}
+                      </p>
+                    </div>
+                  )}
+                </>
+              )}
+              {goal.expectedResults && (
+                <div className="sm:col-span-2">
+                  <p className="mb-0.5 text-xs font-medium text-gray-500">Resultados Esperados</p>
+                  <p className="text-sm text-gray-800 whitespace-pre-wrap">{goal.expectedResults}</p>
+                </div>
+              )}
+              {goal.successMetrics && (
+                <div>
+                  <p className="mb-0.5 text-xs font-medium text-gray-500">Métricas de Sucesso</p>
+                  <p className="text-sm text-gray-800">{goal.successMetrics}</p>
+                </div>
+              )}
+              {goal.responsibleId && (
+                <div>
+                  <p className="mb-0.5 text-xs font-medium text-gray-500">Responsável</p>
+                  <p className="text-sm text-gray-800">
+                    {goal.responsibleId === employeeId
+                      ? `${employeeName} (Colaborador)`
+                      : goal.responsibleId === managerId
+                        ? `${managerName} (Gestor)`
+                        : goal.responsibleId}
+                  </p>
+                </div>
+              )}
+              {goal.completedAt && (
+                <div>
+                  <p className="mb-0.5 text-xs font-medium text-gray-500">Término</p>
+                  <p className="text-sm text-gray-800">
+                    {new Date(goal.completedAt).toLocaleDateString("pt-BR", { timeZone: "UTC" })}
+                  </p>
+                </div>
+              )}
+              {goal.achievedResults && (
+                <div className="sm:col-span-2">
+                  <p className="mb-0.5 text-xs font-medium text-gray-500">Resultados Obtidos</p>
+                  <p className="text-sm text-gray-800 whitespace-pre-wrap">{goal.achievedResults}</p>
+                </div>
+              )}
             </div>
           )}
 
@@ -957,6 +1092,16 @@ function FollowUpsSection({
   const [completeNotes, setCompleteNotes] = useState("");
   const [completeConductedAt, setCompleteConductedAt] = useState("");
 
+  // Next schedule prompt state
+  const [showNextScheduleModal, setShowNextScheduleModal] = useState(false);
+  const [nextScheduleDate, setNextScheduleDate] = useState("");
+
+  function nextMonthDate(): string {
+    const d = new Date();
+    d.setMonth(d.getMonth() + 1);
+    return d.toISOString().slice(0, 10);
+  }
+
   const isActive = pdiStatus === "active";
 
   // Separate scheduled (future) and done/cancelled
@@ -991,8 +1136,23 @@ function FollowUpsSection({
       setCompletingId(null);
       setCompleteNotes("");
       setCompleteConductedAt("");
+      setNextScheduleDate(nextMonthDate());
+      setShowNextScheduleModal(true);
     } else {
       setError(result.error ?? "Erro ao completar acompanhamento");
+    }
+  }
+
+  async function handleScheduleNext() {
+    if (!nextScheduleDate) return;
+    setLoading(true);
+    setError(null);
+    const result = await scheduleFollowUp(pdiId, nextScheduleDate);
+    setLoading(false);
+    if (result.success) {
+      setShowNextScheduleModal(false);
+    } else {
+      setError(result.error ?? "Erro ao agendar");
     }
   }
 
@@ -1127,6 +1287,53 @@ function FollowUpsSection({
         </div>
       )}
 
+      {/* Next Schedule Modal */}
+      {showNextScheduleModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <h3 className="mb-2 text-base font-semibold text-gray-900">
+              Agendar próximo acompanhamento?
+            </h3>
+            <p className="mb-4 text-sm text-gray-600">
+              Deseja criar o agendamento da próxima reunião para o mês seguinte?
+            </p>
+            <div className="mb-4">
+              <label className="mb-1 block text-xs font-medium text-gray-700">
+                Data sugerida
+              </label>
+              <input
+                type="date"
+                value={nextScheduleDate}
+                onChange={(e) => setNextScheduleDate(e.target.value)}
+                className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                disabled={loading}
+              />
+            </div>
+            {error && (
+              <div className="mb-3 rounded-md border border-red-200 bg-red-50 p-2 text-sm text-red-700">
+                {error}
+              </div>
+            )}
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowNextScheduleModal(false)}
+                disabled={loading}
+                className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              >
+                Não, obrigado
+              </button>
+              <button
+                onClick={handleScheduleNext}
+                disabled={loading || !nextScheduleDate}
+                className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              >
+                {loading ? "Agendando..." : "Agendar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Follow-Ups List */}
       {followUps.length === 0 ? (
         <p className="text-sm text-gray-500">
@@ -1148,6 +1355,7 @@ function FollowUpsSection({
                       day: "2-digit",
                       month: "long",
                       year: "numeric",
+                      timeZone: "UTC",
                     })}
                   </p>
                   <span
@@ -1209,11 +1417,13 @@ function FollowUpsSection({
                             day: "2-digit",
                             month: "long",
                             year: "numeric",
+                            timeZone: "UTC",
                           })
                         : new Date(fu.scheduledAt).toLocaleDateString("pt-BR", {
                             day: "2-digit",
                             month: "long",
                             year: "numeric",
+                            timeZone: "UTC",
                           })}
                     </p>
                     <span

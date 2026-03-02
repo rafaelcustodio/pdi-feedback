@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Save, ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -83,6 +83,7 @@ export function EmployeeForm({ mode, orgUnits, initialData }: EmployeeFormProps)
   const [loading, setLoading] = useState(false);
   const [loadingManagers, setLoadingManagers] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const isInitialMount = useRef(true);
 
   // Fetch managers when org unit changes
   useEffect(() => {
@@ -94,10 +95,11 @@ export function EmployeeForm({ mode, orgUnits, initialData }: EmployeeFormProps)
       );
       setManagers(candidates);
 
-      // If current manager not in new list, clear selection
-      if (managerId && !candidates.find((m) => m.id === managerId)) {
+      // Only clear manager selection if the user changed the org unit manually (not on initial load)
+      if (!isInitialMount.current && managerId && !candidates.find((m) => m.id === managerId)) {
         setManagerId("");
       }
+      isInitialMount.current = false;
 
       setLoadingManagers(false);
     }

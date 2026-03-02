@@ -309,7 +309,7 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
                       </td>
                       <td className="px-4 py-3 text-gray-600">
                         {emp.eventDate
-                          ? new Date(emp.eventDate).toLocaleDateString("pt-BR")
+                          ? new Date(emp.eventDate).toLocaleDateString("pt-BR", { timeZone: "UTC" })
                           : "—"}
                       </td>
                       <td className="px-4 py-3">

@@ -111,7 +111,7 @@ export function PDIReadOnly({ pdi }: { pdi: PDIDetail }) {
                       {goal.dueDate && (
                         <span className="inline-flex items-center gap-1">
                           <Calendar size={12} />
-                          {new Date(goal.dueDate).toLocaleDateString("pt-BR")}
+                          {new Date(goal.dueDate).toLocaleDateString("pt-BR", { timeZone: "UTC" })}
                         </span>
                       )}
                     </div>

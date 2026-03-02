@@ -363,7 +363,7 @@ export function FeedbackTable({
                             Agendado para preenchimento
                           </span>
                           <span className="ml-1.5 text-xs text-indigo-600">
-                            {new Date(fb.scheduledAt).toLocaleDateString("pt-BR")}
+                            {new Date(fb.scheduledAt).toLocaleDateString("pt-BR", { timeZone: "UTC" })}
                           </span>
                         </>
                       ) : (
@@ -381,7 +381,7 @@ export function FeedbackTable({
                           </span>
                           {fb.status === "scheduled" && fb.scheduledAt && (
                             <span className="ml-1.5 text-xs text-blue-600">
-                              {new Date(fb.scheduledAt).toLocaleDateString("pt-BR")}
+                              {new Date(fb.scheduledAt).toLocaleDateString("pt-BR", { timeZone: "UTC" })}
                             </span>
                           )}
                         </>
@@ -390,7 +390,7 @@ export function FeedbackTable({
                   )}
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
                     {fb.conductedAt
-                      ? new Date(fb.conductedAt).toLocaleDateString("pt-BR")
+                      ? new Date(fb.conductedAt).toLocaleDateString("pt-BR", { timeZone: "UTC" })
                       : "—"}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
