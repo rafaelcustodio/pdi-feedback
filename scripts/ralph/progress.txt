@@ -303,6 +303,15 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - All new fields (startDate, expectedResults, responsibleId, completedAt, successMetrics, achievedResults) persisted in create/update operations
 ---
 
+## 2026-03-02T18:30 - US-012 (reestruturacao-pdi-colaborador)
+- What was implemented: Updated PDI UI for continuous model. Removed manual PDI creation UI, added "Nova Meta" button in tracking view, completed goals shown collapsed.
+- Files changed:
+  - `src/app/(dashboard)/pdis/page.tsx` — Removed canCreate/isEmployeeView props
+  - `src/app/(dashboard)/pdis/novo/page.tsx` — Simplified to redirect to /pdis
+  - `src/components/pdi-table.tsx` — Removed "Novo PDI" button, Plus import, canCreate prop
+  - `src/components/pdi-tracking.tsx` — Added AddGoalForm component, "Nova Meta" button, completed goals collapsed section, defaultCollapsed prop on GoalCard
+---
+
 ## 2026-03-02T18:20 - US-011 (reestruturacao-pdi-colaborador)
 - What was implemented: Updated PDI server actions for continuous model. Added getOrCreatePDI and addGoal actions, removed manual createPDI, defaulted listing to active-only.
 - Files changed:
