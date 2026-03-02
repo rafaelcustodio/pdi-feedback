@@ -10,6 +10,32 @@ import {
   getManagerCandidates,
 } from "@/app/(dashboard)/colaboradores/actions";
 
+const UF_OPTIONS = [
+  "AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG",
+  "PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO",
+];
+
+function maskCPF(v: string): string {
+  const d = v.replace(/\D/g, "").slice(0, 11);
+  if (d.length <= 3) return d;
+  if (d.length <= 6) return `${d.slice(0, 3)}.${d.slice(3)}`;
+  if (d.length <= 9) return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6)}`;
+  return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9)}`;
+}
+
+function maskPhone(v: string): string {
+  const d = v.replace(/\D/g, "").slice(0, 11);
+  if (d.length <= 2) return d.length ? `(${d}` : "";
+  if (d.length <= 7) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+}
+
+function maskZip(v: string): string {
+  const d = v.replace(/\D/g, "").slice(0, 8);
+  if (d.length <= 5) return d;
+  return `${d.slice(0, 5)}-${d.slice(5)}`;
+}
+
 interface EmployeeFormProps {
   mode: "create" | "edit";
   orgUnits: { id: string; name: string }[];
@@ -22,6 +48,14 @@ interface EmployeeFormProps {
     orgUnitId?: string;
     managerId?: string;
     admissionDate?: string;
+    phone?: string;
+    cpf?: string;
+    birthDate?: string;
+    jobTitle?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
   };
 }
 
@@ -35,6 +69,14 @@ export function EmployeeForm({ mode, orgUnits, initialData }: EmployeeFormProps)
   const [orgUnitId, setOrgUnitId] = useState(initialData?.orgUnitId ?? "");
   const [managerId, setManagerId] = useState(initialData?.managerId ?? "");
   const [admissionDate, setAdmissionDate] = useState(initialData?.admissionDate ?? "");
+  const [phone, setPhone] = useState(initialData?.phone ? maskPhone(initialData.phone) : "");
+  const [cpf, setCpf] = useState(initialData?.cpf ? maskCPF(initialData.cpf) : "");
+  const [birthDate, setBirthDate] = useState(initialData?.birthDate ?? "");
+  const [jobTitle, setJobTitle] = useState(initialData?.jobTitle ?? "");
+  const [address, setAddress] = useState(initialData?.address ?? "");
+  const [city, setCity] = useState(initialData?.city ?? "");
+  const [state, setState] = useState(initialData?.state ?? "");
+  const [zipCode, setZipCode] = useState(initialData?.zipCode ? maskZip(initialData.zipCode) : "");
   const [managers, setManagers] = useState<
     { id: string; name: string; email: string }[]
   >([]);
@@ -79,6 +121,14 @@ export function EmployeeForm({ mode, orgUnits, initialData }: EmployeeFormProps)
         orgUnitId: orgUnitId || undefined,
         managerId: managerId || undefined,
         admissionDate: admissionDate || undefined,
+        phone: phone || undefined,
+        cpf: cpf || undefined,
+        birthDate: birthDate || undefined,
+        jobTitle: jobTitle || undefined,
+        address: address || undefined,
+        city: city || undefined,
+        state: state || undefined,
+        zipCode: zipCode || undefined,
       });
     } else {
       result = await updateEmployee(initialData!.id, {
@@ -89,6 +139,14 @@ export function EmployeeForm({ mode, orgUnits, initialData }: EmployeeFormProps)
         orgUnitId: orgUnitId || undefined,
         managerId: managerId || undefined,
         admissionDate: admissionDate || undefined,
+        phone: phone || undefined,
+        cpf: cpf || undefined,
+        birthDate: birthDate || undefined,
+        jobTitle: jobTitle || undefined,
+        address: address || undefined,
+        city: city || undefined,
+        state: state || undefined,
+        zipCode: zipCode || undefined,
       });
     }
 
@@ -129,6 +187,7 @@ export function EmployeeForm({ mode, orgUnits, initialData }: EmployeeFormProps)
       )}
 
       <div className="rounded-lg border border-gray-200 bg-white p-6">
+        <h2 className="mb-4 text-lg font-medium text-gray-900">Dados do Sistema</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           {/* Name */}
           <div>
@@ -295,6 +354,141 @@ export function EmployeeForm({ mode, orgUnits, initialData }: EmployeeFormProps)
               type="date"
               value={admissionDate}
               onChange={(e) => setAdmissionDate(e.target.value)}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              disabled={loading}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Dados Pessoais Section */}
+      <div className="rounded-lg border border-gray-200 bg-white p-6">
+        <h2 className="mb-4 text-lg font-medium text-gray-900">Dados Pessoais</h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {/* CPF */}
+          <div>
+            <label htmlFor="emp-cpf" className="mb-1 block text-sm font-medium text-gray-700">
+              CPF
+            </label>
+            <input
+              id="emp-cpf"
+              type="text"
+              value={cpf}
+              onChange={(e) => setCpf(maskCPF(e.target.value))}
+              placeholder="000.000.000-00"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              disabled={loading}
+            />
+          </div>
+
+          {/* Phone */}
+          <div>
+            <label htmlFor="emp-phone" className="mb-1 block text-sm font-medium text-gray-700">
+              Telefone
+            </label>
+            <input
+              id="emp-phone"
+              type="text"
+              value={phone}
+              onChange={(e) => setPhone(maskPhone(e.target.value))}
+              placeholder="(00) 00000-0000"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              disabled={loading}
+            />
+          </div>
+
+          {/* Birth Date */}
+          <div>
+            <label htmlFor="emp-birthdate" className="mb-1 block text-sm font-medium text-gray-700">
+              Data de Nascimento
+            </label>
+            <input
+              id="emp-birthdate"
+              type="date"
+              value={birthDate}
+              onChange={(e) => setBirthDate(e.target.value)}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              disabled={loading}
+            />
+          </div>
+
+          {/* Job Title */}
+          <div>
+            <label htmlFor="emp-jobtitle" className="mb-1 block text-sm font-medium text-gray-700">
+              Cargo
+            </label>
+            <input
+              id="emp-jobtitle"
+              type="text"
+              value={jobTitle}
+              onChange={(e) => setJobTitle(e.target.value)}
+              placeholder="Ex: Analista de TI"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              disabled={loading}
+            />
+          </div>
+
+          {/* Address */}
+          <div className="sm:col-span-2">
+            <label htmlFor="emp-address" className="mb-1 block text-sm font-medium text-gray-700">
+              Endereço
+            </label>
+            <input
+              id="emp-address"
+              type="text"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder="Rua, número, complemento"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              disabled={loading}
+            />
+          </div>
+
+          {/* City */}
+          <div>
+            <label htmlFor="emp-city" className="mb-1 block text-sm font-medium text-gray-700">
+              Cidade
+            </label>
+            <input
+              id="emp-city"
+              type="text"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              disabled={loading}
+            />
+          </div>
+
+          {/* State */}
+          <div>
+            <label htmlFor="emp-state" className="mb-1 block text-sm font-medium text-gray-700">
+              Estado (UF)
+            </label>
+            <select
+              id="emp-state"
+              value={state}
+              onChange={(e) => setState(e.target.value)}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              disabled={loading}
+            >
+              <option value="">Selecione</option>
+              {UF_OPTIONS.map((uf) => (
+                <option key={uf} value={uf}>{uf}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Zip Code */}
+          <div>
+            <label htmlFor="emp-zipcode" className="mb-1 block text-sm font-medium text-gray-700">
+              CEP
+            </label>
+            <input
+              id="emp-zipcode"
+              type="text"
+              value={zipCode}
+              onChange={(e) => setZipCode(maskZip(e.target.value))}
+              placeholder="00000-000"
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               disabled={loading}
             />

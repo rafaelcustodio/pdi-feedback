@@ -40,6 +40,14 @@ export default async function EditarColaboradorPage({
           orgUnitId: employee.hierarchy?.organizationalUnitId,
           managerId: employee.hierarchy?.managerId,
           admissionDate: employee.admissionDate?.toISOString().slice(0, 10),
+          phone: employee.phone ?? undefined,
+          cpf: employee.cpf ?? undefined,
+          birthDate: employee.birthDate?.toISOString().slice(0, 10),
+          jobTitle: employee.jobTitle ?? undefined,
+          address: employee.address ?? undefined,
+          city: employee.city ?? undefined,
+          state: employee.state ?? undefined,
+          zipCode: employee.zipCode ?? undefined,
         }}
       />
       <ScheduleSection

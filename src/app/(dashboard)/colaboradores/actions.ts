@@ -6,6 +6,23 @@ import { revalidatePath } from "next/cache";
 import { generateScheduledFeedbackEvents, removeScheduledFeedbackEvents } from "@/lib/schedule-utils";
 import { createOnboardingFeedbacks, updateOnboardingFeedbacks, handleSectorTransfer } from "@/lib/sector-schedule-utils";
 
+function validateCPF(cpf: string): boolean {
+  const digits = cpf.replace(/\D/g, "");
+  if (digits.length !== 11) return false;
+  if (/^(\d)\1{10}$/.test(digits)) return false;
+  let sum = 0;
+  for (let i = 0; i < 9; i++) sum += parseInt(digits[i]) * (10 - i);
+  let check = 11 - (sum % 11);
+  if (check >= 10) check = 0;
+  if (parseInt(digits[9]) !== check) return false;
+  sum = 0;
+  for (let i = 0; i < 10; i++) sum += parseInt(digits[i]) * (11 - i);
+  check = 11 - (sum % 11);
+  if (check >= 10) check = 0;
+  if (parseInt(digits[10]) !== check) return false;
+  return true;
+}
+
 export type EmployeeListItem = {
   id: string;
   name: string;
@@ -26,6 +43,14 @@ export type EmployeeDetail = {
   isActive: boolean;
   avatarUrl: string | null;
   admissionDate: Date | null;
+  phone: string | null;
+  cpf: string | null;
+  birthDate: Date | null;
+  jobTitle: string | null;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  zipCode: string | null;
   createdAt: Date;
   hierarchy: {
     id: string;
@@ -145,6 +170,14 @@ export async function getEmployeeById(
     isActive: user.isActive,
     avatarUrl: user.avatarUrl,
     admissionDate: user.admissionDate,
+    phone: user.phone ?? null,
+    cpf: user.cpf ?? null,
+    birthDate: user.birthDate ?? null,
+    jobTitle: user.jobTitle ?? null,
+    address: user.address ?? null,
+    city: user.city ?? null,
+    state: user.state ?? null,
+    zipCode: user.zipCode ?? null,
     createdAt: user.createdAt,
     hierarchy: activeHierarchy
       ? {
@@ -223,6 +256,14 @@ export async function createEmployee(data: {
   orgUnitId?: string;
   managerId?: string;
   admissionDate?: string;
+  phone?: string;
+  cpf?: string;
+  birthDate?: string;
+  jobTitle?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
 }): Promise<{ success: boolean; error?: string; id?: string }> {
   const session = await requireAdmin();
   if (!session) {
@@ -260,12 +301,22 @@ export async function createEmployee(data: {
     return { success: false, error: "Modo de avaliação inválido" };
   }
 
+  // Validate CPF if provided
+  if (data.cpf) {
+    const cpfDigits = data.cpf.replace(/\D/g, "");
+    if (cpfDigits && !validateCPF(cpfDigits)) {
+      return { success: false, error: "CPF inválido" };
+    }
+  }
+
   // Hash password if provided
   let hashedPassword: string | null = null;
   if (data.password) {
     const { hash } = await import("bcryptjs");
     hashedPassword = await hash(data.password, 10);
   }
+
+  const cpfClean = data.cpf?.replace(/\D/g, "") || null;
 
   const user = await prisma.user.create({
     data: {
@@ -275,6 +326,14 @@ export async function createEmployee(data: {
       evaluationMode: evaluationMode as "pdi" | "feedback",
       password: hashedPassword,
       admissionDate: data.admissionDate ? new Date(data.admissionDate) : null,
+      phone: data.phone?.trim() || null,
+      cpf: cpfClean || null,
+      birthDate: data.birthDate ? new Date(data.birthDate) : null,
+      jobTitle: data.jobTitle?.trim() || null,
+      address: data.address?.trim() || null,
+      city: data.city?.trim() || null,
+      state: data.state?.trim() || null,
+      zipCode: data.zipCode?.replace(/\D/g, "") || null,
     },
   });
 
@@ -312,6 +371,14 @@ export async function updateEmployee(
     orgUnitId?: string;
     managerId?: string;
     admissionDate?: string;
+    phone?: string;
+    cpf?: string;
+    birthDate?: string;
+    jobTitle?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
   }
 ): Promise<{ success: boolean; error?: string }> {
   const session = await requireAdmin();
@@ -354,10 +421,20 @@ export async function updateEmployee(
     return { success: false, error: "Modo de avaliação inválido" };
   }
 
+  // Validate CPF if provided
+  if (data.cpf) {
+    const cpfDigits = data.cpf.replace(/\D/g, "");
+    if (cpfDigits && !validateCPF(cpfDigits)) {
+      return { success: false, error: "CPF inválido" };
+    }
+  }
+
   // Update user fields
   const newAdmissionDate = data.admissionDate ? new Date(data.admissionDate) : null;
   const admissionChanged =
     newAdmissionDate?.getTime() !== user.admissionDate?.getTime();
+
+  const cpfClean = data.cpf?.replace(/\D/g, "") || null;
 
   await prisma.user.update({
     where: { id },
@@ -367,6 +444,14 @@ export async function updateEmployee(
       role: data.role as "admin" | "manager" | "employee",
       evaluationMode: evaluationMode as "pdi" | "feedback",
       admissionDate: newAdmissionDate,
+      phone: data.phone?.trim() || null,
+      cpf: cpfClean || null,
+      birthDate: data.birthDate ? new Date(data.birthDate) : null,
+      jobTitle: data.jobTitle?.trim() || null,
+      address: data.address?.trim() || null,
+      city: data.city?.trim() || null,
+      state: data.state?.trim() || null,
+      zipCode: data.zipCode?.replace(/\D/g, "") || null,
     },
   });
 
