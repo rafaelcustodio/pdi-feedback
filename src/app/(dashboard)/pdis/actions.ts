@@ -706,6 +706,15 @@ export async function addComment(
     }
   }
 
+  // Verify user still exists in DB (JWT may carry stale userId after db reset)
+  const userExists = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true },
+  });
+  if (!userExists) {
+    return { success: false, error: "Sessão inválida. Faça logout e login novamente." };
+  }
+
   await prisma.pDIComment.create({
     data: {
       pdiId,

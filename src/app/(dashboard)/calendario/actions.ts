@@ -6,7 +6,7 @@ import { getAccessibleEmployeeIds } from "@/lib/access-control";
 
 export type CalendarEvent = {
   id: string;
-  type: "pdi" | "feedback";
+  type: "pdi" | "feedback" | "followup";
   employeeName: string;
   scheduledAt: Date;
   status: string;
@@ -99,6 +99,29 @@ export async function getCalendarEvents(
         scheduledAt: pdi.conductedAt ?? pdi.createdAt,
         status: pdi.status,
         href: `/pdis/${pdi.id}`,
+      });
+    }
+  }
+
+  // Fetch PDI Follow-Up events
+  if (tipo === "all" || tipo === "pdi") {
+    const followUps = await prisma.pDIFollowUp.findMany({
+      where: {
+        pdi: { ...employeeFilter, status: "active" },
+        scheduledAt: { gte: startOfMonth, lte: endOfMonth },
+        status: { not: "cancelled" },
+      },
+      include: { pdi: { include: { employee: { select: { name: true } } } } },
+    });
+
+    for (const fu of followUps) {
+      events.push({
+        id: fu.id,
+        type: "followup",
+        employeeName: fu.pdi.employee.name,
+        scheduledAt: fu.scheduledAt,
+        status: fu.status,
+        href: `/pdis/${fu.pdiId}`,
       });
     }
   }

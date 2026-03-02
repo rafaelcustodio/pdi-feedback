@@ -11,12 +11,13 @@ import {
   Check,
   ClipboardList,
   MessageSquare,
+  Calendar,
 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 
 export type SerializedCalendarEvent = {
   id: string;
-  type: "pdi" | "feedback";
+  type: "pdi" | "feedback" | "followup";
   employeeName: string;
   scheduledAt: string;
   status: string;
@@ -57,8 +58,10 @@ function getStatusStyle(status: string): StatusStyle {
   return STATUS_STYLES[status] || STATUS_STYLES.scheduled;
 }
 
-function getTypeBorderColor(type: "pdi" | "feedback"): string {
-  return type === "pdi" ? "border-l-blue-500" : "border-l-green-500";
+function getTypeBorderColor(type: "pdi" | "feedback" | "followup"): string {
+  if (type === "pdi") return "border-l-blue-500";
+  if (type === "followup") return "border-l-purple-500";
+  return "border-l-green-500";
 }
 
 export function CalendarView({ events, month, year }: CalendarViewProps) {
@@ -271,6 +274,10 @@ export function CalendarView({ events, month, year }: CalendarViewProps) {
           <span className="inline-block h-3 w-3 rounded border-l-2 border-l-green-500 bg-green-50" />
           Feedback
         </span>
+        <span className="flex items-center gap-1">
+          <span className="inline-block h-3 w-3 rounded border-l-2 border-l-purple-500 bg-purple-50" />
+          Acompanhamento
+        </span>
         <span className="mx-2 text-gray-300">|</span>
         {Object.entries(STATUS_STYLES).filter(([k]) => k !== "completed").map(([key, style]) => (
           <span key={key} className="flex items-center gap-1">
@@ -292,7 +299,7 @@ function EventBadge({ event }: { event: SerializedCalendarEvent }) {
     <Link
       href={event.href}
       className={`flex items-center gap-1 truncate rounded border-l-2 ${borderColor} ${style.bg} px-1.5 py-0.5 text-xs ${style.text} transition-opacity hover:opacity-80`}
-      title={`${event.type === "pdi" ? "PDI" : "Feedback"} — ${event.employeeName} (${style.label})`}
+      title={`${event.type === "pdi" ? "PDI" : event.type === "followup" ? "Acompanhamento PDI" : "Feedback"} — ${event.employeeName} (${style.label})`}
     >
       <Icon size={12} className="shrink-0" />
       <span className="truncate">{event.employeeName}</span>
@@ -373,7 +380,7 @@ function MobileAgendaView({
             <div className="divide-y divide-gray-50">
               {dayEvents.map((event) => {
                 const style = getStatusStyle(event.status);
-                const EventIcon = event.type === "pdi" ? ClipboardList : MessageSquare;
+                const EventIcon = event.type === "pdi" ? ClipboardList : event.type === "followup" ? Calendar : MessageSquare;
                 const StatusIcon = style.Icon;
 
                 return (
@@ -387,7 +394,9 @@ function MobileAgendaView({
                         className={`flex h-8 w-8 items-center justify-center rounded-lg ${
                           event.type === "pdi"
                             ? "bg-blue-50 text-blue-600"
-                            : "bg-green-50 text-green-600"
+                            : event.type === "followup"
+                              ? "bg-purple-50 text-purple-600"
+                              : "bg-green-50 text-green-600"
                         }`}
                       >
                         <EventIcon size={16} />
@@ -397,7 +406,7 @@ function MobileAgendaView({
                           {event.employeeName}
                         </p>
                         <p className="text-xs text-gray-500">
-                          {event.type === "pdi" ? "PDI" : "Feedback"}
+                          {event.type === "pdi" ? "PDI" : event.type === "followup" ? "Acompanhamento PDI" : "Feedback"}
                         </p>
                       </div>
                     </div>

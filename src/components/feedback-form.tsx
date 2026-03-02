@@ -26,7 +26,7 @@ interface FeedbackFormProps {
     strengths: string;
     improvements: string;
     rating: number;
-    conductedAt: string;
+    scheduledDate: string;
     createdAt?: string;
     status?: string;
     scheduledAt?: string;
@@ -81,7 +81,7 @@ export function FeedbackForm({
   const router = useRouter();
   const [employeeId, setEmployeeId] = useState(initialData?.employeeId ?? "");
   const [period, setPeriod] = useState(initialData?.period ?? "");
-  const [conductedAt, setConductedAt] = useState(initialData?.conductedAt ?? "");
+  const [scheduledDate, setScheduledDate] = useState(initialData?.scheduledDate ?? "");
   const [content, setContent] = useState(initialData?.content ?? "");
   const [strengths, setStrengths] = useState(initialData?.strengths ?? "");
   const [improvements, setImprovements] = useState(
@@ -111,7 +111,7 @@ export function FeedbackForm({
   const canSubmit =
     (mode === "create" ? !!employeeId : true) &&
     !!period.trim() &&
-    !!conductedAt &&
+    !!scheduledDate &&
     !!content.trim() &&
     !!strengths.trim() &&
     !!improvements.trim() &&
@@ -141,7 +141,7 @@ export function FeedbackForm({
         strengths,
         improvements,
         rating,
-        conductedAt,
+        scheduledAt: scheduledDate,
         submit,
       });
     } else {
@@ -151,7 +151,7 @@ export function FeedbackForm({
         strengths,
         improvements,
         rating,
-        conductedAt,
+        scheduledAt: scheduledDate,
         submit,
       });
     }
@@ -184,7 +184,7 @@ export function FeedbackForm({
         strengths,
         improvements,
         rating,
-        conductedAt,
+        scheduledAt: scheduledDate,
         submit: false,
       });
       if (!createResult.success || !createResult.id) {
@@ -208,7 +208,7 @@ export function FeedbackForm({
         strengths,
         improvements,
         rating,
-        conductedAt,
+        scheduledAt: scheduledDate,
         submit: false,
       });
       if (!saveResult.success) {
@@ -376,19 +376,19 @@ export function FeedbackForm({
               />
             </div>
 
-            {/* Conducted At */}
+            {/* Scheduled Date */}
             <div>
               <label
-                htmlFor="fb-conducted-at"
+                htmlFor="fb-scheduled-date"
                 className="mb-1 block text-sm font-medium text-gray-700"
               >
-                Data de Realização
+                Data da Programação
               </label>
               <input
-                id="fb-conducted-at"
+                id="fb-scheduled-date"
                 type="date"
-                value={conductedAt}
-                onChange={(e) => setConductedAt(e.target.value)}
+                value={scheduledDate}
+                onChange={(e) => setScheduledDate(e.target.value)}
                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 disabled={loading}
               />

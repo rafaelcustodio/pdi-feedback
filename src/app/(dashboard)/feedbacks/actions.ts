@@ -274,7 +274,7 @@ export async function createFeedback(data: {
   strengths: string;
   improvements: string;
   rating: number;
-  conductedAt: string;
+  scheduledAt: string;
   submit?: boolean;
 }): Promise<{ success: boolean; error?: string; id?: string }> {
   const session = await auth();
@@ -300,13 +300,13 @@ export async function createFeedback(data: {
     return { success: false, error: "Período é obrigatório" };
   }
 
-  if (!data.conductedAt.trim()) {
-    return { success: false, error: "Data de realização é obrigatória" };
+  if (!data.scheduledAt.trim()) {
+    return { success: false, error: "Data da programação é obrigatória" };
   }
 
-  const conductedAtDate = new Date(data.conductedAt);
-  if (isNaN(conductedAtDate.getTime())) {
-    return { success: false, error: "Data de realização inválida" };
+  const scheduledAtDate = new Date(data.scheduledAt);
+  if (isNaN(scheduledAtDate.getTime())) {
+    return { success: false, error: "Data da programação inválida" };
   }
 
   // If submitting, validate all required fields
@@ -334,7 +334,7 @@ export async function createFeedback(data: {
       strengths: data.strengths.trim() || null,
       improvements: data.improvements.trim() || null,
       rating: data.rating || null,
-      conductedAt: conductedAtDate,
+      scheduledAt: scheduledAtDate,
       status: data.submit ? "submitted" : "draft",
     },
   });
@@ -356,7 +356,7 @@ export async function updateFeedback(
     strengths: string;
     improvements: string;
     rating: number;
-    conductedAt: string;
+    scheduledAt: string;
     submit?: boolean;
   }
 ): Promise<{ success: boolean; error?: string }> {
@@ -387,13 +387,13 @@ export async function updateFeedback(
     return { success: false, error: "Período é obrigatório" };
   }
 
-  if (!data.conductedAt.trim()) {
-    return { success: false, error: "Data de realização é obrigatória" };
+  if (!data.scheduledAt.trim()) {
+    return { success: false, error: "Data da programação é obrigatória" };
   }
 
-  const conductedAtDate = new Date(data.conductedAt);
-  if (isNaN(conductedAtDate.getTime())) {
-    return { success: false, error: "Data de realização inválida" };
+  const scheduledAtDate = new Date(data.scheduledAt);
+  if (isNaN(scheduledAtDate.getTime())) {
+    return { success: false, error: "Data da programação inválida" };
   }
 
   // If submitting, validate all required fields
@@ -420,7 +420,7 @@ export async function updateFeedback(
       strengths: data.strengths.trim() || null,
       improvements: data.improvements.trim() || null,
       rating: data.rating || null,
-      conductedAt: conductedAtDate,
+      scheduledAt: scheduledAtDate,
       status: data.submit ? "submitted" : (feedback.status === "scheduled" ? "draft" : feedback.status),
     },
   });
@@ -518,8 +518,8 @@ export async function scheduleFeedback(
   if (!feedback.rating || feedback.rating < 1 || feedback.rating > 5) {
     return { success: false, error: "Avaliação (1-5) é obrigatória para agendar submissão" };
   }
-  if (!feedback.conductedAt) {
-    return { success: false, error: "Data de realização é obrigatória para agendar submissão" };
+  if (!feedback.scheduledAt) {
+    return { success: false, error: "Data da programação é obrigatória para agendar submissão" };
   }
 
   // Validate scheduledAt is a future date
