@@ -390,6 +390,18 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - Generated Prisma types in models/PDI.ts affect typecheck when app code creates PDIs — must update create/update input types
 ---
 
+## 2026-03-02T19:20 - US-015 (reestruturacao-pdi-colaborador)
+- What was implemented: Added follow-up UI to PDI tracking view. FollowUpsSection component with schedule, complete, and cancel functionality. Updated generated Prisma types for followUps relation on PDI.
+- Files changed:
+  - `src/components/pdi-tracking.tsx` — Added FollowUpsSection component with: schedule form (date picker), complete form (date + notes), cancel button, list split by scheduled vs past. Imported follow-up actions.
+  - `src/app/(dashboard)/pdis/actions.ts` — Added followUps to PDIDetail type, getPDIById and getOrCreatePDI include followUps relation
+  - `src/generated/prisma/models/PDI.ts` — Added followUps to PDIInclude and $PDIPayload, added PDI$followUpsArgs type, removed old scalar fields (period, frequencyMonths, scheduledAt)
+  - `src/generated/prisma/models/PDIFollowUp.ts` — Added $PDIFollowUpPayload type
+- **Learnings for future iterations:**
+  - Generated Prisma types need $Payload type with objects and scalars sections, and include types with model-specific args
+  - The PDI$followUpsArgs pattern follows PDI$commentsArgs — same structure for each relation
+---
+
 ## 2026-03-02T17:24 - US-008 (reestruturacao-pdi-colaborador)
 - What was implemented: Updated PDI form and tracking components to display and edit all new PDIGoal fields. Added responsible dropdown showing only employee and manager. completedAt/achievedResults disabled when status != completed.
 - Files changed:
