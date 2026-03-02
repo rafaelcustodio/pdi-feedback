@@ -423,6 +423,14 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - The PDI$followUpsArgs pattern follows PDI$commentsArgs — same structure for each relation
 ---
 
+## 2026-03-02T20:00 - US-018 (reestruturacao-pdi-colaborador)
+- What was implemented: Updated employee form with HR fields (CPF, phone, birth date, job title, address, city, state, zip). Added input masks, CPF validation, Brazilian UF dropdown.
+- Files changed:
+  - `src/app/(dashboard)/colaboradores/actions.ts` — Added validateCPF, HR fields to EmployeeDetail, createEmployee, updateEmployee
+  - `src/components/employee-form.tsx` — Added maskCPF/maskPhone/maskZip, UF_OPTIONS, "Dados Pessoais" section with all HR fields
+  - `src/app/(dashboard)/colaboradores/[id]/page.tsx` — Passes HR fields in initialData to EmployeeForm
+---
+
 ## 2026-03-02T17:24 - US-008 (reestruturacao-pdi-colaborador)
 - What was implemented: Updated PDI form and tracking components to display and edit all new PDIGoal fields. Added responsible dropdown showing only employee and manager. completedAt/achievedResults disabled when status != completed.
 - Files changed:
