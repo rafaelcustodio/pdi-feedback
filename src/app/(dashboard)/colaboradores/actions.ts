@@ -3,7 +3,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { generateScheduledFeedbackEvents, removeScheduledFeedbackEvents } from "@/lib/schedule-utils";
+import { removeScheduledFeedbackEvents } from "@/lib/schedule-utils";
 import { handleSectorTransfer } from "@/lib/sector-schedule-utils";
 
 function validateCPF(cpf: string): boolean {
@@ -660,8 +660,6 @@ export async function saveEmployeeSchedules(
         },
       });
     }
-    // Generate scheduled Feedback events for the next 12 months
-    await generateScheduledFeedbackEvents(employeeId, data.feedbackFrequency, managerId);
   } else if (existingFeedbackSchedule) {
     await prisma.feedbackSchedule.update({
       where: { id: existingFeedbackSchedule.id },
