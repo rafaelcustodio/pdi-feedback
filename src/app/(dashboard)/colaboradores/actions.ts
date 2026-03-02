@@ -22,6 +22,7 @@ export type EmployeeDetail = {
   name: string;
   email: string;
   role: string;
+  evaluationMode: string;
   isActive: boolean;
   avatarUrl: string | null;
   admissionDate: Date | null;
@@ -140,6 +141,7 @@ export async function getEmployeeById(
     name: user.name,
     email: user.email,
     role: user.role,
+    evaluationMode: user.evaluationMode,
     isActive: user.isActive,
     avatarUrl: user.avatarUrl,
     admissionDate: user.admissionDate,
@@ -216,6 +218,7 @@ export async function createEmployee(data: {
   name: string;
   email: string;
   role: string;
+  evaluationMode?: string;
   password?: string;
   orgUnitId?: string;
   managerId?: string;
@@ -250,6 +253,13 @@ export async function createEmployee(data: {
     return { success: false, error: "Papel inválido" };
   }
 
+  // Validate evaluationMode
+  const validEvaluationModes = ["pdi", "feedback"];
+  const evaluationMode = data.evaluationMode ?? "feedback";
+  if (!validEvaluationModes.includes(evaluationMode)) {
+    return { success: false, error: "Modo de avaliação inválido" };
+  }
+
   // Hash password if provided
   let hashedPassword: string | null = null;
   if (data.password) {
@@ -262,6 +272,7 @@ export async function createEmployee(data: {
       name: trimmedName,
       email: trimmedEmail,
       role: data.role as "admin" | "manager" | "employee",
+      evaluationMode: evaluationMode as "pdi" | "feedback",
       password: hashedPassword,
       admissionDate: data.admissionDate ? new Date(data.admissionDate) : null,
     },
@@ -297,6 +308,7 @@ export async function updateEmployee(
     name: string;
     email: string;
     role: string;
+    evaluationMode?: string;
     orgUnitId?: string;
     managerId?: string;
     admissionDate?: string;
@@ -335,6 +347,13 @@ export async function updateEmployee(
     return { success: false, error: "Papel inválido" };
   }
 
+  // Validate evaluationMode
+  const validEvaluationModes = ["pdi", "feedback"];
+  const evaluationMode = data.evaluationMode ?? "feedback";
+  if (!validEvaluationModes.includes(evaluationMode)) {
+    return { success: false, error: "Modo de avaliação inválido" };
+  }
+
   // Update user fields
   const newAdmissionDate = data.admissionDate ? new Date(data.admissionDate) : null;
   const admissionChanged =
@@ -346,6 +365,7 @@ export async function updateEmployee(
       name: trimmedName,
       email: trimmedEmail,
       role: data.role as "admin" | "manager" | "employee",
+      evaluationMode: evaluationMode as "pdi" | "feedback",
       admissionDate: newAdmissionDate,
     },
   });

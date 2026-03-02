@@ -222,3 +222,15 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - The inlineSchema in `class.ts` must match the current schema for runtime Prisma operations.
   - For enum fields, the pattern is: add enum to schema, add to enums.ts, add filter/nested filter/aggregates filter types to commonInputTypes.ts, add field ref types to prismaNamespace.ts, add field to all User type definitions in User.ts, add FieldUpdateOperationsInput type in User.ts.
 ---
+
+## 2026-03-02T16:44 - US-002 (reestruturacao-pdi-colaborador)
+- What was implemented: Added "Modo de Avaliação" dropdown to employee form with Feedback (default) and PDI options. Updated server actions to accept, validate, and save evaluationMode on create and update.
+- Files changed:
+  - `src/components/employee-form.tsx` — Added evaluationMode state, dropdown UI, and inclusion in create/update calls
+  - `src/app/(dashboard)/colaboradores/actions.ts` — Added evaluationMode to createEmployee/updateEmployee params, validation, and prisma calls. Added evaluationMode to EmployeeDetail type and getEmployeeById return.
+  - `src/app/(dashboard)/colaboradores/[id]/page.tsx` — Passes evaluationMode in initialData to EmployeeForm
+- **Learnings for future iterations:**
+  - Employee form follows pattern: state → form field → submit calls. Add new fields in all three places.
+  - Server actions validate with allowlist pattern: define validValues array, check with includes().
+  - EmployeeDetail type must be updated when adding fields to User, since the edit page passes it as initialData.
+---

@@ -36,6 +36,7 @@ export default async function EditarColaboradorPage({
           name: employee.name,
           email: employee.email,
           role: employee.role,
+          evaluationMode: employee.evaluationMode,
           orgUnitId: employee.hierarchy?.organizationalUnitId,
           managerId: employee.hierarchy?.managerId,
           admissionDate: employee.admissionDate?.toISOString().slice(0, 10),

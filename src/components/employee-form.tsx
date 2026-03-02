@@ -18,6 +18,7 @@ interface EmployeeFormProps {
     name: string;
     email: string;
     role: string;
+    evaluationMode?: string;
     orgUnitId?: string;
     managerId?: string;
     admissionDate?: string;
@@ -29,6 +30,7 @@ export function EmployeeForm({ mode, orgUnits, initialData }: EmployeeFormProps)
   const [name, setName] = useState(initialData?.name ?? "");
   const [email, setEmail] = useState(initialData?.email ?? "");
   const [role, setRole] = useState(initialData?.role ?? "employee");
+  const [evaluationMode, setEvaluationMode] = useState(initialData?.evaluationMode ?? "feedback");
   const [password, setPassword] = useState("");
   const [orgUnitId, setOrgUnitId] = useState(initialData?.orgUnitId ?? "");
   const [managerId, setManagerId] = useState(initialData?.managerId ?? "");
@@ -72,6 +74,7 @@ export function EmployeeForm({ mode, orgUnits, initialData }: EmployeeFormProps)
         name,
         email,
         role,
+        evaluationMode,
         password: password || undefined,
         orgUnitId: orgUnitId || undefined,
         managerId: managerId || undefined,
@@ -82,6 +85,7 @@ export function EmployeeForm({ mode, orgUnits, initialData }: EmployeeFormProps)
         name,
         email,
         role,
+        evaluationMode,
         orgUnitId: orgUnitId || undefined,
         managerId: managerId || undefined,
         admissionDate: admissionDate || undefined,
@@ -184,6 +188,26 @@ export function EmployeeForm({ mode, orgUnits, initialData }: EmployeeFormProps)
               <option value="employee">Colaborador</option>
               <option value="manager">Gestor</option>
               <option value="admin">Administrador</option>
+            </select>
+          </div>
+
+          {/* Evaluation Mode */}
+          <div>
+            <label
+              htmlFor="emp-evaluation-mode"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
+              Modo de Avaliação
+            </label>
+            <select
+              id="emp-evaluation-mode"
+              value={evaluationMode}
+              onChange={(e) => setEvaluationMode(e.target.value)}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              disabled={loading}
+            >
+              <option value="feedback">Feedback</option>
+              <option value="pdi">PDI</option>
             </select>
           </div>
 
