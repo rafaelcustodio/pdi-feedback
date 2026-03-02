@@ -200,3 +200,25 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - Pre-loading lookup maps avoids N+1 queries in the cron loop — efficient for large datasets
   - The design is defensive: even if an individual schedule is active alongside sector config, sector takes precedence for auto-generation
 ---
+
+## Codebase Patterns (Updated 2026-03-02)
+- Prisma schema engine binary cannot be downloaded in this environment (network restriction to binaries.prisma.sh). Generated client files must be updated manually after schema changes: update `enums.ts`, `models/User.ts`, `commonInputTypes.ts`, `internal/prismaNamespace.ts`, and `internal/class.ts` (inlineSchema).
+- When adding a new enum field to a model, update ALL type definitions in the generated model file: aggregate types (Min/Max/Count), where filters, create inputs, update inputs, orderBy, scalars in $Payload, and FieldRef. Also add corresponding filter types in `commonInputTypes.ts` and field ref types in `prismaNamespace.ts`.
+
+---
+
+## 2026-03-02T16:35 - US-001 (reestruturacao-pdi-colaborador)
+- What was implemented: Added `EvaluationMode` enum (`pdi`, `feedback`) and `evaluationMode` field with default `feedback` to the User model in schema.prisma. Created migration SQL. Manually updated generated Prisma client files to include new types.
+- Files changed:
+  - `prisma/schema.prisma` — Added EvaluationMode enum, evaluationMode field on User, index
+  - `prisma/migrations/20260302120000_add_evaluation_mode/migration.sql` — Migration SQL
+  - `src/generated/prisma/enums.ts` — Added EvaluationMode const and type
+  - `src/generated/prisma/models/User.ts` — Added evaluationMode to all User type definitions
+  - `src/generated/prisma/commonInputTypes.ts` — Added filter types for EvaluationMode
+  - `src/generated/prisma/internal/prismaNamespace.ts` — Added field ref types
+  - `src/generated/prisma/internal/class.ts` — Updated inlineSchema
+- **Learnings for future iterations:**
+  - Prisma binaries server (binaries.prisma.sh) is unreachable. Use manual approach for schema changes.
+  - The inlineSchema in `class.ts` must match the current schema for runtime Prisma operations.
+  - For enum fields, the pattern is: add enum to schema, add to enums.ts, add filter/nested filter/aggregates filter types to commonInputTypes.ts, add field ref types to prismaNamespace.ts, add field to all User type definitions in User.ts, add FieldUpdateOperationsInput type in User.ts.
+---

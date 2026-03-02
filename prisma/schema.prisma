@@ -17,6 +17,11 @@ enum UserRole {
   employee
 }
 
+enum EvaluationMode {
+  pdi
+  feedback
+}
+
 enum ScheduleType {
   pdi
   feedback
@@ -28,6 +33,7 @@ model User {
   email       String    @unique
   password    String?
   role        UserRole  @default(employee)
+  evaluationMode EvaluationMode @default(feedback)
   avatarUrl   String?
   ssoProvider String?
   ssoId       String?
@@ -57,6 +63,7 @@ model User {
 
   @@index([email])
   @@index([role])
+  @@index([evaluationMode])
 }
 
 // ============================================================
