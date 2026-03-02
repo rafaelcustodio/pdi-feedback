@@ -423,6 +423,13 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - The PDI$followUpsArgs pattern follows PDI$commentsArgs — same structure for each relation
 ---
 
+## 2026-03-02T20:10 - US-019 (reestruturacao-pdi-colaborador)
+- What was implemented: Added Cargo, Telefone, and Modo columns to employee listing table with responsive design and evaluation mode badge.
+- Files changed:
+  - `src/app/(dashboard)/colaboradores/actions.ts` — Added jobTitle, phone, evaluationMode to EmployeeListItem type and getEmployees return mapping
+  - `src/components/employee-table.tsx` — Added 3 new columns (Cargo, Telefone, Modo) with responsive hiding (hidden on sm, visible md/lg), Modo badge: PDI=blue, Feedback=green
+---
+
 ## 2026-03-02T20:00 - US-018 (reestruturacao-pdi-colaborador)
 - What was implemented: Updated employee form with HR fields (CPF, phone, birth date, job title, address, city, state, zip). Added input masks, CPF validation, Brazilian UF dropdown.
 - Files changed:
