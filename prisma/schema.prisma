@@ -132,6 +132,12 @@ enum GoalStatus {
   completed
 }
 
+enum FollowUpStatus {
+  scheduled
+  completed
+  cancelled
+}
+
 model PDI {
   id              String    @id @default(cuid())
   employeeId      String
@@ -141,15 +147,30 @@ model PDI {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  employee User @relation("PDIEmployee", fields: [employeeId], references: [id])
-  manager  User @relation("PDIManager", fields: [managerId], references: [id])
+  employee  User @relation("PDIEmployee", fields: [employeeId], references: [id])
+  manager   User @relation("PDIManager", fields: [managerId], references: [id])
 
-  goals    PDIGoal[]
-  comments PDIComment[]
+  goals     PDIGoal[]
+  comments  PDIComment[]
+  followUps PDIFollowUp[]
 
   @@index([employeeId])
   @@index([managerId])
   @@index([status])
+}
+
+model PDIFollowUp {
+  id          String         @id @default(cuid())
+  pdiId       String
+  scheduledAt DateTime
+  conductedAt DateTime?
+  notes       String?
+  status      FollowUpStatus @default(scheduled)
+  createdAt   DateTime       @default(now())
+
+  pdi PDI @relation(fields: [pdiId], references: [id], onDelete: Cascade)
+
+  @@index([pdiId])
 }
 
 model PDIGoal {

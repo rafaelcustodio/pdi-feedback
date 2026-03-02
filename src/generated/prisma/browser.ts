@@ -58,6 +58,11 @@ export type PDIEvidence = Prisma.PDIEvidenceModel
  */
 export type PDIComment = Prisma.PDICommentModel
 /**
+ * Model PDIFollowUp
+ *
+ */
+export type PDIFollowUp = Prisma.PDIFollowUpModel
+/**
  * Model Feedback
  * 
  */

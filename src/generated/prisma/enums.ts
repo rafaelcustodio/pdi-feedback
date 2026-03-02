@@ -51,6 +51,15 @@ export const GoalStatus = {
 export type GoalStatus = (typeof GoalStatus)[keyof typeof GoalStatus]
 
 
+export const FollowUpStatus = {
+  scheduled: 'scheduled',
+  completed: 'completed',
+  cancelled: 'cancelled'
+} as const
+
+export type FollowUpStatus = (typeof FollowUpStatus)[keyof typeof FollowUpStatus]
+
+
 export const FeedbackStatus = {
   draft: 'draft',
   scheduled: 'scheduled',
