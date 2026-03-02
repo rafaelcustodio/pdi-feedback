@@ -39,6 +39,14 @@ model User {
   ssoId       String?
   isActive    Boolean   @default(true)
   admissionDate DateTime?
+  phone       String?
+  cpf         String?   @unique
+  birthDate   DateTime?
+  jobTitle    String?
+  address     String?
+  city        String?
+  state       String?
+  zipCode     String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

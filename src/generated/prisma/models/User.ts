@@ -36,6 +36,14 @@ export type UserMinAggregateOutputType = {
   ssoId: string | null
   isActive: boolean | null
   admissionDate: Date | null
+  phone: string | null
+  cpf: string | null
+  birthDate: Date | null
+  jobTitle: string | null
+  address: string | null
+  city: string | null
+  state: string | null
+  zipCode: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -52,6 +60,14 @@ export type UserMaxAggregateOutputType = {
   ssoId: string | null
   isActive: boolean | null
   admissionDate: Date | null
+  phone: string | null
+  cpf: string | null
+  birthDate: Date | null
+  jobTitle: string | null
+  address: string | null
+  city: string | null
+  state: string | null
+  zipCode: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -68,6 +84,14 @@ export type UserCountAggregateOutputType = {
   ssoId: number
   isActive: number
   admissionDate: number
+  phone: number
+  cpf: number
+  birthDate: number
+  jobTitle: number
+  address: number
+  city: number
+  state: number
+  zipCode: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -85,6 +109,14 @@ export type UserMinAggregateInputType = {
   ssoId?: true
   isActive?: true
   admissionDate?: true
+  phone?: true
+  cpf?: true
+  birthDate?: true
+  jobTitle?: true
+  address?: true
+  city?: true
+  state?: true
+  zipCode?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -100,6 +132,14 @@ export type UserMaxAggregateInputType = {
   ssoId?: true
   isActive?: true
   admissionDate?: true
+  phone?: true
+  cpf?: true
+  birthDate?: true
+  jobTitle?: true
+  address?: true
+  city?: true
+  state?: true
+  zipCode?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -115,6 +155,14 @@ export type UserCountAggregateInputType = {
   ssoId?: true
   isActive?: true
   admissionDate?: true
+  phone?: true
+  cpf?: true
+  birthDate?: true
+  jobTitle?: true
+  address?: true
+  city?: true
+  state?: true
+  zipCode?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -368,6 +416,14 @@ export type UserCreateInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -397,6 +453,14 @@ export type UserUncheckedCreateInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -426,6 +490,14 @@ export type UserUpdateInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -455,6 +527,14 @@ export type UserUncheckedUpdateInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -484,6 +564,14 @@ export type UserCreateManyInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -500,6 +588,14 @@ export type UserUpdateManyMutationInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -863,6 +959,14 @@ export type UserCreateWithoutManagerHierarchiesInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -891,6 +995,14 @@ export type UserUncheckedCreateWithoutManagerHierarchiesInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -1002,6 +1114,14 @@ export type UserUpdateWithoutManagerHierarchiesInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -1030,6 +1150,14 @@ export type UserUncheckedUpdateWithoutManagerHierarchiesInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -1058,6 +1186,14 @@ export type UserCreateWithoutPdisAsEmployeeInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -1086,6 +1222,14 @@ export type UserUncheckedCreateWithoutPdisAsEmployeeInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -1119,6 +1263,14 @@ export type UserCreateWithoutPdisAsManagerInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -1147,6 +1299,14 @@ export type UserUncheckedCreateWithoutPdisAsManagerInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -1191,6 +1351,14 @@ export type UserUpdateWithoutPdisAsEmployeeInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -1219,6 +1387,14 @@ export type UserUncheckedUpdateWithoutPdisAsEmployeeInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -1258,6 +1434,14 @@ export type UserUpdateWithoutPdisAsManagerInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -1286,6 +1470,14 @@ export type UserUncheckedUpdateWithoutPdisAsManagerInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -1314,6 +1506,14 @@ export type UserCreateWithoutPdiEvidencesInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -1342,6 +1542,14 @@ export type UserUncheckedCreateWithoutPdiEvidencesInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -1386,6 +1594,14 @@ export type UserUpdateWithoutPdiEvidencesInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -1414,6 +1630,14 @@ export type UserUncheckedUpdateWithoutPdiEvidencesInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -1442,6 +1666,14 @@ export type UserCreateWithoutPdiCommentsInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -1470,6 +1702,14 @@ export type UserUncheckedCreateWithoutPdiCommentsInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -1514,6 +1754,14 @@ export type UserUpdateWithoutPdiCommentsInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -1542,6 +1790,14 @@ export type UserUncheckedUpdateWithoutPdiCommentsInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -1570,6 +1826,14 @@ export type UserCreateWithoutFeedbacksReceivedInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -1598,6 +1862,14 @@ export type UserUncheckedCreateWithoutFeedbacksReceivedInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -1631,6 +1903,14 @@ export type UserCreateWithoutFeedbacksGivenInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -1659,6 +1939,14 @@ export type UserUncheckedCreateWithoutFeedbacksGivenInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -1703,6 +1991,14 @@ export type UserUpdateWithoutFeedbacksReceivedInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -1731,6 +2027,14 @@ export type UserUncheckedUpdateWithoutFeedbacksReceivedInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -1770,6 +2074,14 @@ export type UserUpdateWithoutFeedbacksGivenInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -1798,6 +2110,14 @@ export type UserUncheckedUpdateWithoutFeedbacksGivenInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -1826,6 +2146,14 @@ export type UserCreateWithoutFeedbackSchedulesAsEmployeeInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -1854,6 +2182,14 @@ export type UserUncheckedCreateWithoutFeedbackSchedulesAsEmployeeInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -1887,6 +2223,14 @@ export type UserCreateWithoutFeedbackSchedulesAsManagerInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -1915,6 +2259,14 @@ export type UserUncheckedCreateWithoutFeedbackSchedulesAsManagerInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -1959,6 +2311,14 @@ export type UserUpdateWithoutFeedbackSchedulesAsEmployeeInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -1987,6 +2347,14 @@ export type UserUncheckedUpdateWithoutFeedbackSchedulesAsEmployeeInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -2026,6 +2394,14 @@ export type UserUpdateWithoutFeedbackSchedulesAsManagerInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -2054,6 +2430,14 @@ export type UserUncheckedUpdateWithoutFeedbackSchedulesAsManagerInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -2082,6 +2466,14 @@ export type UserCreateWithoutPdiSchedulesAsEmployeeInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -2110,6 +2502,14 @@ export type UserUncheckedCreateWithoutPdiSchedulesAsEmployeeInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -2143,6 +2543,14 @@ export type UserCreateWithoutPdiSchedulesAsManagerInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -2171,6 +2579,14 @@ export type UserUncheckedCreateWithoutPdiSchedulesAsManagerInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -2215,6 +2631,14 @@ export type UserUpdateWithoutPdiSchedulesAsEmployeeInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -2243,6 +2667,14 @@ export type UserUncheckedUpdateWithoutPdiSchedulesAsEmployeeInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -2282,6 +2714,14 @@ export type UserUpdateWithoutPdiSchedulesAsManagerInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -2310,6 +2750,14 @@ export type UserUncheckedUpdateWithoutPdiSchedulesAsManagerInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -2338,6 +2786,14 @@ export type UserCreateWithoutNotificationsInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -2366,6 +2822,14 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -2410,6 +2874,14 @@ export type UserUpdateWithoutNotificationsInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -2438,6 +2910,14 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -2716,6 +3196,14 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     ssoId: string | null
     isActive: boolean
     admissionDate: Date | null
+    phone: string | null
+    cpf: string | null
+    birthDate: Date | null
+    jobTitle: string | null
+    address: string | null
+    city: string | null
+    state: string | null
+    zipCode: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
