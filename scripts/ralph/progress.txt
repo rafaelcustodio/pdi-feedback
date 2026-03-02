@@ -39,3 +39,18 @@ Started: Mon Mar  2 11:01:25 PST 2026
   - For Prisma errors in "use server" actions, use `error && typeof error === "object" && "code" in error` pattern for safe type narrowing
   - The `getOrCreatePDI()` function is the primary entry point for creating PDIs in the continuous model
 ---
+
+## 2026-03-02 - US-003
+- Fixed `programEvents()` in `src/app/(dashboard)/programacao/actions.ts`:
+  - Changed PDI duplicate check from date-range (createdAt/conductedAt between periodStart-periodEnd) to simple `status: "active"` check
+  - Added P2002 try/catch on `prisma.pDI.create()` as safety fallback, incrementing `skipped`
+  - Feedback duplicate check left unchanged (still uses date-range which is correct for feedbacks)
+- Files changed:
+  - `src/app/(dashboard)/programacao/actions.ts` (modified programEvents)
+  - `scripts/ralph/prd.json` (US-003 passes: true)
+  - `scripts/ralph/progress.txt` (this entry)
+- **Learnings for future iterations:**
+  - PDIs use continuous model (one active per employee), so duplicate checks should use `status: "active"` not date ranges
+  - Feedbacks use period-based model, so duplicate checks correctly use date ranges (scheduledAt/conductedAt between periodStart-periodEnd)
+  - `programEvents()` handles both types but with different duplicate detection logic
+---

@@ -51,7 +51,7 @@
         "Typecheck passa"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "A verificação atual usa janela de datas (createdAt/conductedAt entre periodStart e periodEnd) que é incorreta para o modelo contínuo. Deve verificar apenas status='active' para PDIs."
     },
     {

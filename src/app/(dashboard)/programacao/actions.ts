@@ -241,14 +241,11 @@ export async function programEvents(params: {
     const emp = accessibleEmployees.find((e) => e.id === event.employeeId)!;
 
     if (params.type === "pdi") {
+      // Continuous model: only one active PDI per employee, regardless of dates
       const existing = await prisma.pDI.findFirst({
         where: {
           employeeId: event.employeeId,
-          OR: [
-            { createdAt: { gte: params.periodStart, lte: params.periodEnd } },
-            { conductedAt: { gte: params.periodStart, lte: params.periodEnd } },
-          ],
-          status: { in: ["active", "cancelled"] },
+          status: "active",
         },
       });
       if (existing) {
@@ -291,13 +288,27 @@ export async function programEvents(params: {
     const period = formatPeriod(event.scheduledDate);
 
     if (params.type === "pdi") {
-      await prisma.pDI.create({
-        data: {
-          employeeId: event.employeeId,
-          managerId: emp.managerId,
-          status: "active",
-        },
-      });
+      try {
+        await prisma.pDI.create({
+          data: {
+            employeeId: event.employeeId,
+            managerId: emp.managerId,
+            status: "active",
+          },
+        });
+      } catch (error: unknown) {
+        // P2002 = unique constraint violation (employee already has active PDI)
+        if (
+          error &&
+          typeof error === "object" &&
+          "code" in error &&
+          (error as { code: string }).code === "P2002"
+        ) {
+          skipped++;
+          continue;
+        }
+        throw error;
+      }
     } else {
       await prisma.feedback.create({
         data: {
