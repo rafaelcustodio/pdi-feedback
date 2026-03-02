@@ -66,7 +66,7 @@
         "Typecheck passa"
       ],
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "notes": "O bug está em getSectorComplianceStatus() linhas ~44-53 onde faz findMany em EmployeeHierarchy sem filtrar employee.evaluationMode. Adicionar o filtro no select/include do employee."
     }
   ]

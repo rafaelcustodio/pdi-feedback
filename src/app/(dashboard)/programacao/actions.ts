@@ -40,15 +40,18 @@ export async function getSectorComplianceStatus(
   // Get accessible employee IDs
   const accessibleIds = await getAccessibleEmployeeIds(userId, role);
 
-  // Get all active employees in the unit
+  // Get all active employees in the unit, filtered by evaluationMode
   const hierarchies = await prisma.employeeHierarchy.findMany({
     where: {
       organizationalUnitId: unitId,
       endDate: null,
+      employee: {
+        evaluationMode: type,
+      },
     },
     include: {
       employee: {
-        select: { id: true, name: true, role: true, admissionDate: true },
+        select: { id: true, name: true, role: true, admissionDate: true, evaluationMode: true },
       },
     },
   });
@@ -201,12 +204,15 @@ export async function programEvents(params: {
     const hasAccess = await canAccessEmployee(userId, role, empId);
     if (!hasAccess) continue;
 
-    // Get the employee's current manager and admission date
+    // Get the employee's current manager, admission date, and evaluationMode
     const hierarchy = await prisma.employeeHierarchy.findFirst({
       where: { employeeId: empId, endDate: null },
-      include: { employee: { select: { name: true, admissionDate: true } } },
+      include: { employee: { select: { name: true, admissionDate: true, evaluationMode: true } } },
     });
     if (!hierarchy) continue;
+
+    // Skip employees whose evaluationMode doesn't match the event type
+    if (hierarchy.employee.evaluationMode !== params.type) continue;
 
     // For feedback: skip employees still in onboarding (admissionDate + 90d > periodStart)
     if (params.type === "feedback" && hierarchy.employee.admissionDate) {

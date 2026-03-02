@@ -54,3 +54,17 @@ Started: Mon Mar  2 11:01:25 PST 2026
   - Feedbacks use period-based model, so duplicate checks correctly use date ranges (scheduledAt/conductedAt between periodStart-periodEnd)
   - `programEvents()` handles both types but with different duplicate detection logic
 ---
+
+## 2026-03-02 - US-004
+- Added `evaluationMode` filtering to `src/app/(dashboard)/programacao/actions.ts`:
+  - `getSectorComplianceStatus()`: Added `employee: { evaluationMode: type }` to EmployeeHierarchy where clause and `evaluationMode` to employee select
+  - `programEvents()`: Added `evaluationMode` to employee select, added early `continue` if `hierarchy.employee.evaluationMode !== params.type`
+- Files changed:
+  - `src/app/(dashboard)/programacao/actions.ts` (modified getSectorComplianceStatus, programEvents)
+  - `scripts/ralph/prd.json` (US-004 passes: true)
+  - `scripts/ralph/progress.txt` (this entry)
+- **Learnings for future iterations:**
+  - `evaluationMode` on User controls which evaluation type applies: 'pdi' or 'feedback'
+  - Filter at the Prisma query level when possible (using nested `employee: { evaluationMode: type }` in where clause) for efficiency
+  - Always include `evaluationMode` in select when it's needed for validation downstream
+---
