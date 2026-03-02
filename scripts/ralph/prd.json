@@ -1,340 +1,73 @@
 {
   "project": "pdi-feedback",
-  "branchName": "ralph/reestruturacao-pdi-colaborador",
-  "description": "Reestruturação PDI/Feedback: modo exclusivo por colaborador, metas detalhadas, PDI contínuo com follow-ups, e campos de RH no cadastro",
+  "branchName": "ralph/fix-pdi-duplicatas-evaluationmode",
+  "description": "Correção de PDIs duplicados por colaborador e filtro evaluationMode na tela de Programação",
   "userStories": [
     {
       "id": "US-001",
-      "title": "Adicionar enum EvaluationMode e campo evaluationMode ao User",
-      "description": "Como desenvolvedor, preciso adicionar o campo evaluationMode ao modelo User para distinguir colaboradores que usam PDI dos que usam Feedback.",
+      "title": "Consolidar PDIs duplicados existentes e adicionar constraint único",
+      "description": "Como desenvolvedor, preciso criar uma migration que consolide PDIs duplicados ativos e adicione um índice único parcial para impedir recorrência.",
       "acceptanceCriteria": [
-        "Criar enum EvaluationMode com valores 'pdi' e 'feedback' no schema.prisma",
-        "Adicionar campo evaluationMode ao modelo User com default 'feedback'",
-        "Adicionar índice em evaluationMode para queries filtradas",
-        "Gerar e aplicar migration Prisma com sucesso",
+        "Migration identifica colaboradores com mais de um PDI com status='active'",
+        "Para cada caso: mantém o PDI com updatedAt mais recente como ativo",
+        "Metas (PDIGoal), evidências (PDIEvidence via goal), comentários (PDIComment) e acompanhamentos (PDIFollowUp) dos PDIs cancelados são movidos para o PDI ativo mantido",
+        "PDIs redundantes são marcados como 'cancelled'",
+        "Nenhum dado é perdido na consolidação",
+        "Cria índice único parcial: CREATE UNIQUE INDEX idx_pdi_one_active_per_employee ON PDI(employeeId) WHERE status = 'active'",
+        "Migration é idempotente (rodar duas vezes não causa erro)",
+        "Migration aplica sem erros com prisma migrate dev",
         "Rodar prisma generate sem erros",
         "Typecheck passa"
       ],
       "priority": 1,
       "passes": true,
-      "notes": ""
+      "notes": "A migration 20260302160000_consolidate_pdis_per_employee já consolidou PDIs mas NÃO adicionou o constraint único. Esta migration complementa aquela. Consolidar também PDIFollowUp (não feito na migration anterior)."
     },
     {
       "id": "US-002",
-      "title": "Adicionar dropdown de modo de avaliação no formulário do colaborador",
-      "description": "Como administrador/gestor, quero selecionar o modo de avaliação (PDI ou Feedback) ao cadastrar ou editar um colaborador.",
+      "title": "Tornar getOrCreatePDI() atômico contra race conditions",
+      "description": "Como gestor, ao acessar o PDI de um colaborador, o sistema deve garantir que apenas um PDI ativo seja criado mesmo com acessos simultâneos.",
       "acceptanceCriteria": [
-        "Dropdown 'Modo de Avaliação' no formulário de colaborador (employee-form.tsx) com opções 'Feedback' (padrão) e 'PDI'",
-        "Campo enviado corretamente nas server actions de criação e edição (colaboradores/actions.ts)",
-        "Valor default 'feedback' quando não selecionado",
-        "Typecheck passa",
-        "Verify in browser using dev-browser skill"
+        "getOrCreatePDI() em src/app/(dashboard)/pdis/actions.ts usa try/catch no prisma.pDI.create()",
+        "Se o create falhar com erro P2002 (unique constraint violation), faz findFirst() como fallback e retorna o PDI existente",
+        "Se já existe PDI ativo, retorna o existente sem criar novo (comportamento atual mantido)",
+        "Se não existe, cria e retorna o novo PDI",
+        "Dois requests simultâneos para o mesmo colaborador nunca criam dois PDIs",
+        "Typecheck passa"
       ],
       "priority": 2,
-      "passes": true,
-      "notes": ""
+      "passes": false,
+      "notes": "O constraint único da US-001 é pré-requisito. O fallback com P2002 é a abordagem mais simples e robusta para PostgreSQL."
     },
     {
       "id": "US-003",
-      "title": "Filtrar menu lateral e rotas pelo modo de avaliação",
-      "description": "Como colaborador, quero ver apenas PDIs ou Feedbacks conforme meu modo configurado. Admins/gestores veem ambos.",
+      "title": "Corrigir verificação de duplicatas no programEvents()",
+      "description": "Como admin, ao programar eventos em massa, o sistema deve respeitar o modelo contínuo e nunca criar PDIs duplicados.",
       "acceptanceCriteria": [
-        "Menu lateral (sidebar/nav) mostra 'PDIs' somente se evaluationMode='pdi' ou se role é admin/manager",
-        "Menu lateral mostra 'Feedbacks' somente se evaluationMode='feedback' ou se role é admin/manager",
-        "Session/JWT inclui evaluationMode para uso no client",
-        "Typecheck passa",
-        "Verify in browser using dev-browser skill"
+        "programEvents() em src/app/(dashboard)/programacao/actions.ts verifica se o colaborador já tem um PDI ativo (status='active') independente de datas/período antes de criar",
+        "Se já existe PDI ativo, pula o colaborador incrementando skipped",
+        "A criação de PDI usa try/catch para capturar P2002 (unique constraint) como fallback de segurança, incrementando skipped",
+        "A verificação e criação de Feedbacks permanece com a lógica de janela de datas (não é afetada)",
+        "Typecheck passa"
       ],
       "priority": 3,
-      "passes": true,
-      "notes": ""
+      "passes": false,
+      "notes": "A verificação atual usa janela de datas (createdAt/conductedAt entre periodStart e periodEnd) que é incorreta para o modelo contínuo. Deve verificar apenas status='active' para PDIs."
     },
     {
       "id": "US-004",
-      "title": "Filtrar queries de PDI e Feedback pelo evaluationMode",
-      "description": "Como desenvolvedor, preciso garantir que as queries de listagem de PDI retornem apenas colaboradores com evaluationMode='pdi' e de Feedback apenas evaluationMode='feedback'.",
+      "title": "Filtrar por evaluationMode na tela de Programação",
+      "description": "Como gestor, ao visualizar a programação de PDIs quero ver apenas colaboradores com evaluationMode='pdi', e na de Feedbacks apenas evaluationMode='feedback'.",
       "acceptanceCriteria": [
-        "Server actions de PDI (pdis/actions.ts) filtram employee.evaluationMode='pdi' em todas as queries de listagem",
-        "Server actions de Feedback (feedbacks/actions.ts) filtram employee.evaluationMode='feedback' em todas as queries de listagem",
-        "Dropdown de seleção de colaborador no formulário de PDI mostra apenas colaboradores com evaluationMode='pdi'",
-        "Dropdown de seleção de colaborador no formulário de Feedback mostra apenas colaboradores com evaluationMode='feedback'",
+        "getSectorComplianceStatus() em src/app/(dashboard)/programacao/actions.ts filtra hierarquias por employee.evaluationMode igual ao parâmetro type (pdi ou feedback)",
+        "Colaborador com evaluationMode='feedback' não aparece na compliance de PDI",
+        "Colaborador com evaluationMode='pdi' não aparece na compliance de Feedback",
+        "programEvents() valida que cada colaborador tem evaluationMode compatível com o tipo de evento antes de criar",
         "Typecheck passa"
       ],
       "priority": 4,
-      "passes": true,
-      "notes": ""
-    },
-    {
-      "id": "US-005",
-      "title": "Atualizar crons para respeitar evaluationMode",
-      "description": "Como desenvolvedor, preciso que os crons generate-events e email-reminders respeitem o modo de avaliação do colaborador.",
-      "acceptanceCriteria": [
-        "Cron generate-events (api/cron/generate-events) gera eventos de PDI apenas para colaboradores com evaluationMode='pdi'",
-        "Cron generate-events gera eventos de Feedback apenas para colaboradores com evaluationMode='feedback'",
-        "Cron email-reminders (api/cron/email-reminders) envia lembretes conforme o modo do colaborador",
-        "Typecheck passa"
-      ],
-      "priority": 5,
-      "passes": true,
-      "notes": ""
-    },
-    {
-      "id": "US-006",
-      "title": "Reestruturar schema do PDIGoal com novos campos",
-      "description": "Como desenvolvedor, preciso atualizar o modelo PDIGoal com campos mais detalhados para acompanhamento profissional.",
-      "acceptanceCriteria": [
-        "Renomear campo 'title' para 'developmentObjective' (Objetivo de Desenvolvimento) preservando dados",
-        "Renomear campo 'description' para 'actions' (Ações/Atividades) preservando dados",
-        "Remover campo 'competency' do PDIGoal",
-        "Adicionar campo 'startDate' (DateTime opcional) - Início",
-        "Adicionar campo 'expectedResults' (String opcional) - Resultados Esperados",
-        "Adicionar campo 'responsibleId' (FK para User, opcional) - Responsável",
-        "Adicionar campo 'completedAt' (DateTime opcional) - Término",
-        "Adicionar campo 'successMetrics' (String opcional) - Métricas de Sucesso",
-        "Adicionar campo 'achievedResults' (String opcional) - Resultados Obtidos",
-        "Campos existentes mantidos: dueDate, status, pdiId",
-        "Migration usa RENAME COLUMN para preservar dados existentes",
-        "Rodar prisma generate sem erros",
-        "Typecheck passa"
-      ],
-      "priority": 6,
-      "passes": true,
-      "notes": ""
-    },
-    {
-      "id": "US-007",
-      "title": "Atualizar server actions do PDI para novos campos de PDIGoal",
-      "description": "Como desenvolvedor, preciso atualizar as server actions de PDI para lidar com os novos campos do PDIGoal.",
-      "acceptanceCriteria": [
-        "Action de criação de PDI aceita todos os novos campos de goal: developmentObjective, actions, startDate, expectedResults, responsibleId, completedAt, successMetrics, achievedResults",
-        "Action de edição de PDI atualiza os novos campos corretamente",
-        "Validação server-side: developmentObjective é obrigatório, status é obrigatório",
-        "Validação: completedAt e achievedResults só aceitos quando status='completed'",
-        "Validação: responsibleId deve ser o employeeId ou managerId do PDI",
-        "Referências a 'title' e 'description' atualizadas para 'developmentObjective' e 'actions'",
-        "Referências a 'competency' removidas",
-        "Typecheck passa"
-      ],
-      "priority": 7,
-      "passes": true,
-      "notes": ""
-    },
-    {
-      "id": "US-008",
-      "title": "Atualizar formulário de metas do PDI com novos campos",
-      "description": "Como gestor, quero preencher todos os novos campos ao criar/editar metas no PDI.",
-      "acceptanceCriteria": [
-        "Formulário de meta exibe campos: Objetivo de Desenvolvimento (obrigatório), Ações/Atividades, Início (date), Resultados Esperados, Responsável (dropdown), Prazo Final (date), Término (date), Métricas de Sucesso, Status (obrigatório), Resultados Obtidos",
-        "Dropdown 'Responsável' mostra apenas o colaborador dono do PDI e o gestor do PDI",
-        "Campos 'Resultados Obtidos' e 'Término' ficam desabilitados quando status != 'completed'",
-        "Remover dropdown de 'Competência' do formulário",
-        "Validação client-side: Objetivo de Desenvolvimento obrigatório",
-        "Typecheck passa",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 8,
-      "passes": true,
-      "notes": ""
-    },
-    {
-      "id": "US-009",
-      "title": "Simplificar schema do PDI para modelo contínuo",
-      "description": "Como desenvolvedor, preciso simplificar o modelo PDI removendo campos de período e ajustando status para o modelo contínuo.",
-      "acceptanceCriteria": [
-        "Remover campo 'period' do modelo PDI",
-        "Remover campo 'frequencyMonths' do modelo PDI",
-        "Alterar enum PDIStatus para apenas 'active' e 'cancelled' (remover draft, scheduled, completed)",
-        "Remover modelo PDISchedule completamente do schema",
-        "Adicionar constraint unique em (employeeId) onde status='active' (ou garantir via application logic)",
-        "Migration criada preservando PDIs existentes (atualizar status dos existentes para 'active')",
-        "Rodar prisma generate sem erros",
-        "Typecheck passa"
-      ],
-      "priority": 9,
-      "passes": true,
-      "notes": "Migration deve: 1) remover PDISchedule, 2) atualizar PDIs com status draft/scheduled para active, 3) remover enum values antigos, 4) drop columns period e frequencyMonths."
-    },
-    {
-      "id": "US-010",
-      "title": "Migration para consolidar PDIs existentes por colaborador",
-      "description": "Como desenvolvedor, preciso criar uma migration que consolide múltiplos PDIs do mesmo colaborador em um único PDI ativo.",
-      "acceptanceCriteria": [
-        "Para cada colaborador com múltiplos PDIs: o mais recente (por updatedAt) vira o PDI ativo",
-        "Metas dos PDIs não selecionados são movidas (reparented) para o PDI ativo do colaborador",
-        "PDIs vazios (sem metas após consolidação) são marcados como cancelled",
-        "Metas com status 'completed' de PDIs antigos são preservadas no PDI ativo",
-        "Nenhum dado é perdido na consolidação",
-        "Migration é idempotente (rodar duas vezes não causa erro)",
-        "Typecheck passa"
-      ],
-      "priority": 10,
-      "passes": true,
-      "notes": "Esta migration deve rodar DEPOIS da US-009. Usar migration SQL customizada com lógica de consolidação."
-    },
-    {
-      "id": "US-011",
-      "title": "Atualizar server actions do PDI para modelo contínuo",
-      "description": "Como desenvolvedor, preciso atualizar as server actions de PDI para o modelo de formulário único contínuo.",
-      "acceptanceCriteria": [
-        "Remover action de criação manual de PDI (não se cria PDI manualmente mais)",
-        "Nova action getOrCreatePDI(employeeId): retorna o PDI ativo do colaborador ou cria um novo automaticamente",
-        "Action de listagem de PDIs ajustada para mostrar apenas PDIs ativos",
-        "Remover lógica de agendamento/scheduling de PDI (substituído por follow-ups)",
-        "Remover referências a 'period' e 'frequencyMonths' nas actions",
-        "Action de adicionar meta funciona no PDI contínuo (adiciona meta ao PDI ativo)",
-        "Action de editar/remover meta continua funcionando",
-        "Typecheck passa"
-      ],
-      "priority": 11,
-      "passes": true,
-      "notes": ""
-    },
-    {
-      "id": "US-012",
-      "title": "Atualizar UI do PDI para modelo contínuo",
-      "description": "Como gestor, quero acessar o PDI de um colaborador como um formulário único com lista de metas e histórico.",
-      "acceptanceCriteria": [
-        "Página de PDIs mostra lista de colaboradores com modo PDI (um card/linha por colaborador)",
-        "Clicar no colaborador abre seu PDI contínuo (getOrCreatePDI)",
-        "PDI exibe lista de metas existentes (scrollável) com todas as informações",
-        "Metas completed aparecem de forma resumida (colapsadas ou com visual diferenciado)",
-        "Botão para adicionar nova meta ao PDI",
-        "Remover formulário de criação de PDI antigo (pdi-form com mode=create para criar novo PDI)",
-        "Remover campos de period e scheduling do formulário",
-        "Typecheck passa",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 12,
-      "passes": true,
-      "notes": ""
-    },
-    {
-      "id": "US-013",
-      "title": "Adicionar modelo PDIFollowUp ao schema",
-      "description": "Como desenvolvedor, preciso criar o modelo PDIFollowUp para agendar reuniões de acompanhamento dentro do PDI.",
-      "acceptanceCriteria": [
-        "Novo modelo PDIFollowUp com campos: id (cuid), pdiId (FK para PDI), scheduledAt (DateTime), conductedAt (DateTime opcional), notes (String opcional), status (enum: scheduled, completed, cancelled), createdAt",
-        "Criar enum FollowUpStatus com valores scheduled, completed, cancelled",
-        "Relação PDI hasMany PDIFollowUp",
-        "Índice em pdiId para performance",
-        "Migration criada e aplicada com sucesso",
-        "Rodar prisma generate sem erros",
-        "Typecheck passa"
-      ],
-      "priority": 13,
-      "passes": true,
-      "notes": ""
-    },
-    {
-      "id": "US-014",
-      "title": "Adicionar server actions para PDIFollowUp",
-      "description": "Como desenvolvedor, preciso criar server actions para agendar, listar, completar e cancelar acompanhamentos do PDI.",
-      "acceptanceCriteria": [
-        "Action scheduleFollowUp(pdiId, scheduledAt): cria novo follow-up com status 'scheduled'",
-        "Action completeFollowUp(followUpId, notes, conductedAt): marca como completed com observações",
-        "Action cancelFollowUp(followUpId): marca como cancelled",
-        "Action getFollowUps(pdiId): lista follow-ups ordenados por scheduledAt",
-        "Validação: apenas manager do PDI ou admin pode agendar/completar/cancelar",
-        "Access control respeita hierarquia existente",
-        "Typecheck passa"
-      ],
-      "priority": 14,
-      "passes": true,
-      "notes": ""
-    },
-    {
-      "id": "US-015",
-      "title": "Adicionar UI de acompanhamentos no PDI",
-      "description": "Como gestor, quero agendar e gerenciar reuniões de acompanhamento dentro do PDI do colaborador.",
-      "acceptanceCriteria": [
-        "Botão 'Agendar Acompanhamento' visível no formulário do PDI",
-        "Modal para selecionar data/hora do acompanhamento",
-        "Lista de acompanhamentos visível no PDI (futuros no topo, passados abaixo)",
-        "Follow-up scheduled mostra data agendada e botão 'Realizar'",
-        "Ao clicar 'Realizar': modal para adicionar observações e marcar como concluído",
-        "Follow-up completed mostra data realizada e observações",
-        "Botão cancelar em follow-ups scheduled",
-        "Typecheck passa",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 15,
-      "passes": true,
-      "notes": ""
-    },
-    {
-      "id": "US-016",
-      "title": "Integrar lembretes de follow-up no cron de notificações",
-      "description": "Como sistema, preciso enviar lembretes para acompanhamentos agendados próximos.",
-      "acceptanceCriteria": [
-        "Cron email-reminders busca PDIFollowUp com status 'scheduled' e scheduledAt nos próximos 2 dias",
-        "Envia notificação de lembrete para o gestor do PDI",
-        "Cria registro de Notification no banco para o lembrete",
-        "Não envia lembrete duplicado (verificar se já existe notificação recente para o follow-up)",
-        "Typecheck passa"
-      ],
-      "priority": 16,
-      "passes": true,
-      "notes": ""
-    },
-    {
-      "id": "US-017",
-      "title": "Adicionar campos de RH ao modelo User",
-      "description": "Como desenvolvedor, preciso adicionar campos pessoais e profissionais ao modelo User para uso do RH.",
-      "acceptanceCriteria": [
-        "Adicionar campo 'phone' (String opcional) ao modelo User",
-        "Adicionar campo 'cpf' (String opcional, unique where not null) ao modelo User",
-        "Adicionar campo 'birthDate' (DateTime opcional) ao modelo User",
-        "Adicionar campo 'jobTitle' (String opcional) ao modelo User",
-        "Adicionar campo 'address' (String opcional) ao modelo User",
-        "Adicionar campo 'city' (String opcional) ao modelo User",
-        "Adicionar campo 'state' (String opcional) ao modelo User",
-        "Adicionar campo 'zipCode' (String opcional) ao modelo User",
-        "Migration criada e aplicada com sucesso",
-        "Rodar prisma generate sem erros",
-        "Typecheck passa"
-      ],
-      "priority": 17,
-      "passes": true,
-      "notes": ""
-    },
-    {
-      "id": "US-018",
-      "title": "Atualizar formulário do colaborador com campos de RH",
-      "description": "Como administrador/RH, quero preencher dados pessoais ao cadastrar/editar colaboradores com máscaras e validação.",
-      "acceptanceCriteria": [
-        "Formulário organizado em seções: 'Dados do Sistema' (campos existentes) e 'Dados Pessoais' (novos campos)",
-        "Campo CPF com máscara 000.000.000-00 e validação de dígitos verificadores",
-        "Campo Telefone com máscara (00) 00000-0000",
-        "Campo CEP com máscara 00000-000",
-        "Dropdown de Estado (UF) com todos os 26 estados + DF",
-        "Campos Data de Nascimento e Cargo como inputs simples",
-        "Campo Endereço como textarea ou input de texto",
-        "Todos os campos novos são opcionais",
-        "Server actions de criação e edição do colaborador aceitam e salvam os novos campos",
-        "Validação CPF no server (dígitos verificadores)",
-        "Typecheck passa",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 18,
-      "passes": true,
-      "notes": ""
-    },
-    {
-      "id": "US-019",
-      "title": "Atualizar tabela de colaboradores com novos campos",
-      "description": "Como administrador, quero ver Cargo, Telefone e Modo de Avaliação na listagem de colaboradores.",
-      "acceptanceCriteria": [
-        "Coluna 'Cargo' adicionada à tabela de colaboradores",
-        "Coluna 'Telefone' adicionada à tabela de colaboradores",
-        "Coluna 'Modo' com badge visual: 'PDI' (azul) ou 'Feedback' (verde)",
-        "Novas colunas incluídas na query de listagem (colaboradores/actions.ts)",
-        "Tabela responsiva — colunas extras podem ser ocultadas em telas menores",
-        "Typecheck passa",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 19,
-      "passes": true,
-      "notes": ""
+      "passes": false,
+      "notes": "O bug está em getSectorComplianceStatus() linhas ~44-53 onde faz findMany em EmployeeHierarchy sem filtrar employee.evaluationMode. Adicionar o filtro no select/include do employee."
     }
   ]
 }
