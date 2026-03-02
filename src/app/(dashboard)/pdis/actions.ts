@@ -874,3 +874,171 @@ export async function updateEvidence(
   return { success: true };
 }
 
+// ============================================================
+// PDI Follow-Ups (US-014)
+// ============================================================
+
+export type FollowUpDetail = {
+  id: string;
+  pdiId: string;
+  scheduledAt: Date;
+  conductedAt: Date | null;
+  notes: string | null;
+  status: string;
+  createdAt: Date;
+};
+
+export async function getFollowUps(
+  pdiId: string
+): Promise<{ success: boolean; error?: string; followUps?: FollowUpDetail[] }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  const pdi = await prisma.pDI.findUnique({ where: { id: pdiId } });
+  if (!pdi) return { success: false, error: "PDI não encontrado" };
+
+  // Check access
+  if (role !== "admin" && pdi.managerId !== userId && pdi.employeeId !== userId) {
+    const hasAccess = await canAccessEmployee(userId, role, pdi.employeeId);
+    if (!hasAccess) return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const followUps = await prisma.pDIFollowUp.findMany({
+    where: { pdiId },
+    orderBy: { scheduledAt: "asc" },
+  });
+
+  return {
+    success: true,
+    followUps: followUps.map((f: FollowUpDetail) => ({
+      id: f.id,
+      pdiId: f.pdiId,
+      scheduledAt: f.scheduledAt,
+      conductedAt: f.conductedAt,
+      notes: f.notes,
+      status: f.status,
+      createdAt: f.createdAt,
+    })),
+  };
+}
+
+export async function scheduleFollowUp(
+  pdiId: string,
+  scheduledAt: string
+): Promise<{ success: boolean; error?: string; id?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  const pdi = await prisma.pDI.findUnique({ where: { id: pdiId } });
+  if (!pdi) return { success: false, error: "PDI não encontrado" };
+
+  // Only manager or admin can schedule follow-ups
+  if (role !== "admin" && pdi.managerId !== userId) {
+    return { success: false, error: "Apenas o gestor ou admin pode agendar acompanhamentos" };
+  }
+
+  const date = new Date(scheduledAt);
+  if (isNaN(date.getTime())) {
+    return { success: false, error: "Data inválida" };
+  }
+
+  const followUp = await prisma.pDIFollowUp.create({
+    data: {
+      pdiId,
+      scheduledAt: date,
+      status: "scheduled",
+    },
+  });
+
+  revalidatePath(`/pdis/${pdiId}`);
+  return { success: true, id: followUp.id };
+}
+
+export async function completeFollowUp(
+  followUpId: string,
+  notes: string,
+  conductedAt: string
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  const followUp = await prisma.pDIFollowUp.findUnique({
+    where: { id: followUpId },
+    include: { pdi: true },
+  });
+
+  if (!followUp) return { success: false, error: "Acompanhamento não encontrado" };
+
+  if (role !== "admin" && followUp.pdi.managerId !== userId) {
+    return { success: false, error: "Apenas o gestor ou admin pode completar acompanhamentos" };
+  }
+
+  if (followUp.status !== "scheduled") {
+    return { success: false, error: "Apenas acompanhamentos agendados podem ser completados" };
+  }
+
+  const date = conductedAt ? new Date(conductedAt) : new Date();
+
+  await prisma.pDIFollowUp.update({
+    where: { id: followUpId },
+    data: {
+      status: "completed",
+      conductedAt: date,
+      notes: notes?.trim() || null,
+    },
+  });
+
+  revalidatePath(`/pdis/${followUp.pdiId}`);
+  return { success: true };
+}
+
+export async function cancelFollowUp(
+  followUpId: string
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  const followUp = await prisma.pDIFollowUp.findUnique({
+    where: { id: followUpId },
+    include: { pdi: true },
+  });
+
+  if (!followUp) return { success: false, error: "Acompanhamento não encontrado" };
+
+  if (role !== "admin" && followUp.pdi.managerId !== userId) {
+    return { success: false, error: "Apenas o gestor ou admin pode cancelar acompanhamentos" };
+  }
+
+  if (followUp.status !== "scheduled") {
+    return { success: false, error: "Apenas acompanhamentos agendados podem ser cancelados" };
+  }
+
+  await prisma.pDIFollowUp.update({
+    where: { id: followUpId },
+    data: { status: "cancelled" },
+  });
+
+  revalidatePath(`/pdis/${followUp.pdiId}`);
+  return { success: true };
+}
+

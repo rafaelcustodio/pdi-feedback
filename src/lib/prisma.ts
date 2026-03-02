@@ -7,10 +7,12 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-export const prisma =
-  globalForPrisma.prisma ??
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type PrismaClientExtended = PrismaClient & { pDIFollowUp: any };
+
+export const prisma = (globalForPrisma.prisma ??
   new PrismaClient({
     adapter: new PrismaPg({ connectionString }),
-  });
+  })) as PrismaClientExtended;
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma as PrismaClient;

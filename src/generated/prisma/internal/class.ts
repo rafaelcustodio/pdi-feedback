@@ -269,6 +269,16 @@ export interface PrismaClient<
   get pDIComment(): Prisma.PDICommentDelegate<ExtArgs, { omit: OmitOpts }>;
 
   /**
+   * `prisma.pDIFollowUp`: Exposes CRUD operations for the **PDIFollowUp** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PDIFollowUps
+    * const pDIFollowUps = await prisma.pDIFollowUp.findMany()
+    * ```
+    */
+  get pDIFollowUp(): Prisma.PDIFollowUpDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
    * `prisma.feedback`: Exposes CRUD operations for the **Feedback** model.
     * Example usage:
     * ```ts
