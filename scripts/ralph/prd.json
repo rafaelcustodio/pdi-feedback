@@ -168,7 +168,7 @@
         "Typecheck passa"
       ],
       "priority": 10,
-      "passes": false,
+      "passes": true,
       "notes": "Esta migration deve rodar DEPOIS da US-009. Usar migration SQL customizada com lógica de consolidação."
     },
     {

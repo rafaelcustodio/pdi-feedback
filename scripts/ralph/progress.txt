@@ -303,6 +303,19 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - All new fields (startDate, expectedResults, responsibleId, completedAt, successMetrics, achievedResults) persisted in create/update operations
 ---
 
+## 2026-03-02T18:10 - US-010 (reestruturacao-pdi-colaborador)
+- What was implemented: Created idempotent SQL migration to consolidate multiple PDIs per employee into a single active PDI.
+- Files changed:
+  - `prisma/migrations/20260302160000_consolidate_pdis_per_employee/migration.sql` — 3-step consolidation: reparent goals, reparent comments, cancel non-keeper PDIs
+- **Migration approach:**
+  - Uses `DISTINCT ON ("employeeId") ... ORDER BY "employeeId", "updatedAt" DESC` to select keeper (most recently updated active PDI)
+  - Step 1: UPDATE PDIGoal.pdiId from non-keeper to keeper
+  - Step 2: UPDATE PDIComment.pdiId from non-keeper to keeper
+  - Step 3: UPDATE PDI.status = 'cancelled' for non-keeper active PDIs
+  - Idempotent: after first run, no non-keeper active PDIs remain, so subsequent runs are no-ops
+  - PDIEvidence is not touched directly — it's linked to PDIGoal, so reparenting goals automatically carries evidences
+---
+
 ## 2026-03-02T18:00 - US-009 (reestruturacao-pdi-colaborador)
 - What was implemented: Simplified PDI to continuous model. Removed period, frequencyMonths, scheduledAt from PDI. Reduced PDIStatus to active/cancelled. Removed PDISchedule model entirely. Updated all ~20 files referencing old PDI schema.
 - Files changed:
