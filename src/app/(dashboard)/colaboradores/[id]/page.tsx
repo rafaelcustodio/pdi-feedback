@@ -1,7 +1,8 @@
 import { auth } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
-import { getEmployeeById, getOrgUnitsFlat } from "../actions";
+import { getEmployeeById, getOrgUnitsFlat, getEmployeeActivePDI } from "../actions";
 import { EmployeeForm } from "@/components/employee-form";
+import { EmployeePDISection } from "@/components/employee-pdi-section";
 
 export default async function EditarColaboradorPage({
   params,
@@ -14,9 +15,10 @@ export default async function EditarColaboradorPage({
   }
 
   const { id } = await params;
-  const [employee, orgUnits] = await Promise.all([
+  const [employee, orgUnits, activePdi] = await Promise.all([
     getEmployeeById(id),
     getOrgUnitsFlat(),
+    getEmployeeActivePDI(id),
   ]);
 
   if (!employee) {
@@ -46,6 +48,10 @@ export default async function EditarColaboradorPage({
           state: employee.state ?? undefined,
           zipCode: employee.zipCode ?? undefined,
         }}
+      />
+      <EmployeePDISection
+        employeeId={employee.id}
+        activePdiId={activePdi?.id ?? null}
       />
     </div>
   );

@@ -577,6 +577,21 @@ export async function reactivateEmployee(
 }
 
 // ============================================================
+// PDI status for collaborator page
+// ============================================================
+
+export async function getEmployeeActivePDI(
+  employeeId: string
+): Promise<{ id: string } | null> {
+  const session = await auth();
+  if (!session?.user) return null;
+  return prisma.pDI.findFirst({
+    where: { employeeId, status: "active" },
+    select: { id: true },
+  });
+}
+
+// ============================================================
 // US-012: Schedule management (PDI & Feedback frequency)
 // ============================================================
 

@@ -18,11 +18,10 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
   const searchParams = useSearchParams();
 
   const initialUnit = searchParams.get("unit") ?? "";
-  const initialType = (searchParams.get("type") as "pdi" | "feedback") || "pdi";
   const initialPeriod = searchParams.get("period") ?? "";
 
   const [unitId, setUnitId] = useState(initialUnit);
-  const [type, setType] = useState<"pdi" | "feedback">(initialType);
+  const type = "feedback" as const;
   const [periods, setPeriods] = useState<PeriodOption[]>([]);
   const [selectedPeriod, setSelectedPeriod] = useState(initialPeriod);
   const [employees, setEmployees] = useState<ComplianceEmployee[]>([]);
@@ -116,7 +115,7 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
     <div className="space-y-4">
       {/* Filters */}
       <div className="rounded-lg border border-gray-200 bg-white p-4">
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">
               Unidade Organizacional
@@ -137,36 +136,6 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
                 </option>
               ))}
             </select>
-          </div>
-
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              Tipo
-            </label>
-            <div className="flex rounded-md border border-gray-300">
-              <button
-                type="button"
-                onClick={() => setType("pdi")}
-                className={`flex-1 rounded-l-md px-3 py-2 text-sm font-medium transition-colors ${
-                  type === "pdi"
-                    ? "bg-blue-600 text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-50"
-                }`}
-              >
-                PDI
-              </button>
-              <button
-                type="button"
-                onClick={() => setType("feedback")}
-                className={`flex-1 rounded-r-md px-3 py-2 text-sm font-medium transition-colors ${
-                  type === "feedback"
-                    ? "bg-blue-600 text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-50"
-                }`}
-              >
-                Feedback
-              </button>
-            </div>
           </div>
 
           <div>
@@ -198,7 +167,7 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
         <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center">
           <CalendarCheck className="mx-auto mb-3 text-gray-400" size={40} />
           <p className="text-sm text-gray-500">
-            Setor sem configuração de recorrência para {type === "pdi" ? "PDI" : "Feedback"}.
+            Setor sem configuração de recorrência para Feedback.
           </p>
           <p className="mt-1 text-xs text-gray-400">
             Configure a recorrência em Configurações antes de programar eventos.
