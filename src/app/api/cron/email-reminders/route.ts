@@ -198,6 +198,52 @@ export async function GET(request: Request) {
       }
     }
 
+    // PDI Follow-Up reminders (scheduled within next 2 days)
+    const twoDaysFromNow = new Date(now);
+    twoDaysFromNow.setDate(twoDaysFromNow.getDate() + 2);
+
+    const upcomingFollowUps = await prisma.pDIFollowUp.findMany({
+      where: {
+        status: "scheduled",
+        scheduledAt: { gte: now, lte: twoDaysFromNow },
+      },
+      include: {
+        pdi: {
+          select: {
+            managerId: true,
+            employeeId: true,
+            employee: { select: { name: true } },
+          },
+        },
+      },
+    });
+
+    for (const followUp of upcomingFollowUps) {
+      const scheduledStr = new Date(followUp.scheduledAt).toLocaleDateString("pt-BR");
+      const messageKey = `pdi_followup_${followUp.id}_${scheduledStr}`;
+
+      const existing = await prisma.notification.findFirst({
+        where: {
+          userId: followUp.pdi.managerId,
+          type: "pdi_reminder",
+          message: { contains: messageKey },
+        },
+      });
+
+      if (!existing) {
+        const employeeName = followUp.pdi.employee.name;
+        await prisma.notification.create({
+          data: {
+            userId: followUp.pdi.managerId,
+            type: "pdi_reminder",
+            title: `Acompanhamento de PDI agendado - ${employeeName}`,
+            message: `O acompanhamento de PDI de ${employeeName} está agendado para ${scheduledStr}. [${messageKey}]`,
+          },
+        });
+        notificationsCreated++;
+      }
+    }
+
     // -------------------------------------------------------
     // Step 1.5: Sector cycle notifications
     // -------------------------------------------------------
