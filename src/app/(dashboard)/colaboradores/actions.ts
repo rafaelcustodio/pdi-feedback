@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { removeScheduledFeedbackEvents } from "@/lib/schedule-utils";
-import { handleSectorTransfer } from "@/lib/sector-schedule-utils";
+import { createOnboardingFeedbacks, updateOnboardingFeedbacks, handleSectorTransfer } from "@/lib/sector-schedule-utils";
 
 function validateCPF(cpf: string): boolean {
   const digits = cpf.replace(/\D/g, "");
@@ -353,6 +353,14 @@ export async function createEmployee(data: {
       },
     });
 
+    // Create onboarding feedbacks if admission date provided
+    if (data.admissionDate) {
+      await createOnboardingFeedbacks(
+        user.id,
+        new Date(data.admissionDate),
+        data.managerId
+      );
+    }
   }
 
   revalidatePath("/colaboradores");
@@ -497,6 +505,11 @@ export async function updateEmployee(
         data: { endDate: new Date() },
       });
     }
+  }
+
+  // Handle onboarding feedbacks when admission date changes
+  if (admissionChanged && newAdmissionDate && data.managerId) {
+    await updateOnboardingFeedbacks(id, newAdmissionDate, data.managerId);
   }
 
   revalidatePath("/colaboradores");
