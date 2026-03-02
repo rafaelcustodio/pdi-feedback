@@ -73,3 +73,66 @@ export type PDIFollowUpCreateManyInput = {
 type PDIFollowUpCreateNestedPdiInput = {
   connect?: { id: string }
 }
+
+export type $PDIFollowUpPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  name: "PDIFollowUp"
+  objects: {
+    pdi: Prisma.$PDIPayload<ExtArgs>
+  }
+  scalars: runtime.Types.Extensions.GetPayloadResult<{
+    id: string
+    pdiId: string
+    scheduledAt: Date
+    conductedAt: Date | null
+    notes: string | null
+    status: $Enums.FollowUpStatus
+    createdAt: Date
+  }, ExtArgs["result"]["pDIFollowUp"]>
+  composites: {}
+}
+
+export type PDIFollowUpSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  id?: boolean
+  pdiId?: boolean
+  scheduledAt?: boolean
+  conductedAt?: boolean
+  notes?: boolean
+  status?: boolean
+  createdAt?: boolean
+  pdi?: boolean | Prisma.PDIDefaultArgs<ExtArgs>
+}, ExtArgs["result"]["pDIFollowUp"]>
+
+export type PDIFollowUpOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "pdiId" | "scheduledAt" | "conductedAt" | "notes" | "status" | "createdAt", ExtArgs["result"]["pDIFollowUp"]>
+
+export type PDIFollowUpInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  pdi?: boolean | Prisma.PDIDefaultArgs<ExtArgs>
+}
+
+export type PDIFollowUpWhereInput = {
+  AND?: PDIFollowUpWhereInput | PDIFollowUpWhereInput[]
+  OR?: PDIFollowUpWhereInput[]
+  NOT?: PDIFollowUpWhereInput | PDIFollowUpWhereInput[]
+  id?: string | { equals?: string; in?: string[]; notIn?: string[]; contains?: string; startsWith?: string; endsWith?: string }
+  pdiId?: string | { equals?: string; in?: string[]; notIn?: string[] }
+  scheduledAt?: Date | string | { equals?: Date | string; lt?: Date | string; lte?: Date | string; gt?: Date | string; gte?: Date | string }
+  conductedAt?: Date | string | null | { equals?: Date | string | null; lt?: Date | string; lte?: Date | string; gt?: Date | string; gte?: Date | string }
+  notes?: string | null | { equals?: string | null; contains?: string }
+  status?: $Enums.FollowUpStatus | { equals?: $Enums.FollowUpStatus; in?: $Enums.FollowUpStatus[] }
+  createdAt?: Date | string | { equals?: Date | string; lt?: Date | string; lte?: Date | string; gt?: Date | string; gte?: Date | string }
+}
+
+export type PDIFollowUpOrderByWithRelationInput = {
+  id?: "asc" | "desc"
+  pdiId?: "asc" | "desc"
+  scheduledAt?: "asc" | "desc"
+  conductedAt?: "asc" | "desc" | { sort: "asc" | "desc"; nulls?: "first" | "last" }
+  notes?: "asc" | "desc" | { sort: "asc" | "desc"; nulls?: "first" | "last" }
+  status?: "asc" | "desc"
+  createdAt?: "asc" | "desc"
+}
+
+export type PDIFollowUpWhereUniqueInput = {
+  id?: string
+}
+
+export type PDIFollowUpScalarFieldEnum = "id" | "pdiId" | "scheduledAt" | "conductedAt" | "notes" | "status" | "createdAt"

@@ -16,7 +16,7 @@ import {
   XCircle,
   Pencil,
 } from "lucide-react";
-import type { PDIDetail, GoalInput } from "@/app/(dashboard)/pdis/actions";
+import type { PDIDetail, GoalInput, FollowUpDetail } from "@/app/(dashboard)/pdis/actions";
 import {
   addEvidence,
   addComment,
@@ -25,6 +25,9 @@ import {
   updateComment,
   updateEvidence,
   addGoal as addGoalAction,
+  scheduleFollowUp,
+  completeFollowUp,
+  cancelFollowUp,
 } from "@/app/(dashboard)/pdis/actions";
 
 const statusLabels: Record<string, string> = {
@@ -209,6 +212,14 @@ export function PDITracking({ pdi, userId, userRole }: PDITrackingProps) {
           </div>
         )}
       </div>
+
+      {/* Follow-Ups Section */}
+      <FollowUpsSection
+        pdiId={pdi.id}
+        followUps={pdi.followUps}
+        isManager={isManager}
+        pdiStatus={pdi.status}
+      />
 
       {/* Comments Section */}
       <CommentsSection
@@ -903,6 +914,321 @@ function GoalCard({
               )}
             </div>
           )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================
+// Follow-Ups Section
+// ============================================================
+
+const followUpStatusLabels: Record<string, string> = {
+  scheduled: "Agendado",
+  completed: "Realizado",
+  cancelled: "Cancelado",
+};
+
+const followUpStatusColors: Record<string, string> = {
+  scheduled: "bg-yellow-100 text-yellow-700",
+  completed: "bg-green-100 text-green-700",
+  cancelled: "bg-gray-100 text-gray-500",
+};
+
+function FollowUpsSection({
+  pdiId,
+  followUps,
+  isManager,
+  pdiStatus,
+}: {
+  pdiId: string;
+  followUps: FollowUpDetail[];
+  isManager: boolean;
+  pdiStatus: string;
+}) {
+  const [showScheduleForm, setShowScheduleForm] = useState(false);
+  const [scheduleDate, setScheduleDate] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Complete follow-up modal state
+  const [completingId, setCompletingId] = useState<string | null>(null);
+  const [completeNotes, setCompleteNotes] = useState("");
+  const [completeConductedAt, setCompleteConductedAt] = useState("");
+
+  const isActive = pdiStatus === "active";
+
+  // Separate scheduled (future) and done/cancelled
+  const scheduledFollowUps = followUps.filter((f) => f.status === "scheduled");
+  const pastFollowUps = followUps.filter((f) => f.status !== "scheduled");
+
+  async function handleSchedule() {
+    if (!scheduleDate) return;
+    setLoading(true);
+    setError(null);
+    const result = await scheduleFollowUp(pdiId, scheduleDate);
+    setLoading(false);
+    if (result.success) {
+      setShowScheduleForm(false);
+      setScheduleDate("");
+    } else {
+      setError(result.error ?? "Erro ao agendar acompanhamento");
+    }
+  }
+
+  async function handleComplete() {
+    if (!completingId) return;
+    setLoading(true);
+    setError(null);
+    const result = await completeFollowUp(
+      completingId,
+      completeNotes,
+      completeConductedAt || new Date().toISOString()
+    );
+    setLoading(false);
+    if (result.success) {
+      setCompletingId(null);
+      setCompleteNotes("");
+      setCompleteConductedAt("");
+    } else {
+      setError(result.error ?? "Erro ao completar acompanhamento");
+    }
+  }
+
+  async function handleCancel(followUpId: string) {
+    setLoading(true);
+    setError(null);
+    const result = await cancelFollowUp(followUpId);
+    setLoading(false);
+    if (!result.success) {
+      setError(result.error ?? "Erro ao cancelar acompanhamento");
+    }
+  }
+
+  return (
+    <div className="rounded-lg border border-gray-200 bg-white p-6">
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-lg font-medium text-gray-900">
+          Acompanhamentos ({followUps.length})
+        </h2>
+        {isManager && isActive && (
+          <button
+            onClick={() => setShowScheduleForm(!showScheduleForm)}
+            className="inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
+          >
+            <Calendar size={14} />
+            Agendar Acompanhamento
+          </button>
+        )}
+      </div>
+
+      {error && (
+        <div className="mb-3 rounded-md border border-red-200 bg-red-50 p-2 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
+      {/* Schedule Form */}
+      {showScheduleForm && (
+        <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
+          <p className="mb-3 text-sm font-medium text-blue-800">
+            Agendar Novo Acompanhamento
+          </p>
+          <div className="flex items-end gap-3">
+            <div className="flex-1">
+              <label className="mb-1 block text-xs font-medium text-gray-700">
+                Data do Acompanhamento *
+              </label>
+              <input
+                type="date"
+                value={scheduleDate}
+                onChange={(e) => setScheduleDate(e.target.value)}
+                className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                disabled={loading}
+              />
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  setShowScheduleForm(false);
+                  setScheduleDate("");
+                }}
+                disabled={loading}
+                className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSchedule}
+                disabled={loading || !scheduleDate}
+                className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              >
+                {loading ? "Agendando..." : "Agendar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Complete Follow-Up Modal */}
+      {completingId && (
+        <div className="mb-4 rounded-lg border border-green-200 bg-green-50 p-4">
+          <p className="mb-3 text-sm font-medium text-green-800">
+            Registrar Acompanhamento Realizado
+          </p>
+          <div className="grid gap-3">
+            <div>
+              <label className="mb-1 block text-xs font-medium text-gray-700">
+                Data de Realização
+              </label>
+              <input
+                type="date"
+                value={completeConductedAt}
+                onChange={(e) => setCompleteConductedAt(e.target.value)}
+                className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                disabled={loading}
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-medium text-gray-700">
+                Observações
+              </label>
+              <textarea
+                value={completeNotes}
+                onChange={(e) => setCompleteNotes(e.target.value)}
+                rows={3}
+                placeholder="Observações sobre o acompanhamento..."
+                className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                disabled={loading}
+              />
+            </div>
+          </div>
+          <div className="mt-3 flex justify-end gap-2">
+            <button
+              onClick={() => {
+                setCompletingId(null);
+                setCompleteNotes("");
+                setCompleteConductedAt("");
+              }}
+              disabled={loading}
+              className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={handleComplete}
+              disabled={loading}
+              className="rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-50"
+            >
+              {loading ? "Salvando..." : "Marcar Realizado"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Follow-Ups List */}
+      {followUps.length === 0 ? (
+        <p className="text-sm text-gray-500">
+          Nenhum acompanhamento agendado.
+        </p>
+      ) : (
+        <div className="space-y-3">
+          {/* Scheduled follow-ups first */}
+          {scheduledFollowUps.map((fu) => (
+            <div
+              key={fu.id}
+              className="flex items-center justify-between rounded-md border border-yellow-200 bg-yellow-50 p-3"
+            >
+              <div className="flex items-center gap-3">
+                <Calendar size={16} className="text-yellow-600" />
+                <div>
+                  <p className="text-sm font-medium text-gray-900">
+                    {new Date(fu.scheduledAt).toLocaleDateString("pt-BR", {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </p>
+                  <span
+                    className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${followUpStatusColors[fu.status]}`}
+                  >
+                    {followUpStatusLabels[fu.status]}
+                  </span>
+                </div>
+              </div>
+              {isManager && (
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setCompletingId(fu.id);
+                      setCompleteConductedAt(
+                        new Date().toISOString().split("T")[0]
+                      );
+                    }}
+                    disabled={loading}
+                    className="inline-flex items-center gap-1 rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-50"
+                  >
+                    <CheckCircle2 size={12} />
+                    Realizar
+                  </button>
+                  <button
+                    onClick={() => handleCancel(fu.id)}
+                    disabled={loading}
+                    className="inline-flex items-center gap-1 rounded-md bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-100 disabled:opacity-50"
+                  >
+                    <XCircle size={12} />
+                    Cancelar
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+
+          {/* Past follow-ups (completed / cancelled) */}
+          {pastFollowUps.map((fu) => (
+            <div
+              key={fu.id}
+              className={`rounded-md border p-3 ${
+                fu.status === "completed"
+                  ? "border-green-200 bg-green-50"
+                  : "border-gray-200 bg-gray-50"
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  {fu.status === "completed" ? (
+                    <CheckCircle2 size={16} className="text-green-600" />
+                  ) : (
+                    <XCircle size={16} className="text-gray-400" />
+                  )}
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">
+                      {fu.conductedAt
+                        ? new Date(fu.conductedAt).toLocaleDateString("pt-BR", {
+                            day: "2-digit",
+                            month: "long",
+                            year: "numeric",
+                          })
+                        : new Date(fu.scheduledAt).toLocaleDateString("pt-BR", {
+                            day: "2-digit",
+                            month: "long",
+                            year: "numeric",
+                          })}
+                    </p>
+                    <span
+                      className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${followUpStatusColors[fu.status]}`}
+                    >
+                      {followUpStatusLabels[fu.status]}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              {fu.notes && (
+                <p className="mt-2 pl-7 text-sm text-gray-600">{fu.notes}</p>
+              )}
+            </div>
+          ))}
         </div>
       )}
     </div>

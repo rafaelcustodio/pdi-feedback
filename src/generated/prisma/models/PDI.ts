@@ -1080,6 +1080,7 @@ export type PDIInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   manager?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   goals?: boolean | Prisma.PDI$goalsArgs<ExtArgs>
   comments?: boolean | Prisma.PDI$commentsArgs<ExtArgs>
+  followUps?: boolean | Prisma.PDI$followUpsArgs<ExtArgs>
   _count?: boolean | Prisma.PDICountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PDIIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1098,16 +1099,14 @@ export type $PDIPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
     manager: Prisma.$UserPayload<ExtArgs>
     goals: Prisma.$PDIGoalPayload<ExtArgs>[]
     comments: Prisma.$PDICommentPayload<ExtArgs>[]
+    followUps: Prisma.$PDIFollowUpPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     employeeId: string
     managerId: string
     status: $Enums.PDIStatus
-    period: string
-    frequencyMonths: number | null
     conductedAt: Date | null
-    scheduledAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["pDI"]>
@@ -1988,6 +1987,30 @@ export type PDI$commentsArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   distinct?: Prisma.PDICommentScalarFieldEnum | Prisma.PDICommentScalarFieldEnum[]
+}
+
+/**
+ * PDI.followUps
+ */
+export type PDI$followUpsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PDIFollowUp
+   */
+  select?: Prisma.PDIFollowUpSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PDIFollowUp
+   */
+  omit?: Prisma.PDIFollowUpOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PDIFollowUpInclude<ExtArgs> | null
+  where?: Prisma.PDIFollowUpWhereInput
+  orderBy?: Prisma.PDIFollowUpOrderByWithRelationInput | Prisma.PDIFollowUpOrderByWithRelationInput[]
+  cursor?: Prisma.PDIFollowUpWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PDIFollowUpScalarFieldEnum | Prisma.PDIFollowUpScalarFieldEnum[]
 }
 
 /**

@@ -64,6 +64,7 @@ export type PDIDetail = {
   managerName: string;
   goals: GoalDetail[];
   comments: CommentDetail[];
+  followUps: FollowUpDetail[];
 };
 
 export type SubordinateOption = {
@@ -209,6 +210,9 @@ export async function getPDIById(id: string): Promise<PDIDetail | null> {
           author: { select: { name: true } },
         },
       },
+      followUps: {
+        orderBy: { scheduledAt: "asc" },
+      },
     },
   });
 
@@ -264,6 +268,15 @@ export async function getPDIById(id: string): Promise<PDIDetail | null> {
       content: c.content,
       createdAt: c.createdAt,
     })),
+    followUps: (pdi.followUps ?? []).map((f: FollowUpDetail) => ({
+      id: f.id,
+      pdiId: f.pdiId,
+      scheduledAt: f.scheduledAt,
+      conductedAt: f.conductedAt,
+      notes: f.notes,
+      status: f.status,
+      createdAt: f.createdAt,
+    })),
   };
 }
 
@@ -317,21 +330,26 @@ export async function getOrCreatePDI(
     return { success: false, error: "Você não tem acesso a este colaborador" };
   }
 
+  const pdiInclude = {
+    employee: { select: { name: true } },
+    manager: { select: { name: true } },
+    goals: {
+      orderBy: { createdAt: "asc" as const },
+      include: { evidences: { orderBy: { createdAt: "desc" as const } } },
+    },
+    comments: {
+      orderBy: { createdAt: "asc" as const },
+      include: { author: { select: { name: true } } },
+    },
+    followUps: {
+      orderBy: { scheduledAt: "asc" as const },
+    },
+  };
+
   // Find existing active PDI
   let pdi = await prisma.pDI.findFirst({
     where: { employeeId, status: "active" },
-    include: {
-      employee: { select: { name: true } },
-      manager: { select: { name: true } },
-      goals: {
-        orderBy: { createdAt: "asc" },
-        include: { evidences: { orderBy: { createdAt: "desc" } } },
-      },
-      comments: {
-        orderBy: { createdAt: "asc" },
-        include: { author: { select: { name: true } } },
-      },
-    },
+    include: pdiInclude,
   });
 
   // If none exists, create one
@@ -352,18 +370,7 @@ export async function getOrCreatePDI(
         managerId,
         status: "active",
       },
-      include: {
-        employee: { select: { name: true } },
-        manager: { select: { name: true } },
-        goals: {
-          orderBy: { createdAt: "asc" },
-          include: { evidences: { orderBy: { createdAt: "desc" } } },
-        },
-        comments: {
-          orderBy: { createdAt: "asc" },
-          include: { author: { select: { name: true } } },
-        },
-      },
+      include: pdiInclude,
     });
     pdi = created;
     revalidatePath("/pdis");
@@ -408,6 +415,15 @@ export async function getOrCreatePDI(
         authorName: c.author.name,
         content: c.content,
         createdAt: c.createdAt,
+      })),
+      followUps: (pdi.followUps ?? []).map((f: FollowUpDetail) => ({
+        id: f.id,
+        pdiId: f.pdiId,
+        scheduledAt: f.scheduledAt,
+        conductedAt: f.conductedAt,
+        notes: f.notes,
+        status: f.status,
+        createdAt: f.createdAt,
       })),
     },
   };
