@@ -303,6 +303,16 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - All new fields (startDate, expectedResults, responsibleId, completedAt, successMetrics, achievedResults) persisted in create/update operations
 ---
 
+## 2026-03-02T18:40 - US-013 (reestruturacao-pdi-colaborador)
+- What was implemented: Added PDIFollowUp model and FollowUpStatus enum to schema. Created migration, updated generated Prisma client.
+- Files changed:
+  - `prisma/schema.prisma` — Added FollowUpStatus enum, PDIFollowUp model, followUps relation on PDI
+  - `prisma/migrations/20260302170000_add_pdi_followup/migration.sql` — CREATE TYPE, CREATE TABLE, CREATE INDEX, ADD FK
+  - `src/generated/prisma/enums.ts` — Added FollowUpStatus
+  - `src/generated/prisma/models/PDIFollowUp.ts` — New model type file
+  - `src/generated/prisma/internal/class.ts` — Updated inlineSchema
+---
+
 ## 2026-03-02T18:30 - US-012 (reestruturacao-pdi-colaborador)
 - What was implemented: Updated PDI UI for continuous model. Removed manual PDI creation UI, added "Nova Meta" button in tracking view, completed goals shown collapsed.
 - Files changed:
