@@ -20,6 +20,7 @@ interface EmployeeFormProps {
     role: string;
     orgUnitId?: string;
     managerId?: string;
+    admissionDate?: string;
   };
 }
 
@@ -31,6 +32,7 @@ export function EmployeeForm({ mode, orgUnits, initialData }: EmployeeFormProps)
   const [password, setPassword] = useState("");
   const [orgUnitId, setOrgUnitId] = useState(initialData?.orgUnitId ?? "");
   const [managerId, setManagerId] = useState(initialData?.managerId ?? "");
+  const [admissionDate, setAdmissionDate] = useState(initialData?.admissionDate ?? "");
   const [managers, setManagers] = useState<
     { id: string; name: string; email: string }[]
   >([]);
@@ -73,6 +75,7 @@ export function EmployeeForm({ mode, orgUnits, initialData }: EmployeeFormProps)
         password: password || undefined,
         orgUnitId: orgUnitId || undefined,
         managerId: managerId || undefined,
+        admissionDate: admissionDate || undefined,
       });
     } else {
       result = await updateEmployee(initialData!.id, {
@@ -81,6 +84,7 @@ export function EmployeeForm({ mode, orgUnits, initialData }: EmployeeFormProps)
         role,
         orgUnitId: orgUnitId || undefined,
         managerId: managerId || undefined,
+        admissionDate: admissionDate || undefined,
       });
     }
 
@@ -252,6 +256,24 @@ export function EmployeeForm({ mode, orgUnits, initialData }: EmployeeFormProps)
                 </option>
               ))}
             </select>
+          </div>
+
+          {/* Admission Date */}
+          <div>
+            <label
+              htmlFor="emp-admission"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
+              Data de Admissão
+            </label>
+            <input
+              id="emp-admission"
+              type="date"
+              value={admissionDate}
+              onChange={(e) => setAdmissionDate(e.target.value)}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              disabled={loading}
+            />
           </div>
         </div>
       </div>

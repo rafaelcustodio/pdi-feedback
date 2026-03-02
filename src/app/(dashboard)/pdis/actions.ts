@@ -295,7 +295,7 @@ export async function getSubordinatesForPDI(): Promise<SubordinateOption[]> {
 export async function createPDI(data: {
   employeeId: string;
   period: string;
-  conductedAt: string;
+  conductedAt?: string;
   goals: GoalInput[];
   activate?: boolean;
 }): Promise<{ success: boolean; error?: string; id?: string }> {
@@ -320,8 +320,8 @@ export async function createPDI(data: {
     return { success: false, error: "Período é obrigatório" };
   }
 
-  if (!data.conductedAt) {
-    return { success: false, error: "Data de realização é obrigatória" };
+  if (data.activate && !data.conductedAt) {
+    return { success: false, error: "Data de realização é obrigatória para ativar o PDI" };
   }
 
   if (data.activate && data.goals.length === 0) {
@@ -344,7 +344,7 @@ export async function createPDI(data: {
       employeeId: data.employeeId,
       managerId: userId,
       period: data.period.trim(),
-      conductedAt: new Date(data.conductedAt),
+      conductedAt: data.conductedAt ? new Date(data.conductedAt) : null,
       status: data.activate ? "active" : "draft",
       goals: {
         create: data.goals
@@ -368,7 +368,7 @@ export async function updatePDI(
   id: string,
   data: {
     period: string;
-    conductedAt: string;
+    conductedAt?: string;
     goals: GoalInput[];
     activate?: boolean;
   }
@@ -401,8 +401,8 @@ export async function updatePDI(
     return { success: false, error: "Período é obrigatório" };
   }
 
-  if (!data.conductedAt) {
-    return { success: false, error: "Data de realização é obrigatória" };
+  if (data.activate && !data.conductedAt) {
+    return { success: false, error: "Data de realização é obrigatória para ativar o PDI" };
   }
 
   if (data.activate && data.goals.length === 0) {
@@ -470,7 +470,7 @@ export async function updatePDI(
       where: { id },
       data: {
         period: data.period.trim(),
-        conductedAt: new Date(data.conductedAt),
+        conductedAt: data.conductedAt ? new Date(data.conductedAt) : null,
         status: data.activate ? "active" : (pdi.status === "scheduled" ? "draft" : pdi.status),
       },
     });

@@ -38,7 +38,34 @@ export async function GET(request: Request) {
 
     let generated = 0;
     let checked = 0;
+    let skippedBySector = 0;
     const errors: string[] = [];
+
+    // Pre-load employee→unit mapping for active hierarchies
+    const activeHierarchies = await prisma.employeeHierarchy.findMany({
+      where: { endDate: null },
+      select: { employeeId: true, organizationalUnitId: true },
+    });
+    const employeeUnitMap = new Map<string, string>();
+    for (const h of activeHierarchies) {
+      employeeUnitMap.set(h.employeeId, h.organizationalUnitId);
+    }
+
+    // Pre-load active sector schedules by unit+type
+    const activeSectorSchedules = await prisma.sectorSchedule.findMany({
+      where: { isActive: true },
+      select: { organizationalUnitId: true, type: true },
+    });
+    const sectorScheduleSet = new Set(
+      activeSectorSchedules.map((s) => `${s.organizationalUnitId}_${s.type}`)
+    );
+
+    // Helper: check if employee's unit has active sector schedule for the type
+    const hasSectorSchedule = (employeeId: string, type: string): boolean => {
+      const unitId = employeeUnitMap.get(employeeId);
+      if (!unitId) return false;
+      return sectorScheduleSet.has(`${unitId}_${type}`);
+    };
 
     // -------------------------------------------------------
     // Process PDI Schedules
@@ -54,6 +81,12 @@ export async function GET(request: Request) {
       checked++;
       try {
         if (!schedule.employee.isActive) continue;
+
+        // Skip employees under sector config — manager programs manually
+        if (hasSectorSchedule(schedule.employeeId, "pdi")) {
+          skippedBySector++;
+          continue;
+        }
 
         // Find all future scheduled PDIs for this employee
         const futureScheduled = await prisma.pDI.findMany({
@@ -156,6 +189,12 @@ export async function GET(request: Request) {
       try {
         if (!schedule.employee.isActive) continue;
 
+        // Skip employees under sector config — manager programs manually
+        if (hasSectorSchedule(schedule.employeeId, "feedback")) {
+          skippedBySector++;
+          continue;
+        }
+
         // Find all future scheduled Feedbacks for this employee
         const futureScheduled = await prisma.feedback.findMany({
           where: {
@@ -241,12 +280,13 @@ export async function GET(request: Request) {
     }
 
     console.log(
-      `[Cron] generate-events completed: checked=${checked}, generated=${generated}, errors=${errors.length}`
+      `[Cron] generate-events completed: checked=${checked}, generated=${generated}, skippedBySector=${skippedBySector}, errors=${errors.length}`
     );
 
     return NextResponse.json({
       generated,
       checked,
+      skippedBySector,
       errors,
     });
   } catch (error) {

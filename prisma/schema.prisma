@@ -17,6 +17,11 @@ enum UserRole {
   employee
 }
 
+enum ScheduleType {
+  pdi
+  feedback
+}
+
 model User {
   id          String    @id @default(cuid())
   name        String
@@ -27,8 +32,9 @@ model User {
   ssoProvider String?
   ssoId       String?
   isActive    Boolean   @default(true)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  admissionDate DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   // Relations as employee
   employeeHierarchies EmployeeHierarchy[] @relation("Employee")
@@ -67,8 +73,25 @@ model OrganizationalUnit {
   children OrganizationalUnit[] @relation("OrgUnitHierarchy")
 
   employeeHierarchies EmployeeHierarchy[]
+  sectorSchedules     SectorSchedule[]
 
   @@index([parentId])
+}
+
+model SectorSchedule {
+  id                   String       @id @default(cuid())
+  organizationalUnitId String
+  type                 ScheduleType
+  frequencyMonths      Int
+  startDate            DateTime
+  isActive             Boolean      @default(true)
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+
+  organizationalUnit OrganizationalUnit @relation(fields: [organizationalUnitId], references: [id])
+
+  @@unique([organizationalUnitId, type])
+  @@index([organizationalUnitId])
 }
 
 model EmployeeHierarchy {
@@ -184,6 +207,7 @@ enum FeedbackStatus {
   draft
   scheduled
   submitted
+  cancelled
 }
 
 model Feedback {
@@ -199,6 +223,7 @@ model Feedback {
   frequencyMonths Int?
   conductedAt     DateTime?
   scheduledAt     DateTime?
+  isOnboarding    Boolean        @default(false)
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 

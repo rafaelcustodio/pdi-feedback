@@ -6,6 +6,10 @@ import {
   buildReminderEmailSubject,
   type ReminderItem,
 } from "@/lib/email-templates";
+import {
+  calculatePeriods,
+  getCurrentPeriod,
+} from "@/lib/sector-schedule-utils";
 
 /**
  * GET /api/cron/email-reminders
@@ -234,6 +238,195 @@ export async function GET(request: Request) {
           },
         });
         notificationsCreated++;
+      }
+    }
+
+    // -------------------------------------------------------
+    // Step 1.5: Sector cycle notifications
+    // -------------------------------------------------------
+
+    const activeSectorSchedules = await prisma.sectorSchedule.findMany({
+      where: { isActive: true },
+      include: { organizationalUnit: { select: { id: true, name: true } } },
+    });
+
+    for (const schedule of activeSectorSchedules) {
+      const type = schedule.type as "pdi" | "feedback";
+      const unitId = schedule.organizationalUnitId;
+      const unitName = schedule.organizationalUnit.name;
+      const typeLabel = type === "pdi" ? "PDI" : "Feedback";
+      const notifType = type === "pdi" ? "pdi_reminder" : "feedback_reminder";
+
+      const periods = calculatePeriods(schedule.frequencyMonths, schedule.startDate);
+      const currentPeriod = getCurrentPeriod(periods);
+
+      // Get active employees in this unit
+      const hierarchies = await prisma.employeeHierarchy.findMany({
+        where: { organizationalUnitId: unitId, endDate: null },
+        select: {
+          employeeId: true,
+          managerId: true,
+          employee: { select: { admissionDate: true } },
+        },
+      });
+
+      // Helper: filter eligible employees for a given period start
+      const getEligible = (periodStart: Date) =>
+        hierarchies.filter((h) => {
+          if (type === "feedback" && h.employee.admissionDate) {
+            const onboardingEnd = new Date(h.employee.admissionDate);
+            onboardingEnd.setDate(onboardingEnd.getDate() + 90);
+            if (periodStart < onboardingEnd) return false;
+          }
+          return true;
+        });
+
+      // Helper: count compliance statuses for a period
+      const countCompliance = async (
+        eligible: typeof hierarchies,
+        periodStart: Date,
+        periodEnd: Date
+      ) => {
+        let notScheduled = 0;
+        let scheduled = 0;
+        let done = 0;
+
+        for (const h of eligible) {
+          if (type === "pdi") {
+            const pdi = await prisma.pDI.findFirst({
+              where: {
+                employeeId: h.employeeId,
+                OR: [
+                  { scheduledAt: { gte: periodStart, lte: periodEnd } },
+                  { conductedAt: { gte: periodStart, lte: periodEnd } },
+                ],
+              },
+              orderBy: { scheduledAt: "desc" },
+            });
+            if (!pdi) notScheduled++;
+            else if (pdi.status === "active" || pdi.status === "completed") done++;
+            else scheduled++;
+          } else {
+            const feedback = await prisma.feedback.findFirst({
+              where: {
+                employeeId: h.employeeId,
+                OR: [
+                  { scheduledAt: { gte: periodStart, lte: periodEnd } },
+                  { conductedAt: { gte: periodStart, lte: periodEnd } },
+                ],
+              },
+              orderBy: { scheduledAt: "desc" },
+            });
+            if (!feedback) notScheduled++;
+            else if (feedback.status === "submitted") done++;
+            else scheduled++;
+          }
+        }
+
+        return { notScheduled, scheduled, done };
+      };
+
+      // --- Phase 1: Period start (first 7 days) ---
+      if (currentPeriod) {
+        const daysSinceStart = Math.floor(
+          (now.getTime() - currentPeriod.start.getTime()) / (1000 * 60 * 60 * 24)
+        );
+        const daysUntilEnd = Math.floor(
+          (currentPeriod.end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+        );
+
+        const eligible = getEligible(currentPeriod.start);
+        const managerIds = [...new Set(eligible.map((h) => h.managerId))];
+
+        if (daysSinceStart >= 0 && daysSinceStart <= 7 && eligible.length > 0) {
+          const counts = await countCompliance(eligible, currentPeriod.start, currentPeriod.end);
+          if (counts.notScheduled > 0) {
+            for (const managerId of managerIds) {
+              const messageKey = `sector_reminder_${unitId}_${currentPeriod.label}_${type}_period_start`;
+              const existing = await prisma.notification.findFirst({
+                where: { userId: managerId, message: { contains: messageKey } },
+              });
+              if (!existing) {
+                await prisma.notification.create({
+                  data: {
+                    userId: managerId,
+                    type: notifType,
+                    title: `${counts.notScheduled} colaboradores aguardam programação de ${typeLabel}`,
+                    message: `${counts.notScheduled} colaboradores aguardam programação de ${typeLabel} no período ${currentPeriod.label} (${unitName}). [${messageKey}]`,
+                  },
+                });
+                notificationsCreated++;
+              }
+            }
+          }
+        }
+
+        // --- Phase 2: Approaching end (7 days before) ---
+        if (daysUntilEnd >= 0 && daysUntilEnd <= 7 && eligible.length > 0) {
+          const counts = await countCompliance(eligible, currentPeriod.start, currentPeriod.end);
+          const pendingCount = counts.notScheduled + counts.scheduled;
+          if (pendingCount > 0) {
+            for (const managerId of managerIds) {
+              const messageKey = `sector_reminder_${unitId}_${currentPeriod.label}_${type}_approaching_end`;
+              const existing = await prisma.notification.findFirst({
+                where: { userId: managerId, message: { contains: messageKey } },
+              });
+              if (!existing) {
+                let msgBody = `Faltam ${daysUntilEnd} dias para o fim do período ${currentPeriod.label} (${unitName}).`;
+                if (counts.notScheduled > 0) msgBody += ` ${counts.notScheduled} não programados.`;
+                if (counts.scheduled > 0) msgBody += ` ${counts.scheduled} programados mas não realizados.`;
+                await prisma.notification.create({
+                  data: {
+                    userId: managerId,
+                    type: notifType,
+                    title: `${typeLabel}: ${pendingCount} pendências antes do fim do período — ${unitName}`,
+                    message: `${msgBody} [${messageKey}]`,
+                  },
+                });
+                notificationsCreated++;
+              }
+            }
+          }
+        }
+      }
+
+      // --- Phase 3: Previous period ended with pending items ---
+      const endedPeriods = periods.filter((p) => p.end < now);
+      const previousPeriod = endedPeriods.length > 0 ? endedPeriods[endedPeriods.length - 1] : null;
+
+      if (previousPeriod) {
+        const daysSinceEnd = Math.floor(
+          (now.getTime() - previousPeriod.end.getTime()) / (1000 * 60 * 60 * 24)
+        );
+        // Only check recently ended periods (within 7 days)
+        if (daysSinceEnd >= 0 && daysSinceEnd <= 7) {
+          const eligible = getEligible(previousPeriod.start);
+          const managerIds = [...new Set(eligible.map((h) => h.managerId))];
+
+          if (eligible.length > 0) {
+            const counts = await countCompliance(eligible, previousPeriod.start, previousPeriod.end);
+            const pendingCount = counts.notScheduled + counts.scheduled;
+            if (pendingCount > 0) {
+              for (const managerId of managerIds) {
+                const messageKey = `sector_reminder_${unitId}_${previousPeriod.label}_${type}_period_ended`;
+                const existing = await prisma.notification.findFirst({
+                  where: { userId: managerId, message: { contains: messageKey } },
+                });
+                if (!existing) {
+                  await prisma.notification.create({
+                    data: {
+                      userId: managerId,
+                      type: notifType,
+                      title: `Período ${previousPeriod.label} encerrado com pendências — ${unitName}`,
+                      message: `Período ${previousPeriod.label} encerrado com ${pendingCount} pendências de ${typeLabel} em ${unitName}. [${messageKey}]`,
+                    },
+                  });
+                  notificationsCreated++;
+                }
+              }
+            }
+          }
+        }
       }
     }
 

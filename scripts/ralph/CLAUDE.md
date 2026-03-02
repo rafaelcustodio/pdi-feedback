@@ -70,6 +70,18 @@ Before committing, check if any edited files have learnings worth preserving in 
 
 Only update CLAUDE.md if you have **genuinely reusable knowledge** that would help future work in that directory.
 
+## Protected Files — Do NOT Modify
+
+The following files contain critical infrastructure fixes and must **never be overwritten or reverted**:
+
+- **`src/middleware.ts`** — Uses `auth.config.ts` (Edge Runtime compatible, no Prisma). Do NOT revert to `export { auth as middleware } from "@/lib/auth"`.
+- **`src/lib/auth.config.ts`** — Lightweight NextAuth config for the middleware. Do NOT delete.
+- **`next.config.ts`** — Must keep `serverExternalPackages: ["@prisma/client", "@prisma/adapter-pg", "pg"]` to prevent Prisma from being bundled for the browser.
+- **`src/lib/access-control.ts`** — Has `"use server"` directive. Must only export `async` functions. Do NOT add `export { computeSubordinates }` or any other sync re-export — this breaks the entire module. If consumers need `computeSubordinates` or `HierarchyEntry`, they must import directly from `@/lib/hierarchy-utils`.
+- **`src/app/(dashboard)/notificacoes/actions.ts` — `generateScheduleNotifications`** — Do NOT call `revalidatePath` inside this function. It is called during page render (not from a user action), so `revalidatePath` during render throws a runtime error. The page fetches fresh data immediately after calling this function, so revalidation is unnecessary.
+
+If your story requires changes to authentication or Next.js config, extend these files rather than replacing them.
+
 ## Quality Requirements
 
 - ALL commits must pass your project's quality checks (typecheck, lint, test)
