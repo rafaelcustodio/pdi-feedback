@@ -248,3 +248,14 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - Auth chain: authorize() → jwt() → session() → layout → AppLayout → Sidebar. Each step must pass the new field.
   - Sidebar filtering: `roles` controls role-based visibility, `evaluationModes` controls mode-based visibility. Admin/manager bypass evaluationModes filter.
 ---
+
+## 2026-03-02T16:53 - US-004 (reestruturacao-pdi-colaborador)
+- What was implemented: Added evaluationMode filters to all PDI and Feedback listing queries and employee selection dropdowns.
+- Files changed:
+  - `src/app/(dashboard)/pdis/actions.ts` — Added `{ employee: { evaluationMode: "pdi" } }` to getPDIs andConditions; added `evaluationMode: "pdi"` to getSubordinatesForPDI where clauses
+  - `src/app/(dashboard)/feedbacks/actions.ts` — Added `{ employee: { evaluationMode: "feedback" } }` to getFeedbacks andConditions and getAvailableYears; added `evaluationMode: "feedback"` to getSubordinatesForFeedback where clauses
+- **Learnings for future iterations:**
+  - For filtering on related model fields in Prisma, use nested object syntax: `{ employee: { evaluationMode: "pdi" } }`
+  - The andConditions pattern allows adding filters incrementally without restructuring existing where logic
+  - Both getSubordinatesForPDI and getSubordinatesForFeedback have two code paths (all vs filtered IDs) - must update both
+---

@@ -109,6 +109,9 @@ export async function getPDIs(
 
   const andConditions: Record<string, unknown>[] = [];
 
+  // Only show PDIs for employees with evaluationMode='pdi'
+  andConditions.push({ employee: { evaluationMode: "pdi" } });
+
   // Employees should NOT see scheduled PDIs
   if (role === "employee") {
     andConditions.push({ status: { not: "scheduled" } });
@@ -276,7 +279,7 @@ export async function getSubordinatesForPDI(): Promise<SubordinateOption[]> {
 
   if (accessible === "all") {
     return prisma.user.findMany({
-      where: { isActive: true, id: { not: userId } },
+      where: { isActive: true, id: { not: userId }, evaluationMode: "pdi" },
       select: { id: true, name: true, email: true },
       orderBy: { name: "asc" },
     });
@@ -286,7 +289,7 @@ export async function getSubordinatesForPDI(): Promise<SubordinateOption[]> {
   if (subordinateIds.length === 0) return [];
 
   return prisma.user.findMany({
-    where: { id: { in: subordinateIds }, isActive: true },
+    where: { id: { in: subordinateIds }, isActive: true, evaluationMode: "pdi" },
     select: { id: true, name: true, email: true },
     orderBy: { name: "asc" },
   });
