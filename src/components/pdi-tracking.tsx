@@ -141,6 +141,10 @@ export function PDITracking({ pdi, userId, userRole }: PDITrackingProps) {
                 isManager={isManager}
                 pdiStatus={pdi.status}
                 userId={userId}
+                employeeId={pdi.employeeId}
+                managerId={pdi.managerId}
+                employeeName={pdi.employeeName}
+                managerName={pdi.managerName}
               />
             ))}
           </div>
@@ -180,12 +184,20 @@ function GoalCard({
   isManager,
   pdiStatus,
   userId,
+  employeeId,
+  managerId,
+  employeeName,
+  managerName,
 }: {
   goal: PDIDetail["goals"][number];
   isEmployee: boolean;
   isManager: boolean;
   pdiStatus: string;
   userId: string;
+  employeeId: string;
+  managerId: string;
+  employeeName: string;
+  managerName: string;
 }) {
   const [expanded, setExpanded] = useState(false);
   const [showEvidenceForm, setShowEvidenceForm] = useState(false);
@@ -200,6 +212,16 @@ function GoalCard({
   const [editDueDate, setEditDueDate] = useState(
     goal.dueDate ? new Date(goal.dueDate).toISOString().split("T")[0] : ""
   );
+  const [editStartDate, setEditStartDate] = useState(
+    goal.startDate ? new Date(goal.startDate).toISOString().split("T")[0] : ""
+  );
+  const [editExpectedResults, setEditExpectedResults] = useState(goal.expectedResults ?? "");
+  const [editResponsibleId, setEditResponsibleId] = useState(goal.responsibleId ?? "");
+  const [editSuccessMetrics, setEditSuccessMetrics] = useState(goal.successMetrics ?? "");
+  const [editCompletedAt, setEditCompletedAt] = useState(
+    goal.completedAt ? new Date(goal.completedAt).toISOString().split("T")[0] : ""
+  );
+  const [editAchievedResults, setEditAchievedResults] = useState(goal.achievedResults ?? "");
 
   // Evidence editing state
   const [editingEvidenceId, setEditingEvidenceId] = useState<string | null>(null);
@@ -241,6 +263,12 @@ function GoalCard({
       developmentObjective: editObjective.trim(),
       actions: editActions,
       dueDate: editDueDate || undefined,
+      startDate: editStartDate || undefined,
+      expectedResults: editExpectedResults || undefined,
+      responsibleId: editResponsibleId || undefined,
+      successMetrics: editSuccessMetrics || undefined,
+      completedAt: editCompletedAt || undefined,
+      achievedResults: editAchievedResults || undefined,
     });
     setLoading(false);
     if (result.success) {
@@ -348,8 +376,8 @@ function GoalCard({
           {editingGoal && (
             <div className="mb-4 rounded-md border border-blue-200 bg-blue-50 p-4">
               <p className="mb-3 text-xs font-medium text-blue-700">Editar Meta</p>
-              <div className="space-y-3">
-                <div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="sm:col-span-2">
                   <label className="mb-1 block text-xs font-medium text-gray-700">
                     Objetivo de Desenvolvimento *
                   </label>
@@ -361,9 +389,33 @@ function GoalCard({
                     disabled={loading}
                   />
                 </div>
+                <div className="sm:col-span-2">
+                  <label className="mb-1 block text-xs font-medium text-gray-700">
+                    Ações / Atividades
+                  </label>
+                  <textarea
+                    value={editActions}
+                    onChange={(e) => setEditActions(e.target.value)}
+                    rows={2}
+                    className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    disabled={loading}
+                  />
+                </div>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-gray-700">
-                    Prazo
+                    Início
+                  </label>
+                  <input
+                    type="date"
+                    value={editStartDate}
+                    onChange={(e) => setEditStartDate(e.target.value)}
+                    className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    disabled={loading}
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-700">
+                    Prazo Final
                   </label>
                   <input
                     type="date"
@@ -373,16 +425,70 @@ function GoalCard({
                     disabled={loading}
                   />
                 </div>
-                <div>
+                <div className="sm:col-span-2">
                   <label className="mb-1 block text-xs font-medium text-gray-700">
-                    Ações / Atividades
+                    Resultados Esperados
                   </label>
                   <textarea
-                    value={editActions}
-                    onChange={(e) => setEditActions(e.target.value)}
-                    rows={3}
+                    value={editExpectedResults}
+                    onChange={(e) => setEditExpectedResults(e.target.value)}
+                    rows={2}
+                    placeholder="Descreva os resultados esperados..."
                     className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     disabled={loading}
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-700">
+                    Responsável
+                  </label>
+                  <select
+                    value={editResponsibleId}
+                    onChange={(e) => setEditResponsibleId(e.target.value)}
+                    className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    disabled={loading}
+                  >
+                    <option value="">Selecione</option>
+                    <option value={employeeId}>{employeeName} (Colaborador)</option>
+                    <option value={managerId}>{managerName} (Gestor)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-700">
+                    Métricas de Sucesso
+                  </label>
+                  <input
+                    type="text"
+                    value={editSuccessMetrics}
+                    onChange={(e) => setEditSuccessMetrics(e.target.value)}
+                    placeholder="Ex: Nota >= 80% no exame"
+                    className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    disabled={loading}
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-700">
+                    Término
+                  </label>
+                  <input
+                    type="date"
+                    value={editCompletedAt}
+                    onChange={(e) => setEditCompletedAt(e.target.value)}
+                    className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400"
+                    disabled={loading || goal.status !== "completed"}
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-700">
+                    Resultados Obtidos
+                  </label>
+                  <input
+                    type="text"
+                    value={editAchievedResults}
+                    onChange={(e) => setEditAchievedResults(e.target.value)}
+                    placeholder="Descreva os resultados obtidos..."
+                    className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400"
+                    disabled={loading || goal.status !== "completed"}
                   />
                 </div>
               </div>

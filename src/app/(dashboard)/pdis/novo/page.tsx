@@ -20,7 +20,12 @@ export default async function NovoPDIPage() {
 
   return (
     <div className="mx-auto max-w-3xl">
-      <PDIForm mode="create" subordinates={subordinates} />
+      <PDIForm
+        mode="create"
+        subordinates={subordinates}
+        managerId={session.user.id}
+        managerName={session.user.name ?? "Gestor"}
+      />
     </div>
   );
 }

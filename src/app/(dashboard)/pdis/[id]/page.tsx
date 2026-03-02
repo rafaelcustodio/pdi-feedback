@@ -34,6 +34,8 @@ export default async function PDIDetailPage({
       <div className="mx-auto max-w-3xl">
         <PDIForm
           mode="edit"
+          managerId={pdi.managerId}
+          managerName={pdi.managerName}
           initialData={{
             id: pdi.id,
             employeeId: pdi.employeeId,
@@ -55,6 +57,16 @@ export default async function PDIDetailPage({
               dueDate: g.dueDate
                 ? new Date(g.dueDate).toISOString().split("T")[0]
                 : "",
+              startDate: g.startDate
+                ? new Date(g.startDate).toISOString().split("T")[0]
+                : "",
+              expectedResults: g.expectedResults ?? "",
+              responsibleId: g.responsibleId ?? "",
+              completedAt: g.completedAt
+                ? new Date(g.completedAt).toISOString().split("T")[0]
+                : "",
+              successMetrics: g.successMetrics ?? "",
+              achievedResults: g.achievedResults ?? "",
             })),
           }}
         />

@@ -302,3 +302,12 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - responsibleId validated against employeeId or managerId of the PDI
   - All new fields (startDate, expectedResults, responsibleId, completedAt, successMetrics, achievedResults) persisted in create/update operations
 ---
+
+## 2026-03-02T17:24 - US-008 (reestruturacao-pdi-colaborador)
+- What was implemented: Updated PDI form and tracking components to display and edit all new PDIGoal fields. Added responsible dropdown showing only employee and manager. completedAt/achievedResults disabled when status != completed.
+- Files changed:
+  - `src/components/pdi-form.tsx` — Added managerId/managerName props, expanded goal form with all new fields (startDate, expectedResults, responsibleId dropdown, successMetrics, completedAt, achievedResults), disabled logic for completed-only fields
+  - `src/components/pdi-tracking.tsx` — Added PDI context props to GoalCard, expanded edit form with all new fields, responsible dropdown, disabled logic
+  - `src/app/(dashboard)/pdis/[id]/page.tsx` — Pass managerId/managerName and new goal fields to PDIForm
+  - `src/app/(dashboard)/pdis/novo/page.tsx` — Pass managerId/managerName from session to PDIForm
+---

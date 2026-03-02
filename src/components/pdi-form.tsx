@@ -15,6 +15,8 @@ import type { SubordinateOption, GoalInput } from "@/app/(dashboard)/pdis/action
 interface PDIFormProps {
   mode: "create" | "edit";
   subordinates?: SubordinateOption[];
+  managerId?: string;
+  managerName?: string;
   initialData?: {
     id: string;
     employeeId: string;
@@ -30,6 +32,12 @@ interface PDIFormProps {
       actions: string;
       status: string;
       dueDate: string;
+      startDate?: string;
+      expectedResults?: string;
+      responsibleId?: string;
+      completedAt?: string;
+      successMetrics?: string;
+      achievedResults?: string;
     }[];
   };
 }
@@ -40,12 +48,20 @@ function createEmptyGoal(): GoalInput {
     actions: "",
     status: "pending",
     dueDate: "",
+    startDate: "",
+    expectedResults: "",
+    responsibleId: "",
+    completedAt: "",
+    successMetrics: "",
+    achievedResults: "",
   };
 }
 
 export function PDIForm({
   mode,
   subordinates,
+  managerId,
+  managerName,
   initialData,
 }: PDIFormProps) {
   const router = useRouter();
@@ -379,26 +395,6 @@ export function PDIForm({
                   />
                 </div>
 
-                {/* Due Date */}
-                <div>
-                  <label
-                    htmlFor={`goal-duedate-${index}`}
-                    className="mb-1 block text-xs font-medium text-gray-600"
-                  >
-                    Prazo
-                  </label>
-                  <input
-                    id={`goal-duedate-${index}`}
-                    type="date"
-                    value={goal.dueDate}
-                    onChange={(e) =>
-                      updateGoal(index, "dueDate", e.target.value)
-                    }
-                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    disabled={loading}
-                  />
-                </div>
-
                 {/* Actions */}
                 <div className="sm:col-span-2">
                   <label
@@ -417,6 +413,160 @@ export function PDIForm({
                     rows={2}
                     className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     disabled={loading}
+                  />
+                </div>
+
+                {/* Start Date */}
+                <div>
+                  <label
+                    htmlFor={`goal-startdate-${index}`}
+                    className="mb-1 block text-xs font-medium text-gray-600"
+                  >
+                    Início
+                  </label>
+                  <input
+                    id={`goal-startdate-${index}`}
+                    type="date"
+                    value={goal.startDate || ""}
+                    onChange={(e) =>
+                      updateGoal(index, "startDate", e.target.value)
+                    }
+                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    disabled={loading}
+                  />
+                </div>
+
+                {/* Due Date */}
+                <div>
+                  <label
+                    htmlFor={`goal-duedate-${index}`}
+                    className="mb-1 block text-xs font-medium text-gray-600"
+                  >
+                    Prazo Final
+                  </label>
+                  <input
+                    id={`goal-duedate-${index}`}
+                    type="date"
+                    value={goal.dueDate}
+                    onChange={(e) =>
+                      updateGoal(index, "dueDate", e.target.value)
+                    }
+                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    disabled={loading}
+                  />
+                </div>
+
+                {/* Expected Results */}
+                <div className="sm:col-span-2">
+                  <label
+                    htmlFor={`goal-expected-${index}`}
+                    className="mb-1 block text-xs font-medium text-gray-600"
+                  >
+                    Resultados Esperados
+                  </label>
+                  <textarea
+                    id={`goal-expected-${index}`}
+                    value={goal.expectedResults || ""}
+                    onChange={(e) =>
+                      updateGoal(index, "expectedResults", e.target.value)
+                    }
+                    placeholder="Descreva os resultados esperados..."
+                    rows={2}
+                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    disabled={loading}
+                  />
+                </div>
+
+                {/* Responsible */}
+                <div>
+                  <label
+                    htmlFor={`goal-responsible-${index}`}
+                    className="mb-1 block text-xs font-medium text-gray-600"
+                  >
+                    Responsável
+                  </label>
+                  <select
+                    id={`goal-responsible-${index}`}
+                    value={goal.responsibleId || ""}
+                    onChange={(e) =>
+                      updateGoal(index, "responsibleId", e.target.value)
+                    }
+                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    disabled={loading}
+                  >
+                    <option value="">Selecione</option>
+                    {(initialData?.employeeId || employeeId) && (
+                      <option value={initialData?.employeeId || employeeId}>
+                        {initialData?.employeeName || subordinates?.find(s => s.id === employeeId)?.name || "Colaborador"} (Colaborador)
+                      </option>
+                    )}
+                    {managerId && (
+                      <option value={managerId}>
+                        {managerName} (Gestor)
+                      </option>
+                    )}
+                  </select>
+                </div>
+
+                {/* Success Metrics */}
+                <div>
+                  <label
+                    htmlFor={`goal-metrics-${index}`}
+                    className="mb-1 block text-xs font-medium text-gray-600"
+                  >
+                    Métricas de Sucesso
+                  </label>
+                  <input
+                    id={`goal-metrics-${index}`}
+                    type="text"
+                    value={goal.successMetrics || ""}
+                    onChange={(e) =>
+                      updateGoal(index, "successMetrics", e.target.value)
+                    }
+                    placeholder="Ex: Aprovação no exame com nota >= 80%"
+                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    disabled={loading}
+                  />
+                </div>
+
+                {/* Completed At */}
+                <div>
+                  <label
+                    htmlFor={`goal-completed-${index}`}
+                    className="mb-1 block text-xs font-medium text-gray-600"
+                  >
+                    Término
+                  </label>
+                  <input
+                    id={`goal-completed-${index}`}
+                    type="date"
+                    value={goal.completedAt || ""}
+                    onChange={(e) =>
+                      updateGoal(index, "completedAt", e.target.value)
+                    }
+                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400"
+                    disabled={loading || goal.status !== "completed"}
+                  />
+                </div>
+
+                {/* Achieved Results */}
+                <div>
+                  <label
+                    htmlFor={`goal-achieved-${index}`}
+                    className="mb-1 block text-xs font-medium text-gray-600"
+                  >
+                    Resultados Obtidos
+                  </label>
+                  <input
+                    id={`goal-achieved-${index}`}
+                    type="text"
+                    value={goal.achievedResults || ""}
+                    onChange={(e) =>
+                      updateGoal(index, "achievedResults", e.target.value)
+                    }
+                    placeholder="Descreva os resultados obtidos..."
+                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400"
+                    disabled={loading || goal.status !== "completed"}
                   />
                 </div>
               </div>
