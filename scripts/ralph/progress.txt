@@ -303,6 +303,18 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - All new fields (startDate, expectedResults, responsibleId, completedAt, successMetrics, achievedResults) persisted in create/update operations
 ---
 
+## 2026-03-02T18:20 - US-011 (reestruturacao-pdi-colaborador)
+- What was implemented: Updated PDI server actions for continuous model. Added getOrCreatePDI and addGoal actions, removed manual createPDI, defaulted listing to active-only.
+- Files changed:
+  - `src/app/(dashboard)/pdis/actions.ts` — Added getOrCreatePDI(employeeId), addGoal(pdiId, data); removed createPDI; getPDIs defaults to status: "active"
+  - `src/app/(dashboard)/pdis/novo/page.tsx` — Simplified to redirect to /pdis (manual creation removed)
+  - `src/components/pdi-form.tsx` — Simplified to edit-only mode, removed create mode, employee selector, SubordinateOption import
+- **Key design decisions:**
+  - getOrCreatePDI finds active PDI or creates one with managerId from EmployeeHierarchy
+  - addGoal validates goal constraints (completedAt/achievedResults only when completed, responsibleId must be employee or manager)
+  - PDIForm kept for edit mode but no longer used directly — US-012 will overhaul the UI
+---
+
 ## 2026-03-02T18:10 - US-010 (reestruturacao-pdi-colaborador)
 - What was implemented: Created idempotent SQL migration to consolidate multiple PDIs per employee into a single active PDI.
 - Files changed:
