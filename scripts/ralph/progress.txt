@@ -292,3 +292,13 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - Migration uses RENAME COLUMN to preserve data, not DROP+ADD
   - notificacoes/actions.ts is "protected" but mechanical field renames are allowed
 ---
+
+## 2026-03-02T17:20 - US-007 (reestruturacao-pdi-colaborador)
+- What was implemented: Updated PDI server actions to handle all new PDIGoal fields with proper server-side validation.
+- Files changed:
+  - `src/app/(dashboard)/pdis/actions.ts` — Expanded GoalInput type, updated createPDI/updatePDI/updateGoal with new fields and validations
+- **Key validations added:**
+  - completedAt and achievedResults only accepted when goal status='completed'
+  - responsibleId validated against employeeId or managerId of the PDI
+  - All new fields (startDate, expectedResults, responsibleId, completedAt, successMetrics, achievedResults) persisted in create/update operations
+---

@@ -84,6 +84,12 @@ export type GoalInput = {
   actions: string;
   status: string;
   dueDate: string;
+  startDate?: string;
+  expectedResults?: string;
+  responsibleId?: string;
+  completedAt?: string;
+  successMetrics?: string;
+  achievedResults?: string;
 };
 
 export async function getPDIs(
@@ -348,6 +354,19 @@ export async function createPDI(data: {
     }
   }
 
+  // Validate goal-level constraints
+  for (const goal of data.goals) {
+    if (goal.completedAt && goal.status !== "completed") {
+      return { success: false, error: "Término só pode ser preenchido quando status é 'Concluída'" };
+    }
+    if (goal.achievedResults && goal.status !== "completed") {
+      return { success: false, error: "Resultados Obtidos só pode ser preenchido quando status é 'Concluída'" };
+    }
+    if (goal.responsibleId && goal.responsibleId !== data.employeeId && goal.responsibleId !== userId) {
+      return { success: false, error: "Responsável deve ser o colaborador ou o gestor do PDI" };
+    }
+  }
+
   const pdi = await prisma.pDI.create({
     data: {
       employeeId: data.employeeId,
@@ -363,6 +382,12 @@ export async function createPDI(data: {
             actions: g.actions.trim() || null,
             status: "pending" as const,
             dueDate: g.dueDate ? new Date(g.dueDate) : null,
+            startDate: g.startDate ? new Date(g.startDate) : null,
+            expectedResults: g.expectedResults?.trim() || null,
+            responsibleId: g.responsibleId || null,
+            completedAt: g.completedAt ? new Date(g.completedAt) : null,
+            successMetrics: g.successMetrics?.trim() || null,
+            achievedResults: g.achievedResults?.trim() || null,
           })),
       },
     },
@@ -425,6 +450,19 @@ export async function updatePDI(
     }
   }
 
+  // Validate goal-level constraints
+  for (const goal of data.goals) {
+    if (goal.completedAt && goal.status !== "completed") {
+      return { success: false, error: "Término só pode ser preenchido quando status é 'Concluída'" };
+    }
+    if (goal.achievedResults && goal.status !== "completed") {
+      return { success: false, error: "Resultados Obtidos só pode ser preenchido quando status é 'Concluída'" };
+    }
+    if (goal.responsibleId && goal.responsibleId !== pdi.employeeId && goal.responsibleId !== userId) {
+      return { success: false, error: "Responsável deve ser o colaborador ou o gestor do PDI" };
+    }
+  }
+
   // Determine which goals to keep, update, create, or delete
   const existingGoalIds = pdi.goals.map((g) => g.id);
   const incomingGoalIds = data.goals.filter((g) => g.id).map((g) => g.id as string);
@@ -449,6 +487,12 @@ export async function updatePDI(
           developmentObjective: goal.developmentObjective.trim(),
           actions: goal.actions.trim() || null,
           dueDate: goal.dueDate ? new Date(goal.dueDate) : null,
+          startDate: goal.startDate ? new Date(goal.startDate) : null,
+          expectedResults: goal.expectedResults?.trim() || null,
+          responsibleId: goal.responsibleId || null,
+          completedAt: goal.completedAt ? new Date(goal.completedAt) : null,
+          successMetrics: goal.successMetrics?.trim() || null,
+          achievedResults: goal.achievedResults?.trim() || null,
         },
       });
     }
@@ -464,6 +508,12 @@ export async function updatePDI(
             actions: g.actions.trim() || null,
             status: "pending" as const,
             dueDate: g.dueDate ? new Date(g.dueDate) : null,
+            startDate: g.startDate ? new Date(g.startDate) : null,
+            expectedResults: g.expectedResults?.trim() || null,
+            responsibleId: g.responsibleId || null,
+            completedAt: g.completedAt ? new Date(g.completedAt) : null,
+            successMetrics: g.successMetrics?.trim() || null,
+            achievedResults: g.achievedResults?.trim() || null,
           })),
       });
     }
@@ -753,7 +803,17 @@ export async function cancelScheduledPDI(
 
 export async function updateGoal(
   goalId: string,
-  data: { developmentObjective: string; actions?: string; dueDate?: string }
+  data: {
+    developmentObjective: string;
+    actions?: string;
+    dueDate?: string;
+    startDate?: string;
+    expectedResults?: string;
+    responsibleId?: string;
+    completedAt?: string;
+    successMetrics?: string;
+    achievedResults?: string;
+  }
 ): Promise<{ success: boolean; error?: string }> {
   const session = await auth();
   if (!session?.user?.id) {
@@ -780,12 +840,32 @@ export async function updateGoal(
     return { success: false, error: "Apenas o gestor pode editar metas" };
   }
 
+  // Validate completedAt/achievedResults only allowed when completed
+  const effectiveStatus = goal.status;
+  if (data.completedAt && effectiveStatus !== "completed") {
+    return { success: false, error: "Término só pode ser preenchido quando status é 'Concluída'" };
+  }
+  if (data.achievedResults && effectiveStatus !== "completed") {
+    return { success: false, error: "Resultados Obtidos só pode ser preenchido quando status é 'Concluída'" };
+  }
+
+  // Validate responsibleId
+  if (data.responsibleId && data.responsibleId !== goal.pdi.employeeId && data.responsibleId !== goal.pdi.managerId) {
+    return { success: false, error: "Responsável deve ser o colaborador ou o gestor do PDI" };
+  }
+
   await prisma.pDIGoal.update({
     where: { id: goalId },
     data: {
       developmentObjective: data.developmentObjective.trim(),
       actions: data.actions?.trim() || null,
       dueDate: data.dueDate ? new Date(data.dueDate) : null,
+      startDate: data.startDate ? new Date(data.startDate) : null,
+      expectedResults: data.expectedResults?.trim() || null,
+      responsibleId: data.responsibleId || null,
+      completedAt: data.completedAt ? new Date(data.completedAt) : null,
+      successMetrics: data.successMetrics?.trim() || null,
+      achievedResults: data.achievedResults?.trim() || null,
     },
   });
 
