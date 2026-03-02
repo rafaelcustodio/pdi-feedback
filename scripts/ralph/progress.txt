@@ -303,6 +303,14 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - All new fields (startDate, expectedResults, responsibleId, completedAt, successMetrics, achievedResults) persisted in create/update operations
 ---
 
+## 2026-03-02T18:50 - US-014 (reestruturacao-pdi-colaborador)
+- What was implemented: Added server actions for PDIFollowUp CRUD: scheduleFollowUp, completeFollowUp, cancelFollowUp, getFollowUps.
+- Files changed:
+  - `src/app/(dashboard)/pdis/actions.ts` — Added 4 follow-up actions with FollowUpDetail type
+  - `src/lib/prisma.ts` — Extended PrismaClient type with pDIFollowUp property
+  - `src/generated/prisma/internal/class.ts` — Added pDIFollowUp getter to PrismaClient class
+---
+
 ## 2026-03-02T18:40 - US-013 (reestruturacao-pdi-colaborador)
 - What was implemented: Added PDIFollowUp model and FollowUpStatus enum to schema. Created migration, updated generated Prisma client.
 - Files changed:
