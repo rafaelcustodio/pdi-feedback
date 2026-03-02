@@ -24,3 +24,18 @@ Started: Mon Mar  2 11:01:25 PST 2026
   - Network-restricted env: `prisma migrate dev` and `prisma generate` fail due to missing Linux engine binaries (only Windows cached). Migration SQL files can still be created manually.
   - The PDI model uses `status` enum (active/cancelled) - partial unique index ensures one active PDI per employee at DB level
 ---
+
+## 2026-03-02 - US-002
+- Modified `getOrCreatePDI()` in `src/app/(dashboard)/pdis/actions.ts` to handle race conditions:
+  - Wrapped `prisma.pDI.create()` in try/catch
+  - On P2002 (unique constraint violation), falls back to `findFirst()` for the existing active PDI
+  - Non-P2002 errors are re-thrown
+- Files changed:
+  - `src/app/(dashboard)/pdis/actions.ts` (modified getOrCreatePDI)
+  - `scripts/ralph/prd.json` (US-002 passes: true)
+  - `scripts/ralph/progress.txt` (this entry)
+- **Learnings for future iterations:**
+  - Prisma P2002 error code is for unique constraint violations - check `error.code === "P2002"`
+  - For Prisma errors in "use server" actions, use `error && typeof error === "object" && "code" in error` pattern for safe type narrowing
+  - The `getOrCreatePDI()` function is the primary entry point for creating PDIs in the continuous model
+---

@@ -364,16 +364,36 @@ export async function getOrCreatePDI(
     });
     const managerId = hierarchy?.managerId ?? userId;
 
-    const created = await prisma.pDI.create({
-      data: {
-        employeeId,
-        managerId,
-        status: "active",
-      },
-      include: pdiInclude,
-    });
-    pdi = created;
-    revalidatePath("/pdis");
+    try {
+      const created = await prisma.pDI.create({
+        data: {
+          employeeId,
+          managerId,
+          status: "active",
+        },
+        include: pdiInclude,
+      });
+      pdi = created;
+      revalidatePath("/pdis");
+    } catch (error: unknown) {
+      // P2002 = unique constraint violation (race condition: another request created the PDI first)
+      if (
+        error &&
+        typeof error === "object" &&
+        "code" in error &&
+        (error as { code: string }).code === "P2002"
+      ) {
+        pdi = await prisma.pDI.findFirst({
+          where: { employeeId, status: "active" },
+          include: pdiInclude,
+        });
+        if (!pdi) {
+          return { success: false, error: "Erro ao criar PDI. Tente novamente." };
+        }
+      } else {
+        throw error;
+      }
+    }
   }
 
   return {

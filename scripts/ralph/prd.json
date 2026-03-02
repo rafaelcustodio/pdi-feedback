@@ -36,7 +36,7 @@
         "Typecheck passa"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "O constraint único da US-001 é pré-requisito. O fallback com P2002 é a abordagem mais simples e robusta para PostgreSQL."
     },
     {
