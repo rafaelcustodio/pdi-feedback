@@ -14,7 +14,6 @@ async function main() {
   // Clean existing data (FK-safe order)
   // ============================================================
   await prisma.notification.deleteMany();
-  await prisma.pDISchedule.deleteMany();
   await prisma.feedbackSchedule.deleteMany();
   await prisma.feedback.deleteMany();
   await prisma.pDIEvidence.deleteMany();

@@ -56,12 +56,12 @@ export const ModelName = {
   SectorSchedule: 'SectorSchedule',
   EmployeeHierarchy: 'EmployeeHierarchy',
   PDI: 'PDI',
+  PDIFollowUp: 'PDIFollowUp',
   PDIGoal: 'PDIGoal',
   PDIEvidence: 'PDIEvidence',
   PDIComment: 'PDIComment',
   Feedback: 'Feedback',
   FeedbackSchedule: 'FeedbackSchedule',
-  PDISchedule: 'PDISchedule',
   Notification: 'Notification'
 } as const
 
@@ -87,11 +87,20 @@ export const UserScalarFieldEnum = {
   email: 'email',
   password: 'password',
   role: 'role',
+  evaluationMode: 'evaluationMode',
   avatarUrl: 'avatarUrl',
   ssoProvider: 'ssoProvider',
   ssoId: 'ssoId',
   isActive: 'isActive',
   admissionDate: 'admissionDate',
+  phone: 'phone',
+  cpf: 'cpf',
+  birthDate: 'birthDate',
+  jobTitle: 'jobTitle',
+  address: 'address',
+  city: 'city',
+  state: 'state',
+  zipCode: 'zipCode',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -140,15 +149,25 @@ export const PDIScalarFieldEnum = {
   employeeId: 'employeeId',
   managerId: 'managerId',
   status: 'status',
-  period: 'period',
-  frequencyMonths: 'frequencyMonths',
   conductedAt: 'conductedAt',
-  scheduledAt: 'scheduledAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type PDIScalarFieldEnum = (typeof PDIScalarFieldEnum)[keyof typeof PDIScalarFieldEnum]
+
+
+export const PDIFollowUpScalarFieldEnum = {
+  id: 'id',
+  pdiId: 'pdiId',
+  scheduledAt: 'scheduledAt',
+  conductedAt: 'conductedAt',
+  notes: 'notes',
+  status: 'status',
+  createdAt: 'createdAt'
+} as const
+
+export type PDIFollowUpScalarFieldEnum = (typeof PDIFollowUpScalarFieldEnum)[keyof typeof PDIFollowUpScalarFieldEnum]
 
 
 export const PDIGoalScalarFieldEnum = {
@@ -224,18 +243,6 @@ export const FeedbackScheduleScalarFieldEnum = {
 } as const
 
 export type FeedbackScheduleScalarFieldEnum = (typeof FeedbackScheduleScalarFieldEnum)[keyof typeof FeedbackScheduleScalarFieldEnum]
-
-
-export const PDIScheduleScalarFieldEnum = {
-  id: 'id',
-  employeeId: 'employeeId',
-  managerId: 'managerId',
-  frequencyMonths: 'frequencyMonths',
-  nextDueDate: 'nextDueDate',
-  isActive: 'isActive'
-} as const
-
-export type PDIScheduleScalarFieldEnum = (typeof PDIScheduleScalarFieldEnum)[keyof typeof PDIScheduleScalarFieldEnum]
 
 
 export const NotificationScalarFieldEnum = {

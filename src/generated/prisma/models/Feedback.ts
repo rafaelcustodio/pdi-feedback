@@ -673,6 +673,14 @@ export type FeedbackUncheckedUpdateManyWithoutManagerNestedInput = {
   deleteMany?: Prisma.FeedbackScalarWhereInput | Prisma.FeedbackScalarWhereInput[]
 }
 
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type EnumFeedbackStatusFieldUpdateOperationsInput = {
   set?: $Enums.FeedbackStatus
 }

@@ -67,6 +67,11 @@ export type EmployeeHierarchy = Prisma.EmployeeHierarchyModel
  */
 export type PDI = Prisma.PDIModel
 /**
+ * Model PDIFollowUp
+ * 
+ */
+export type PDIFollowUp = Prisma.PDIFollowUpModel
+/**
  * Model PDIGoal
  * 
  */
@@ -81,11 +86,6 @@ export type PDIEvidence = Prisma.PDIEvidenceModel
  * 
  */
 export type PDIComment = Prisma.PDICommentModel
-/**
- * Model PDIFollowUp
- *
- */
-export type PDIFollowUp = Prisma.PDIFollowUpModel
 /**
  * Model Feedback
  * 

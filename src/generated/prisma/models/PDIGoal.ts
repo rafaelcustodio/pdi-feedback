@@ -247,6 +247,7 @@ export type PDIGoalWhereInput = {
   achievedResults?: Prisma.StringNullableFilter<"PDIGoal"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PDIGoal"> | Date | string
   pdi?: Prisma.XOR<Prisma.PDIScalarRelationFilter, Prisma.PDIWhereInput>
+  responsible?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   evidences?: Prisma.PDIEvidenceListRelationFilter
 }
 
@@ -257,14 +258,15 @@ export type PDIGoalOrderByWithRelationInput = {
   actions?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   dueDate?: Prisma.SortOrderInput | Prisma.SortOrder
-  startDate?: Prisma.SortOrder
-  expectedResults?: Prisma.SortOrder
-  responsibleId?: Prisma.SortOrder
-  completedAt?: Prisma.SortOrder
-  successMetrics?: Prisma.SortOrder
-  achievedResults?: Prisma.SortOrder
+  startDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  expectedResults?: Prisma.SortOrderInput | Prisma.SortOrder
+  responsibleId?: Prisma.SortOrderInput | Prisma.SortOrder
+  completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  successMetrics?: Prisma.SortOrderInput | Prisma.SortOrder
+  achievedResults?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   pdi?: Prisma.PDIOrderByWithRelationInput
+  responsible?: Prisma.UserOrderByWithRelationInput
   evidences?: Prisma.PDIEvidenceOrderByRelationAggregateInput
 }
 
@@ -278,8 +280,15 @@ export type PDIGoalWhereUniqueInput = Prisma.AtLeast<{
   actions?: Prisma.StringNullableFilter<"PDIGoal"> | string | null
   status?: Prisma.EnumGoalStatusFilter<"PDIGoal"> | $Enums.GoalStatus
   dueDate?: Prisma.DateTimeNullableFilter<"PDIGoal"> | Date | string | null
+  startDate?: Prisma.DateTimeNullableFilter<"PDIGoal"> | Date | string | null
+  expectedResults?: Prisma.StringNullableFilter<"PDIGoal"> | string | null
+  responsibleId?: Prisma.StringNullableFilter<"PDIGoal"> | string | null
+  completedAt?: Prisma.DateTimeNullableFilter<"PDIGoal"> | Date | string | null
+  successMetrics?: Prisma.StringNullableFilter<"PDIGoal"> | string | null
+  achievedResults?: Prisma.StringNullableFilter<"PDIGoal"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PDIGoal"> | Date | string
   pdi?: Prisma.XOR<Prisma.PDIScalarRelationFilter, Prisma.PDIWhereInput>
+  responsible?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   evidences?: Prisma.PDIEvidenceListRelationFilter
 }, "id">
 
@@ -290,12 +299,12 @@ export type PDIGoalOrderByWithAggregationInput = {
   actions?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   dueDate?: Prisma.SortOrderInput | Prisma.SortOrder
-  startDate?: Prisma.SortOrder
-  expectedResults?: Prisma.SortOrder
-  responsibleId?: Prisma.SortOrder
-  completedAt?: Prisma.SortOrder
-  successMetrics?: Prisma.SortOrder
-  achievedResults?: Prisma.SortOrder
+  startDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  expectedResults?: Prisma.SortOrderInput | Prisma.SortOrder
+  responsibleId?: Prisma.SortOrderInput | Prisma.SortOrder
+  completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  successMetrics?: Prisma.SortOrderInput | Prisma.SortOrder
+  achievedResults?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.PDIGoalCountOrderByAggregateInput
   _max?: Prisma.PDIGoalMaxOrderByAggregateInput
@@ -329,12 +338,12 @@ export type PDIGoalCreateInput = {
   dueDate?: Date | string | null
   startDate?: Date | string | null
   expectedResults?: string | null
-  responsibleId?: string | null
   completedAt?: Date | string | null
   successMetrics?: string | null
   achievedResults?: string | null
   createdAt?: Date | string
   pdi: Prisma.PDICreateNestedOneWithoutGoalsInput
+  responsible?: Prisma.UserCreateNestedOneWithoutGoalResponsibilitiesInput
   evidences?: Prisma.PDIEvidenceCreateNestedManyWithoutGoalInput
 }
 
@@ -363,12 +372,12 @@ export type PDIGoalUpdateInput = {
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expectedResults?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  responsibleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successMetrics?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   achievedResults?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   pdi?: Prisma.PDIUpdateOneRequiredWithoutGoalsNestedInput
+  responsible?: Prisma.UserUpdateOneWithoutGoalResponsibilitiesNestedInput
   evidences?: Prisma.PDIEvidenceUpdateManyWithoutGoalNestedInput
 }
 
@@ -413,7 +422,6 @@ export type PDIGoalUpdateManyMutationInput = {
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expectedResults?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  responsibleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successMetrics?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   achievedResults?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -499,6 +507,48 @@ export type PDIGoalScalarRelationFilter = {
   isNot?: Prisma.PDIGoalWhereInput
 }
 
+export type PDIGoalCreateNestedManyWithoutResponsibleInput = {
+  create?: Prisma.XOR<Prisma.PDIGoalCreateWithoutResponsibleInput, Prisma.PDIGoalUncheckedCreateWithoutResponsibleInput> | Prisma.PDIGoalCreateWithoutResponsibleInput[] | Prisma.PDIGoalUncheckedCreateWithoutResponsibleInput[]
+  connectOrCreate?: Prisma.PDIGoalCreateOrConnectWithoutResponsibleInput | Prisma.PDIGoalCreateOrConnectWithoutResponsibleInput[]
+  createMany?: Prisma.PDIGoalCreateManyResponsibleInputEnvelope
+  connect?: Prisma.PDIGoalWhereUniqueInput | Prisma.PDIGoalWhereUniqueInput[]
+}
+
+export type PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput = {
+  create?: Prisma.XOR<Prisma.PDIGoalCreateWithoutResponsibleInput, Prisma.PDIGoalUncheckedCreateWithoutResponsibleInput> | Prisma.PDIGoalCreateWithoutResponsibleInput[] | Prisma.PDIGoalUncheckedCreateWithoutResponsibleInput[]
+  connectOrCreate?: Prisma.PDIGoalCreateOrConnectWithoutResponsibleInput | Prisma.PDIGoalCreateOrConnectWithoutResponsibleInput[]
+  createMany?: Prisma.PDIGoalCreateManyResponsibleInputEnvelope
+  connect?: Prisma.PDIGoalWhereUniqueInput | Prisma.PDIGoalWhereUniqueInput[]
+}
+
+export type PDIGoalUpdateManyWithoutResponsibleNestedInput = {
+  create?: Prisma.XOR<Prisma.PDIGoalCreateWithoutResponsibleInput, Prisma.PDIGoalUncheckedCreateWithoutResponsibleInput> | Prisma.PDIGoalCreateWithoutResponsibleInput[] | Prisma.PDIGoalUncheckedCreateWithoutResponsibleInput[]
+  connectOrCreate?: Prisma.PDIGoalCreateOrConnectWithoutResponsibleInput | Prisma.PDIGoalCreateOrConnectWithoutResponsibleInput[]
+  upsert?: Prisma.PDIGoalUpsertWithWhereUniqueWithoutResponsibleInput | Prisma.PDIGoalUpsertWithWhereUniqueWithoutResponsibleInput[]
+  createMany?: Prisma.PDIGoalCreateManyResponsibleInputEnvelope
+  set?: Prisma.PDIGoalWhereUniqueInput | Prisma.PDIGoalWhereUniqueInput[]
+  disconnect?: Prisma.PDIGoalWhereUniqueInput | Prisma.PDIGoalWhereUniqueInput[]
+  delete?: Prisma.PDIGoalWhereUniqueInput | Prisma.PDIGoalWhereUniqueInput[]
+  connect?: Prisma.PDIGoalWhereUniqueInput | Prisma.PDIGoalWhereUniqueInput[]
+  update?: Prisma.PDIGoalUpdateWithWhereUniqueWithoutResponsibleInput | Prisma.PDIGoalUpdateWithWhereUniqueWithoutResponsibleInput[]
+  updateMany?: Prisma.PDIGoalUpdateManyWithWhereWithoutResponsibleInput | Prisma.PDIGoalUpdateManyWithWhereWithoutResponsibleInput[]
+  deleteMany?: Prisma.PDIGoalScalarWhereInput | Prisma.PDIGoalScalarWhereInput[]
+}
+
+export type PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput = {
+  create?: Prisma.XOR<Prisma.PDIGoalCreateWithoutResponsibleInput, Prisma.PDIGoalUncheckedCreateWithoutResponsibleInput> | Prisma.PDIGoalCreateWithoutResponsibleInput[] | Prisma.PDIGoalUncheckedCreateWithoutResponsibleInput[]
+  connectOrCreate?: Prisma.PDIGoalCreateOrConnectWithoutResponsibleInput | Prisma.PDIGoalCreateOrConnectWithoutResponsibleInput[]
+  upsert?: Prisma.PDIGoalUpsertWithWhereUniqueWithoutResponsibleInput | Prisma.PDIGoalUpsertWithWhereUniqueWithoutResponsibleInput[]
+  createMany?: Prisma.PDIGoalCreateManyResponsibleInputEnvelope
+  set?: Prisma.PDIGoalWhereUniqueInput | Prisma.PDIGoalWhereUniqueInput[]
+  disconnect?: Prisma.PDIGoalWhereUniqueInput | Prisma.PDIGoalWhereUniqueInput[]
+  delete?: Prisma.PDIGoalWhereUniqueInput | Prisma.PDIGoalWhereUniqueInput[]
+  connect?: Prisma.PDIGoalWhereUniqueInput | Prisma.PDIGoalWhereUniqueInput[]
+  update?: Prisma.PDIGoalUpdateWithWhereUniqueWithoutResponsibleInput | Prisma.PDIGoalUpdateWithWhereUniqueWithoutResponsibleInput[]
+  updateMany?: Prisma.PDIGoalUpdateManyWithWhereWithoutResponsibleInput | Prisma.PDIGoalUpdateManyWithWhereWithoutResponsibleInput[]
+  deleteMany?: Prisma.PDIGoalScalarWhereInput | Prisma.PDIGoalScalarWhereInput[]
+}
+
 export type PDIGoalCreateNestedManyWithoutPdiInput = {
   create?: Prisma.XOR<Prisma.PDIGoalCreateWithoutPdiInput, Prisma.PDIGoalUncheckedCreateWithoutPdiInput> | Prisma.PDIGoalCreateWithoutPdiInput[] | Prisma.PDIGoalUncheckedCreateWithoutPdiInput[]
   connectOrCreate?: Prisma.PDIGoalCreateOrConnectWithoutPdiInput | Prisma.PDIGoalCreateOrConnectWithoutPdiInput[]
@@ -559,6 +609,83 @@ export type PDIGoalUpdateOneRequiredWithoutEvidencesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.PDIGoalUpdateToOneWithWhereWithoutEvidencesInput, Prisma.PDIGoalUpdateWithoutEvidencesInput>, Prisma.PDIGoalUncheckedUpdateWithoutEvidencesInput>
 }
 
+export type PDIGoalCreateWithoutResponsibleInput = {
+  id?: string
+  developmentObjective: string
+  actions?: string | null
+  status?: $Enums.GoalStatus
+  dueDate?: Date | string | null
+  startDate?: Date | string | null
+  expectedResults?: string | null
+  completedAt?: Date | string | null
+  successMetrics?: string | null
+  achievedResults?: string | null
+  createdAt?: Date | string
+  pdi: Prisma.PDICreateNestedOneWithoutGoalsInput
+  evidences?: Prisma.PDIEvidenceCreateNestedManyWithoutGoalInput
+}
+
+export type PDIGoalUncheckedCreateWithoutResponsibleInput = {
+  id?: string
+  pdiId: string
+  developmentObjective: string
+  actions?: string | null
+  status?: $Enums.GoalStatus
+  dueDate?: Date | string | null
+  startDate?: Date | string | null
+  expectedResults?: string | null
+  completedAt?: Date | string | null
+  successMetrics?: string | null
+  achievedResults?: string | null
+  createdAt?: Date | string
+  evidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutGoalInput
+}
+
+export type PDIGoalCreateOrConnectWithoutResponsibleInput = {
+  where: Prisma.PDIGoalWhereUniqueInput
+  create: Prisma.XOR<Prisma.PDIGoalCreateWithoutResponsibleInput, Prisma.PDIGoalUncheckedCreateWithoutResponsibleInput>
+}
+
+export type PDIGoalCreateManyResponsibleInputEnvelope = {
+  data: Prisma.PDIGoalCreateManyResponsibleInput | Prisma.PDIGoalCreateManyResponsibleInput[]
+  skipDuplicates?: boolean
+}
+
+export type PDIGoalUpsertWithWhereUniqueWithoutResponsibleInput = {
+  where: Prisma.PDIGoalWhereUniqueInput
+  update: Prisma.XOR<Prisma.PDIGoalUpdateWithoutResponsibleInput, Prisma.PDIGoalUncheckedUpdateWithoutResponsibleInput>
+  create: Prisma.XOR<Prisma.PDIGoalCreateWithoutResponsibleInput, Prisma.PDIGoalUncheckedCreateWithoutResponsibleInput>
+}
+
+export type PDIGoalUpdateWithWhereUniqueWithoutResponsibleInput = {
+  where: Prisma.PDIGoalWhereUniqueInput
+  data: Prisma.XOR<Prisma.PDIGoalUpdateWithoutResponsibleInput, Prisma.PDIGoalUncheckedUpdateWithoutResponsibleInput>
+}
+
+export type PDIGoalUpdateManyWithWhereWithoutResponsibleInput = {
+  where: Prisma.PDIGoalScalarWhereInput
+  data: Prisma.XOR<Prisma.PDIGoalUpdateManyMutationInput, Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleInput>
+}
+
+export type PDIGoalScalarWhereInput = {
+  AND?: Prisma.PDIGoalScalarWhereInput | Prisma.PDIGoalScalarWhereInput[]
+  OR?: Prisma.PDIGoalScalarWhereInput[]
+  NOT?: Prisma.PDIGoalScalarWhereInput | Prisma.PDIGoalScalarWhereInput[]
+  id?: Prisma.StringFilter<"PDIGoal"> | string
+  pdiId?: Prisma.StringFilter<"PDIGoal"> | string
+  developmentObjective?: Prisma.StringFilter<"PDIGoal"> | string
+  actions?: Prisma.StringNullableFilter<"PDIGoal"> | string | null
+  status?: Prisma.EnumGoalStatusFilter<"PDIGoal"> | $Enums.GoalStatus
+  dueDate?: Prisma.DateTimeNullableFilter<"PDIGoal"> | Date | string | null
+  startDate?: Prisma.DateTimeNullableFilter<"PDIGoal"> | Date | string | null
+  expectedResults?: Prisma.StringNullableFilter<"PDIGoal"> | string | null
+  responsibleId?: Prisma.StringNullableFilter<"PDIGoal"> | string | null
+  completedAt?: Prisma.DateTimeNullableFilter<"PDIGoal"> | Date | string | null
+  successMetrics?: Prisma.StringNullableFilter<"PDIGoal"> | string | null
+  achievedResults?: Prisma.StringNullableFilter<"PDIGoal"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"PDIGoal"> | Date | string
+}
+
 export type PDIGoalCreateWithoutPdiInput = {
   id?: string
   developmentObjective: string
@@ -567,11 +694,11 @@ export type PDIGoalCreateWithoutPdiInput = {
   dueDate?: Date | string | null
   startDate?: Date | string | null
   expectedResults?: string | null
-  responsibleId?: string | null
   completedAt?: Date | string | null
   successMetrics?: string | null
   achievedResults?: string | null
   createdAt?: Date | string
+  responsible?: Prisma.UserCreateNestedOneWithoutGoalResponsibilitiesInput
   evidences?: Prisma.PDIEvidenceCreateNestedManyWithoutGoalInput
 }
 
@@ -617,25 +744,6 @@ export type PDIGoalUpdateManyWithWhereWithoutPdiInput = {
   data: Prisma.XOR<Prisma.PDIGoalUpdateManyMutationInput, Prisma.PDIGoalUncheckedUpdateManyWithoutPdiInput>
 }
 
-export type PDIGoalScalarWhereInput = {
-  AND?: Prisma.PDIGoalScalarWhereInput | Prisma.PDIGoalScalarWhereInput[]
-  OR?: Prisma.PDIGoalScalarWhereInput[]
-  NOT?: Prisma.PDIGoalScalarWhereInput | Prisma.PDIGoalScalarWhereInput[]
-  id?: Prisma.StringFilter<"PDIGoal"> | string
-  pdiId?: Prisma.StringFilter<"PDIGoal"> | string
-  developmentObjective?: Prisma.StringFilter<"PDIGoal"> | string
-  actions?: Prisma.StringNullableFilter<"PDIGoal"> | string | null
-  status?: Prisma.EnumGoalStatusFilter<"PDIGoal"> | $Enums.GoalStatus
-  dueDate?: Prisma.DateTimeNullableFilter<"PDIGoal"> | Date | string | null
-  startDate?: Prisma.DateTimeNullableFilter<"PDIGoal"> | Date | string | null
-  expectedResults?: Prisma.StringNullableFilter<"PDIGoal"> | string | null
-  responsibleId?: Prisma.StringNullableFilter<"PDIGoal"> | string | null
-  completedAt?: Prisma.DateTimeNullableFilter<"PDIGoal"> | Date | string | null
-  successMetrics?: Prisma.StringNullableFilter<"PDIGoal"> | string | null
-  achievedResults?: Prisma.StringNullableFilter<"PDIGoal"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"PDIGoal"> | Date | string
-}
-
 export type PDIGoalCreateWithoutEvidencesInput = {
   id?: string
   developmentObjective: string
@@ -644,12 +752,12 @@ export type PDIGoalCreateWithoutEvidencesInput = {
   dueDate?: Date | string | null
   startDate?: Date | string | null
   expectedResults?: string | null
-  responsibleId?: string | null
   completedAt?: Date | string | null
   successMetrics?: string | null
   achievedResults?: string | null
   createdAt?: Date | string
   pdi: Prisma.PDICreateNestedOneWithoutGoalsInput
+  responsible?: Prisma.UserCreateNestedOneWithoutGoalResponsibilitiesInput
 }
 
 export type PDIGoalUncheckedCreateWithoutEvidencesInput = {
@@ -692,12 +800,12 @@ export type PDIGoalUpdateWithoutEvidencesInput = {
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expectedResults?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  responsibleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successMetrics?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   achievedResults?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   pdi?: Prisma.PDIUpdateOneRequiredWithoutGoalsNestedInput
+  responsible?: Prisma.UserUpdateOneWithoutGoalResponsibilitiesNestedInput
 }
 
 export type PDIGoalUncheckedUpdateWithoutEvidencesInput = {
@@ -710,6 +818,68 @@ export type PDIGoalUncheckedUpdateWithoutEvidencesInput = {
   startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expectedResults?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   responsibleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  successMetrics?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  achievedResults?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type PDIGoalCreateManyResponsibleInput = {
+  id?: string
+  pdiId: string
+  developmentObjective: string
+  actions?: string | null
+  status?: $Enums.GoalStatus
+  dueDate?: Date | string | null
+  startDate?: Date | string | null
+  expectedResults?: string | null
+  completedAt?: Date | string | null
+  successMetrics?: string | null
+  achievedResults?: string | null
+  createdAt?: Date | string
+}
+
+export type PDIGoalUpdateWithoutResponsibleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  developmentObjective?: Prisma.StringFieldUpdateOperationsInput | string
+  actions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumGoalStatusFieldUpdateOperationsInput | $Enums.GoalStatus
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expectedResults?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  successMetrics?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  achievedResults?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  pdi?: Prisma.PDIUpdateOneRequiredWithoutGoalsNestedInput
+  evidences?: Prisma.PDIEvidenceUpdateManyWithoutGoalNestedInput
+}
+
+export type PDIGoalUncheckedUpdateWithoutResponsibleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  pdiId?: Prisma.StringFieldUpdateOperationsInput | string
+  developmentObjective?: Prisma.StringFieldUpdateOperationsInput | string
+  actions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumGoalStatusFieldUpdateOperationsInput | $Enums.GoalStatus
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expectedResults?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  successMetrics?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  achievedResults?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  evidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutGoalNestedInput
+}
+
+export type PDIGoalUncheckedUpdateManyWithoutResponsibleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  pdiId?: Prisma.StringFieldUpdateOperationsInput | string
+  developmentObjective?: Prisma.StringFieldUpdateOperationsInput | string
+  actions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumGoalStatusFieldUpdateOperationsInput | $Enums.GoalStatus
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expectedResults?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successMetrics?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   achievedResults?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -739,11 +909,11 @@ export type PDIGoalUpdateWithoutPdiInput = {
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expectedResults?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  responsibleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successMetrics?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   achievedResults?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  responsible?: Prisma.UserUpdateOneWithoutGoalResponsibilitiesNestedInput
   evidences?: Prisma.PDIEvidenceUpdateManyWithoutGoalNestedInput
 }
 
@@ -824,6 +994,7 @@ export type PDIGoalSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   achievedResults?: boolean
   createdAt?: boolean
   pdi?: boolean | Prisma.PDIDefaultArgs<ExtArgs>
+  responsible?: boolean | Prisma.PDIGoal$responsibleArgs<ExtArgs>
   evidences?: boolean | Prisma.PDIGoal$evidencesArgs<ExtArgs>
   _count?: boolean | Prisma.PDIGoalCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["pDIGoal"]>
@@ -843,6 +1014,7 @@ export type PDIGoalSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   achievedResults?: boolean
   createdAt?: boolean
   pdi?: boolean | Prisma.PDIDefaultArgs<ExtArgs>
+  responsible?: boolean | Prisma.PDIGoal$responsibleArgs<ExtArgs>
 }, ExtArgs["result"]["pDIGoal"]>
 
 export type PDIGoalSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -860,6 +1032,7 @@ export type PDIGoalSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   achievedResults?: boolean
   createdAt?: boolean
   pdi?: boolean | Prisma.PDIDefaultArgs<ExtArgs>
+  responsible?: boolean | Prisma.PDIGoal$responsibleArgs<ExtArgs>
 }, ExtArgs["result"]["pDIGoal"]>
 
 export type PDIGoalSelectScalar = {
@@ -869,27 +1042,36 @@ export type PDIGoalSelectScalar = {
   actions?: boolean
   status?: boolean
   dueDate?: boolean
+  startDate?: boolean
+  expectedResults?: boolean
+  responsibleId?: boolean
+  completedAt?: boolean
+  successMetrics?: boolean
+  achievedResults?: boolean
   createdAt?: boolean
 }
 
 export type PDIGoalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "pdiId" | "developmentObjective" | "actions" | "status" | "dueDate" | "startDate" | "expectedResults" | "responsibleId" | "completedAt" | "successMetrics" | "achievedResults" | "createdAt", ExtArgs["result"]["pDIGoal"]>
 export type PDIGoalInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   pdi?: boolean | Prisma.PDIDefaultArgs<ExtArgs>
-  responsible?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  responsible?: boolean | Prisma.PDIGoal$responsibleArgs<ExtArgs>
   evidences?: boolean | Prisma.PDIGoal$evidencesArgs<ExtArgs>
   _count?: boolean | Prisma.PDIGoalCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PDIGoalIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   pdi?: boolean | Prisma.PDIDefaultArgs<ExtArgs>
+  responsible?: boolean | Prisma.PDIGoal$responsibleArgs<ExtArgs>
 }
 export type PDIGoalIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   pdi?: boolean | Prisma.PDIDefaultArgs<ExtArgs>
+  responsible?: boolean | Prisma.PDIGoal$responsibleArgs<ExtArgs>
 }
 
 export type $PDIGoalPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "PDIGoal"
   objects: {
     pdi: Prisma.$PDIPayload<ExtArgs>
+    responsible: Prisma.$UserPayload<ExtArgs> | null
     evidences: Prisma.$PDIEvidencePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1301,6 +1483,7 @@ readonly fields: PDIGoalFieldRefs;
 export interface Prisma__PDIGoalClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   pdi<T extends Prisma.PDIDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PDIDefaultArgs<ExtArgs>>): Prisma.Prisma__PDIClient<runtime.Types.Result.GetResult<Prisma.$PDIPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  responsible<T extends Prisma.PDIGoal$responsibleArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PDIGoal$responsibleArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   evidences<T extends Prisma.PDIGoal$evidencesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PDIGoal$evidencesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PDIEvidencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1737,6 +1920,25 @@ export type PDIGoalDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many PDIGoals to delete.
    */
   limit?: number
+}
+
+/**
+ * PDIGoal.responsible
+ */
+export type PDIGoal$responsibleArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
 }
 
 /**

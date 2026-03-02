@@ -104,6 +104,7 @@ export type UserMinAggregateInputType = {
   email?: true
   password?: true
   role?: true
+  evaluationMode?: true
   avatarUrl?: true
   ssoProvider?: true
   ssoId?: true
@@ -127,6 +128,7 @@ export type UserMaxAggregateInputType = {
   email?: true
   password?: true
   role?: true
+  evaluationMode?: true
   avatarUrl?: true
   ssoProvider?: true
   ssoId?: true
@@ -150,6 +152,7 @@ export type UserCountAggregateInputType = {
   email?: true
   password?: true
   role?: true
+  evaluationMode?: true
   avatarUrl?: true
   ssoProvider?: true
   ssoId?: true
@@ -246,11 +249,20 @@ export type UserGroupByOutputType = {
   email: string
   password: string | null
   role: $Enums.UserRole
+  evaluationMode: $Enums.EvaluationMode
   avatarUrl: string | null
   ssoProvider: string | null
   ssoId: string | null
   isActive: boolean
   admissionDate: Date | null
+  phone: string | null
+  cpf: string | null
+  birthDate: Date | null
+  jobTitle: string | null
+  address: string | null
+  city: string | null
+  state: string | null
+  zipCode: string | null
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
@@ -288,20 +300,27 @@ export type UserWhereInput = {
   ssoId?: Prisma.StringNullableFilter<"User"> | string | null
   isActive?: Prisma.BoolFilter<"User"> | boolean
   admissionDate?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  phone?: Prisma.StringNullableFilter<"User"> | string | null
+  cpf?: Prisma.StringNullableFilter<"User"> | string | null
+  birthDate?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  jobTitle?: Prisma.StringNullableFilter<"User"> | string | null
+  address?: Prisma.StringNullableFilter<"User"> | string | null
+  city?: Prisma.StringNullableFilter<"User"> | string | null
+  state?: Prisma.StringNullableFilter<"User"> | string | null
+  zipCode?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyListRelationFilter
   pdisAsEmployee?: Prisma.PDIListRelationFilter
   feedbacksReceived?: Prisma.FeedbackListRelationFilter
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleListRelationFilter
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleListRelationFilter
   managerHierarchies?: Prisma.EmployeeHierarchyListRelationFilter
   pdisAsManager?: Prisma.PDIListRelationFilter
   feedbacksGiven?: Prisma.FeedbackListRelationFilter
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleListRelationFilter
-  pdiSchedulesAsManager?: Prisma.PDIScheduleListRelationFilter
   pdiComments?: Prisma.PDICommentListRelationFilter
   pdiEvidences?: Prisma.PDIEvidenceListRelationFilter
+  goalResponsibilities?: Prisma.PDIGoalListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
 }
 
@@ -317,26 +336,34 @@ export type UserOrderByWithRelationInput = {
   ssoId?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   admissionDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  phone?: Prisma.SortOrderInput | Prisma.SortOrder
+  cpf?: Prisma.SortOrderInput | Prisma.SortOrder
+  birthDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  jobTitle?: Prisma.SortOrderInput | Prisma.SortOrder
+  address?: Prisma.SortOrderInput | Prisma.SortOrder
+  city?: Prisma.SortOrderInput | Prisma.SortOrder
+  state?: Prisma.SortOrderInput | Prisma.SortOrder
+  zipCode?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   employeeHierarchies?: Prisma.EmployeeHierarchyOrderByRelationAggregateInput
   pdisAsEmployee?: Prisma.PDIOrderByRelationAggregateInput
   feedbacksReceived?: Prisma.FeedbackOrderByRelationAggregateInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleOrderByRelationAggregateInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleOrderByRelationAggregateInput
   managerHierarchies?: Prisma.EmployeeHierarchyOrderByRelationAggregateInput
   pdisAsManager?: Prisma.PDIOrderByRelationAggregateInput
   feedbacksGiven?: Prisma.FeedbackOrderByRelationAggregateInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleOrderByRelationAggregateInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleOrderByRelationAggregateInput
   pdiComments?: Prisma.PDICommentOrderByRelationAggregateInput
   pdiEvidences?: Prisma.PDIEvidenceOrderByRelationAggregateInput
+  goalResponsibilities?: Prisma.PDIGoalOrderByRelationAggregateInput
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   email?: string
+  cpf?: string
   AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
@@ -349,22 +376,28 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   ssoId?: Prisma.StringNullableFilter<"User"> | string | null
   isActive?: Prisma.BoolFilter<"User"> | boolean
   admissionDate?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  phone?: Prisma.StringNullableFilter<"User"> | string | null
+  birthDate?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  jobTitle?: Prisma.StringNullableFilter<"User"> | string | null
+  address?: Prisma.StringNullableFilter<"User"> | string | null
+  city?: Prisma.StringNullableFilter<"User"> | string | null
+  state?: Prisma.StringNullableFilter<"User"> | string | null
+  zipCode?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyListRelationFilter
   pdisAsEmployee?: Prisma.PDIListRelationFilter
   feedbacksReceived?: Prisma.FeedbackListRelationFilter
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleListRelationFilter
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleListRelationFilter
   managerHierarchies?: Prisma.EmployeeHierarchyListRelationFilter
   pdisAsManager?: Prisma.PDIListRelationFilter
   feedbacksGiven?: Prisma.FeedbackListRelationFilter
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleListRelationFilter
-  pdiSchedulesAsManager?: Prisma.PDIScheduleListRelationFilter
   pdiComments?: Prisma.PDICommentListRelationFilter
   pdiEvidences?: Prisma.PDIEvidenceListRelationFilter
+  goalResponsibilities?: Prisma.PDIGoalListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
-}, "id" | "email">
+}, "id" | "email" | "cpf">
 
 export type UserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -378,6 +411,14 @@ export type UserOrderByWithAggregationInput = {
   ssoId?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   admissionDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  phone?: Prisma.SortOrderInput | Prisma.SortOrder
+  cpf?: Prisma.SortOrderInput | Prisma.SortOrder
+  birthDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  jobTitle?: Prisma.SortOrderInput | Prisma.SortOrder
+  address?: Prisma.SortOrderInput | Prisma.SortOrder
+  city?: Prisma.SortOrderInput | Prisma.SortOrder
+  state?: Prisma.SortOrderInput | Prisma.SortOrder
+  zipCode?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -400,6 +441,14 @@ export type UserScalarWhereWithAggregatesInput = {
   ssoId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   isActive?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   admissionDate?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  phone?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  cpf?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  birthDate?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  jobTitle?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  address?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  city?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  state?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  zipCode?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -430,14 +479,13 @@ export type UserCreateInput = {
   pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
   feedbacksReceived?: Prisma.FeedbackCreateNestedManyWithoutEmployeeInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleCreateNestedManyWithoutEmployeeInput
   managerHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutManagerInput
   pdisAsManager?: Prisma.PDICreateNestedManyWithoutManagerInput
   feedbacksGiven?: Prisma.FeedbackCreateNestedManyWithoutManagerInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleCreateNestedManyWithoutManagerInput
   pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
 }
 
@@ -467,14 +515,13 @@ export type UserUncheckedCreateInput = {
   pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
   feedbacksReceived?: Prisma.FeedbackUncheckedCreateNestedManyWithoutEmployeeInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutEmployeeInput
   managerHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutManagerInput
   pdisAsManager?: Prisma.PDIUncheckedCreateNestedManyWithoutManagerInput
   feedbacksGiven?: Prisma.FeedbackUncheckedCreateNestedManyWithoutManagerInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutManagerInput
   pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -504,14 +551,13 @@ export type UserUpdateInput = {
   pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
   feedbacksReceived?: Prisma.FeedbackUpdateManyWithoutEmployeeNestedInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUpdateManyWithoutEmployeeNestedInput
   managerHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutManagerNestedInput
   pdisAsManager?: Prisma.PDIUpdateManyWithoutManagerNestedInput
   feedbacksGiven?: Prisma.FeedbackUpdateManyWithoutManagerNestedInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUpdateManyWithoutManagerNestedInput
   pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
 }
 
@@ -541,14 +587,13 @@ export type UserUncheckedUpdateInput = {
   pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
   feedbacksReceived?: Prisma.FeedbackUncheckedUpdateManyWithoutEmployeeNestedInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
   managerHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutManagerNestedInput
   pdisAsManager?: Prisma.PDIUncheckedUpdateManyWithoutManagerNestedInput
   feedbacksGiven?: Prisma.FeedbackUncheckedUpdateManyWithoutManagerNestedInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedUpdateManyWithoutManagerNestedInput
   pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -612,6 +657,14 @@ export type UserUncheckedUpdateManyInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -628,6 +681,14 @@ export type UserCountOrderByAggregateInput = {
   ssoId?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   admissionDate?: Prisma.SortOrder
+  phone?: Prisma.SortOrder
+  cpf?: Prisma.SortOrder
+  birthDate?: Prisma.SortOrder
+  jobTitle?: Prisma.SortOrder
+  address?: Prisma.SortOrder
+  city?: Prisma.SortOrder
+  state?: Prisma.SortOrder
+  zipCode?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -644,6 +705,14 @@ export type UserMaxOrderByAggregateInput = {
   ssoId?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   admissionDate?: Prisma.SortOrder
+  phone?: Prisma.SortOrder
+  cpf?: Prisma.SortOrder
+  birthDate?: Prisma.SortOrder
+  jobTitle?: Prisma.SortOrder
+  address?: Prisma.SortOrder
+  city?: Prisma.SortOrder
+  state?: Prisma.SortOrder
+  zipCode?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -660,6 +729,14 @@ export type UserMinOrderByAggregateInput = {
   ssoId?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   admissionDate?: Prisma.SortOrder
+  phone?: Prisma.SortOrder
+  cpf?: Prisma.SortOrder
+  birthDate?: Prisma.SortOrder
+  jobTitle?: Prisma.SortOrder
+  address?: Prisma.SortOrder
+  city?: Prisma.SortOrder
+  state?: Prisma.SortOrder
+  zipCode?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -758,6 +835,22 @@ export type UserUpdateOneRequiredWithoutPdisAsManagerNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPdisAsManagerInput, Prisma.UserUpdateWithoutPdisAsManagerInput>, Prisma.UserUncheckedUpdateWithoutPdisAsManagerInput>
 }
 
+export type UserCreateNestedOneWithoutGoalResponsibilitiesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutGoalResponsibilitiesInput, Prisma.UserUncheckedCreateWithoutGoalResponsibilitiesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutGoalResponsibilitiesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutGoalResponsibilitiesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutGoalResponsibilitiesInput, Prisma.UserUncheckedCreateWithoutGoalResponsibilitiesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutGoalResponsibilitiesInput
+  upsert?: Prisma.UserUpsertWithoutGoalResponsibilitiesInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutGoalResponsibilitiesInput, Prisma.UserUpdateWithoutGoalResponsibilitiesInput>, Prisma.UserUncheckedUpdateWithoutGoalResponsibilitiesInput>
+}
+
 export type UserCreateNestedOneWithoutPdiEvidencesInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutPdiEvidencesInput, Prisma.UserUncheckedCreateWithoutPdiEvidencesInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutPdiEvidencesInput
@@ -844,34 +937,6 @@ export type UserUpdateOneRequiredWithoutFeedbackSchedulesAsManagerNestedInput = 
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutFeedbackSchedulesAsManagerInput, Prisma.UserUpdateWithoutFeedbackSchedulesAsManagerInput>, Prisma.UserUncheckedUpdateWithoutFeedbackSchedulesAsManagerInput>
 }
 
-export type UserCreateNestedOneWithoutPdiSchedulesAsEmployeeInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutPdiSchedulesAsEmployeeInput, Prisma.UserUncheckedCreateWithoutPdiSchedulesAsEmployeeInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPdiSchedulesAsEmployeeInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserCreateNestedOneWithoutPdiSchedulesAsManagerInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutPdiSchedulesAsManagerInput, Prisma.UserUncheckedCreateWithoutPdiSchedulesAsManagerInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPdiSchedulesAsManagerInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutPdiSchedulesAsEmployeeNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutPdiSchedulesAsEmployeeInput, Prisma.UserUncheckedCreateWithoutPdiSchedulesAsEmployeeInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPdiSchedulesAsEmployeeInput
-  upsert?: Prisma.UserUpsertWithoutPdiSchedulesAsEmployeeInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPdiSchedulesAsEmployeeInput, Prisma.UserUpdateWithoutPdiSchedulesAsEmployeeInput>, Prisma.UserUncheckedUpdateWithoutPdiSchedulesAsEmployeeInput>
-}
-
-export type UserUpdateOneRequiredWithoutPdiSchedulesAsManagerNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutPdiSchedulesAsManagerInput, Prisma.UserUncheckedCreateWithoutPdiSchedulesAsManagerInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPdiSchedulesAsManagerInput
-  upsert?: Prisma.UserUpsertWithoutPdiSchedulesAsManagerInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPdiSchedulesAsManagerInput, Prisma.UserUpdateWithoutPdiSchedulesAsManagerInput>, Prisma.UserUncheckedUpdateWithoutPdiSchedulesAsManagerInput>
-}
-
 export type UserCreateNestedOneWithoutNotificationsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutNotificationsInput, Prisma.UserUncheckedCreateWithoutNotificationsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutNotificationsInput
@@ -898,19 +963,26 @@ export type UserCreateWithoutEmployeeHierarchiesInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
   feedbacksReceived?: Prisma.FeedbackCreateNestedManyWithoutEmployeeInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleCreateNestedManyWithoutEmployeeInput
   managerHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutManagerInput
   pdisAsManager?: Prisma.PDICreateNestedManyWithoutManagerInput
   feedbacksGiven?: Prisma.FeedbackCreateNestedManyWithoutManagerInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleCreateNestedManyWithoutManagerInput
   pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
 }
 
@@ -926,19 +998,26 @@ export type UserUncheckedCreateWithoutEmployeeHierarchiesInput = {
   ssoId?: string | null
   isActive?: boolean
   admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
   feedbacksReceived?: Prisma.FeedbackUncheckedCreateNestedManyWithoutEmployeeInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutEmployeeInput
   managerHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutManagerInput
   pdisAsManager?: Prisma.PDIUncheckedCreateNestedManyWithoutManagerInput
   feedbacksGiven?: Prisma.FeedbackUncheckedCreateNestedManyWithoutManagerInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutManagerInput
   pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -973,13 +1052,12 @@ export type UserCreateWithoutManagerHierarchiesInput = {
   pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
   feedbacksReceived?: Prisma.FeedbackCreateNestedManyWithoutEmployeeInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleCreateNestedManyWithoutEmployeeInput
   pdisAsManager?: Prisma.PDICreateNestedManyWithoutManagerInput
   feedbacksGiven?: Prisma.FeedbackCreateNestedManyWithoutManagerInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleCreateNestedManyWithoutManagerInput
   pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
 }
 
@@ -1009,13 +1087,12 @@ export type UserUncheckedCreateWithoutManagerHierarchiesInput = {
   pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
   feedbacksReceived?: Prisma.FeedbackUncheckedCreateNestedManyWithoutEmployeeInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutEmployeeInput
   pdisAsManager?: Prisma.PDIUncheckedCreateNestedManyWithoutManagerInput
   feedbacksGiven?: Prisma.FeedbackUncheckedCreateNestedManyWithoutManagerInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutManagerInput
   pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -1047,19 +1124,26 @@ export type UserUpdateWithoutEmployeeHierarchiesInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
   feedbacksReceived?: Prisma.FeedbackUpdateManyWithoutEmployeeNestedInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUpdateManyWithoutEmployeeNestedInput
   managerHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutManagerNestedInput
   pdisAsManager?: Prisma.PDIUpdateManyWithoutManagerNestedInput
   feedbacksGiven?: Prisma.FeedbackUpdateManyWithoutManagerNestedInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUpdateManyWithoutManagerNestedInput
   pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
 }
 
@@ -1075,19 +1159,26 @@ export type UserUncheckedUpdateWithoutEmployeeHierarchiesInput = {
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
   feedbacksReceived?: Prisma.FeedbackUncheckedUpdateManyWithoutEmployeeNestedInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
   managerHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutManagerNestedInput
   pdisAsManager?: Prisma.PDIUncheckedUpdateManyWithoutManagerNestedInput
   feedbacksGiven?: Prisma.FeedbackUncheckedUpdateManyWithoutManagerNestedInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedUpdateManyWithoutManagerNestedInput
   pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -1128,13 +1219,12 @@ export type UserUpdateWithoutManagerHierarchiesInput = {
   pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
   feedbacksReceived?: Prisma.FeedbackUpdateManyWithoutEmployeeNestedInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUpdateManyWithoutEmployeeNestedInput
   pdisAsManager?: Prisma.PDIUpdateManyWithoutManagerNestedInput
   feedbacksGiven?: Prisma.FeedbackUpdateManyWithoutManagerNestedInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUpdateManyWithoutManagerNestedInput
   pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
 }
 
@@ -1164,13 +1254,12 @@ export type UserUncheckedUpdateWithoutManagerHierarchiesInput = {
   pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
   feedbacksReceived?: Prisma.FeedbackUncheckedUpdateManyWithoutEmployeeNestedInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
   pdisAsManager?: Prisma.PDIUncheckedUpdateManyWithoutManagerNestedInput
   feedbacksGiven?: Prisma.FeedbackUncheckedUpdateManyWithoutManagerNestedInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedUpdateManyWithoutManagerNestedInput
   pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -1199,14 +1288,13 @@ export type UserCreateWithoutPdisAsEmployeeInput = {
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
   feedbacksReceived?: Prisma.FeedbackCreateNestedManyWithoutEmployeeInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleCreateNestedManyWithoutEmployeeInput
   managerHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutManagerInput
   pdisAsManager?: Prisma.PDICreateNestedManyWithoutManagerInput
   feedbacksGiven?: Prisma.FeedbackCreateNestedManyWithoutManagerInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleCreateNestedManyWithoutManagerInput
   pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
 }
 
@@ -1235,14 +1323,13 @@ export type UserUncheckedCreateWithoutPdisAsEmployeeInput = {
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
   feedbacksReceived?: Prisma.FeedbackUncheckedCreateNestedManyWithoutEmployeeInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutEmployeeInput
   managerHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutManagerInput
   pdisAsManager?: Prisma.PDIUncheckedCreateNestedManyWithoutManagerInput
   feedbacksGiven?: Prisma.FeedbackUncheckedCreateNestedManyWithoutManagerInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutManagerInput
   pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -1277,13 +1364,12 @@ export type UserCreateWithoutPdisAsManagerInput = {
   pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
   feedbacksReceived?: Prisma.FeedbackCreateNestedManyWithoutEmployeeInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleCreateNestedManyWithoutEmployeeInput
   managerHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutManagerInput
   feedbacksGiven?: Prisma.FeedbackCreateNestedManyWithoutManagerInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleCreateNestedManyWithoutManagerInput
   pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
 }
 
@@ -1313,13 +1399,12 @@ export type UserUncheckedCreateWithoutPdisAsManagerInput = {
   pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
   feedbacksReceived?: Prisma.FeedbackUncheckedCreateNestedManyWithoutEmployeeInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutEmployeeInput
   managerHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutManagerInput
   feedbacksGiven?: Prisma.FeedbackUncheckedCreateNestedManyWithoutManagerInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutManagerInput
   pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -1364,14 +1449,13 @@ export type UserUpdateWithoutPdisAsEmployeeInput = {
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
   feedbacksReceived?: Prisma.FeedbackUpdateManyWithoutEmployeeNestedInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUpdateManyWithoutEmployeeNestedInput
   managerHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutManagerNestedInput
   pdisAsManager?: Prisma.PDIUpdateManyWithoutManagerNestedInput
   feedbacksGiven?: Prisma.FeedbackUpdateManyWithoutManagerNestedInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUpdateManyWithoutManagerNestedInput
   pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
 }
 
@@ -1400,14 +1484,13 @@ export type UserUncheckedUpdateWithoutPdisAsEmployeeInput = {
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
   feedbacksReceived?: Prisma.FeedbackUncheckedUpdateManyWithoutEmployeeNestedInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
   managerHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutManagerNestedInput
   pdisAsManager?: Prisma.PDIUncheckedUpdateManyWithoutManagerNestedInput
   feedbacksGiven?: Prisma.FeedbackUncheckedUpdateManyWithoutManagerNestedInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedUpdateManyWithoutManagerNestedInput
   pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -1448,13 +1531,12 @@ export type UserUpdateWithoutPdisAsManagerInput = {
   pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
   feedbacksReceived?: Prisma.FeedbackUpdateManyWithoutEmployeeNestedInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUpdateManyWithoutEmployeeNestedInput
   managerHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutManagerNestedInput
   feedbacksGiven?: Prisma.FeedbackUpdateManyWithoutManagerNestedInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUpdateManyWithoutManagerNestedInput
   pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
 }
 
@@ -1484,11 +1566,166 @@ export type UserUncheckedUpdateWithoutPdisAsManagerInput = {
   pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
   feedbacksReceived?: Prisma.FeedbackUncheckedUpdateManyWithoutEmployeeNestedInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
   managerHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutManagerNestedInput
   feedbacksGiven?: Prisma.FeedbackUncheckedUpdateManyWithoutManagerNestedInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedUpdateManyWithoutManagerNestedInput
+  pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
+  pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutGoalResponsibilitiesInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  role?: $Enums.UserRole
+  evaluationMode?: $Enums.EvaluationMode
+  avatarUrl?: string | null
+  ssoProvider?: string | null
+  ssoId?: string | null
+  isActive?: boolean
+  admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
+  pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
+  feedbacksReceived?: Prisma.FeedbackCreateNestedManyWithoutEmployeeInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleCreateNestedManyWithoutEmployeeInput
+  managerHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutManagerInput
+  pdisAsManager?: Prisma.PDICreateNestedManyWithoutManagerInput
+  feedbacksGiven?: Prisma.FeedbackCreateNestedManyWithoutManagerInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleCreateNestedManyWithoutManagerInput
+  pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
+  pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutGoalResponsibilitiesInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  role?: $Enums.UserRole
+  evaluationMode?: $Enums.EvaluationMode
+  avatarUrl?: string | null
+  ssoProvider?: string | null
+  ssoId?: string | null
+  isActive?: boolean
+  admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
+  pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
+  feedbacksReceived?: Prisma.FeedbackUncheckedCreateNestedManyWithoutEmployeeInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutEmployeeInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutManagerInput
+  pdisAsManager?: Prisma.PDIUncheckedCreateNestedManyWithoutManagerInput
+  feedbacksGiven?: Prisma.FeedbackUncheckedCreateNestedManyWithoutManagerInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutManagerInput
+  pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
+  pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutGoalResponsibilitiesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutGoalResponsibilitiesInput, Prisma.UserUncheckedCreateWithoutGoalResponsibilitiesInput>
+}
+
+export type UserUpsertWithoutGoalResponsibilitiesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutGoalResponsibilitiesInput, Prisma.UserUncheckedUpdateWithoutGoalResponsibilitiesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutGoalResponsibilitiesInput, Prisma.UserUncheckedCreateWithoutGoalResponsibilitiesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutGoalResponsibilitiesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutGoalResponsibilitiesInput, Prisma.UserUncheckedUpdateWithoutGoalResponsibilitiesInput>
+}
+
+export type UserUpdateWithoutGoalResponsibilitiesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
+  pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
+  feedbacksReceived?: Prisma.FeedbackUpdateManyWithoutEmployeeNestedInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUpdateManyWithoutEmployeeNestedInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutManagerNestedInput
+  pdisAsManager?: Prisma.PDIUpdateManyWithoutManagerNestedInput
+  feedbacksGiven?: Prisma.FeedbackUpdateManyWithoutManagerNestedInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUpdateManyWithoutManagerNestedInput
+  pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
+  pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutGoalResponsibilitiesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
+  pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
+  feedbacksReceived?: Prisma.FeedbackUncheckedUpdateManyWithoutEmployeeNestedInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutManagerNestedInput
+  pdisAsManager?: Prisma.PDIUncheckedUpdateManyWithoutManagerNestedInput
+  feedbacksGiven?: Prisma.FeedbackUncheckedUpdateManyWithoutManagerNestedInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutManagerNestedInput
   pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -1520,13 +1757,12 @@ export type UserCreateWithoutPdiEvidencesInput = {
   pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
   feedbacksReceived?: Prisma.FeedbackCreateNestedManyWithoutEmployeeInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleCreateNestedManyWithoutEmployeeInput
   managerHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutManagerInput
   pdisAsManager?: Prisma.PDICreateNestedManyWithoutManagerInput
   feedbacksGiven?: Prisma.FeedbackCreateNestedManyWithoutManagerInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleCreateNestedManyWithoutManagerInput
   pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
 }
 
@@ -1556,13 +1792,12 @@ export type UserUncheckedCreateWithoutPdiEvidencesInput = {
   pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
   feedbacksReceived?: Prisma.FeedbackUncheckedCreateNestedManyWithoutEmployeeInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutEmployeeInput
   managerHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutManagerInput
   pdisAsManager?: Prisma.PDIUncheckedCreateNestedManyWithoutManagerInput
   feedbacksGiven?: Prisma.FeedbackUncheckedCreateNestedManyWithoutManagerInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutManagerInput
   pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -1608,13 +1843,12 @@ export type UserUpdateWithoutPdiEvidencesInput = {
   pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
   feedbacksReceived?: Prisma.FeedbackUpdateManyWithoutEmployeeNestedInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUpdateManyWithoutEmployeeNestedInput
   managerHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutManagerNestedInput
   pdisAsManager?: Prisma.PDIUpdateManyWithoutManagerNestedInput
   feedbacksGiven?: Prisma.FeedbackUpdateManyWithoutManagerNestedInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUpdateManyWithoutManagerNestedInput
   pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
 }
 
@@ -1644,13 +1878,12 @@ export type UserUncheckedUpdateWithoutPdiEvidencesInput = {
   pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
   feedbacksReceived?: Prisma.FeedbackUncheckedUpdateManyWithoutEmployeeNestedInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
   managerHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutManagerNestedInput
   pdisAsManager?: Prisma.PDIUncheckedUpdateManyWithoutManagerNestedInput
   feedbacksGiven?: Prisma.FeedbackUncheckedUpdateManyWithoutManagerNestedInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedUpdateManyWithoutManagerNestedInput
   pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -1680,13 +1913,12 @@ export type UserCreateWithoutPdiCommentsInput = {
   pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
   feedbacksReceived?: Prisma.FeedbackCreateNestedManyWithoutEmployeeInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleCreateNestedManyWithoutEmployeeInput
   managerHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutManagerInput
   pdisAsManager?: Prisma.PDICreateNestedManyWithoutManagerInput
   feedbacksGiven?: Prisma.FeedbackCreateNestedManyWithoutManagerInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleCreateNestedManyWithoutManagerInput
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
 }
 
@@ -1716,13 +1948,12 @@ export type UserUncheckedCreateWithoutPdiCommentsInput = {
   pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
   feedbacksReceived?: Prisma.FeedbackUncheckedCreateNestedManyWithoutEmployeeInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutEmployeeInput
   managerHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutManagerInput
   pdisAsManager?: Prisma.PDIUncheckedCreateNestedManyWithoutManagerInput
   feedbacksGiven?: Prisma.FeedbackUncheckedCreateNestedManyWithoutManagerInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutManagerInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -1768,13 +1999,12 @@ export type UserUpdateWithoutPdiCommentsInput = {
   pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
   feedbacksReceived?: Prisma.FeedbackUpdateManyWithoutEmployeeNestedInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUpdateManyWithoutEmployeeNestedInput
   managerHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutManagerNestedInput
   pdisAsManager?: Prisma.PDIUpdateManyWithoutManagerNestedInput
   feedbacksGiven?: Prisma.FeedbackUpdateManyWithoutManagerNestedInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUpdateManyWithoutManagerNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
 }
 
@@ -1804,13 +2034,12 @@ export type UserUncheckedUpdateWithoutPdiCommentsInput = {
   pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
   feedbacksReceived?: Prisma.FeedbackUncheckedUpdateManyWithoutEmployeeNestedInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
   managerHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutManagerNestedInput
   pdisAsManager?: Prisma.PDIUncheckedUpdateManyWithoutManagerNestedInput
   feedbacksGiven?: Prisma.FeedbackUncheckedUpdateManyWithoutManagerNestedInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedUpdateManyWithoutManagerNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -1839,14 +2068,13 @@ export type UserCreateWithoutFeedbacksReceivedInput = {
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
   pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleCreateNestedManyWithoutEmployeeInput
   managerHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutManagerInput
   pdisAsManager?: Prisma.PDICreateNestedManyWithoutManagerInput
   feedbacksGiven?: Prisma.FeedbackCreateNestedManyWithoutManagerInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleCreateNestedManyWithoutManagerInput
   pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
 }
 
@@ -1875,14 +2103,13 @@ export type UserUncheckedCreateWithoutFeedbacksReceivedInput = {
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
   pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutEmployeeInput
   managerHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutManagerInput
   pdisAsManager?: Prisma.PDIUncheckedCreateNestedManyWithoutManagerInput
   feedbacksGiven?: Prisma.FeedbackUncheckedCreateNestedManyWithoutManagerInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutManagerInput
   pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -1917,13 +2144,12 @@ export type UserCreateWithoutFeedbacksGivenInput = {
   pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
   feedbacksReceived?: Prisma.FeedbackCreateNestedManyWithoutEmployeeInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleCreateNestedManyWithoutEmployeeInput
   managerHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutManagerInput
   pdisAsManager?: Prisma.PDICreateNestedManyWithoutManagerInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleCreateNestedManyWithoutManagerInput
   pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
 }
 
@@ -1953,13 +2179,12 @@ export type UserUncheckedCreateWithoutFeedbacksGivenInput = {
   pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
   feedbacksReceived?: Prisma.FeedbackUncheckedCreateNestedManyWithoutEmployeeInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutEmployeeInput
   managerHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutManagerInput
   pdisAsManager?: Prisma.PDIUncheckedCreateNestedManyWithoutManagerInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutManagerInput
   pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -2004,14 +2229,13 @@ export type UserUpdateWithoutFeedbacksReceivedInput = {
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
   pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUpdateManyWithoutEmployeeNestedInput
   managerHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutManagerNestedInput
   pdisAsManager?: Prisma.PDIUpdateManyWithoutManagerNestedInput
   feedbacksGiven?: Prisma.FeedbackUpdateManyWithoutManagerNestedInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUpdateManyWithoutManagerNestedInput
   pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
 }
 
@@ -2040,14 +2264,13 @@ export type UserUncheckedUpdateWithoutFeedbacksReceivedInput = {
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
   pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
   managerHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutManagerNestedInput
   pdisAsManager?: Prisma.PDIUncheckedUpdateManyWithoutManagerNestedInput
   feedbacksGiven?: Prisma.FeedbackUncheckedUpdateManyWithoutManagerNestedInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedUpdateManyWithoutManagerNestedInput
   pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -2088,13 +2311,12 @@ export type UserUpdateWithoutFeedbacksGivenInput = {
   pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
   feedbacksReceived?: Prisma.FeedbackUpdateManyWithoutEmployeeNestedInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUpdateManyWithoutEmployeeNestedInput
   managerHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutManagerNestedInput
   pdisAsManager?: Prisma.PDIUpdateManyWithoutManagerNestedInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUpdateManyWithoutManagerNestedInput
   pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
 }
 
@@ -2124,13 +2346,12 @@ export type UserUncheckedUpdateWithoutFeedbacksGivenInput = {
   pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
   feedbacksReceived?: Prisma.FeedbackUncheckedUpdateManyWithoutEmployeeNestedInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
   managerHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutManagerNestedInput
   pdisAsManager?: Prisma.PDIUncheckedUpdateManyWithoutManagerNestedInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedUpdateManyWithoutManagerNestedInput
   pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -2159,14 +2380,13 @@ export type UserCreateWithoutFeedbackSchedulesAsEmployeeInput = {
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
   pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
   feedbacksReceived?: Prisma.FeedbackCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleCreateNestedManyWithoutEmployeeInput
   managerHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutManagerInput
   pdisAsManager?: Prisma.PDICreateNestedManyWithoutManagerInput
   feedbacksGiven?: Prisma.FeedbackCreateNestedManyWithoutManagerInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleCreateNestedManyWithoutManagerInput
   pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
 }
 
@@ -2195,14 +2415,13 @@ export type UserUncheckedCreateWithoutFeedbackSchedulesAsEmployeeInput = {
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
   pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
   feedbacksReceived?: Prisma.FeedbackUncheckedCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutEmployeeInput
   managerHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutManagerInput
   pdisAsManager?: Prisma.PDIUncheckedCreateNestedManyWithoutManagerInput
   feedbacksGiven?: Prisma.FeedbackUncheckedCreateNestedManyWithoutManagerInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutManagerInput
   pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -2237,13 +2456,12 @@ export type UserCreateWithoutFeedbackSchedulesAsManagerInput = {
   pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
   feedbacksReceived?: Prisma.FeedbackCreateNestedManyWithoutEmployeeInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleCreateNestedManyWithoutEmployeeInput
   managerHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutManagerInput
   pdisAsManager?: Prisma.PDICreateNestedManyWithoutManagerInput
   feedbacksGiven?: Prisma.FeedbackCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleCreateNestedManyWithoutManagerInput
   pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
 }
 
@@ -2273,13 +2491,12 @@ export type UserUncheckedCreateWithoutFeedbackSchedulesAsManagerInput = {
   pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
   feedbacksReceived?: Prisma.FeedbackUncheckedCreateNestedManyWithoutEmployeeInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutEmployeeInput
   managerHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutManagerInput
   pdisAsManager?: Prisma.PDIUncheckedCreateNestedManyWithoutManagerInput
   feedbacksGiven?: Prisma.FeedbackUncheckedCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutManagerInput
   pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -2324,14 +2541,13 @@ export type UserUpdateWithoutFeedbackSchedulesAsEmployeeInput = {
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
   pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
   feedbacksReceived?: Prisma.FeedbackUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUpdateManyWithoutEmployeeNestedInput
   managerHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutManagerNestedInput
   pdisAsManager?: Prisma.PDIUpdateManyWithoutManagerNestedInput
   feedbacksGiven?: Prisma.FeedbackUpdateManyWithoutManagerNestedInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUpdateManyWithoutManagerNestedInput
   pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
 }
 
@@ -2360,14 +2576,13 @@ export type UserUncheckedUpdateWithoutFeedbackSchedulesAsEmployeeInput = {
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
   pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
   feedbacksReceived?: Prisma.FeedbackUncheckedUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
   managerHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutManagerNestedInput
   pdisAsManager?: Prisma.PDIUncheckedUpdateManyWithoutManagerNestedInput
   feedbacksGiven?: Prisma.FeedbackUncheckedUpdateManyWithoutManagerNestedInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedUpdateManyWithoutManagerNestedInput
   pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -2408,13 +2623,12 @@ export type UserUpdateWithoutFeedbackSchedulesAsManagerInput = {
   pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
   feedbacksReceived?: Prisma.FeedbackUpdateManyWithoutEmployeeNestedInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUpdateManyWithoutEmployeeNestedInput
   managerHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutManagerNestedInput
   pdisAsManager?: Prisma.PDIUpdateManyWithoutManagerNestedInput
   feedbacksGiven?: Prisma.FeedbackUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUpdateManyWithoutManagerNestedInput
   pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
 }
 
@@ -2444,333 +2658,12 @@ export type UserUncheckedUpdateWithoutFeedbackSchedulesAsManagerInput = {
   pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
   feedbacksReceived?: Prisma.FeedbackUncheckedUpdateManyWithoutEmployeeNestedInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
   managerHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutManagerNestedInput
   pdisAsManager?: Prisma.PDIUncheckedUpdateManyWithoutManagerNestedInput
   feedbacksGiven?: Prisma.FeedbackUncheckedUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedUpdateManyWithoutManagerNestedInput
   pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-}
-
-export type UserCreateWithoutPdiSchedulesAsEmployeeInput = {
-  id?: string
-  name: string
-  email: string
-  password?: string | null
-  role?: $Enums.UserRole
-  evaluationMode?: $Enums.EvaluationMode
-  avatarUrl?: string | null
-  ssoProvider?: string | null
-  ssoId?: string | null
-  isActive?: boolean
-  admissionDate?: Date | string | null
-  phone?: string | null
-  cpf?: string | null
-  birthDate?: Date | string | null
-  jobTitle?: string | null
-  address?: string | null
-  city?: string | null
-  state?: string | null
-  zipCode?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
-  pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
-  feedbacksReceived?: Prisma.FeedbackCreateNestedManyWithoutEmployeeInput
-  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleCreateNestedManyWithoutEmployeeInput
-  managerHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutManagerInput
-  pdisAsManager?: Prisma.PDICreateNestedManyWithoutManagerInput
-  feedbacksGiven?: Prisma.FeedbackCreateNestedManyWithoutManagerInput
-  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleCreateNestedManyWithoutManagerInput
-  pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
-  pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-}
-
-export type UserUncheckedCreateWithoutPdiSchedulesAsEmployeeInput = {
-  id?: string
-  name: string
-  email: string
-  password?: string | null
-  role?: $Enums.UserRole
-  evaluationMode?: $Enums.EvaluationMode
-  avatarUrl?: string | null
-  ssoProvider?: string | null
-  ssoId?: string | null
-  isActive?: boolean
-  admissionDate?: Date | string | null
-  phone?: string | null
-  cpf?: string | null
-  birthDate?: Date | string | null
-  jobTitle?: string | null
-  address?: string | null
-  city?: string | null
-  state?: string | null
-  zipCode?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
-  pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
-  feedbacksReceived?: Prisma.FeedbackUncheckedCreateNestedManyWithoutEmployeeInput
-  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutEmployeeInput
-  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutManagerInput
-  pdisAsManager?: Prisma.PDIUncheckedCreateNestedManyWithoutManagerInput
-  feedbacksGiven?: Prisma.FeedbackUncheckedCreateNestedManyWithoutManagerInput
-  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutManagerInput
-  pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
-  pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-}
-
-export type UserCreateOrConnectWithoutPdiSchedulesAsEmployeeInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutPdiSchedulesAsEmployeeInput, Prisma.UserUncheckedCreateWithoutPdiSchedulesAsEmployeeInput>
-}
-
-export type UserCreateWithoutPdiSchedulesAsManagerInput = {
-  id?: string
-  name: string
-  email: string
-  password?: string | null
-  role?: $Enums.UserRole
-  evaluationMode?: $Enums.EvaluationMode
-  avatarUrl?: string | null
-  ssoProvider?: string | null
-  ssoId?: string | null
-  isActive?: boolean
-  admissionDate?: Date | string | null
-  phone?: string | null
-  cpf?: string | null
-  birthDate?: Date | string | null
-  jobTitle?: string | null
-  address?: string | null
-  city?: string | null
-  state?: string | null
-  zipCode?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
-  pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
-  feedbacksReceived?: Prisma.FeedbackCreateNestedManyWithoutEmployeeInput
-  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleCreateNestedManyWithoutEmployeeInput
-  managerHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutManagerInput
-  pdisAsManager?: Prisma.PDICreateNestedManyWithoutManagerInput
-  feedbacksGiven?: Prisma.FeedbackCreateNestedManyWithoutManagerInput
-  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleCreateNestedManyWithoutManagerInput
-  pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
-  pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-}
-
-export type UserUncheckedCreateWithoutPdiSchedulesAsManagerInput = {
-  id?: string
-  name: string
-  email: string
-  password?: string | null
-  role?: $Enums.UserRole
-  evaluationMode?: $Enums.EvaluationMode
-  avatarUrl?: string | null
-  ssoProvider?: string | null
-  ssoId?: string | null
-  isActive?: boolean
-  admissionDate?: Date | string | null
-  phone?: string | null
-  cpf?: string | null
-  birthDate?: Date | string | null
-  jobTitle?: string | null
-  address?: string | null
-  city?: string | null
-  state?: string | null
-  zipCode?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
-  pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
-  feedbacksReceived?: Prisma.FeedbackUncheckedCreateNestedManyWithoutEmployeeInput
-  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutEmployeeInput
-  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutManagerInput
-  pdisAsManager?: Prisma.PDIUncheckedCreateNestedManyWithoutManagerInput
-  feedbacksGiven?: Prisma.FeedbackUncheckedCreateNestedManyWithoutManagerInput
-  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutManagerInput
-  pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
-  pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-}
-
-export type UserCreateOrConnectWithoutPdiSchedulesAsManagerInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutPdiSchedulesAsManagerInput, Prisma.UserUncheckedCreateWithoutPdiSchedulesAsManagerInput>
-}
-
-export type UserUpsertWithoutPdiSchedulesAsEmployeeInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutPdiSchedulesAsEmployeeInput, Prisma.UserUncheckedUpdateWithoutPdiSchedulesAsEmployeeInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutPdiSchedulesAsEmployeeInput, Prisma.UserUncheckedCreateWithoutPdiSchedulesAsEmployeeInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutPdiSchedulesAsEmployeeInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutPdiSchedulesAsEmployeeInput, Prisma.UserUncheckedUpdateWithoutPdiSchedulesAsEmployeeInput>
-}
-
-export type UserUpdateWithoutPdiSchedulesAsEmployeeInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
-  pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
-  feedbacksReceived?: Prisma.FeedbackUpdateManyWithoutEmployeeNestedInput
-  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUpdateManyWithoutEmployeeNestedInput
-  managerHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutManagerNestedInput
-  pdisAsManager?: Prisma.PDIUpdateManyWithoutManagerNestedInput
-  feedbacksGiven?: Prisma.FeedbackUpdateManyWithoutManagerNestedInput
-  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUpdateManyWithoutManagerNestedInput
-  pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
-  pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-}
-
-export type UserUncheckedUpdateWithoutPdiSchedulesAsEmployeeInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
-  pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
-  feedbacksReceived?: Prisma.FeedbackUncheckedUpdateManyWithoutEmployeeNestedInput
-  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
-  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutManagerNestedInput
-  pdisAsManager?: Prisma.PDIUncheckedUpdateManyWithoutManagerNestedInput
-  feedbacksGiven?: Prisma.FeedbackUncheckedUpdateManyWithoutManagerNestedInput
-  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedUpdateManyWithoutManagerNestedInput
-  pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
-  pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-}
-
-export type UserUpsertWithoutPdiSchedulesAsManagerInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutPdiSchedulesAsManagerInput, Prisma.UserUncheckedUpdateWithoutPdiSchedulesAsManagerInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutPdiSchedulesAsManagerInput, Prisma.UserUncheckedCreateWithoutPdiSchedulesAsManagerInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutPdiSchedulesAsManagerInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutPdiSchedulesAsManagerInput, Prisma.UserUncheckedUpdateWithoutPdiSchedulesAsManagerInput>
-}
-
-export type UserUpdateWithoutPdiSchedulesAsManagerInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
-  pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
-  feedbacksReceived?: Prisma.FeedbackUpdateManyWithoutEmployeeNestedInput
-  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUpdateManyWithoutEmployeeNestedInput
-  managerHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutManagerNestedInput
-  pdisAsManager?: Prisma.PDIUpdateManyWithoutManagerNestedInput
-  feedbacksGiven?: Prisma.FeedbackUpdateManyWithoutManagerNestedInput
-  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUpdateManyWithoutManagerNestedInput
-  pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
-  pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-}
-
-export type UserUncheckedUpdateWithoutPdiSchedulesAsManagerInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
-  pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
-  feedbacksReceived?: Prisma.FeedbackUncheckedUpdateManyWithoutEmployeeNestedInput
-  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
-  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutManagerNestedInput
-  pdisAsManager?: Prisma.PDIUncheckedUpdateManyWithoutManagerNestedInput
-  feedbacksGiven?: Prisma.FeedbackUncheckedUpdateManyWithoutManagerNestedInput
-  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutManagerNestedInput
-  pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
-  pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -2800,14 +2693,13 @@ export type UserCreateWithoutNotificationsInput = {
   pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
   feedbacksReceived?: Prisma.FeedbackCreateNestedManyWithoutEmployeeInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleCreateNestedManyWithoutEmployeeInput
   managerHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutManagerInput
   pdisAsManager?: Prisma.PDICreateNestedManyWithoutManagerInput
   feedbacksGiven?: Prisma.FeedbackCreateNestedManyWithoutManagerInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleCreateNestedManyWithoutManagerInput
   pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -2836,14 +2728,13 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
   feedbacksReceived?: Prisma.FeedbackUncheckedCreateNestedManyWithoutEmployeeInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutEmployeeInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutEmployeeInput
   managerHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutManagerInput
   pdisAsManager?: Prisma.PDIUncheckedCreateNestedManyWithoutManagerInput
   feedbacksGiven?: Prisma.FeedbackUncheckedCreateNestedManyWithoutManagerInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutManagerInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedCreateNestedManyWithoutManagerInput
   pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -2888,14 +2779,13 @@ export type UserUpdateWithoutNotificationsInput = {
   pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
   feedbacksReceived?: Prisma.FeedbackUpdateManyWithoutEmployeeNestedInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUpdateManyWithoutEmployeeNestedInput
   managerHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutManagerNestedInput
   pdisAsManager?: Prisma.PDIUpdateManyWithoutManagerNestedInput
   feedbacksGiven?: Prisma.FeedbackUpdateManyWithoutManagerNestedInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUpdateManyWithoutManagerNestedInput
   pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -2924,14 +2814,13 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
   feedbacksReceived?: Prisma.FeedbackUncheckedUpdateManyWithoutEmployeeNestedInput
   feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
-  pdiSchedulesAsEmployee?: Prisma.PDIScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
   managerHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutManagerNestedInput
   pdisAsManager?: Prisma.PDIUncheckedUpdateManyWithoutManagerNestedInput
   feedbacksGiven?: Prisma.FeedbackUncheckedUpdateManyWithoutManagerNestedInput
   feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutManagerNestedInput
-  pdiSchedulesAsManager?: Prisma.PDIScheduleUncheckedUpdateManyWithoutManagerNestedInput
   pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
 }
 
 
@@ -2944,14 +2833,13 @@ export type UserCountOutputType = {
   pdisAsEmployee: number
   feedbacksReceived: number
   feedbackSchedulesAsEmployee: number
-  pdiSchedulesAsEmployee: number
   managerHierarchies: number
   pdisAsManager: number
   feedbacksGiven: number
   feedbackSchedulesAsManager: number
-  pdiSchedulesAsManager: number
   pdiComments: number
   pdiEvidences: number
+  goalResponsibilities: number
   notifications: number
 }
 
@@ -2960,14 +2848,13 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   pdisAsEmployee?: boolean | UserCountOutputTypeCountPdisAsEmployeeArgs
   feedbacksReceived?: boolean | UserCountOutputTypeCountFeedbacksReceivedArgs
   feedbackSchedulesAsEmployee?: boolean | UserCountOutputTypeCountFeedbackSchedulesAsEmployeeArgs
-  pdiSchedulesAsEmployee?: boolean | UserCountOutputTypeCountPdiSchedulesAsEmployeeArgs
   managerHierarchies?: boolean | UserCountOutputTypeCountManagerHierarchiesArgs
   pdisAsManager?: boolean | UserCountOutputTypeCountPdisAsManagerArgs
   feedbacksGiven?: boolean | UserCountOutputTypeCountFeedbacksGivenArgs
   feedbackSchedulesAsManager?: boolean | UserCountOutputTypeCountFeedbackSchedulesAsManagerArgs
-  pdiSchedulesAsManager?: boolean | UserCountOutputTypeCountPdiSchedulesAsManagerArgs
   pdiComments?: boolean | UserCountOutputTypeCountPdiCommentsArgs
   pdiEvidences?: boolean | UserCountOutputTypeCountPdiEvidencesArgs
+  goalResponsibilities?: boolean | UserCountOutputTypeCountGoalResponsibilitiesArgs
   notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
 }
 
@@ -3012,13 +2899,6 @@ export type UserCountOutputTypeCountFeedbackSchedulesAsEmployeeArgs<ExtArgs exte
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountPdiSchedulesAsEmployeeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.PDIScheduleWhereInput
-}
-
-/**
- * UserCountOutputType without action
- */
 export type UserCountOutputTypeCountManagerHierarchiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.EmployeeHierarchyWhereInput
 }
@@ -3047,13 +2927,6 @@ export type UserCountOutputTypeCountFeedbackSchedulesAsManagerArgs<ExtArgs exten
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountPdiSchedulesAsManagerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.PDIScheduleWhereInput
-}
-
-/**
- * UserCountOutputType without action
- */
 export type UserCountOutputTypeCountPdiCommentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.PDICommentWhereInput
 }
@@ -3063,6 +2936,13 @@ export type UserCountOutputTypeCountPdiCommentsArgs<ExtArgs extends runtime.Type
  */
 export type UserCountOutputTypeCountPdiEvidencesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.PDIEvidenceWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountGoalResponsibilitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PDIGoalWhereInput
 }
 
 /**
@@ -3079,25 +2959,33 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   email?: boolean
   password?: boolean
   role?: boolean
+  evaluationMode?: boolean
   avatarUrl?: boolean
   ssoProvider?: boolean
   ssoId?: boolean
   isActive?: boolean
   admissionDate?: boolean
+  phone?: boolean
+  cpf?: boolean
+  birthDate?: boolean
+  jobTitle?: boolean
+  address?: boolean
+  city?: boolean
+  state?: boolean
+  zipCode?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   employeeHierarchies?: boolean | Prisma.User$employeeHierarchiesArgs<ExtArgs>
   pdisAsEmployee?: boolean | Prisma.User$pdisAsEmployeeArgs<ExtArgs>
   feedbacksReceived?: boolean | Prisma.User$feedbacksReceivedArgs<ExtArgs>
   feedbackSchedulesAsEmployee?: boolean | Prisma.User$feedbackSchedulesAsEmployeeArgs<ExtArgs>
-  pdiSchedulesAsEmployee?: boolean | Prisma.User$pdiSchedulesAsEmployeeArgs<ExtArgs>
   managerHierarchies?: boolean | Prisma.User$managerHierarchiesArgs<ExtArgs>
   pdisAsManager?: boolean | Prisma.User$pdisAsManagerArgs<ExtArgs>
   feedbacksGiven?: boolean | Prisma.User$feedbacksGivenArgs<ExtArgs>
   feedbackSchedulesAsManager?: boolean | Prisma.User$feedbackSchedulesAsManagerArgs<ExtArgs>
-  pdiSchedulesAsManager?: boolean | Prisma.User$pdiSchedulesAsManagerArgs<ExtArgs>
   pdiComments?: boolean | Prisma.User$pdiCommentsArgs<ExtArgs>
   pdiEvidences?: boolean | Prisma.User$pdiEvidencesArgs<ExtArgs>
+  goalResponsibilities?: boolean | Prisma.User$goalResponsibilitiesArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
@@ -3108,11 +2996,20 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   email?: boolean
   password?: boolean
   role?: boolean
+  evaluationMode?: boolean
   avatarUrl?: boolean
   ssoProvider?: boolean
   ssoId?: boolean
   isActive?: boolean
   admissionDate?: boolean
+  phone?: boolean
+  cpf?: boolean
+  birthDate?: boolean
+  jobTitle?: boolean
+  address?: boolean
+  city?: boolean
+  state?: boolean
+  zipCode?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -3123,11 +3020,20 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   email?: boolean
   password?: boolean
   role?: boolean
+  evaluationMode?: boolean
   avatarUrl?: boolean
   ssoProvider?: boolean
   ssoId?: boolean
   isActive?: boolean
   admissionDate?: boolean
+  phone?: boolean
+  cpf?: boolean
+  birthDate?: boolean
+  jobTitle?: boolean
+  address?: boolean
+  city?: boolean
+  state?: boolean
+  zipCode?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -3138,29 +3044,37 @@ export type UserSelectScalar = {
   email?: boolean
   password?: boolean
   role?: boolean
+  evaluationMode?: boolean
   avatarUrl?: boolean
   ssoProvider?: boolean
   ssoId?: boolean
   isActive?: boolean
   admissionDate?: boolean
+  phone?: boolean
+  cpf?: boolean
+  birthDate?: boolean
+  jobTitle?: boolean
+  address?: boolean
+  city?: boolean
+  state?: boolean
+  zipCode?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "role" | "avatarUrl" | "ssoProvider" | "ssoId" | "isActive" | "admissionDate" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "role" | "evaluationMode" | "avatarUrl" | "ssoProvider" | "ssoId" | "isActive" | "admissionDate" | "phone" | "cpf" | "birthDate" | "jobTitle" | "address" | "city" | "state" | "zipCode" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   employeeHierarchies?: boolean | Prisma.User$employeeHierarchiesArgs<ExtArgs>
   pdisAsEmployee?: boolean | Prisma.User$pdisAsEmployeeArgs<ExtArgs>
   feedbacksReceived?: boolean | Prisma.User$feedbacksReceivedArgs<ExtArgs>
   feedbackSchedulesAsEmployee?: boolean | Prisma.User$feedbackSchedulesAsEmployeeArgs<ExtArgs>
-  pdiSchedulesAsEmployee?: boolean | Prisma.User$pdiSchedulesAsEmployeeArgs<ExtArgs>
   managerHierarchies?: boolean | Prisma.User$managerHierarchiesArgs<ExtArgs>
   pdisAsManager?: boolean | Prisma.User$pdisAsManagerArgs<ExtArgs>
   feedbacksGiven?: boolean | Prisma.User$feedbacksGivenArgs<ExtArgs>
   feedbackSchedulesAsManager?: boolean | Prisma.User$feedbackSchedulesAsManagerArgs<ExtArgs>
-  pdiSchedulesAsManager?: boolean | Prisma.User$pdiSchedulesAsManagerArgs<ExtArgs>
   pdiComments?: boolean | Prisma.User$pdiCommentsArgs<ExtArgs>
   pdiEvidences?: boolean | Prisma.User$pdiEvidencesArgs<ExtArgs>
+  goalResponsibilities?: boolean | Prisma.User$goalResponsibilitiesArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -3174,14 +3088,13 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     pdisAsEmployee: Prisma.$PDIPayload<ExtArgs>[]
     feedbacksReceived: Prisma.$FeedbackPayload<ExtArgs>[]
     feedbackSchedulesAsEmployee: Prisma.$FeedbackSchedulePayload<ExtArgs>[]
-    pdiSchedulesAsEmployee: Prisma.$PDISchedulePayload<ExtArgs>[]
     managerHierarchies: Prisma.$EmployeeHierarchyPayload<ExtArgs>[]
     pdisAsManager: Prisma.$PDIPayload<ExtArgs>[]
     feedbacksGiven: Prisma.$FeedbackPayload<ExtArgs>[]
     feedbackSchedulesAsManager: Prisma.$FeedbackSchedulePayload<ExtArgs>[]
-    pdiSchedulesAsManager: Prisma.$PDISchedulePayload<ExtArgs>[]
     pdiComments: Prisma.$PDICommentPayload<ExtArgs>[]
     pdiEvidences: Prisma.$PDIEvidencePayload<ExtArgs>[]
+    goalResponsibilities: Prisma.$PDIGoalPayload<ExtArgs>[]
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -3604,14 +3517,13 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   pdisAsEmployee<T extends Prisma.User$pdisAsEmployeeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pdisAsEmployeeArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PDIPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   feedbacksReceived<T extends Prisma.User$feedbacksReceivedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$feedbacksReceivedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FeedbackPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   feedbackSchedulesAsEmployee<T extends Prisma.User$feedbackSchedulesAsEmployeeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$feedbackSchedulesAsEmployeeArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FeedbackSchedulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  pdiSchedulesAsEmployee<T extends Prisma.User$pdiSchedulesAsEmployeeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pdiSchedulesAsEmployeeArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PDISchedulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   managerHierarchies<T extends Prisma.User$managerHierarchiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$managerHierarchiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeHierarchyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   pdisAsManager<T extends Prisma.User$pdisAsManagerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pdisAsManagerArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PDIPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   feedbacksGiven<T extends Prisma.User$feedbacksGivenArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$feedbacksGivenArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FeedbackPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   feedbackSchedulesAsManager<T extends Prisma.User$feedbackSchedulesAsManagerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$feedbackSchedulesAsManagerArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FeedbackSchedulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  pdiSchedulesAsManager<T extends Prisma.User$pdiSchedulesAsManagerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pdiSchedulesAsManagerArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PDISchedulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   pdiComments<T extends Prisma.User$pdiCommentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pdiCommentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PDICommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   pdiEvidences<T extends Prisma.User$pdiEvidencesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pdiEvidencesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PDIEvidencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  goalResponsibilities<T extends Prisma.User$goalResponsibilitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$goalResponsibilitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PDIGoalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notifications<T extends Prisma.User$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -3653,6 +3565,14 @@ export interface UserFieldRefs {
   readonly ssoId: Prisma.FieldRef<"User", 'String'>
   readonly isActive: Prisma.FieldRef<"User", 'Boolean'>
   readonly admissionDate: Prisma.FieldRef<"User", 'DateTime'>
+  readonly phone: Prisma.FieldRef<"User", 'String'>
+  readonly cpf: Prisma.FieldRef<"User", 'String'>
+  readonly birthDate: Prisma.FieldRef<"User", 'DateTime'>
+  readonly jobTitle: Prisma.FieldRef<"User", 'String'>
+  readonly address: Prisma.FieldRef<"User", 'String'>
+  readonly city: Prisma.FieldRef<"User", 'String'>
+  readonly state: Prisma.FieldRef<"User", 'String'>
+  readonly zipCode: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }
@@ -4139,30 +4059,6 @@ export type User$feedbackSchedulesAsEmployeeArgs<ExtArgs extends runtime.Types.E
 }
 
 /**
- * User.pdiSchedulesAsEmployee
- */
-export type User$pdiSchedulesAsEmployeeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the PDISchedule
-   */
-  select?: Prisma.PDIScheduleSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the PDISchedule
-   */
-  omit?: Prisma.PDIScheduleOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.PDIScheduleInclude<ExtArgs> | null
-  where?: Prisma.PDIScheduleWhereInput
-  orderBy?: Prisma.PDIScheduleOrderByWithRelationInput | Prisma.PDIScheduleOrderByWithRelationInput[]
-  cursor?: Prisma.PDIScheduleWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.PDIScheduleScalarFieldEnum | Prisma.PDIScheduleScalarFieldEnum[]
-}
-
-/**
  * User.managerHierarchies
  */
 export type User$managerHierarchiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4259,30 +4155,6 @@ export type User$feedbackSchedulesAsManagerArgs<ExtArgs extends runtime.Types.Ex
 }
 
 /**
- * User.pdiSchedulesAsManager
- */
-export type User$pdiSchedulesAsManagerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the PDISchedule
-   */
-  select?: Prisma.PDIScheduleSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the PDISchedule
-   */
-  omit?: Prisma.PDIScheduleOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.PDIScheduleInclude<ExtArgs> | null
-  where?: Prisma.PDIScheduleWhereInput
-  orderBy?: Prisma.PDIScheduleOrderByWithRelationInput | Prisma.PDIScheduleOrderByWithRelationInput[]
-  cursor?: Prisma.PDIScheduleWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.PDIScheduleScalarFieldEnum | Prisma.PDIScheduleScalarFieldEnum[]
-}
-
-/**
  * User.pdiComments
  */
 export type User$pdiCommentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4328,6 +4200,30 @@ export type User$pdiEvidencesArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.PDIEvidenceScalarFieldEnum | Prisma.PDIEvidenceScalarFieldEnum[]
+}
+
+/**
+ * User.goalResponsibilities
+ */
+export type User$goalResponsibilitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PDIGoal
+   */
+  select?: Prisma.PDIGoalSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PDIGoal
+   */
+  omit?: Prisma.PDIGoalOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PDIGoalInclude<ExtArgs> | null
+  where?: Prisma.PDIGoalWhereInput
+  orderBy?: Prisma.PDIGoalOrderByWithRelationInput | Prisma.PDIGoalOrderByWithRelationInput[]
+  cursor?: Prisma.PDIGoalWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PDIGoalScalarFieldEnum | Prisma.PDIGoalScalarFieldEnum[]
 }
 
 /**

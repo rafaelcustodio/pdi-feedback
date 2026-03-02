@@ -20,18 +20,8 @@ export type PDIModel = runtime.Types.Result.DefaultSelection<Prisma.$PDIPayload>
 
 export type AggregatePDI = {
   _count: PDICountAggregateOutputType | null
-  _avg: PDIAvgAggregateOutputType | null
-  _sum: PDISumAggregateOutputType | null
   _min: PDIMinAggregateOutputType | null
   _max: PDIMaxAggregateOutputType | null
-}
-
-export type PDIAvgAggregateOutputType = {
-  frequencyMonths: number | null
-}
-
-export type PDISumAggregateOutputType = {
-  frequencyMonths: number | null
 }
 
 export type PDIMinAggregateOutputType = {
@@ -39,10 +29,7 @@ export type PDIMinAggregateOutputType = {
   employeeId: string | null
   managerId: string | null
   status: $Enums.PDIStatus | null
-  period: string | null
-  frequencyMonths: number | null
   conductedAt: Date | null
-  scheduledAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -52,10 +39,7 @@ export type PDIMaxAggregateOutputType = {
   employeeId: string | null
   managerId: string | null
   status: $Enums.PDIStatus | null
-  period: string | null
-  frequencyMonths: number | null
   conductedAt: Date | null
-  scheduledAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -65,33 +49,19 @@ export type PDICountAggregateOutputType = {
   employeeId: number
   managerId: number
   status: number
-  period: number
-  frequencyMonths: number
   conductedAt: number
-  scheduledAt: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
 
-export type PDIAvgAggregateInputType = {
-  frequencyMonths?: true
-}
-
-export type PDISumAggregateInputType = {
-  frequencyMonths?: true
-}
-
 export type PDIMinAggregateInputType = {
   id?: true
   employeeId?: true
   managerId?: true
   status?: true
-  period?: true
-  frequencyMonths?: true
   conductedAt?: true
-  scheduledAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -101,10 +71,7 @@ export type PDIMaxAggregateInputType = {
   employeeId?: true
   managerId?: true
   status?: true
-  period?: true
-  frequencyMonths?: true
   conductedAt?: true
-  scheduledAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -114,10 +81,7 @@ export type PDICountAggregateInputType = {
   employeeId?: true
   managerId?: true
   status?: true
-  period?: true
-  frequencyMonths?: true
   conductedAt?: true
-  scheduledAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -161,18 +125,6 @@ export type PDIAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
-   * Select which fields to average
-  **/
-  _avg?: PDIAvgAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
-   * Select which fields to sum
-  **/
-  _sum?: PDISumAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
    * Select which fields to find the minimum value
   **/
   _min?: PDIMinAggregateInputType
@@ -203,8 +155,6 @@ export type PDIGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
   take?: number
   skip?: number
   _count?: PDICountAggregateInputType | true
-  _avg?: PDIAvgAggregateInputType
-  _sum?: PDISumAggregateInputType
   _min?: PDIMinAggregateInputType
   _max?: PDIMaxAggregateInputType
 }
@@ -214,15 +164,10 @@ export type PDIGroupByOutputType = {
   employeeId: string
   managerId: string
   status: $Enums.PDIStatus
-  period: string
-  frequencyMonths: number | null
   conductedAt: Date | null
-  scheduledAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: PDICountAggregateOutputType | null
-  _avg: PDIAvgAggregateOutputType | null
-  _sum: PDISumAggregateOutputType | null
   _min: PDIMinAggregateOutputType | null
   _max: PDIMaxAggregateOutputType | null
 }
@@ -250,16 +195,14 @@ export type PDIWhereInput = {
   employeeId?: Prisma.StringFilter<"PDI"> | string
   managerId?: Prisma.StringFilter<"PDI"> | string
   status?: Prisma.EnumPDIStatusFilter<"PDI"> | $Enums.PDIStatus
-  period?: Prisma.StringFilter<"PDI"> | string
-  frequencyMonths?: Prisma.IntNullableFilter<"PDI"> | number | null
   conductedAt?: Prisma.DateTimeNullableFilter<"PDI"> | Date | string | null
-  scheduledAt?: Prisma.DateTimeNullableFilter<"PDI"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"PDI"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PDI"> | Date | string
   employee?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   manager?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   goals?: Prisma.PDIGoalListRelationFilter
   comments?: Prisma.PDICommentListRelationFilter
+  followUps?: Prisma.PDIFollowUpListRelationFilter
 }
 
 export type PDIOrderByWithRelationInput = {
@@ -267,16 +210,14 @@ export type PDIOrderByWithRelationInput = {
   employeeId?: Prisma.SortOrder
   managerId?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  period?: Prisma.SortOrder
-  frequencyMonths?: Prisma.SortOrderInput | Prisma.SortOrder
   conductedAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  scheduledAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   employee?: Prisma.UserOrderByWithRelationInput
   manager?: Prisma.UserOrderByWithRelationInput
   goals?: Prisma.PDIGoalOrderByRelationAggregateInput
   comments?: Prisma.PDICommentOrderByRelationAggregateInput
+  followUps?: Prisma.PDIFollowUpOrderByRelationAggregateInput
 }
 
 export type PDIWhereUniqueInput = Prisma.AtLeast<{
@@ -287,16 +228,14 @@ export type PDIWhereUniqueInput = Prisma.AtLeast<{
   employeeId?: Prisma.StringFilter<"PDI"> | string
   managerId?: Prisma.StringFilter<"PDI"> | string
   status?: Prisma.EnumPDIStatusFilter<"PDI"> | $Enums.PDIStatus
-  period?: Prisma.StringFilter<"PDI"> | string
-  frequencyMonths?: Prisma.IntNullableFilter<"PDI"> | number | null
   conductedAt?: Prisma.DateTimeNullableFilter<"PDI"> | Date | string | null
-  scheduledAt?: Prisma.DateTimeNullableFilter<"PDI"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"PDI"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PDI"> | Date | string
   employee?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   manager?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   goals?: Prisma.PDIGoalListRelationFilter
   comments?: Prisma.PDICommentListRelationFilter
+  followUps?: Prisma.PDIFollowUpListRelationFilter
 }, "id">
 
 export type PDIOrderByWithAggregationInput = {
@@ -304,17 +243,12 @@ export type PDIOrderByWithAggregationInput = {
   employeeId?: Prisma.SortOrder
   managerId?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  period?: Prisma.SortOrder
-  frequencyMonths?: Prisma.SortOrderInput | Prisma.SortOrder
   conductedAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  scheduledAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.PDICountOrderByAggregateInput
-  _avg?: Prisma.PDIAvgOrderByAggregateInput
   _max?: Prisma.PDIMaxOrderByAggregateInput
   _min?: Prisma.PDIMinOrderByAggregateInput
-  _sum?: Prisma.PDISumOrderByAggregateInput
 }
 
 export type PDIScalarWhereWithAggregatesInput = {
@@ -325,10 +259,7 @@ export type PDIScalarWhereWithAggregatesInput = {
   employeeId?: Prisma.StringWithAggregatesFilter<"PDI"> | string
   managerId?: Prisma.StringWithAggregatesFilter<"PDI"> | string
   status?: Prisma.EnumPDIStatusWithAggregatesFilter<"PDI"> | $Enums.PDIStatus
-  period?: Prisma.StringWithAggregatesFilter<"PDI"> | string
-  frequencyMonths?: Prisma.IntNullableWithAggregatesFilter<"PDI"> | number | null
   conductedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PDI"> | Date | string | null
-  scheduledAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PDI"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"PDI"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"PDI"> | Date | string
 }
@@ -343,6 +274,7 @@ export type PDICreateInput = {
   manager: Prisma.UserCreateNestedOneWithoutPdisAsManagerInput
   goals?: Prisma.PDIGoalCreateNestedManyWithoutPdiInput
   comments?: Prisma.PDICommentCreateNestedManyWithoutPdiInput
+  followUps?: Prisma.PDIFollowUpCreateNestedManyWithoutPdiInput
 }
 
 export type PDIUncheckedCreateInput = {
@@ -355,6 +287,7 @@ export type PDIUncheckedCreateInput = {
   updatedAt?: Date | string
   goals?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutPdiInput
   comments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutPdiInput
+  followUps?: Prisma.PDIFollowUpUncheckedCreateNestedManyWithoutPdiInput
 }
 
 export type PDIUpdateInput = {
@@ -367,6 +300,7 @@ export type PDIUpdateInput = {
   manager?: Prisma.UserUpdateOneRequiredWithoutPdisAsManagerNestedInput
   goals?: Prisma.PDIGoalUpdateManyWithoutPdiNestedInput
   comments?: Prisma.PDICommentUpdateManyWithoutPdiNestedInput
+  followUps?: Prisma.PDIFollowUpUpdateManyWithoutPdiNestedInput
 }
 
 export type PDIUncheckedUpdateInput = {
@@ -379,6 +313,7 @@ export type PDIUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   goals?: Prisma.PDIGoalUncheckedUpdateManyWithoutPdiNestedInput
   comments?: Prisma.PDICommentUncheckedUpdateManyWithoutPdiNestedInput
+  followUps?: Prisma.PDIFollowUpUncheckedUpdateManyWithoutPdiNestedInput
 }
 
 export type PDICreateManyInput = {
@@ -394,10 +329,7 @@ export type PDICreateManyInput = {
 export type PDIUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPDIStatusFieldUpdateOperationsInput | $Enums.PDIStatus
-  period?: Prisma.StringFieldUpdateOperationsInput | string
-  frequencyMonths?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -407,10 +339,7 @@ export type PDIUncheckedUpdateManyInput = {
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPDIStatusFieldUpdateOperationsInput | $Enums.PDIStatus
-  period?: Prisma.StringFieldUpdateOperationsInput | string
-  frequencyMonths?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -430,16 +359,9 @@ export type PDICountOrderByAggregateInput = {
   employeeId?: Prisma.SortOrder
   managerId?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  period?: Prisma.SortOrder
-  frequencyMonths?: Prisma.SortOrder
   conductedAt?: Prisma.SortOrder
-  scheduledAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-}
-
-export type PDIAvgOrderByAggregateInput = {
-  frequencyMonths?: Prisma.SortOrder
 }
 
 export type PDIMaxOrderByAggregateInput = {
@@ -447,10 +369,7 @@ export type PDIMaxOrderByAggregateInput = {
   employeeId?: Prisma.SortOrder
   managerId?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  period?: Prisma.SortOrder
-  frequencyMonths?: Prisma.SortOrder
   conductedAt?: Prisma.SortOrder
-  scheduledAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -460,16 +379,9 @@ export type PDIMinOrderByAggregateInput = {
   employeeId?: Prisma.SortOrder
   managerId?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  period?: Prisma.SortOrder
-  frequencyMonths?: Prisma.SortOrder
   conductedAt?: Prisma.SortOrder
-  scheduledAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-}
-
-export type PDISumOrderByAggregateInput = {
-  frequencyMonths?: Prisma.SortOrder
 }
 
 export type PDIScalarRelationFilter = {
@@ -565,12 +477,18 @@ export type EnumPDIStatusFieldUpdateOperationsInput = {
   set?: $Enums.PDIStatus
 }
 
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
+export type PDICreateNestedOneWithoutFollowUpsInput = {
+  create?: Prisma.XOR<Prisma.PDICreateWithoutFollowUpsInput, Prisma.PDIUncheckedCreateWithoutFollowUpsInput>
+  connectOrCreate?: Prisma.PDICreateOrConnectWithoutFollowUpsInput
+  connect?: Prisma.PDIWhereUniqueInput
+}
+
+export type PDIUpdateOneRequiredWithoutFollowUpsNestedInput = {
+  create?: Prisma.XOR<Prisma.PDICreateWithoutFollowUpsInput, Prisma.PDIUncheckedCreateWithoutFollowUpsInput>
+  connectOrCreate?: Prisma.PDICreateOrConnectWithoutFollowUpsInput
+  upsert?: Prisma.PDIUpsertWithoutFollowUpsInput
+  connect?: Prisma.PDIWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PDIUpdateToOneWithWhereWithoutFollowUpsInput, Prisma.PDIUpdateWithoutFollowUpsInput>, Prisma.PDIUncheckedUpdateWithoutFollowUpsInput>
 }
 
 export type PDICreateNestedOneWithoutGoalsInput = {
@@ -604,29 +522,25 @@ export type PDIUpdateOneRequiredWithoutCommentsNestedInput = {
 export type PDICreateWithoutEmployeeInput = {
   id?: string
   status?: $Enums.PDIStatus
-  period: string
-  frequencyMonths?: number | null
   conductedAt?: Date | string | null
-  scheduledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   manager: Prisma.UserCreateNestedOneWithoutPdisAsManagerInput
   goals?: Prisma.PDIGoalCreateNestedManyWithoutPdiInput
   comments?: Prisma.PDICommentCreateNestedManyWithoutPdiInput
+  followUps?: Prisma.PDIFollowUpCreateNestedManyWithoutPdiInput
 }
 
 export type PDIUncheckedCreateWithoutEmployeeInput = {
   id?: string
   managerId: string
   status?: $Enums.PDIStatus
-  period: string
-  frequencyMonths?: number | null
   conductedAt?: Date | string | null
-  scheduledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   goals?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutPdiInput
   comments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutPdiInput
+  followUps?: Prisma.PDIFollowUpUncheckedCreateNestedManyWithoutPdiInput
 }
 
 export type PDICreateOrConnectWithoutEmployeeInput = {
@@ -642,29 +556,25 @@ export type PDICreateManyEmployeeInputEnvelope = {
 export type PDICreateWithoutManagerInput = {
   id?: string
   status?: $Enums.PDIStatus
-  period: string
-  frequencyMonths?: number | null
   conductedAt?: Date | string | null
-  scheduledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employee: Prisma.UserCreateNestedOneWithoutPdisAsEmployeeInput
   goals?: Prisma.PDIGoalCreateNestedManyWithoutPdiInput
   comments?: Prisma.PDICommentCreateNestedManyWithoutPdiInput
+  followUps?: Prisma.PDIFollowUpCreateNestedManyWithoutPdiInput
 }
 
 export type PDIUncheckedCreateWithoutManagerInput = {
   id?: string
   employeeId: string
   status?: $Enums.PDIStatus
-  period: string
-  frequencyMonths?: number | null
   conductedAt?: Date | string | null
-  scheduledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   goals?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutPdiInput
   comments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutPdiInput
+  followUps?: Prisma.PDIFollowUpUncheckedCreateNestedManyWithoutPdiInput
 }
 
 export type PDICreateOrConnectWithoutManagerInput = {
@@ -701,10 +611,7 @@ export type PDIScalarWhereInput = {
   employeeId?: Prisma.StringFilter<"PDI"> | string
   managerId?: Prisma.StringFilter<"PDI"> | string
   status?: Prisma.EnumPDIStatusFilter<"PDI"> | $Enums.PDIStatus
-  period?: Prisma.StringFilter<"PDI"> | string
-  frequencyMonths?: Prisma.IntNullableFilter<"PDI"> | number | null
   conductedAt?: Prisma.DateTimeNullableFilter<"PDI"> | Date | string | null
-  scheduledAt?: Prisma.DateTimeNullableFilter<"PDI"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"PDI"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PDI"> | Date | string
 }
@@ -725,18 +632,80 @@ export type PDIUpdateManyWithWhereWithoutManagerInput = {
   data: Prisma.XOR<Prisma.PDIUpdateManyMutationInput, Prisma.PDIUncheckedUpdateManyWithoutManagerInput>
 }
 
+export type PDICreateWithoutFollowUpsInput = {
+  id?: string
+  status?: $Enums.PDIStatus
+  conductedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employee: Prisma.UserCreateNestedOneWithoutPdisAsEmployeeInput
+  manager: Prisma.UserCreateNestedOneWithoutPdisAsManagerInput
+  goals?: Prisma.PDIGoalCreateNestedManyWithoutPdiInput
+  comments?: Prisma.PDICommentCreateNestedManyWithoutPdiInput
+}
+
+export type PDIUncheckedCreateWithoutFollowUpsInput = {
+  id?: string
+  employeeId: string
+  managerId: string
+  status?: $Enums.PDIStatus
+  conductedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  goals?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutPdiInput
+  comments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutPdiInput
+}
+
+export type PDICreateOrConnectWithoutFollowUpsInput = {
+  where: Prisma.PDIWhereUniqueInput
+  create: Prisma.XOR<Prisma.PDICreateWithoutFollowUpsInput, Prisma.PDIUncheckedCreateWithoutFollowUpsInput>
+}
+
+export type PDIUpsertWithoutFollowUpsInput = {
+  update: Prisma.XOR<Prisma.PDIUpdateWithoutFollowUpsInput, Prisma.PDIUncheckedUpdateWithoutFollowUpsInput>
+  create: Prisma.XOR<Prisma.PDICreateWithoutFollowUpsInput, Prisma.PDIUncheckedCreateWithoutFollowUpsInput>
+  where?: Prisma.PDIWhereInput
+}
+
+export type PDIUpdateToOneWithWhereWithoutFollowUpsInput = {
+  where?: Prisma.PDIWhereInput
+  data: Prisma.XOR<Prisma.PDIUpdateWithoutFollowUpsInput, Prisma.PDIUncheckedUpdateWithoutFollowUpsInput>
+}
+
+export type PDIUpdateWithoutFollowUpsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPDIStatusFieldUpdateOperationsInput | $Enums.PDIStatus
+  conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employee?: Prisma.UserUpdateOneRequiredWithoutPdisAsEmployeeNestedInput
+  manager?: Prisma.UserUpdateOneRequiredWithoutPdisAsManagerNestedInput
+  goals?: Prisma.PDIGoalUpdateManyWithoutPdiNestedInput
+  comments?: Prisma.PDICommentUpdateManyWithoutPdiNestedInput
+}
+
+export type PDIUncheckedUpdateWithoutFollowUpsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeId?: Prisma.StringFieldUpdateOperationsInput | string
+  managerId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPDIStatusFieldUpdateOperationsInput | $Enums.PDIStatus
+  conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  goals?: Prisma.PDIGoalUncheckedUpdateManyWithoutPdiNestedInput
+  comments?: Prisma.PDICommentUncheckedUpdateManyWithoutPdiNestedInput
+}
+
 export type PDICreateWithoutGoalsInput = {
   id?: string
   status?: $Enums.PDIStatus
-  period: string
-  frequencyMonths?: number | null
   conductedAt?: Date | string | null
-  scheduledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employee: Prisma.UserCreateNestedOneWithoutPdisAsEmployeeInput
   manager: Prisma.UserCreateNestedOneWithoutPdisAsManagerInput
   comments?: Prisma.PDICommentCreateNestedManyWithoutPdiInput
+  followUps?: Prisma.PDIFollowUpCreateNestedManyWithoutPdiInput
 }
 
 export type PDIUncheckedCreateWithoutGoalsInput = {
@@ -744,13 +713,11 @@ export type PDIUncheckedCreateWithoutGoalsInput = {
   employeeId: string
   managerId: string
   status?: $Enums.PDIStatus
-  period: string
-  frequencyMonths?: number | null
   conductedAt?: Date | string | null
-  scheduledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   comments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutPdiInput
+  followUps?: Prisma.PDIFollowUpUncheckedCreateNestedManyWithoutPdiInput
 }
 
 export type PDICreateOrConnectWithoutGoalsInput = {
@@ -772,15 +739,13 @@ export type PDIUpdateToOneWithWhereWithoutGoalsInput = {
 export type PDIUpdateWithoutGoalsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPDIStatusFieldUpdateOperationsInput | $Enums.PDIStatus
-  period?: Prisma.StringFieldUpdateOperationsInput | string
-  frequencyMonths?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employee?: Prisma.UserUpdateOneRequiredWithoutPdisAsEmployeeNestedInput
   manager?: Prisma.UserUpdateOneRequiredWithoutPdisAsManagerNestedInput
   comments?: Prisma.PDICommentUpdateManyWithoutPdiNestedInput
+  followUps?: Prisma.PDIFollowUpUpdateManyWithoutPdiNestedInput
 }
 
 export type PDIUncheckedUpdateWithoutGoalsInput = {
@@ -788,27 +753,23 @@ export type PDIUncheckedUpdateWithoutGoalsInput = {
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPDIStatusFieldUpdateOperationsInput | $Enums.PDIStatus
-  period?: Prisma.StringFieldUpdateOperationsInput | string
-  frequencyMonths?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   comments?: Prisma.PDICommentUncheckedUpdateManyWithoutPdiNestedInput
+  followUps?: Prisma.PDIFollowUpUncheckedUpdateManyWithoutPdiNestedInput
 }
 
 export type PDICreateWithoutCommentsInput = {
   id?: string
   status?: $Enums.PDIStatus
-  period: string
-  frequencyMonths?: number | null
   conductedAt?: Date | string | null
-  scheduledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employee: Prisma.UserCreateNestedOneWithoutPdisAsEmployeeInput
   manager: Prisma.UserCreateNestedOneWithoutPdisAsManagerInput
   goals?: Prisma.PDIGoalCreateNestedManyWithoutPdiInput
+  followUps?: Prisma.PDIFollowUpCreateNestedManyWithoutPdiInput
 }
 
 export type PDIUncheckedCreateWithoutCommentsInput = {
@@ -816,13 +777,11 @@ export type PDIUncheckedCreateWithoutCommentsInput = {
   employeeId: string
   managerId: string
   status?: $Enums.PDIStatus
-  period: string
-  frequencyMonths?: number | null
   conductedAt?: Date | string | null
-  scheduledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   goals?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutPdiInput
+  followUps?: Prisma.PDIFollowUpUncheckedCreateNestedManyWithoutPdiInput
 }
 
 export type PDICreateOrConnectWithoutCommentsInput = {
@@ -844,15 +803,13 @@ export type PDIUpdateToOneWithWhereWithoutCommentsInput = {
 export type PDIUpdateWithoutCommentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPDIStatusFieldUpdateOperationsInput | $Enums.PDIStatus
-  period?: Prisma.StringFieldUpdateOperationsInput | string
-  frequencyMonths?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employee?: Prisma.UserUpdateOneRequiredWithoutPdisAsEmployeeNestedInput
   manager?: Prisma.UserUpdateOneRequiredWithoutPdisAsManagerNestedInput
   goals?: Prisma.PDIGoalUpdateManyWithoutPdiNestedInput
+  followUps?: Prisma.PDIFollowUpUpdateManyWithoutPdiNestedInput
 }
 
 export type PDIUncheckedUpdateWithoutCommentsInput = {
@@ -860,23 +817,18 @@ export type PDIUncheckedUpdateWithoutCommentsInput = {
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPDIStatusFieldUpdateOperationsInput | $Enums.PDIStatus
-  period?: Prisma.StringFieldUpdateOperationsInput | string
-  frequencyMonths?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   goals?: Prisma.PDIGoalUncheckedUpdateManyWithoutPdiNestedInput
+  followUps?: Prisma.PDIFollowUpUncheckedUpdateManyWithoutPdiNestedInput
 }
 
 export type PDICreateManyEmployeeInput = {
   id?: string
   managerId: string
   status?: $Enums.PDIStatus
-  period: string
-  frequencyMonths?: number | null
   conductedAt?: Date | string | null
-  scheduledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -885,10 +837,7 @@ export type PDICreateManyManagerInput = {
   id?: string
   employeeId: string
   status?: $Enums.PDIStatus
-  period: string
-  frequencyMonths?: number | null
   conductedAt?: Date | string | null
-  scheduledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -896,39 +845,32 @@ export type PDICreateManyManagerInput = {
 export type PDIUpdateWithoutEmployeeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPDIStatusFieldUpdateOperationsInput | $Enums.PDIStatus
-  period?: Prisma.StringFieldUpdateOperationsInput | string
-  frequencyMonths?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   manager?: Prisma.UserUpdateOneRequiredWithoutPdisAsManagerNestedInput
   goals?: Prisma.PDIGoalUpdateManyWithoutPdiNestedInput
   comments?: Prisma.PDICommentUpdateManyWithoutPdiNestedInput
+  followUps?: Prisma.PDIFollowUpUpdateManyWithoutPdiNestedInput
 }
 
 export type PDIUncheckedUpdateWithoutEmployeeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPDIStatusFieldUpdateOperationsInput | $Enums.PDIStatus
-  period?: Prisma.StringFieldUpdateOperationsInput | string
-  frequencyMonths?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   goals?: Prisma.PDIGoalUncheckedUpdateManyWithoutPdiNestedInput
   comments?: Prisma.PDICommentUncheckedUpdateManyWithoutPdiNestedInput
+  followUps?: Prisma.PDIFollowUpUncheckedUpdateManyWithoutPdiNestedInput
 }
 
 export type PDIUncheckedUpdateManyWithoutEmployeeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPDIStatusFieldUpdateOperationsInput | $Enums.PDIStatus
-  period?: Prisma.StringFieldUpdateOperationsInput | string
-  frequencyMonths?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -936,39 +878,32 @@ export type PDIUncheckedUpdateManyWithoutEmployeeInput = {
 export type PDIUpdateWithoutManagerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPDIStatusFieldUpdateOperationsInput | $Enums.PDIStatus
-  period?: Prisma.StringFieldUpdateOperationsInput | string
-  frequencyMonths?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employee?: Prisma.UserUpdateOneRequiredWithoutPdisAsEmployeeNestedInput
   goals?: Prisma.PDIGoalUpdateManyWithoutPdiNestedInput
   comments?: Prisma.PDICommentUpdateManyWithoutPdiNestedInput
+  followUps?: Prisma.PDIFollowUpUpdateManyWithoutPdiNestedInput
 }
 
 export type PDIUncheckedUpdateWithoutManagerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPDIStatusFieldUpdateOperationsInput | $Enums.PDIStatus
-  period?: Prisma.StringFieldUpdateOperationsInput | string
-  frequencyMonths?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   goals?: Prisma.PDIGoalUncheckedUpdateManyWithoutPdiNestedInput
   comments?: Prisma.PDICommentUncheckedUpdateManyWithoutPdiNestedInput
+  followUps?: Prisma.PDIFollowUpUncheckedUpdateManyWithoutPdiNestedInput
 }
 
 export type PDIUncheckedUpdateManyWithoutManagerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPDIStatusFieldUpdateOperationsInput | $Enums.PDIStatus
-  period?: Prisma.StringFieldUpdateOperationsInput | string
-  frequencyMonths?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -981,11 +916,13 @@ export type PDIUncheckedUpdateManyWithoutManagerInput = {
 export type PDICountOutputType = {
   goals: number
   comments: number
+  followUps: number
 }
 
 export type PDICountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   goals?: boolean | PDICountOutputTypeCountGoalsArgs
   comments?: boolean | PDICountOutputTypeCountCommentsArgs
+  followUps?: boolean | PDICountOutputTypeCountFollowUpsArgs
 }
 
 /**
@@ -1012,22 +949,27 @@ export type PDICountOutputTypeCountCommentsArgs<ExtArgs extends runtime.Types.Ex
   where?: Prisma.PDICommentWhereInput
 }
 
+/**
+ * PDICountOutputType without action
+ */
+export type PDICountOutputTypeCountFollowUpsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PDIFollowUpWhereInput
+}
+
 
 export type PDISelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   employeeId?: boolean
   managerId?: boolean
   status?: boolean
-  period?: boolean
-  frequencyMonths?: boolean
   conductedAt?: boolean
-  scheduledAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   employee?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   manager?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   goals?: boolean | Prisma.PDI$goalsArgs<ExtArgs>
   comments?: boolean | Prisma.PDI$commentsArgs<ExtArgs>
+  followUps?: boolean | Prisma.PDI$followUpsArgs<ExtArgs>
   _count?: boolean | Prisma.PDICountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["pDI"]>
 
@@ -1036,10 +978,7 @@ export type PDISelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extension
   employeeId?: boolean
   managerId?: boolean
   status?: boolean
-  period?: boolean
-  frequencyMonths?: boolean
   conductedAt?: boolean
-  scheduledAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   employee?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1051,10 +990,7 @@ export type PDISelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extension
   employeeId?: boolean
   managerId?: boolean
   status?: boolean
-  period?: boolean
-  frequencyMonths?: boolean
   conductedAt?: boolean
-  scheduledAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   employee?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1066,15 +1002,12 @@ export type PDISelectScalar = {
   employeeId?: boolean
   managerId?: boolean
   status?: boolean
-  period?: boolean
-  frequencyMonths?: boolean
   conductedAt?: boolean
-  scheduledAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type PDIOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "employeeId" | "managerId" | "status" | "period" | "frequencyMonths" | "conductedAt" | "scheduledAt" | "createdAt" | "updatedAt", ExtArgs["result"]["pDI"]>
+export type PDIOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "employeeId" | "managerId" | "status" | "conductedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["pDI"]>
 export type PDIInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   employee?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   manager?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1507,6 +1440,7 @@ export interface Prisma__PDIClient<T, Null = never, ExtArgs extends runtime.Type
   manager<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   goals<T extends Prisma.PDI$goalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PDI$goalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PDIGoalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   comments<T extends Prisma.PDI$commentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PDI$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PDICommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  followUps<T extends Prisma.PDI$followUpsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PDI$followUpsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PDIFollowUpPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1540,10 +1474,7 @@ export interface PDIFieldRefs {
   readonly employeeId: Prisma.FieldRef<"PDI", 'String'>
   readonly managerId: Prisma.FieldRef<"PDI", 'String'>
   readonly status: Prisma.FieldRef<"PDI", 'PDIStatus'>
-  readonly period: Prisma.FieldRef<"PDI", 'String'>
-  readonly frequencyMonths: Prisma.FieldRef<"PDI", 'Int'>
   readonly conductedAt: Prisma.FieldRef<"PDI", 'DateTime'>
-  readonly scheduledAt: Prisma.FieldRef<"PDI", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"PDI", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"PDI", 'DateTime'>
 }

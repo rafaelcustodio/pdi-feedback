@@ -389,12 +389,12 @@ export const ModelName = {
   SectorSchedule: 'SectorSchedule',
   EmployeeHierarchy: 'EmployeeHierarchy',
   PDI: 'PDI',
+  PDIFollowUp: 'PDIFollowUp',
   PDIGoal: 'PDIGoal',
   PDIEvidence: 'PDIEvidence',
   PDIComment: 'PDIComment',
   Feedback: 'Feedback',
   FeedbackSchedule: 'FeedbackSchedule',
-  PDISchedule: 'PDISchedule',
   Notification: 'Notification'
 } as const
 
@@ -411,7 +411,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "organizationalUnit" | "sectorSchedule" | "employeeHierarchy" | "pDI" | "pDIGoal" | "pDIEvidence" | "pDIComment" | "feedback" | "feedbackSchedule" | "pDISchedule" | "notification"
+    modelProps: "user" | "organizationalUnit" | "sectorSchedule" | "employeeHierarchy" | "pDI" | "pDIFollowUp" | "pDIGoal" | "pDIEvidence" | "pDIComment" | "feedback" | "feedbackSchedule" | "notification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -785,6 +785,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    PDIFollowUp: {
+      payload: Prisma.$PDIFollowUpPayload<ExtArgs>
+      fields: Prisma.PDIFollowUpFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PDIFollowUpFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PDIFollowUpPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PDIFollowUpFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PDIFollowUpPayload>
+        }
+        findFirst: {
+          args: Prisma.PDIFollowUpFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PDIFollowUpPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PDIFollowUpFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PDIFollowUpPayload>
+        }
+        findMany: {
+          args: Prisma.PDIFollowUpFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PDIFollowUpPayload>[]
+        }
+        create: {
+          args: Prisma.PDIFollowUpCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PDIFollowUpPayload>
+        }
+        createMany: {
+          args: Prisma.PDIFollowUpCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PDIFollowUpCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PDIFollowUpPayload>[]
+        }
+        delete: {
+          args: Prisma.PDIFollowUpDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PDIFollowUpPayload>
+        }
+        update: {
+          args: Prisma.PDIFollowUpUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PDIFollowUpPayload>
+        }
+        deleteMany: {
+          args: Prisma.PDIFollowUpDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PDIFollowUpUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PDIFollowUpUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PDIFollowUpPayload>[]
+        }
+        upsert: {
+          args: Prisma.PDIFollowUpUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PDIFollowUpPayload>
+        }
+        aggregate: {
+          args: Prisma.PDIFollowUpAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePDIFollowUp>
+        }
+        groupBy: {
+          args: Prisma.PDIFollowUpGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PDIFollowUpGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PDIFollowUpCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PDIFollowUpCountAggregateOutputType> | number
+        }
+      }
+    }
     PDIGoal: {
       payload: Prisma.$PDIGoalPayload<ExtArgs>
       fields: Prisma.PDIGoalFieldRefs
@@ -1155,80 +1229,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    PDISchedule: {
-      payload: Prisma.$PDISchedulePayload<ExtArgs>
-      fields: Prisma.PDIScheduleFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.PDIScheduleFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PDISchedulePayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.PDIScheduleFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PDISchedulePayload>
-        }
-        findFirst: {
-          args: Prisma.PDIScheduleFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PDISchedulePayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.PDIScheduleFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PDISchedulePayload>
-        }
-        findMany: {
-          args: Prisma.PDIScheduleFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PDISchedulePayload>[]
-        }
-        create: {
-          args: Prisma.PDIScheduleCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PDISchedulePayload>
-        }
-        createMany: {
-          args: Prisma.PDIScheduleCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.PDIScheduleCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PDISchedulePayload>[]
-        }
-        delete: {
-          args: Prisma.PDIScheduleDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PDISchedulePayload>
-        }
-        update: {
-          args: Prisma.PDIScheduleUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PDISchedulePayload>
-        }
-        deleteMany: {
-          args: Prisma.PDIScheduleDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.PDIScheduleUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.PDIScheduleUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PDISchedulePayload>[]
-        }
-        upsert: {
-          args: Prisma.PDIScheduleUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PDISchedulePayload>
-        }
-        aggregate: {
-          args: Prisma.PDIScheduleAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregatePDISchedule>
-        }
-        groupBy: {
-          args: Prisma.PDIScheduleGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.PDIScheduleGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.PDIScheduleCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.PDIScheduleCountAggregateOutputType> | number
-        }
-      }
-    }
     Notification: {
       payload: Prisma.$NotificationPayload<ExtArgs>
       fields: Prisma.NotificationFieldRefs
@@ -1348,11 +1348,20 @@ export const UserScalarFieldEnum = {
   email: 'email',
   password: 'password',
   role: 'role',
+  evaluationMode: 'evaluationMode',
   avatarUrl: 'avatarUrl',
   ssoProvider: 'ssoProvider',
   ssoId: 'ssoId',
   isActive: 'isActive',
   admissionDate: 'admissionDate',
+  phone: 'phone',
+  cpf: 'cpf',
+  birthDate: 'birthDate',
+  jobTitle: 'jobTitle',
+  address: 'address',
+  city: 'city',
+  state: 'state',
+  zipCode: 'zipCode',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1401,15 +1410,25 @@ export const PDIScalarFieldEnum = {
   employeeId: 'employeeId',
   managerId: 'managerId',
   status: 'status',
-  period: 'period',
-  frequencyMonths: 'frequencyMonths',
   conductedAt: 'conductedAt',
-  scheduledAt: 'scheduledAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type PDIScalarFieldEnum = (typeof PDIScalarFieldEnum)[keyof typeof PDIScalarFieldEnum]
+
+
+export const PDIFollowUpScalarFieldEnum = {
+  id: 'id',
+  pdiId: 'pdiId',
+  scheduledAt: 'scheduledAt',
+  conductedAt: 'conductedAt',
+  notes: 'notes',
+  status: 'status',
+  createdAt: 'createdAt'
+} as const
+
+export type PDIFollowUpScalarFieldEnum = (typeof PDIFollowUpScalarFieldEnum)[keyof typeof PDIFollowUpScalarFieldEnum]
 
 
 export const PDIGoalScalarFieldEnum = {
@@ -1487,18 +1506,6 @@ export const FeedbackScheduleScalarFieldEnum = {
 export type FeedbackScheduleScalarFieldEnum = (typeof FeedbackScheduleScalarFieldEnum)[keyof typeof FeedbackScheduleScalarFieldEnum]
 
 
-export const PDIScheduleScalarFieldEnum = {
-  id: 'id',
-  employeeId: 'employeeId',
-  managerId: 'managerId',
-  frequencyMonths: 'frequencyMonths',
-  nextDueDate: 'nextDueDate',
-  isActive: 'isActive'
-} as const
-
-export type PDIScheduleScalarFieldEnum = (typeof PDIScheduleScalarFieldEnum)[keyof typeof PDIScheduleScalarFieldEnum]
-
-
 export const NotificationScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -1568,21 +1575,21 @@ export type EnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
  * Reference to a field of type 'UserRole[]'
  */
 export type ListEnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole[]'>
-
+    
 
 
 /**
  * Reference to a field of type 'EvaluationMode'
  */
 export type EnumEvaluationModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EvaluationMode'>
-
+    
 
 
 /**
  * Reference to a field of type 'EvaluationMode[]'
  */
 export type ListEnumEvaluationModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EvaluationMode[]'>
-
+    
 
 
 /**
@@ -1645,6 +1652,20 @@ export type EnumPDIStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
  * Reference to a field of type 'PDIStatus[]'
  */
 export type ListEnumPDIStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PDIStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'FollowUpStatus'
+ */
+export type EnumFollowUpStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FollowUpStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'FollowUpStatus[]'
+ */
+export type ListEnumFollowUpStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FollowUpStatus[]'>
     
 
 
@@ -1803,12 +1824,12 @@ export type GlobalOmitConfig = {
   sectorSchedule?: Prisma.SectorScheduleOmit
   employeeHierarchy?: Prisma.EmployeeHierarchyOmit
   pDI?: Prisma.PDIOmit
+  pDIFollowUp?: Prisma.PDIFollowUpOmit
   pDIGoal?: Prisma.PDIGoalOmit
   pDIEvidence?: Prisma.PDIEvidenceOmit
   pDIComment?: Prisma.PDICommentOmit
   feedback?: Prisma.FeedbackOmit
   feedbackSchedule?: Prisma.FeedbackScheduleOmit
-  pDISchedule?: Prisma.PDIScheduleOmit
   notification?: Prisma.NotificationOmit
 }
 
