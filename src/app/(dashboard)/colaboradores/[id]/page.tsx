@@ -15,15 +15,17 @@ export default async function EditarColaboradorPage({
   }
 
   const { id } = await params;
-  const [employee, orgUnits, activePdi] = await Promise.all([
+  const [employee, orgUnits] = await Promise.all([
     getEmployeeById(id),
     getOrgUnitsFlat(),
-    getEmployeeActivePDI(id),
   ]);
 
   if (!employee) {
     notFound();
   }
+
+  const activePdi =
+    employee.evaluationMode === "pdi" ? await getEmployeeActivePDI(id) : null;
 
   return (
     <div className="space-y-6">
@@ -49,10 +51,12 @@ export default async function EditarColaboradorPage({
           zipCode: employee.zipCode ?? undefined,
         }}
       />
-      <EmployeePDISection
-        employeeId={employee.id}
-        activePdiId={activePdi?.id ?? null}
-      />
+      {employee.evaluationMode === "pdi" && (
+        <EmployeePDISection
+          employeeId={employee.id}
+          activePdiId={activePdi?.id ?? null}
+        />
+      )}
     </div>
   );
 }
