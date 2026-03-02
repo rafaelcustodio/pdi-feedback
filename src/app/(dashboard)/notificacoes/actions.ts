@@ -289,8 +289,8 @@ export async function generateScheduleNotifications(): Promise<{
           ? `Meta de PDI atrasada${isEmployee ? "" : ` - ${employeeName}`}`
           : `Meta de PDI próxima do vencimento${isEmployee ? "" : ` - ${employeeName}`}`;
         const message = isOverdue
-          ? `A meta "${goal.title}" ${isEmployee ? "do seu PDI" : `do PDI de ${employeeName}`} estava prevista para ${dueDateStr} e está atrasada. [${messageKey}]`
-          : `A meta "${goal.title}" ${isEmployee ? "do seu PDI" : `do PDI de ${employeeName}`} vence em ${dueDateStr}. [${messageKey}]`;
+          ? `A meta "${goal.developmentObjective}" ${isEmployee ? "do seu PDI" : `do PDI de ${employeeName}`} estava prevista para ${dueDateStr} e está atrasada. [${messageKey}]`
+          : `A meta "${goal.developmentObjective}" ${isEmployee ? "do seu PDI" : `do PDI de ${employeeName}`} vence em ${dueDateStr}. [${messageKey}]`;
 
         await prisma.notification.create({
           data: {

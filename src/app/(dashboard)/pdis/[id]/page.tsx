@@ -49,9 +49,8 @@ export default async function PDIDetailPage({
             createdAt: pdi.createdAt.toISOString(),
             goals: pdi.goals.map((g) => ({
               id: g.id,
-              title: g.title,
-              description: g.description ?? "",
-              competency: g.competency,
+              developmentObjective: g.developmentObjective,
+              actions: g.actions ?? "",
               status: g.status,
               dueDate: g.dueDate
                 ? new Date(g.dueDate).toISOString().split("T")[0]

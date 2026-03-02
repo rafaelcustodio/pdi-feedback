@@ -26,19 +26,6 @@ import {
   updateEvidence,
 } from "@/app/(dashboard)/pdis/actions";
 
-const COMPETENCIES = [
-  "Liderança",
-  "Comunicação",
-  "Trabalho em Equipe",
-  "Resolução de Problemas",
-  "Gestão de Tempo",
-  "Inovação",
-  "Conhecimento Técnico",
-  "Relacionamento Interpessoal",
-  "Orientação a Resultados",
-  "Adaptabilidade",
-];
-
 const statusLabels: Record<string, string> = {
   draft: "Rascunho",
   active: "Ativo",
@@ -208,9 +195,8 @@ function GoalCard({
 
   // Goal editing state
   const [editingGoal, setEditingGoal] = useState(false);
-  const [editTitle, setEditTitle] = useState(goal.title);
-  const [editDesc, setEditDesc] = useState(goal.description ?? "");
-  const [editCompetency, setEditCompetency] = useState(goal.competency);
+  const [editObjective, setEditObjective] = useState(goal.developmentObjective);
+  const [editActions, setEditActions] = useState(goal.actions ?? "");
   const [editDueDate, setEditDueDate] = useState(
     goal.dueDate ? new Date(goal.dueDate).toISOString().split("T")[0] : ""
   );
@@ -252,9 +238,8 @@ function GoalCard({
     setLoading(true);
     setError(null);
     const result = await updateGoal(goal.id, {
-      title: editTitle.trim(),
-      description: editDesc,
-      competency: editCompetency,
+      developmentObjective: editObjective.trim(),
+      actions: editActions,
       dueDate: editDueDate || undefined,
     });
     setLoading(false);
@@ -297,17 +282,14 @@ function GoalCard({
                       : "text-gray-400"
                 }
               />
-              <h3 className="font-medium text-gray-900">{goal.title}</h3>
+              <h3 className="font-medium text-gray-900">{goal.developmentObjective}</h3>
             </div>
-            {goal.description && (
+            {goal.actions && (
               <p className="mt-1 pl-6 text-sm text-gray-600">
-                {goal.description}
+                {goal.actions}
               </p>
             )}
             <div className="mt-2 flex flex-wrap items-center gap-3 pl-6 text-xs text-gray-500">
-              <span className="rounded bg-gray-200 px-2 py-0.5">
-                {goal.competency}
-              </span>
               {goal.dueDate && (
                 <span className="inline-flex items-center gap-1">
                   <Calendar size={12} />
@@ -369,31 +351,15 @@ function GoalCard({
               <div className="space-y-3">
                 <div>
                   <label className="mb-1 block text-xs font-medium text-gray-700">
-                    Título *
+                    Objetivo de Desenvolvimento *
                   </label>
                   <input
                     type="text"
-                    value={editTitle}
-                    onChange={(e) => setEditTitle(e.target.value)}
+                    value={editObjective}
+                    onChange={(e) => setEditObjective(e.target.value)}
                     className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     disabled={loading}
                   />
-                </div>
-                <div>
-                  <label className="mb-1 block text-xs font-medium text-gray-700">
-                    Competência *
-                  </label>
-                  <select
-                    value={editCompetency}
-                    onChange={(e) => setEditCompetency(e.target.value)}
-                    className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    disabled={loading}
-                  >
-                    <option value="">Selecione...</option>
-                    {COMPETENCIES.map((c) => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-gray-700">
@@ -409,11 +375,11 @@ function GoalCard({
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-gray-700">
-                    Descrição
+                    Ações / Atividades
                   </label>
                   <textarea
-                    value={editDesc}
-                    onChange={(e) => setEditDesc(e.target.value)}
+                    value={editActions}
+                    onChange={(e) => setEditActions(e.target.value)}
                     rows={3}
                     className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     disabled={loading}
@@ -430,7 +396,7 @@ function GoalCard({
                 </button>
                 <button
                   onClick={handleUpdateGoal}
-                  disabled={loading || !editTitle.trim() || !editCompetency.trim()}
+                  disabled={loading || !editObjective.trim()}
                   className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
                 >
                   {loading ? "Salvando..." : "Salvar"}

@@ -157,7 +157,7 @@ export async function getDashboardData(): Promise<DashboardData | null> {
     items.push({
       id: goal.pdi.id,
       type: "pdi",
-      title: `PDI: ${goal.title}`,
+      title: `PDI: ${goal.developmentObjective}`,
       employeeName: goal.pdi.employee.name,
       dueDate: goal.dueDate!,
       href: `/pdis/${goal.pdi.id}`,

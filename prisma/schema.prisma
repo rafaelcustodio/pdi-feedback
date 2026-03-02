@@ -57,9 +57,10 @@ model User {
   pdiSchedulesAsManager      PDISchedule[]      @relation("PDIScheduleManager")
 
   // Other relations
-  pdiComments    PDIComment[]
-  pdiEvidences   PDIEvidence[]
-  notifications  Notification[]
+  pdiComments         PDIComment[]
+  pdiEvidences        PDIEvidence[]
+  goalResponsibilities PDIGoal[]     @relation("GoalResponsible")
+  notifications       Notification[]
 
   @@index([email])
   @@index([role])
@@ -161,20 +162,27 @@ model PDI {
 }
 
 model PDIGoal {
-  id          String     @id @default(cuid())
-  pdiId       String
-  title       String
-  description String?
-  competency  String
-  status      GoalStatus @default(pending)
-  dueDate     DateTime?
-  createdAt   DateTime   @default(now())
+  id                   String     @id @default(cuid())
+  pdiId                String
+  developmentObjective String
+  actions              String?
+  status               GoalStatus @default(pending)
+  dueDate              DateTime?
+  startDate            DateTime?
+  expectedResults      String?
+  responsibleId        String?
+  completedAt          DateTime?
+  successMetrics       String?
+  achievedResults      String?
+  createdAt            DateTime   @default(now())
 
-  pdi       PDI           @relation(fields: [pdiId], references: [id], onDelete: Cascade)
-  evidences PDIEvidence[]
+  pdi         PDI           @relation(fields: [pdiId], references: [id], onDelete: Cascade)
+  responsible User?         @relation("GoalResponsible", fields: [responsibleId], references: [id])
+  evidences   PDIEvidence[]
 
   @@index([pdiId])
   @@index([status])
+  @@index([responsibleId])
 }
 
 model PDIEvidence {

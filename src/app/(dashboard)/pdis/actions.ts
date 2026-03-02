@@ -34,11 +34,16 @@ export type EvidenceDetail = {
 
 export type GoalDetail = {
   id: string;
-  title: string;
-  description: string | null;
-  competency: string;
+  developmentObjective: string;
+  actions: string | null;
   status: string;
   dueDate: Date | null;
+  startDate: Date | null;
+  expectedResults: string | null;
+  responsibleId: string | null;
+  completedAt: Date | null;
+  successMetrics: string | null;
+  achievedResults: string | null;
   createdAt: Date;
   evidences: EvidenceDetail[];
 };
@@ -75,9 +80,8 @@ export type SubordinateOption = {
 
 export type GoalInput = {
   id?: string;
-  title: string;
-  description: string;
-  competency: string;
+  developmentObjective: string;
+  actions: string;
   status: string;
   dueDate: string;
 };
@@ -242,11 +246,16 @@ export async function getPDIById(id: string): Promise<PDIDetail | null> {
     managerName: pdi.manager.name,
     goals: pdi.goals.map((g) => ({
       id: g.id,
-      title: g.title,
-      description: g.description,
-      competency: g.competency,
+      developmentObjective: g.developmentObjective,
+      actions: g.actions,
       status: g.status,
       dueDate: g.dueDate,
+      startDate: g.startDate,
+      expectedResults: g.expectedResults,
+      responsibleId: g.responsibleId,
+      completedAt: g.completedAt,
+      successMetrics: g.successMetrics,
+      achievedResults: g.achievedResults,
       createdAt: g.createdAt,
       evidences: g.evidences.map((e) => ({
         id: e.id,
@@ -333,11 +342,8 @@ export async function createPDI(data: {
 
   if (data.activate) {
     for (const goal of data.goals) {
-      if (!goal.title.trim()) {
-        return { success: false, error: "Todas as metas devem ter um título" };
-      }
-      if (!goal.competency.trim()) {
-        return { success: false, error: "Todas as metas devem ter uma competência" };
+      if (!goal.developmentObjective.trim()) {
+        return { success: false, error: "Todas as metas devem ter um objetivo de desenvolvimento" };
       }
     }
   }
@@ -351,11 +357,10 @@ export async function createPDI(data: {
       status: data.activate ? "active" : "draft",
       goals: {
         create: data.goals
-          .filter((g) => g.title.trim())
+          .filter((g) => g.developmentObjective.trim())
           .map((g) => ({
-            title: g.title.trim(),
-            description: g.description.trim() || null,
-            competency: g.competency.trim(),
+            developmentObjective: g.developmentObjective.trim(),
+            actions: g.actions.trim() || null,
             status: "pending" as const,
             dueDate: g.dueDate ? new Date(g.dueDate) : null,
           })),
@@ -414,11 +419,8 @@ export async function updatePDI(
 
   if (data.activate) {
     for (const goal of data.goals) {
-      if (!goal.title.trim()) {
-        return { success: false, error: "Todas as metas devem ter um título" };
-      }
-      if (!goal.competency.trim()) {
-        return { success: false, error: "Todas as metas devem ter uma competência" };
+      if (!goal.developmentObjective.trim()) {
+        return { success: false, error: "Todas as metas devem ter um objetivo de desenvolvimento" };
       }
     }
   }
@@ -444,9 +446,8 @@ export async function updatePDI(
       await tx.pDIGoal.update({
         where: { id: goal.id },
         data: {
-          title: goal.title.trim(),
-          description: goal.description.trim() || null,
-          competency: goal.competency.trim(),
+          developmentObjective: goal.developmentObjective.trim(),
+          actions: goal.actions.trim() || null,
           dueDate: goal.dueDate ? new Date(goal.dueDate) : null,
         },
       });
@@ -456,12 +457,11 @@ export async function updatePDI(
     if (goalsToCreate.length > 0) {
       await tx.pDIGoal.createMany({
         data: goalsToCreate
-          .filter((g) => g.title.trim())
+          .filter((g) => g.developmentObjective.trim())
           .map((g) => ({
             pdiId: id,
-            title: g.title.trim(),
-            description: g.description.trim() || null,
-            competency: g.competency.trim(),
+            developmentObjective: g.developmentObjective.trim(),
+            actions: g.actions.trim() || null,
             status: "pending" as const,
             dueDate: g.dueDate ? new Date(g.dueDate) : null,
           })),
@@ -753,7 +753,7 @@ export async function cancelScheduledPDI(
 
 export async function updateGoal(
   goalId: string,
-  data: { title: string; description?: string; competency: string; dueDate?: string }
+  data: { developmentObjective: string; actions?: string; dueDate?: string }
 ): Promise<{ success: boolean; error?: string }> {
   const session = await auth();
   if (!session?.user?.id) {
@@ -763,11 +763,8 @@ export async function updateGoal(
   const userId = session.user.id;
   const role = (session.user as { role?: string }).role || "employee";
 
-  if (!data.title.trim()) {
-    return { success: false, error: "Título é obrigatório" };
-  }
-  if (!data.competency.trim()) {
-    return { success: false, error: "Competência é obrigatória" };
+  if (!data.developmentObjective.trim()) {
+    return { success: false, error: "Objetivo de desenvolvimento é obrigatório" };
   }
 
   const goal = await prisma.pDIGoal.findUnique({
@@ -786,9 +783,8 @@ export async function updateGoal(
   await prisma.pDIGoal.update({
     where: { id: goalId },
     data: {
-      title: data.title.trim(),
-      description: data.description?.trim() || null,
-      competency: data.competency.trim(),
+      developmentObjective: data.developmentObjective.trim(),
+      actions: data.actions?.trim() || null,
       dueDate: data.dueDate ? new Date(data.dueDate) : null,
     },
   });

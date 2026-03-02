@@ -98,8 +98,8 @@
         "Typecheck passa"
       ],
       "priority": 6,
-      "passes": false,
-      "notes": "Migration SQL customizada necessária para RENAME COLUMN. Usar migration com --create-only e editar o SQL manualmente."
+      "passes": true,
+      "notes": ""
     },
     {
       "id": "US-007",

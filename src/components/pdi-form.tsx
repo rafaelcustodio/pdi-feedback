@@ -26,33 +26,18 @@ interface PDIFormProps {
     createdAt?: string;
     goals: {
       id: string;
-      title: string;
-      description: string;
-      competency: string;
+      developmentObjective: string;
+      actions: string;
       status: string;
       dueDate: string;
     }[];
   };
 }
 
-const COMPETENCIES = [
-  "Liderança",
-  "Comunicação",
-  "Trabalho em Equipe",
-  "Resolução de Problemas",
-  "Gestão de Tempo",
-  "Inovação",
-  "Conhecimento Técnico",
-  "Relacionamento Interpessoal",
-  "Orientação a Resultados",
-  "Adaptabilidade",
-];
-
 function createEmptyGoal(): GoalInput {
   return {
-    title: "",
-    description: "",
-    competency: "",
+    developmentObjective: "",
+    actions: "",
     status: "pending",
     dueDate: "",
   };
@@ -89,7 +74,7 @@ export function PDIForm({
     (initialData?.status === "scheduled" || initialData?.status === "draft");
 
   const hasValidGoals = goals.some(
-    (g) => g.title.trim() && g.competency.trim()
+    (g) => g.developmentObjective.trim()
   );
 
   const canActivate =
@@ -121,7 +106,7 @@ export function PDIForm({
     setLoading(true);
     setError(null);
 
-    const goalsData = goals.filter((g) => g.title.trim());
+    const goalsData = goals.filter((g) => g.developmentObjective.trim());
 
     let result;
     if (mode === "create") {
@@ -375,49 +360,23 @@ export function PDIForm({
               </div>
 
               <div className="grid gap-2 sm:grid-cols-2">
-                {/* Title */}
+                {/* Development Objective */}
                 <div className="sm:col-span-2">
                   <label
-                    htmlFor={`goal-title-${index}`}
+                    htmlFor={`goal-obj-${index}`}
                     className="mb-1 block text-xs font-medium text-gray-600"
                   >
-                    Título *
+                    Objetivo de Desenvolvimento *
                   </label>
                   <input
-                    id={`goal-title-${index}`}
+                    id={`goal-obj-${index}`}
                     type="text"
-                    value={goal.title}
-                    onChange={(e) => updateGoal(index, "title", e.target.value)}
+                    value={goal.developmentObjective}
+                    onChange={(e) => updateGoal(index, "developmentObjective", e.target.value)}
                     placeholder="Ex: Concluir certificação AWS"
                     className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     disabled={loading}
                   />
-                </div>
-
-                {/* Competency */}
-                <div>
-                  <label
-                    htmlFor={`goal-competency-${index}`}
-                    className="mb-1 block text-xs font-medium text-gray-600"
-                  >
-                    Competência *
-                  </label>
-                  <select
-                    id={`goal-competency-${index}`}
-                    value={goal.competency}
-                    onChange={(e) =>
-                      updateGoal(index, "competency", e.target.value)
-                    }
-                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    disabled={loading}
-                  >
-                    <option value="">Selecione uma competência</option>
-                    {COMPETENCIES.map((c) => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
-                    ))}
-                  </select>
                 </div>
 
                 {/* Due Date */}
@@ -440,21 +399,21 @@ export function PDIForm({
                   />
                 </div>
 
-                {/* Description */}
+                {/* Actions */}
                 <div className="sm:col-span-2">
                   <label
-                    htmlFor={`goal-desc-${index}`}
+                    htmlFor={`goal-actions-${index}`}
                     className="mb-1 block text-xs font-medium text-gray-600"
                   >
-                    Descrição
+                    Ações / Atividades
                   </label>
                   <textarea
-                    id={`goal-desc-${index}`}
-                    value={goal.description}
+                    id={`goal-actions-${index}`}
+                    value={goal.actions}
                     onChange={(e) =>
-                      updateGoal(index, "description", e.target.value)
+                      updateGoal(index, "actions", e.target.value)
                     }
-                    placeholder="Detalhes sobre a meta e como atingi-la..."
+                    placeholder="Detalhes sobre as ações e atividades para atingir o objetivo..."
                     rows={2}
                     className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     disabled={loading}
@@ -512,7 +471,7 @@ export function PDIForm({
             className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
             title={
               !canActivate
-                ? "Preencha todos os campos e adicione pelo menos uma meta com título e competência para ativar"
+                ? "Preencha todos os campos e adicione pelo menos uma meta com objetivo de desenvolvimento para ativar"
                 : ""
             }
           >

@@ -270,3 +270,25 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - For PDIGoal, use `pdi: { employee: { evaluationMode: "pdi" } }` for deep nesting
   - Sector cycle notifications use a dynamic type variable - can directly pass `employee: { evaluationMode: type }` since type matches the enum values
 ---
+
+## 2026-03-02T17:17 - US-006 (reestruturacao-pdi-colaborador)
+- What was implemented: Restructured PDIGoal schema with new detailed fields for professional development tracking. Renamed `title` → `developmentObjective`, `description` → `actions`, removed `competency`, added 6 new fields: `startDate`, `expectedResults`, `responsibleId` (FK to User), `completedAt`, `successMetrics`, `achievedResults`. Updated all application code references.
+- Files changed:
+  - `prisma/schema.prisma` — Restructured PDIGoal model, added GoalResponsible relation on User
+  - `prisma/migrations/20260302140000_restructure_pdi_goal/migration.sql` — RENAME COLUMN + DROP COLUMN + ADD COLUMN migration
+  - `src/app/(dashboard)/pdis/actions.ts` — Updated GoalDetail/GoalInput types, createPDI/updatePDI/updateGoal to use new fields
+  - `src/components/pdi-form.tsx` — Removed COMPETENCIES, updated form to use developmentObjective/actions
+  - `src/components/pdi-tracking.tsx` — Removed COMPETENCIES, updated GoalCard display/edit
+  - `src/components/pdi-read-only.tsx` — Updated goal display fields
+  - `src/app/(dashboard)/pdis/[id]/page.tsx` — Updated goal mapping
+  - `src/app/(dashboard)/dashboard/actions.ts` — goal.title → goal.developmentObjective
+  - `src/app/api/cron/email-reminders/route.ts` — goal.title → goal.developmentObjective
+  - `src/app/(dashboard)/notificacoes/actions.ts` — goal.title → goal.developmentObjective (mechanical rename)
+  - `src/generated/prisma/` — Manually updated PDIGoal.ts, prismaNamespace.ts, prismaNamespaceBrowser.ts, class.ts
+- **Learnings for future iterations:**
+  - Use Python scripts for mass replacements in large generated files (PDIGoal.ts is 700+ lines)
+  - DMMF metadata in class.ts uses escaped quotes (`\"`) — replacement scripts must use escaped patterns
+  - The interned strings array on line 37 of class.ts is indexed positionally — never remove entries, only add
+  - Migration uses RENAME COLUMN to preserve data, not DROP+ADD
+  - notificacoes/actions.ts is "protected" but mechanical field renames are allowed
+---
