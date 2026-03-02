@@ -151,7 +151,7 @@
         "Typecheck passa"
       ],
       "priority": 9,
-      "passes": false,
+      "passes": true,
       "notes": "Migration deve: 1) remover PDISchedule, 2) atualizar PDIs com status draft/scheduled para active, 3) remover enum values antigos, 4) drop columns period e frequencyMonths."
     },
     {

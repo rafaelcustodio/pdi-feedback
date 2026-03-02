@@ -303,6 +303,41 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - All new fields (startDate, expectedResults, responsibleId, completedAt, successMetrics, achievedResults) persisted in create/update operations
 ---
 
+## 2026-03-02T18:00 - US-009 (reestruturacao-pdi-colaborador)
+- What was implemented: Simplified PDI to continuous model. Removed period, frequencyMonths, scheduledAt from PDI. Reduced PDIStatus to active/cancelled. Removed PDISchedule model entirely. Updated all ~20 files referencing old PDI schema.
+- Files changed:
+  - `prisma/schema.prisma` — Removed PDISchedule model, reduced PDIStatus enum, removed PDI fields
+  - `prisma/migrations/20260302150000_simplify_pdi_continuous/migration.sql` — Drop PDISchedule, update statuses, remove columns/enum values
+  - `src/generated/prisma/enums.ts` — PDIStatus = active | cancelled only
+  - `src/generated/prisma/client.ts` — Removed PDISchedule export
+  - `src/generated/prisma/browser.ts` — Removed PDISchedule export
+  - `src/generated/prisma/models.ts` — Removed PDISchedule re-export
+  - `src/generated/prisma/models/PDI.ts` — Removed period, frequencyMonths, scheduledAt from create/update types
+  - `src/components/pdi-read-only.tsx` — Removed draft/completed status, period display
+  - `src/components/pdi-table.tsx` — Removed period/scheduledAt columns, simplified status options
+  - `src/components/pdi-form.tsx` — Removed period/status references for old values
+  - `src/components/pdi-tracking.tsx` — Removed old status references
+  - `src/components/schedule-section.tsx` — Removed all PDI frequency props, state, form fields
+  - `src/app/(dashboard)/dashboard/actions.ts` — Removed PDISchedule queries, simplified pending PDI filter
+  - `src/app/(dashboard)/colaboradores/actions.ts` — Removed PDI schedule CRUD, renamed schedule functions
+  - `src/app/(dashboard)/colaboradores/[id]/page.tsx` — Removed PDI frequency props
+  - `src/app/(dashboard)/notificacoes/actions.ts` — Removed PDISchedule notification block
+  - `src/app/(dashboard)/configuracoes/actions.ts` — Updated PDI compliance to use createdAt/conductedAt
+  - `src/app/(dashboard)/calendario/actions.ts` — Rewrote PDI query for continuous model
+  - `src/app/(dashboard)/programacao/actions.ts` — Updated PDI compliance/creation for continuous model
+  - `src/app/(dashboard)/pdis/actions.ts` — Removed period from create input
+  - `src/app/api/cron/generate-events/route.ts` — Removed entire PDI schedule processing block
+  - `src/app/api/cron/email-reminders/route.ts` — Removed PDI schedule notifications, updated sector compliance
+  - `src/lib/schedule-utils.ts` — Removed all PDI functions, renamed to feedback-only
+  - `src/lib/sector-schedule-utils.ts` — PDI type falls through to sector only, handleSectorTransfer only cancels feedbacks
+  - `src/lib/__tests__/effective-schedule.test.ts` — Updated 3 tests for continuous PDI model
+- **Learnings for future iterations:**
+  - When removing a model (PDISchedule), must trace ALL references across server actions, crons, components, tests, and generated types
+  - PDI in continuous model: always active or cancelled, no scheduling mechanism, uses createdAt/conductedAt instead of scheduledAt
+  - handleSectorTransfer only cancels feedbacks now (PDIs are continuous, not scheduled)
+  - Generated Prisma types in models/PDI.ts affect typecheck when app code creates PDIs — must update create/update input types
+---
+
 ## 2026-03-02T17:24 - US-008 (reestruturacao-pdi-colaborador)
 - What was implemented: Updated PDI form and tracking components to display and edit all new PDIGoal fields. Added responsible dropdown showing only employee and manager. completedAt/achievedResults disabled when status != completed.
 - Files changed:
