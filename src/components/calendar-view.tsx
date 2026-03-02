@@ -19,6 +19,7 @@ export type SerializedCalendarEvent = {
   id: string;
   type: "pdi" | "feedback" | "followup";
   employeeName: string;
+  managerName: string;
   scheduledAt: string;
   status: string;
   href: string;
@@ -290,19 +291,33 @@ export function CalendarView({ events, month, year }: CalendarViewProps) {
   );
 }
 
+const TYPE_LABELS: Record<SerializedCalendarEvent["type"], string> = {
+  feedback: "Feedback",
+  pdi: "PDI",
+  followup: "Acomp. PDI",
+};
+
 function EventBadge({ event }: { event: SerializedCalendarEvent }) {
   const style = getStatusStyle(event.status);
   const borderColor = getTypeBorderColor(event.type);
   const Icon = style.Icon;
+  const typeLabel = TYPE_LABELS[event.type];
 
   return (
     <Link
       href={event.href}
-      className={`flex items-center gap-1 truncate rounded border-l-2 ${borderColor} ${style.bg} px-1.5 py-0.5 text-xs ${style.text} transition-opacity hover:opacity-80`}
-      title={`${event.type === "pdi" ? "PDI" : event.type === "followup" ? "Acompanhamento PDI" : "Feedback"} — ${event.employeeName} (${style.label})`}
+      className={`block rounded border-l-2 ${borderColor} ${style.bg} px-1.5 py-1 text-xs ${style.text} transition-opacity hover:opacity-80`}
+      title={`${typeLabel} — ${event.employeeName} | Gestor: ${event.managerName} (${style.label})`}
     >
-      <Icon size={12} className="shrink-0" />
-      <span className="truncate">{event.employeeName}</span>
+      <div className="flex items-center gap-1">
+        <Icon size={10} className="shrink-0" />
+        <span className="truncate font-medium">
+          [{typeLabel}] {event.employeeName}
+        </span>
+      </div>
+      <div className="mt-0.5 truncate text-[10px] opacity-70">
+        {event.managerName}
+      </div>
     </Link>
   );
 }
@@ -403,10 +418,10 @@ function MobileAgendaView({
                       </div>
                       <div>
                         <p className="text-sm font-medium text-gray-900">
-                          {event.employeeName}
+                          [{TYPE_LABELS[event.type]}] {event.employeeName}
                         </p>
                         <p className="text-xs text-gray-500">
-                          {event.type === "pdi" ? "PDI" : event.type === "followup" ? "Acompanhamento PDI" : "Feedback"}
+                          Gestor: {event.managerName}
                         </p>
                       </div>
                     </div>

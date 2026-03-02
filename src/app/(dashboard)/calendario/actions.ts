@@ -8,6 +8,7 @@ export type CalendarEvent = {
   id: string;
   type: "pdi" | "feedback" | "followup";
   employeeName: string;
+  managerName: string;
   scheduledAt: Date;
   status: string;
   href: string;
@@ -87,6 +88,7 @@ export async function getCalendarEvents(
       },
       include: {
         employee: { select: { name: true } },
+        manager: { select: { name: true } },
       },
       orderBy: { createdAt: "asc" },
     });
@@ -96,6 +98,7 @@ export async function getCalendarEvents(
         id: pdi.id,
         type: "pdi",
         employeeName: pdi.employee.name,
+        managerName: pdi.manager.name,
         scheduledAt: pdi.conductedAt ?? pdi.createdAt,
         status: pdi.status,
         href: `/pdis/${pdi.id}`,
@@ -111,7 +114,14 @@ export async function getCalendarEvents(
         scheduledAt: { gte: startOfMonth, lte: endOfMonth },
         status: { not: "cancelled" },
       },
-      include: { pdi: { include: { employee: { select: { name: true } } } } },
+      include: {
+        pdi: {
+          include: {
+            employee: { select: { name: true } },
+            manager: { select: { name: true } },
+          },
+        },
+      },
     });
 
     for (const fu of followUps) {
@@ -119,6 +129,7 @@ export async function getCalendarEvents(
         id: fu.id,
         type: "followup",
         employeeName: fu.pdi.employee.name,
+        managerName: fu.pdi.manager.name,
         scheduledAt: fu.scheduledAt,
         status: fu.status,
         href: `/pdis/${fu.pdiId}`,
@@ -148,6 +159,7 @@ export async function getCalendarEvents(
       },
       include: {
         employee: { select: { name: true } },
+        manager: { select: { name: true } },
       },
       orderBy: { scheduledAt: "asc" },
     });
@@ -157,6 +169,7 @@ export async function getCalendarEvents(
         id: fb.id,
         type: "feedback",
         employeeName: fb.employee.name,
+        managerName: fb.manager.name,
         scheduledAt: fb.scheduledAt ?? fb.conductedAt!,
         status: fb.status,
         href: `/feedbacks/${fb.id}`,
