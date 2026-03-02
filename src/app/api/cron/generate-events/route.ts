@@ -71,7 +71,7 @@ export async function GET(request: Request) {
     // Process PDI Schedules
     // -------------------------------------------------------
     const pdiSchedules = await prisma.pDISchedule.findMany({
-      where: { isActive: true },
+      where: { isActive: true, employee: { evaluationMode: "pdi" } },
       include: {
         employee: { select: { id: true, name: true, isActive: true } },
       },
@@ -178,7 +178,7 @@ export async function GET(request: Request) {
     // Process Feedback Schedules
     // -------------------------------------------------------
     const feedbackSchedules = await prisma.feedbackSchedule.findMany({
-      where: { isActive: true },
+      where: { isActive: true, employee: { evaluationMode: "feedback" } },
       include: {
         employee: { select: { id: true, name: true, isActive: true } },
       },

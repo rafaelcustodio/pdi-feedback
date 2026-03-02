@@ -50,6 +50,7 @@ export async function GET(request: Request) {
       where: {
         isActive: true,
         nextDueDate: { lte: sevenDaysFromNow },
+        employee: { evaluationMode: "pdi" },
       },
       include: {
         manager: { select: { id: true, name: true } },
@@ -95,6 +96,7 @@ export async function GET(request: Request) {
       where: {
         isActive: true,
         nextDueDate: { lte: sevenDaysFromNow },
+        employee: { evaluationMode: "feedback" },
       },
       include: {
         manager: { select: { id: true, name: true } },
@@ -140,7 +142,7 @@ export async function GET(request: Request) {
       where: {
         status: { not: "completed" },
         dueDate: { not: null, lte: sevenDaysFromNow },
-        pdi: { status: "active" },
+        pdi: { status: "active", employee: { evaluationMode: "pdi" } },
       },
       include: {
         pdi: {
@@ -200,6 +202,7 @@ export async function GET(request: Request) {
       where: {
         status: "draft",
         scheduledAt: { not: null, lte: sevenDaysFromNow },
+        employee: { evaluationMode: "feedback" },
       },
       include: {
         manager: { select: { id: true, name: true } },
@@ -260,9 +263,13 @@ export async function GET(request: Request) {
       const periods = calculatePeriods(schedule.frequencyMonths, schedule.startDate);
       const currentPeriod = getCurrentPeriod(periods);
 
-      // Get active employees in this unit
+      // Get active employees in this unit filtered by evaluationMode
       const hierarchies = await prisma.employeeHierarchy.findMany({
-        where: { organizationalUnitId: unitId, endDate: null },
+        where: {
+          organizationalUnitId: unitId,
+          endDate: null,
+          employee: { evaluationMode: type },
+        },
         select: {
           employeeId: true,
           managerId: true,

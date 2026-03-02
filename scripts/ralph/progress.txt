@@ -259,3 +259,14 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - The andConditions pattern allows adding filters incrementally without restructuring existing where logic
   - Both getSubordinatesForPDI and getSubordinatesForFeedback have two code paths (all vs filtered IDs) - must update both
 ---
+
+## 2026-03-02T16:57 - US-005 (reestruturacao-pdi-colaborador)
+- What was implemented: Added evaluationMode filters to both cron jobs (generate-events and email-reminders).
+- Files changed:
+  - `src/app/api/cron/generate-events/route.ts` — PDI schedules filter by `employee.evaluationMode: "pdi"`, Feedback schedules by `employee.evaluationMode: "feedback"`
+  - `src/app/api/cron/email-reminders/route.ts` — 5 query updates: PDI schedules, Feedback schedules, PDI goals (nested via pdi.employee), draft feedbacks, and sector hierarchy queries filter by evaluationMode matching the schedule type
+- **Learnings for future iterations:**
+  - Prisma nested relation filter syntax: `{ employee: { evaluationMode: "pdi" } }` works in where clause
+  - For PDIGoal, use `pdi: { employee: { evaluationMode: "pdi" } }` for deep nesting
+  - Sector cycle notifications use a dynamic type variable - can directly pass `employee: { evaluationMode: type }` since type matches the enum values
+---
