@@ -6,7 +6,6 @@ import {
   Search,
   ChevronLeft,
   ChevronRight,
-  Plus,
   Eye,
   Target,
   Filter,
@@ -22,8 +21,6 @@ interface PDITableProps {
   conductedAtFrom?: string;
   conductedAtTo?: string;
   statusFilter?: string;
-  canCreate: boolean;
-  isEmployeeView?: boolean;
 }
 
 const statusLabels: Record<string, string> = {
@@ -45,7 +42,6 @@ export function PDITable({
   conductedAtFrom: initialConductedAtFrom = "",
   conductedAtTo: initialConductedAtTo = "",
   statusFilter: initialStatusFilter = "",
-  canCreate,
 }: PDITableProps) {
   const [searchValue, setSearchValue] = useState(initialSearch);
   const [conductedAtFromValue, setConductedAtFromValue] = useState(initialConductedAtFrom);
@@ -142,15 +138,7 @@ export function PDITable({
             </select>
           </div>
         </div>
-        {canCreate && (
-          <Link
-            href="/pdis/novo"
-            className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-          >
-            <Plus size={16} />
-            Novo PDI
-          </Link>
-        )}
+        {/* PDIs are auto-created in continuous model */}
       </div>
 
       {/* Date range filter for conductedAt */}

@@ -16,7 +16,7 @@ import {
   XCircle,
   Pencil,
 } from "lucide-react";
-import type { PDIDetail } from "@/app/(dashboard)/pdis/actions";
+import type { PDIDetail, GoalInput } from "@/app/(dashboard)/pdis/actions";
 import {
   addEvidence,
   addComment,
@@ -24,6 +24,7 @@ import {
   updateGoal,
   updateComment,
   updateEvidence,
+  addGoal as addGoalAction,
 } from "@/app/(dashboard)/pdis/actions";
 
 const statusLabels: Record<string, string> = {
@@ -72,6 +73,13 @@ export function PDITracking({ pdi, userId, userRole }: PDITrackingProps) {
       ? Math.round((completedGoals / pdi.goals.length) * 100)
       : 0;
 
+  // Separate active and completed goals
+  const activeGoals = pdi.goals.filter((g) => g.status !== "completed");
+  const doneGoals = pdi.goals.filter((g) => g.status === "completed");
+
+  const [showAddGoal, setShowAddGoal] = useState(false);
+  const [showCompleted, setShowCompleted] = useState(false);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -119,17 +127,40 @@ export function PDITracking({ pdi, userId, userRole }: PDITrackingProps) {
         </div>
       )}
 
-      {/* Goals */}
+      {/* Goals - Active/In Progress */}
       <div className="rounded-lg border border-gray-200 bg-white p-6">
-        <h2 className="mb-4 text-lg font-medium text-gray-900">
-          Metas ({pdi.goals.length})
-        </h2>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-lg font-medium text-gray-900">
+            Metas ({pdi.goals.length})
+          </h2>
+          {isManager && pdi.status === "active" && (
+            <button
+              onClick={() => setShowAddGoal(!showAddGoal)}
+              className="inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
+            >
+              <Plus size={14} />
+              Nova Meta
+            </button>
+          )}
+        </div>
 
-        {pdi.goals.length === 0 ? (
+        {/* Add Goal Form */}
+        {showAddGoal && (
+          <AddGoalForm
+            pdiId={pdi.id}
+            employeeId={pdi.employeeId}
+            employeeName={pdi.employeeName}
+            managerId={pdi.managerId}
+            managerName={pdi.managerName}
+            onClose={() => setShowAddGoal(false)}
+          />
+        )}
+
+        {activeGoals.length === 0 && doneGoals.length === 0 ? (
           <p className="text-sm text-gray-500">Nenhuma meta cadastrada.</p>
         ) : (
           <div className="space-y-4">
-            {pdi.goals.map((goal) => (
+            {activeGoals.map((goal) => (
               <GoalCard
                 key={goal.id}
                 goal={goal}
@@ -143,6 +174,38 @@ export function PDITracking({ pdi, userId, userRole }: PDITrackingProps) {
                 managerName={pdi.managerName}
               />
             ))}
+          </div>
+        )}
+
+        {/* Completed Goals - Collapsed */}
+        {doneGoals.length > 0 && (
+          <div className="mt-4">
+            <button
+              onClick={() => setShowCompleted(!showCompleted)}
+              className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-700"
+            >
+              {showCompleted ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              Metas concluídas ({doneGoals.length})
+            </button>
+            {showCompleted && (
+              <div className="mt-3 space-y-3">
+                {doneGoals.map((goal) => (
+                  <GoalCard
+                    key={goal.id}
+                    goal={goal}
+                    isEmployee={isEmployee}
+                    isManager={isManager}
+                    pdiStatus={pdi.status}
+                    userId={userId}
+                    employeeId={pdi.employeeId}
+                    managerId={pdi.managerId}
+                    employeeName={pdi.employeeName}
+                    managerName={pdi.managerName}
+                    defaultCollapsed
+                  />
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -171,6 +234,170 @@ export function PDITracking({ pdi, userId, userRole }: PDITrackingProps) {
 }
 
 // ============================================================
+// Add Goal Form (for continuous model)
+// ============================================================
+
+function AddGoalForm({
+  pdiId,
+  employeeId,
+  employeeName,
+  managerId,
+  managerName,
+  onClose,
+}: {
+  pdiId: string;
+  employeeId: string;
+  employeeName: string;
+  managerId: string;
+  managerName: string;
+  onClose: () => void;
+}) {
+  const [objective, setObjective] = useState("");
+  const [actions, setActions] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [expectedResults, setExpectedResults] = useState("");
+  const [responsibleId, setResponsibleId] = useState("");
+  const [successMetrics, setSuccessMetrics] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!objective.trim()) return;
+    setLoading(true);
+    setError(null);
+    const result = await addGoalAction(pdiId, {
+      developmentObjective: objective,
+      actions,
+      status: "pending",
+      dueDate,
+      startDate: startDate || undefined,
+      expectedResults: expectedResults || undefined,
+      responsibleId: responsibleId || undefined,
+      successMetrics: successMetrics || undefined,
+    });
+    setLoading(false);
+    if (result.success) {
+      onClose();
+    } else {
+      setError(result.error ?? "Erro ao adicionar meta");
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
+      <p className="mb-3 text-sm font-medium text-blue-800">Nova Meta</p>
+      {error && (
+        <div className="mb-3 rounded-md border border-red-200 bg-red-50 p-2 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="sm:col-span-2">
+          <label className="mb-1 block text-xs font-medium text-gray-700">
+            Objetivo de Desenvolvimento *
+          </label>
+          <input
+            type="text"
+            value={objective}
+            onChange={(e) => setObjective(e.target.value)}
+            placeholder="Ex: Concluir certificação AWS"
+            className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            disabled={loading}
+            required
+          />
+        </div>
+        <div className="sm:col-span-2">
+          <label className="mb-1 block text-xs font-medium text-gray-700">
+            Ações / Atividades
+          </label>
+          <textarea
+            value={actions}
+            onChange={(e) => setActions(e.target.value)}
+            rows={2}
+            placeholder="Detalhes sobre as ações..."
+            className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            disabled={loading}
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-gray-700">Início</label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            disabled={loading}
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-gray-700">Prazo Final</label>
+          <input
+            type="date"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+            className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            disabled={loading}
+          />
+        </div>
+        <div className="sm:col-span-2">
+          <label className="mb-1 block text-xs font-medium text-gray-700">Resultados Esperados</label>
+          <textarea
+            value={expectedResults}
+            onChange={(e) => setExpectedResults(e.target.value)}
+            rows={2}
+            className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            disabled={loading}
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-gray-700">Responsável</label>
+          <select
+            value={responsibleId}
+            onChange={(e) => setResponsibleId(e.target.value)}
+            className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            disabled={loading}
+          >
+            <option value="">Selecione</option>
+            <option value={employeeId}>{employeeName} (Colaborador)</option>
+            <option value={managerId}>{managerName} (Gestor)</option>
+          </select>
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-gray-700">Métricas de Sucesso</label>
+          <input
+            type="text"
+            value={successMetrics}
+            onChange={(e) => setSuccessMetrics(e.target.value)}
+            placeholder="Ex: Nota >= 80%"
+            className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            disabled={loading}
+          />
+        </div>
+      </div>
+      <div className="mt-3 flex justify-end gap-2">
+        <button
+          type="button"
+          onClick={onClose}
+          disabled={loading}
+          className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          disabled={loading || !objective.trim()}
+          className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+        >
+          {loading ? "Salvando..." : "Adicionar Meta"}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+// ============================================================
 // Goal Card with status management and evidence
 // ============================================================
 
@@ -184,6 +411,7 @@ function GoalCard({
   managerId,
   employeeName,
   managerName,
+  defaultCollapsed = false,
 }: {
   goal: PDIDetail["goals"][number];
   isEmployee: boolean;
@@ -194,8 +422,9 @@ function GoalCard({
   managerId: string;
   employeeName: string;
   managerName: string;
+  defaultCollapsed?: boolean;
 }) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(!defaultCollapsed ? false : false);
   const [showEvidenceForm, setShowEvidenceForm] = useState(false);
   const [evidenceDesc, setEvidenceDesc] = useState("");
   const [loading, setLoading] = useState(false);
