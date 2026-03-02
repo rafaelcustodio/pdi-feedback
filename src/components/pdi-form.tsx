@@ -5,17 +5,14 @@ import { useRouter } from "next/navigation";
 import { Save, ArrowLeft, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 import {
-  createPDI,
   updatePDI,
 } from "@/app/(dashboard)/pdis/actions";
-import type { SubordinateOption, GoalInput } from "@/app/(dashboard)/pdis/actions";
+import type { GoalInput } from "@/app/(dashboard)/pdis/actions";
 
 interface PDIFormProps {
-  mode: "create" | "edit";
-  subordinates?: SubordinateOption[];
   managerId?: string;
   managerName?: string;
-  initialData?: {
+  initialData: {
     id: string;
     employeeId: string;
     employeeName: string;
@@ -52,17 +49,14 @@ function createEmptyGoal(): GoalInput {
 }
 
 export function PDIForm({
-  mode,
-  subordinates,
   managerId,
   managerName,
   initialData,
 }: PDIFormProps) {
   const router = useRouter();
-  const [employeeId, setEmployeeId] = useState(initialData?.employeeId ?? "");
-  const [conductedAt, setConductedAt] = useState(initialData?.conductedAt ?? "");
+  const [conductedAt, setConductedAt] = useState(initialData.conductedAt ?? "");
   const [goals, setGoals] = useState<GoalInput[]>(
-    initialData?.goals && initialData.goals.length > 0
+    initialData.goals && initialData.goals.length > 0
       ? initialData.goals
       : [createEmptyGoal()]
   );
@@ -94,19 +88,10 @@ export function PDIForm({
 
     const goalsData = goals.filter((g) => g.developmentObjective.trim());
 
-    let result;
-    if (mode === "create") {
-      result = await createPDI({
-        employeeId,
-        conductedAt,
-        goals: goalsData,
-      });
-    } else {
-      result = await updatePDI(initialData!.id, {
-        conductedAt,
-        goals: goalsData,
-      });
-    }
+    const result = await updatePDI(initialData.id, {
+      conductedAt,
+      goals: goalsData,
+    });
 
     setLoading(false);
 
@@ -133,12 +118,10 @@ export function PDIForm({
         </Link>
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">
-            {mode === "create" ? "Novo PDI" : "Editar PDI"}
+            Editar PDI
           </h1>
           <p className="mt-1 text-sm text-gray-600">
-            {mode === "create"
-              ? "Crie um plano de desenvolvimento para um colaborador da sua equipe."
-              : `Edite o PDI de ${initialData?.employeeName}.`}
+            Edite o PDI de {initialData.employeeName}.
           </p>
         </div>
       </div>
@@ -155,44 +138,15 @@ export function PDIForm({
           Informações Gerais
         </h2>
         <div className="space-y-3">
-          {/* Employee selection (create mode only) */}
-          {mode === "create" && subordinates && (
-            <div>
-              <label
-                htmlFor="pdi-employee"
-                className="mb-1 block text-sm font-medium text-gray-700"
-              >
-                Colaborador *
-              </label>
-              <select
-                id="pdi-employee"
-                value={employeeId}
-                onChange={(e) => setEmployeeId(e.target.value)}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                required
-                disabled={loading}
-              >
-                <option value="">Selecione um colaborador</option>
-                {subordinates.map((sub) => (
-                  <option key={sub.id} value={sub.id}>
-                    {sub.name} ({sub.email})
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {/* Employee name (edit mode - read only) */}
-          {mode === "edit" && initialData && (
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                Colaborador
-              </label>
-              <p className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700">
-                {initialData.employeeName}
-              </p>
-            </div>
-          )}
+          {/* Employee name (read only) */}
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Colaborador
+            </label>
+            <p className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700">
+              {initialData.employeeName}
+            </p>
+          </div>
 
           {/* Conducted At */}
           <div className="sm:w-1/2">
@@ -374,11 +328,9 @@ export function PDIForm({
                     disabled={loading}
                   >
                     <option value="">Selecione</option>
-                    {(initialData?.employeeId || employeeId) && (
-                      <option value={initialData?.employeeId || employeeId}>
-                        {initialData?.employeeName || subordinates?.find(s => s.id === employeeId)?.name || "Colaborador"} (Colaborador)
-                      </option>
-                    )}
+                    <option value={initialData.employeeId}>
+                      {initialData.employeeName} (Colaborador)
+                    </option>
                     {managerId && (
                       <option value={managerId}>
                         {managerName} (Gestor)
@@ -464,7 +416,7 @@ export function PDIForm({
         </Link>
         <button
           type="submit"
-          disabled={loading || (mode === "create" && !employeeId)}
+          disabled={loading}
           className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
         >
           <Save size={16} />
