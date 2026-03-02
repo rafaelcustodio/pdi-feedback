@@ -390,6 +390,15 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - Generated Prisma types in models/PDI.ts affect typecheck when app code creates PDIs — must update create/update input types
 ---
 
+## 2026-03-02T19:30 - US-017 (reestruturacao-pdi-colaborador)
+- What was implemented: Added 8 HR fields to User model: phone, cpf (unique), birthDate, jobTitle, address, city, state, zipCode.
+- Files changed:
+  - `prisma/schema.prisma` — Added 8 fields to User model
+  - `prisma/migrations/20260302180000_add_hr_fields_to_user/migration.sql` — ALTER TABLE ADD COLUMN + unique index on cpf
+  - `src/generated/prisma/models/User.ts` — Added fields to $UserPayload scalars, Min/Max/Count aggregates, create/update input types
+  - `src/generated/prisma/internal/class.ts` — Updated inlineSchema, added field names to interned strings
+---
+
 ## 2026-03-02T19:25 - US-016 (reestruturacao-pdi-colaborador)
 - What was implemented: Added PDI follow-up reminders to cron email-reminders. Queries scheduled follow-ups within next 2 days, creates pdi_reminder notifications for the PDI manager, idempotent via messageKey.
 - Files changed:
