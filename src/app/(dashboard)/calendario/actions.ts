@@ -72,40 +72,6 @@ export async function getCalendarEvents(
   const tipo = filters?.tipo || "all";
   const events: CalendarEvent[] = [];
 
-  // Fetch PDI events
-  if (tipo === "all" || tipo === "pdi") {
-    const pdis = await prisma.pDI.findMany({
-      where: {
-        ...employeeFilter,
-        status: "active",
-        OR: [
-          { conductedAt: { gte: startOfMonth, lte: endOfMonth } },
-          {
-            conductedAt: null,
-            createdAt: { gte: startOfMonth, lte: endOfMonth },
-          },
-        ],
-      },
-      include: {
-        employee: { select: { name: true } },
-        manager: { select: { name: true } },
-      },
-      orderBy: { createdAt: "asc" },
-    });
-
-    for (const pdi of pdis) {
-      events.push({
-        id: pdi.id,
-        type: "pdi",
-        employeeName: pdi.employee.name,
-        managerName: pdi.manager.name,
-        scheduledAt: pdi.conductedAt ?? pdi.createdAt,
-        status: pdi.status,
-        href: `/pdis/${pdi.id}`,
-      });
-    }
-  }
-
   // Fetch PDI Follow-Up events
   if (tipo === "all" || tipo === "pdi") {
     const followUps = await prisma.pDIFollowUp.findMany({
