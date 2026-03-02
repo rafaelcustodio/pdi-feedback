@@ -390,6 +390,18 @@ Started: Sun Mar  1 02:53:22 PST 2026
   - Generated Prisma types in models/PDI.ts affect typecheck when app code creates PDIs — must update create/update input types
 ---
 
+## 2026-03-02T19:25 - US-016 (reestruturacao-pdi-colaborador)
+- What was implemented: Added PDI follow-up reminders to cron email-reminders. Queries scheduled follow-ups within next 2 days, creates pdi_reminder notifications for the PDI manager, idempotent via messageKey.
+- Files changed:
+  - `src/app/api/cron/email-reminders/route.ts` — Added follow-up reminder block between existing PDI goal reminders and sector cycle notifications
+- **Implementation approach:**
+  - Queries `pDIFollowUp.findMany` with `status: "scheduled"` and `scheduledAt` between now and now+2 days
+  - Includes PDI relation with managerId, employeeId, employee name
+  - MessageKey pattern: `pdi_followup_${followUpId}_${dateStr}` for idempotency
+  - Creates notification with type `pdi_reminder` for the PDI's manager
+  - Notifications flow into existing Step 2/3 for email consolidation
+---
+
 ## 2026-03-02T19:20 - US-015 (reestruturacao-pdi-colaborador)
 - What was implemented: Added follow-up UI to PDI tracking view. FollowUpsSection component with schedule, complete, and cancel functionality. Updated generated Prisma types for followUps relation on PDI.
 - Files changed:
