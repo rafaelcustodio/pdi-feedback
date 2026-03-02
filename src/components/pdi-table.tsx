@@ -8,7 +8,6 @@ import {
   ChevronRight,
   Plus,
   Eye,
-  Pencil,
   Target,
   Filter,
 } from "lucide-react";
@@ -28,18 +27,12 @@ interface PDITableProps {
 }
 
 const statusLabels: Record<string, string> = {
-  scheduled: "Agendado",
-  draft: "Rascunho",
   active: "Ativo",
-  completed: "Concluído",
   cancelled: "Cancelado",
 };
 
 const statusColors: Record<string, string> = {
-  scheduled: "bg-gray-100 text-gray-600",
-  draft: "bg-yellow-100 text-yellow-700",
   active: "bg-blue-100 text-blue-700",
-  completed: "bg-green-100 text-green-700",
   cancelled: "bg-gray-100 text-gray-500",
 };
 
@@ -53,7 +46,6 @@ export function PDITable({
   conductedAtTo: initialConductedAtTo = "",
   statusFilter: initialStatusFilter = "",
   canCreate,
-  isEmployeeView = false,
 }: PDITableProps) {
   const [searchValue, setSearchValue] = useState(initialSearch);
   const [conductedAtFromValue, setConductedAtFromValue] = useState(initialConductedAtFrom);
@@ -103,23 +95,11 @@ export function PDITable({
     window.location.href = buildUrl({ page: String(p) });
   }
 
-  // Status filter options — employees don't see 'scheduled'
-  const statusOptions = isEmployeeView
-    ? [
-        { value: "", label: "Todos os status" },
-        { value: "draft", label: "Rascunho" },
-        { value: "active", label: "Ativo" },
-        { value: "completed", label: "Concluído" },
-        { value: "cancelled", label: "Cancelado" },
-      ]
-    : [
-        { value: "", label: "Todos os status" },
-        { value: "scheduled", label: "Agendado" },
-        { value: "draft", label: "Rascunho" },
-        { value: "active", label: "Ativo" },
-        { value: "completed", label: "Concluído" },
-        { value: "cancelled", label: "Cancelado" },
-      ];
+  const statusOptions = [
+    { value: "", label: "Todos os status" },
+    { value: "active", label: "Ativo" },
+    { value: "cancelled", label: "Cancelado" },
+  ];
 
   return (
     <div className="space-y-4">
@@ -136,7 +116,7 @@ export function PDITable({
                 type="text"
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
-                placeholder="Buscar por colaborador ou período..."
+                placeholder="Buscar por colaborador..."
                 className="w-full rounded-md border border-gray-300 py-2 pl-9 pr-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
@@ -212,16 +192,10 @@ export function PDITable({
                 Gestor
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                Período
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 Metas
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 Status
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                Data Agendada
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 Data de Realização
@@ -235,7 +209,7 @@ export function PDITable({
             {pdis.length === 0 ? (
               <tr>
                 <td
-                  colSpan={8}
+                  colSpan={6}
                   className="px-4 py-8 text-center text-sm text-gray-500"
                 >
                   Nenhum PDI encontrado.
@@ -249,9 +223,6 @@ export function PDITable({
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
                     {pdi.managerName}
-                  </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
-                    {pdi.period}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
                     <span className="inline-flex items-center gap-1">
@@ -269,11 +240,6 @@ export function PDITable({
                     </span>
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
-                    {pdi.scheduledAt
-                      ? new Date(pdi.scheduledAt).toLocaleDateString("pt-BR")
-                      : "—"}
-                  </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
                     {pdi.conductedAt
                       ? new Date(pdi.conductedAt).toLocaleDateString("pt-BR")
                       : "—"}
@@ -283,13 +249,9 @@ export function PDITable({
                       <Link
                         href={`/pdis/${pdi.id}`}
                         className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-blue-600"
-                        title={pdi.status === "draft" || pdi.status === "scheduled" ? "Editar" : "Visualizar"}
+                        title="Visualizar"
                       >
-                        {pdi.status === "draft" || pdi.status === "scheduled" ? (
-                          <Pencil size={14} />
-                        ) : (
-                          <Eye size={14} />
-                        )}
+                        <Eye size={14} />
                       </Link>
                     </div>
                   </td>

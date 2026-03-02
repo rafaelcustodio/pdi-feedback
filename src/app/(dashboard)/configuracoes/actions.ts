@@ -311,13 +311,13 @@ export async function getAllSectorSchedules(): Promise<SectorScheduleSummary[]> 
           where: {
             employeeId: { in: employeeIds },
             OR: [
-              { scheduledAt: { gte: currentP.start, lte: currentP.end } },
+              { createdAt: { gte: currentP.start, lte: currentP.end } },
               { conductedAt: { gte: currentP.start, lte: currentP.end } },
             ],
           },
-          select: { employeeId: true, status: true },
+          select: { employeeId: true, status: true, conductedAt: true },
         });
-        const doneIds = new Set(pdis.filter((p) => p.status === "active" || p.status === "completed").map((p) => p.employeeId));
+        const doneIds = new Set(pdis.filter((p) => p.status === "active" && p.conductedAt != null).map((p) => p.employeeId));
         const scheduledIds = new Set(pdis.map((p) => p.employeeId));
         pdiProgress = {
           total,

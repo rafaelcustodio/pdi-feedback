@@ -1,7 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
 import { getPDIById } from "../actions";
-import { PDIForm } from "@/components/pdi-form";
 import { PDITracking } from "@/components/pdi-tracking";
 
 export default async function PDIDetailPage({
@@ -24,57 +23,7 @@ export default async function PDIDetailPage({
   const userId = session.user.id;
   const role = session.user.role || "employee";
 
-  // Can edit draft and scheduled PDIs, and only the creator manager or admin
-  const canEdit =
-    (pdi.status === "draft" || pdi.status === "scheduled") &&
-    (role === "admin" || pdi.managerId === userId);
-
-  if (canEdit) {
-    return (
-      <div className="mx-auto max-w-3xl">
-        <PDIForm
-          mode="edit"
-          managerId={pdi.managerId}
-          managerName={pdi.managerName}
-          initialData={{
-            id: pdi.id,
-            employeeId: pdi.employeeId,
-            employeeName: pdi.employeeName,
-            period: pdi.period,
-            status: pdi.status,
-            scheduledAt: pdi.scheduledAt
-              ? new Date(pdi.scheduledAt).toISOString().split("T")[0]
-              : undefined,
-            conductedAt: pdi.conductedAt
-              ? new Date(pdi.conductedAt).toISOString().split("T")[0]
-              : "",
-            createdAt: pdi.createdAt.toISOString(),
-            goals: pdi.goals.map((g) => ({
-              id: g.id,
-              developmentObjective: g.developmentObjective,
-              actions: g.actions ?? "",
-              status: g.status,
-              dueDate: g.dueDate
-                ? new Date(g.dueDate).toISOString().split("T")[0]
-                : "",
-              startDate: g.startDate
-                ? new Date(g.startDate).toISOString().split("T")[0]
-                : "",
-              expectedResults: g.expectedResults ?? "",
-              responsibleId: g.responsibleId ?? "",
-              completedAt: g.completedAt
-                ? new Date(g.completedAt).toISOString().split("T")[0]
-                : "",
-              successMetrics: g.successMetrics ?? "",
-              achievedResults: g.achievedResults ?? "",
-            })),
-          }}
-        />
-      </div>
-    );
-  }
-
-  // Interactive tracking view for active/completed/cancelled PDIs
+  // Interactive tracking view for active/cancelled PDIs
   return (
     <div className="mx-auto max-w-3xl">
       <PDITracking pdi={pdi} userId={userId} userRole={role} />

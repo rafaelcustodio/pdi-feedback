@@ -44,8 +44,6 @@ export default async function EditarColaboradorPage({
       />
       <ScheduleSection
         employeeId={employee.id}
-        initialPdiFrequency={schedules.pdiFrequency}
-        initialPdiNextDueDate={schedules.pdiNextDueDate}
         initialFeedbackFrequency={schedules.feedbackFrequency}
         initialFeedbackNextDueDate={schedules.feedbackNextDueDate}
         sectorSchedule={sectorSchedule}

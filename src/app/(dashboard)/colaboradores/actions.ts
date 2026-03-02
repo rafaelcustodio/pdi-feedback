@@ -3,7 +3,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { generateScheduledEvents, removeScheduledEvents } from "@/lib/schedule-utils";
+import { generateScheduledFeedbackEvents, removeScheduledFeedbackEvents } from "@/lib/schedule-utils";
 import { createOnboardingFeedbacks, updateOnboardingFeedbacks, handleSectorTransfer } from "@/lib/sector-schedule-utils";
 
 export type EmployeeListItem = {
@@ -490,9 +490,6 @@ export async function reactivateEmployee(
 // ============================================================
 
 export type EmployeeSchedules = {
-  pdiFrequency: number | null;
-  pdiNextDueDate: Date | null;
-  pdiScheduleId: string | null;
   feedbackFrequency: number | null;
   feedbackNextDueDate: Date | null;
   feedbackScheduleId: string | null;
@@ -504,30 +501,18 @@ export async function getEmployeeSchedules(
   const session = await requireAdmin();
   if (!session) {
     return {
-      pdiFrequency: null,
-      pdiNextDueDate: null,
-      pdiScheduleId: null,
       feedbackFrequency: null,
       feedbackNextDueDate: null,
       feedbackScheduleId: null,
     };
   }
 
-  const [pdiSchedule, feedbackSchedule] = await Promise.all([
-    prisma.pDISchedule.findFirst({
-      where: { employeeId, isActive: true },
-      orderBy: { nextDueDate: "asc" },
-    }),
-    prisma.feedbackSchedule.findFirst({
-      where: { employeeId, isActive: true },
-      orderBy: { nextDueDate: "asc" },
-    }),
-  ]);
+  const feedbackSchedule = await prisma.feedbackSchedule.findFirst({
+    where: { employeeId, isActive: true },
+    orderBy: { nextDueDate: "asc" },
+  });
 
   return {
-    pdiFrequency: pdiSchedule?.frequencyMonths ?? null,
-    pdiNextDueDate: pdiSchedule?.nextDueDate ?? null,
-    pdiScheduleId: pdiSchedule?.id ?? null,
     feedbackFrequency: feedbackSchedule?.frequencyMonths ?? null,
     feedbackNextDueDate: feedbackSchedule?.nextDueDate ?? null,
     feedbackScheduleId: feedbackSchedule?.id ?? null,
@@ -544,7 +529,6 @@ function calculateNextDueDate(frequencyMonths: number): Date {
 export async function saveEmployeeSchedules(
   employeeId: string,
   data: {
-    pdiFrequency: number | null;
     feedbackFrequency: number | null;
   }
 ): Promise<{ success: boolean; error?: string }> {
@@ -555,9 +539,6 @@ export async function saveEmployeeSchedules(
 
   const validFrequencies = [1, 2, 3, 6, 12];
 
-  if (data.pdiFrequency !== null && !validFrequencies.includes(data.pdiFrequency)) {
-    return { success: false, error: "Frequência de PDI inválida" };
-  }
   if (data.feedbackFrequency !== null && !validFrequencies.includes(data.feedbackFrequency)) {
     return { success: false, error: "Frequência de feedback inválida" };
   }
@@ -572,48 +553,6 @@ export async function saveEmployeeSchedules(
   }
 
   const managerId = hierarchy.managerId;
-
-  // Handle PDI schedule
-  const existingPdiSchedule = await prisma.pDISchedule.findFirst({
-    where: { employeeId, isActive: true },
-  });
-
-  if (data.pdiFrequency !== null) {
-    if (existingPdiSchedule) {
-      // Update existing
-      await prisma.pDISchedule.update({
-        where: { id: existingPdiSchedule.id },
-        data: {
-          frequencyMonths: data.pdiFrequency,
-          managerId,
-          nextDueDate:
-            existingPdiSchedule.frequencyMonths !== data.pdiFrequency
-              ? calculateNextDueDate(data.pdiFrequency)
-              : existingPdiSchedule.nextDueDate,
-        },
-      });
-    } else {
-      // Create new
-      await prisma.pDISchedule.create({
-        data: {
-          employeeId,
-          managerId,
-          frequencyMonths: data.pdiFrequency,
-          nextDueDate: calculateNextDueDate(data.pdiFrequency),
-        },
-      });
-    }
-    // Generate scheduled PDI events for the next 12 months
-    await generateScheduledEvents(employeeId, "pdi", data.pdiFrequency, managerId);
-  } else if (existingPdiSchedule) {
-    // Deactivate
-    await prisma.pDISchedule.update({
-      where: { id: existingPdiSchedule.id },
-      data: { isActive: false },
-    });
-    // Remove future scheduled PDI events
-    await removeScheduledEvents(employeeId, "pdi");
-  }
 
   // Handle Feedback schedule
   const existingFeedbackSchedule = await prisma.feedbackSchedule.findFirst({
@@ -644,14 +583,14 @@ export async function saveEmployeeSchedules(
       });
     }
     // Generate scheduled Feedback events for the next 12 months
-    await generateScheduledEvents(employeeId, "feedback", data.feedbackFrequency, managerId);
+    await generateScheduledFeedbackEvents(employeeId, data.feedbackFrequency, managerId);
   } else if (existingFeedbackSchedule) {
     await prisma.feedbackSchedule.update({
       where: { id: existingFeedbackSchedule.id },
       data: { isActive: false },
     });
     // Remove future scheduled Feedback events
-    await removeScheduledEvents(employeeId, "feedback");
+    await removeScheduledFeedbackEvents(employeeId);
   }
 
   revalidatePath(`/colaboradores/${employeeId}`);
@@ -788,18 +727,13 @@ export async function toggleIndividualSchedule(
   }
 
   if (!useIndividual) {
-    // Deactivate individual schedules
-    await prisma.pDISchedule.updateMany({
-      where: { employeeId, isActive: true },
-      data: { isActive: false },
-    });
+    // Deactivate individual feedback schedules
     await prisma.feedbackSchedule.updateMany({
       where: { employeeId, isActive: true },
       data: { isActive: false },
     });
-    // Remove future scheduled events created by individual schedule
-    await removeScheduledEvents(employeeId, "pdi");
-    await removeScheduledEvents(employeeId, "feedback");
+    // Remove future scheduled feedback events
+    await removeScheduledFeedbackEvents(employeeId);
   }
   // When toggling ON, user will use the existing save flow to configure
 

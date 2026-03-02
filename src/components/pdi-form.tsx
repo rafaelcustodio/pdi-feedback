@@ -1,14 +1,12 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Save, Play, ArrowLeft, Plus, Trash2, CalendarClock, CalendarX2, Calendar } from "lucide-react";
+import { Save, ArrowLeft, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 import {
   createPDI,
   updatePDI,
-  reschedulePDI,
-  cancelScheduledPDI,
 } from "@/app/(dashboard)/pdis/actions";
 import type { SubordinateOption, GoalInput } from "@/app/(dashboard)/pdis/actions";
 
@@ -21,11 +19,7 @@ interface PDIFormProps {
     id: string;
     employeeId: string;
     employeeName: string;
-    period: string;
-    status?: string;
-    scheduledAt?: string;
     conductedAt: string;
-    createdAt?: string;
     goals: {
       id: string;
       developmentObjective: string;
@@ -66,7 +60,6 @@ export function PDIForm({
 }: PDIFormProps) {
   const router = useRouter();
   const [employeeId, setEmployeeId] = useState(initialData?.employeeId ?? "");
-  const [period, setPeriod] = useState(initialData?.period ?? "");
   const [conductedAt, setConductedAt] = useState(initialData?.conductedAt ?? "");
   const [goals, setGoals] = useState<GoalInput[]>(
     initialData?.goals && initialData.goals.length > 0
@@ -75,29 +68,6 @@ export function PDIForm({
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showRescheduleModal, setShowRescheduleModal] = useState(false);
-  const [rescheduleDate, setRescheduleDate] = useState("");
-  const [showCancelModal, setShowCancelModal] = useState(false);
-  const minRescheduleDate = useMemo(() => {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    return tomorrow.toISOString().split("T")[0];
-  }, []);
-
-  const canRescheduleOrCancel =
-    mode === "edit" &&
-    initialData?.scheduledAt &&
-    (initialData?.status === "scheduled" || initialData?.status === "draft");
-
-  const hasValidGoals = goals.some(
-    (g) => g.developmentObjective.trim()
-  );
-
-  const canActivate =
-    (mode === "create" ? !!employeeId : true) &&
-    !!period.trim() &&
-    !!conductedAt &&
-    hasValidGoals;
 
   function updateGoal(index: number, field: keyof GoalInput, value: string) {
     setGoals((prev) => {
@@ -118,7 +88,7 @@ export function PDIForm({
     });
   }
 
-  async function handleSave(activate: boolean) {
+  async function handleSave() {
     setLoading(true);
     setError(null);
 
@@ -128,17 +98,13 @@ export function PDIForm({
     if (mode === "create") {
       result = await createPDI({
         employeeId,
-        period,
         conductedAt,
         goals: goalsData,
-        activate,
       });
     } else {
       result = await updatePDI(initialData!.id, {
-        period,
         conductedAt,
         goals: goalsData,
-        activate,
       });
     }
 
@@ -151,38 +117,9 @@ export function PDIForm({
     }
   }
 
-  async function handleReschedule() {
-    if (!rescheduleDate || !initialData?.id) return;
-    setLoading(true);
-    setError(null);
-    const result = await reschedulePDI(initialData.id, rescheduleDate);
-    setLoading(false);
-    if (result.success) {
-      setShowRescheduleModal(false);
-      setRescheduleDate("");
-      router.push("/pdis");
-    } else {
-      setError(result.error ?? "Erro ao reagendar");
-    }
-  }
-
-  async function handleCancelEvent() {
-    if (!initialData?.id) return;
-    setLoading(true);
-    setError(null);
-    const result = await cancelScheduledPDI(initialData.id);
-    setLoading(false);
-    if (result.success) {
-      setShowCancelModal(false);
-      router.push("/pdis");
-    } else {
-      setError(result.error ?? "Erro ao cancelar evento");
-    }
-  }
-
   function handleSubmitForm(e: React.FormEvent) {
     e.preventDefault();
-    handleSave(false);
+    handleSave();
   }
 
   return (
@@ -209,23 +146,6 @@ export function PDIForm({
       {error && (
         <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
           {error}
-        </div>
-      )}
-
-      {initialData?.status === "scheduled" && initialData.scheduledAt && (
-        <div className="flex items-start gap-3 rounded-md border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
-          <CalendarClock size={20} className="mt-0.5 shrink-0 text-blue-600" />
-          <p>
-            Este PDI está agendado para{" "}
-            <strong>
-              {new Date(initialData.scheduledAt + "T00:00:00").toLocaleDateString("pt-BR", {
-                day: "2-digit",
-                month: "long",
-                year: "numeric",
-              })}
-            </strong>
-            . Preencha antes da reunião.
-          </p>
         </div>
       )}
 
@@ -274,64 +194,23 @@ export function PDIForm({
             </div>
           )}
 
-          {/* Period + Conducted At - 2 columns */}
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {/* Period */}
-            <div>
-              <label
-                htmlFor="pdi-period"
-                className="mb-1 block text-sm font-medium text-gray-700"
-              >
-                Período *
-              </label>
-              <input
-                id="pdi-period"
-                type="text"
-                value={period}
-                onChange={(e) => setPeriod(e.target.value)}
-                placeholder="Ex: 1º Semestre 2026, Q1 2026"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                required
-                disabled={loading}
-              />
-            </div>
-
-            {/* Conducted At */}
-            <div>
-              <label
-                htmlFor="pdi-conducted-at"
-                className="mb-1 block text-sm font-medium text-gray-700"
-              >
-                Data de realização
-              </label>
-              <input
-                id="pdi-conducted-at"
-                type="date"
-                value={conductedAt}
-                onChange={(e) => setConductedAt(e.target.value)}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                disabled={loading}
-              />
-            </div>
+          {/* Conducted At */}
+          <div className="sm:w-1/2">
+            <label
+              htmlFor="pdi-conducted-at"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
+              Data de realização
+            </label>
+            <input
+              id="pdi-conducted-at"
+              type="date"
+              value={conductedAt}
+              onChange={(e) => setConductedAt(e.target.value)}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              disabled={loading}
+            />
           </div>
-
-          {/* Created At (read-only, edit mode only) */}
-          {mode === "edit" && initialData?.createdAt && (
-            <div className="sm:w-1/2">
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                Data de criação
-              </label>
-              <p className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700">
-                {new Date(initialData.createdAt).toLocaleDateString("pt-BR", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </p>
-            </div>
-          )}
         </div>
       </div>
 
@@ -583,142 +462,15 @@ export function PDIForm({
         >
           Cancelar
         </Link>
-        <div className="flex flex-wrap items-center gap-3">
-          {canRescheduleOrCancel && (
-            <>
-              <button
-                type="button"
-                onClick={() => setShowCancelModal(true)}
-                disabled={loading}
-                className="inline-flex items-center gap-2 rounded-md border border-red-300 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
-              >
-                <CalendarX2 size={16} />
-                Cancelar Evento
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowRescheduleModal(true)}
-                disabled={loading}
-                className="inline-flex items-center gap-2 rounded-md border border-orange-300 px-4 py-2 text-sm font-medium text-orange-700 hover:bg-orange-50 disabled:opacity-50"
-              >
-                <Calendar size={16} />
-                Reagendar
-              </button>
-            </>
-          )}
-          <button
-            type="submit"
-            disabled={loading || !period.trim() || (mode === "create" && !employeeId)}
-            className="inline-flex items-center gap-2 rounded-md bg-gray-600 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 disabled:opacity-50"
-          >
-            <Save size={16} />
-            {loading ? "Salvando..." : "Salvar Rascunho"}
-          </button>
-          <button
-            type="button"
-            onClick={() => handleSave(true)}
-            disabled={loading || !canActivate}
-            className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-            title={
-              !canActivate
-                ? "Preencha todos os campos e adicione pelo menos uma meta com objetivo de desenvolvimento para ativar"
-                : ""
-            }
-          >
-            <Play size={16} />
-            {loading ? "Ativando..." : "Ativar PDI"}
-          </button>
-        </div>
+        <button
+          type="submit"
+          disabled={loading || (mode === "create" && !employeeId)}
+          className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+        >
+          <Save size={16} />
+          {loading ? "Salvando..." : "Salvar"}
+        </button>
       </div>
-
-      {/* Reschedule Modal */}
-      {showRescheduleModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-            <h3 className="text-lg font-semibold text-gray-900">
-              Reagendar PDI
-            </h3>
-            <p className="mt-1 text-sm text-gray-600">
-              Selecione a nova data para este PDI.
-            </p>
-            <div className="mt-4">
-              <label
-                htmlFor="reschedule-date"
-                className="mb-1 block text-sm font-medium text-gray-700"
-              >
-                Nova data *
-              </label>
-              <input
-                id="reschedule-date"
-                type="date"
-                value={rescheduleDate}
-                onChange={(e) => setRescheduleDate(e.target.value)}
-                min={minRescheduleDate}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
-              />
-              <p className="mt-1 text-xs text-gray-500">
-                A data deve ser futura (a partir de amanhã).
-              </p>
-            </div>
-            <div className="mt-6 flex justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => {
-                  setShowRescheduleModal(false);
-                  setRescheduleDate("");
-                }}
-                className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onClick={handleReschedule}
-                disabled={!rescheduleDate || loading}
-                className="inline-flex items-center gap-2 rounded-md bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700 disabled:opacity-50"
-              >
-                <Calendar size={16} />
-                {loading ? "Reagendando..." : "Confirmar Reagendamento"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Cancel Confirmation Modal */}
-      {showCancelModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-            <h3 className="text-lg font-semibold text-gray-900">
-              Cancelar PDI agendado
-            </h3>
-            <p className="mt-2 text-sm text-gray-600">
-              Tem certeza que deseja cancelar este PDI agendado?
-              {initialData?.status === "scheduled"
-                ? " O registro será removido."
-                : " O PDI será marcado como cancelado."}
-            </p>
-            <div className="mt-6 flex justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => setShowCancelModal(false)}
-                className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-              >
-                Voltar
-              </button>
-              <button
-                type="button"
-                onClick={handleCancelEvent}
-                disabled={loading}
-                className="inline-flex items-center gap-2 rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
-              >
-                <CalendarX2 size={16} />
-                {loading ? "Cancelando..." : "Confirmar Cancelamento"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </form>
   );
 }

@@ -15,35 +15,24 @@ function formatPeriod(date: Date): string {
 }
 
 /**
- * Generate scheduled PDI or Feedback records for the next 12 months.
- * Removes any existing future `scheduled` records for the employee/type before generating new ones.
+ * Generate scheduled Feedback records for the next 12 months.
+ * Removes any existing future `scheduled` records for the employee before generating new ones.
  */
-export async function generateScheduledEvents(
+export async function generateScheduledFeedbackEvents(
   employeeId: string,
-  type: "pdi" | "feedback",
   frequencyMonths: number,
   managerId: string
 ): Promise<number> {
   const now = new Date();
 
-  // Remove existing future scheduled records for this employee/type
-  if (type === "pdi") {
-    await prisma.pDI.deleteMany({
-      where: {
-        employeeId,
-        status: "scheduled",
-        scheduledAt: { gte: now },
-      },
-    });
-  } else {
-    await prisma.feedback.deleteMany({
-      where: {
-        employeeId,
-        status: "scheduled",
-        scheduledAt: { gte: now },
-      },
-    });
-  }
+  // Remove existing future scheduled records for this employee
+  await prisma.feedback.deleteMany({
+    where: {
+      employeeId,
+      status: "scheduled",
+      scheduledAt: { gte: now },
+    },
+  });
 
   // Generate dates covering the next 12 months
   const dates: Date[] = [];
@@ -57,100 +46,35 @@ export async function generateScheduledEvents(
 
   if (dates.length === 0) return 0;
 
-  // Create scheduled records
-  if (type === "pdi") {
-    await prisma.pDI.createMany({
-      data: dates.map((date) => ({
-        employeeId,
-        managerId,
-        status: "scheduled" as const,
-        period: formatPeriod(date),
-        scheduledAt: date,
-      })),
-    });
-  } else {
-    await prisma.feedback.createMany({
-      data: dates.map((date) => ({
-        employeeId,
-        managerId,
-        status: "scheduled" as const,
-        period: formatPeriod(date),
-        scheduledAt: date,
-      })),
-    });
-  }
+  await prisma.feedback.createMany({
+    data: dates.map((date) => ({
+      employeeId,
+      managerId,
+      status: "scheduled" as const,
+      period: formatPeriod(date),
+      scheduledAt: date,
+    })),
+  });
 
   return dates.length;
 }
 
 /**
- * Remove all future scheduled records for the employee/type.
+ * Remove all future scheduled Feedback records for the employee.
  * Called when frequency is set to "Nenhum" (none).
  */
-export async function removeScheduledEvents(
-  employeeId: string,
-  type: "pdi" | "feedback"
-): Promise<void> {
-  const now = new Date();
-
-  if (type === "pdi") {
-    await prisma.pDI.deleteMany({
-      where: {
-        employeeId,
-        status: "scheduled",
-        scheduledAt: { gte: now },
-      },
-    });
-  } else {
-    await prisma.feedback.deleteMany({
-      where: {
-        employeeId,
-        status: "scheduled",
-        scheduledAt: { gte: now },
-      },
-    });
-  }
-}
-
-/**
- * Recalculate the next due date for a PDI schedule after a PDI is completed.
- * Also generates the next scheduled slot if needed.
- */
-export async function recalculatePDISchedule(
+export async function removeScheduledFeedbackEvents(
   employeeId: string
 ): Promise<void> {
-  const schedule = await prisma.pDISchedule.findFirst({
-    where: { employeeId, isActive: true },
-  });
-
-  if (!schedule) return;
-
   const now = new Date();
-  const next = new Date(now);
-  next.setMonth(next.getMonth() + schedule.frequencyMonths);
 
-  await prisma.pDISchedule.update({
-    where: { id: schedule.id },
-    data: { nextDueDate: next },
-  });
-
-  // Check if there are future scheduled PDIs; if not, generate the next slot
-  const futureScheduled = await prisma.pDI.count({
+  await prisma.feedback.deleteMany({
     where: {
       employeeId,
       status: "scheduled",
       scheduledAt: { gte: now },
     },
   });
-
-  if (futureScheduled === 0) {
-    await generateScheduledEvents(
-      employeeId,
-      "pdi",
-      schedule.frequencyMonths,
-      schedule.managerId
-    );
-  }
 }
 
 /**
@@ -185,9 +109,8 @@ export async function recalculateFeedbackSchedule(
   });
 
   if (futureScheduled === 0) {
-    await generateScheduledEvents(
+    await generateScheduledFeedbackEvents(
       employeeId,
-      "feedback",
       schedule.frequencyMonths,
       schedule.managerId
     );

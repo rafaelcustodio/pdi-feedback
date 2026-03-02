@@ -18,6 +18,7 @@ export type DashboardData = {
   upcomingScheduledEvents: ScheduledEvent[];
 };
 
+
 export type UpcomingItem = {
   id: string;
   type: "pdi" | "feedback";
@@ -62,7 +63,7 @@ export async function getDashboardData(): Promise<DashboardData | null> {
   const pendingPdis = await prisma.pDI.count({
     where: {
       ...pdiFilter,
-      status: { in: ["draft", "active"] },
+      status: "active",
     },
   });
 
@@ -135,21 +136,6 @@ export async function getDashboardData(): Promise<DashboardData | null> {
     },
   });
 
-  const upcomingPdiSchedules = await prisma.pDISchedule.findMany({
-    where: {
-      isActive: true,
-      nextDueDate: { gte: now },
-      ...(accessible === "all"
-        ? {}
-        : { employeeId: { in: accessible } }),
-    },
-    orderBy: { nextDueDate: "asc" },
-    take: 5,
-    include: {
-      employee: { select: { name: true } },
-    },
-  });
-
   // Combine and sort upcoming items
   const items: UpcomingItem[] = [];
 
@@ -161,17 +147,6 @@ export async function getDashboardData(): Promise<DashboardData | null> {
       employeeName: goal.pdi.employee.name,
       dueDate: goal.dueDate!,
       href: `/pdis/${goal.pdi.id}`,
-    });
-  }
-
-  for (const schedule of upcomingPdiSchedules) {
-    items.push({
-      id: schedule.id,
-      type: "pdi",
-      title: "PDI agendado",
-      employeeName: schedule.employee.name,
-      dueDate: schedule.nextDueDate,
-      href: `/pdis`,
     });
   }
 
@@ -190,20 +165,7 @@ export async function getDashboardData(): Promise<DashboardData | null> {
   items.sort((a, b) => a.dueDate.getTime() - b.dueDate.getTime());
   const upcomingItems = items.slice(0, 5);
 
-  // 5. Upcoming scheduled events (next 7 PDIs/Feedbacks ordered by scheduledAt)
-  const scheduledPdis = await prisma.pDI.findMany({
-    where: {
-      ...pdiFilter,
-      scheduledAt: { gte: now },
-      status: { in: ["scheduled", "draft"] },
-    },
-    orderBy: { scheduledAt: "asc" },
-    take: 7,
-    include: {
-      employee: { select: { name: true } },
-    },
-  });
-
+  // 5. Upcoming scheduled events (Feedbacks ordered by scheduledAt)
   const scheduledFeedbacks = await prisma.feedback.findMany({
     where: {
       ...feedbackFilter,
@@ -218,17 +180,6 @@ export async function getDashboardData(): Promise<DashboardData | null> {
   });
 
   const scheduledEvents: ScheduledEvent[] = [];
-
-  for (const pdi of scheduledPdis) {
-    scheduledEvents.push({
-      id: pdi.id,
-      type: "pdi",
-      employeeName: pdi.employee.name,
-      scheduledAt: pdi.scheduledAt!,
-      status: pdi.status,
-      href: `/pdis/${pdi.id}`,
-    });
-  }
 
   for (const fb of scheduledFeedbacks) {
     scheduledEvents.push({

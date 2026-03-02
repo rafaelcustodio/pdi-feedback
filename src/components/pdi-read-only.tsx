@@ -5,16 +5,12 @@ import { ArrowLeft, Target, Calendar } from "lucide-react";
 import type { PDIDetail } from "@/app/(dashboard)/pdis/actions";
 
 const statusLabels: Record<string, string> = {
-  draft: "Rascunho",
   active: "Ativo",
-  completed: "Concluído",
   cancelled: "Cancelado",
 };
 
 const statusColors: Record<string, string> = {
-  draft: "bg-yellow-100 text-yellow-700",
   active: "bg-blue-100 text-blue-700",
-  completed: "bg-green-100 text-green-700",
   cancelled: "bg-gray-100 text-gray-500",
 };
 
@@ -60,7 +56,7 @@ export function PDIReadOnly({ pdi }: { pdi: PDIDetail }) {
             </span>
           </div>
           <p className="mt-1 text-sm text-gray-600">
-            Período: {pdi.period} | Gestor: {pdi.managerName}
+            Gestor: {pdi.managerName}
           </p>
         </div>
       </div>

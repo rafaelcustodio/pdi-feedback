@@ -31,8 +31,6 @@ function formatDate(date: Date | string | null): string {
 
 interface ScheduleSectionProps {
   employeeId: string;
-  initialPdiFrequency: number | null;
-  initialPdiNextDueDate: Date | string | null;
   initialFeedbackFrequency: number | null;
   initialFeedbackNextDueDate: Date | string | null;
   sectorSchedule?: SectorScheduleInfo;
@@ -40,19 +38,14 @@ interface ScheduleSectionProps {
 
 export function ScheduleSection({
   employeeId,
-  initialPdiFrequency,
-  initialPdiNextDueDate,
   initialFeedbackFrequency,
   initialFeedbackNextDueDate,
   sectorSchedule,
 }: ScheduleSectionProps) {
-  const hasIndividual = initialPdiFrequency !== null || initialFeedbackFrequency !== null;
+  const hasIndividual = initialFeedbackFrequency !== null;
   const hasSector = !!(sectorSchedule?.pdi || sectorSchedule?.feedback);
 
   const [useIndividual, setUseIndividual] = useState(hasIndividual);
-  const [pdiFrequency, setPdiFrequency] = useState(
-    initialPdiFrequency?.toString() ?? ""
-  );
   const [feedbackFrequency, setFeedbackFrequency] = useState(
     initialFeedbackFrequency?.toString() ?? ""
   );
@@ -60,7 +53,6 @@ export function ScheduleSection({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const [pdiNextDueDate, setPdiNextDueDate] = useState(initialPdiNextDueDate);
   const [feedbackNextDueDate, setFeedbackNextDueDate] = useState(
     initialFeedbackNextDueDate
   );
@@ -79,9 +71,7 @@ export function ScheduleSection({
         setLoading(false);
         return;
       }
-      setPdiFrequency("");
       setFeedbackFrequency("");
-      setPdiNextDueDate(null);
       setFeedbackNextDueDate(null);
     }
 
@@ -95,7 +85,6 @@ export function ScheduleSection({
     setSuccess(false);
 
     const result = await saveEmployeeSchedules(employeeId, {
-      pdiFrequency: pdiFrequency ? parseInt(pdiFrequency, 10) : null,
       feedbackFrequency: feedbackFrequency
         ? parseInt(feedbackFrequency, 10)
         : null,
@@ -105,13 +94,6 @@ export function ScheduleSection({
 
     if (result.success) {
       setSuccess(true);
-      if (pdiFrequency) {
-        const next = new Date();
-        next.setMonth(next.getMonth() + parseInt(pdiFrequency, 10));
-        setPdiNextDueDate(next);
-      } else {
-        setPdiNextDueDate(null);
-      }
       if (feedbackFrequency) {
         const next = new Date();
         next.setMonth(next.getMonth() + parseInt(feedbackFrequency, 10));
@@ -144,7 +126,7 @@ export function ScheduleSection({
       {success && (
         <div className="mb-4 rounded-md border border-green-200 bg-green-50 p-3 text-sm text-green-700">
           Agendamento salvo com sucesso!
-          {(pdiFrequency || feedbackFrequency) && (
+          {feedbackFrequency && (
             <span className="block mt-1 text-xs text-green-600">
               Eventos agendados gerados automaticamente para os próximos 12 meses.
             </span>
@@ -179,36 +161,6 @@ export function ScheduleSection({
         /* Individual schedule editing */
         <>
           <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label
-                htmlFor="pdi-frequency"
-                className="mb-1 block text-sm font-medium text-gray-700"
-              >
-                Frequência do PDI
-              </label>
-              <select
-                id="pdi-frequency"
-                value={pdiFrequency}
-                onChange={(e) => setPdiFrequency(e.target.value)}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                disabled={loading}
-              >
-                {FREQUENCY_OPTIONS.map((opt) => (
-                  <option key={`pdi-${opt.value}`} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-              {pdiNextDueDate && (
-                <p className="mt-1 text-xs text-gray-500">
-                  Próxima data prevista:{" "}
-                  <span className="font-medium text-gray-700">
-                    {formatDate(pdiNextDueDate)}
-                  </span>
-                </p>
-              )}
-            </div>
-
             <div>
               <label
                 htmlFor="feedback-frequency"
@@ -256,23 +208,13 @@ export function ScheduleSection({
         /* Sector schedule read-only display */
         <div className="rounded-md border border-gray-100 bg-gray-50 p-4">
           {hasSector ? (
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <p className="text-sm font-medium text-gray-700">Frequência do PDI</p>
-                <p className="mt-0.5 text-sm text-gray-600">
-                  {sectorSchedule?.pdi
-                    ? frequencyLabel(sectorSchedule.pdi.frequencyMonths)
-                    : "Não configurado no setor"}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-700">Frequência do Feedback</p>
-                <p className="mt-0.5 text-sm text-gray-600">
-                  {sectorSchedule?.feedback
-                    ? frequencyLabel(sectorSchedule.feedback.frequencyMonths)
-                    : "Não configurado no setor"}
-                </p>
-              </div>
+            <div>
+              <p className="text-sm font-medium text-gray-700">Frequência do Feedback</p>
+              <p className="mt-0.5 text-sm text-gray-600">
+                {sectorSchedule?.feedback
+                  ? frequencyLabel(sectorSchedule.feedback.frequencyMonths)
+                  : "Não configurado no setor"}
+              </p>
             </div>
           ) : (
             <p className="text-sm text-gray-500">
