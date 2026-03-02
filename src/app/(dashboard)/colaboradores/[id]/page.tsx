@@ -1,8 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
-import { getEmployeeById, getOrgUnitsFlat, getEmployeeSchedules, getEmployeeSectorSchedule } from "../actions";
+import { getEmployeeById, getOrgUnitsFlat } from "../actions";
 import { EmployeeForm } from "@/components/employee-form";
-import { ScheduleSection } from "@/components/schedule-section";
 
 export default async function EditarColaboradorPage({
   params,
@@ -15,11 +14,9 @@ export default async function EditarColaboradorPage({
   }
 
   const { id } = await params;
-  const [employee, orgUnits, schedules, sectorSchedule] = await Promise.all([
+  const [employee, orgUnits] = await Promise.all([
     getEmployeeById(id),
     getOrgUnitsFlat(),
-    getEmployeeSchedules(id),
-    getEmployeeSectorSchedule(id),
   ]);
 
   if (!employee) {
@@ -49,12 +46,6 @@ export default async function EditarColaboradorPage({
           state: employee.state ?? undefined,
           zipCode: employee.zipCode ?? undefined,
         }}
-      />
-      <ScheduleSection
-        employeeId={employee.id}
-        initialFeedbackFrequency={schedules.feedbackFrequency}
-        initialFeedbackNextDueDate={schedules.feedbackNextDueDate}
-        sectorSchedule={sectorSchedule}
       />
     </div>
   );
