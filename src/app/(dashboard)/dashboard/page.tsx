@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { getDashboardData } from "./actions";
+import { getDashboardData, getMyNineBoxEvaluations } from "./actions";
 import {
   Users,
   ClipboardList,
@@ -12,12 +12,16 @@ import {
   Clock,
 } from "lucide-react";
 import Link from "next/link";
+import NineBoxEvaluationsSection from "@/components/ninebox-evaluations-section";
 
 export default async function DashboardPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const data = await getDashboardData();
+  const [data, nineBoxEvals] = await Promise.all([
+    getDashboardData(),
+    getMyNineBoxEvaluations(),
+  ]);
   if (!data) redirect("/login");
 
   const userName = session.user.name?.split(" ")[0] || "Usuário";
@@ -103,6 +107,14 @@ export default async function DashboardPage() {
           )}
         </div>
       </div>
+
+      {/* Nine Box Evaluations */}
+      {nineBoxEvals && (
+        <NineBoxEvaluationsSection
+          pending={nineBoxEvals.pending}
+          completed={nineBoxEvals.completed}
+        />
+      )}
 
       {/* Upcoming Scheduled Events */}
       <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
