@@ -19,15 +19,15 @@ interface NotificationTableProps {
 function getTypeColor(type: string): string {
   switch (type) {
     case "pdi_reminder":
-      return "bg-blue-100 text-blue-700";
+      return "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300";
     case "feedback_reminder":
-      return "bg-purple-100 text-purple-700";
+      return "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300";
     case "feedback_scheduled":
-      return "bg-indigo-100 text-indigo-700";
+      return "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300";
     case "feedback_submitted_auto":
-      return "bg-green-100 text-green-700";
+      return "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300";
     default:
-      return "bg-gray-100 text-gray-700";
+      return "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300";
   }
 }
 
@@ -98,7 +98,7 @@ export function NotificationTable({
               className={`rounded-md px-3 py-1.5 text-sm font-medium ${
                 filter === f
                   ? "bg-blue-700 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
               }`}
             >
               {f === "all" ? "Todas" : f === "unread" ? "Não lidas" : "Lidas"}
@@ -110,7 +110,7 @@ export function NotificationTable({
           <button
             onClick={handleMarkAllAsRead}
             disabled={isPending}
-            className="flex items-center gap-1.5 rounded-md bg-white px-3 py-1.5 text-sm font-medium text-blue-700 ring-1 ring-inset ring-blue-200 hover:bg-blue-50 disabled:opacity-50"
+            className="flex items-center gap-1.5 rounded-md bg-white px-3 py-1.5 text-sm font-medium text-blue-700 ring-1 ring-inset ring-blue-200 hover:bg-blue-50 disabled:opacity-50 dark:bg-gray-800 dark:text-blue-400 dark:ring-blue-800 dark:hover:bg-blue-950/30"
           >
             <CheckCheck size={16} />
             Marcar todas como lidas
@@ -119,9 +119,9 @@ export function NotificationTable({
       </div>
 
       {/* Notification list */}
-      <div className="rounded-lg border border-gray-200 bg-white">
+      <div className="rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
         {notifications.length === 0 ? (
-          <div className="px-6 py-12 text-center text-sm text-gray-500">
+          <div className="px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400">
             {filter === "unread"
               ? "Nenhuma notificação não lida"
               : filter === "read"
@@ -129,12 +129,12 @@ export function NotificationTable({
                 : "Nenhuma notificação"}
           </div>
         ) : (
-          <ul className="divide-y divide-gray-100">
+          <ul className="divide-y divide-gray-100 dark:divide-gray-700">
             {notifications.map((notification) => (
               <li
                 key={notification.id}
                 className={`flex items-start gap-4 px-4 py-4 sm:px-6 ${
-                  !notification.isRead ? "bg-blue-50/50" : ""
+                  !notification.isRead ? "bg-blue-50/50 dark:bg-blue-950/30" : ""
                 }`}
               >
                 <div className="min-w-0 flex-1">
@@ -147,7 +147,7 @@ export function NotificationTable({
                     {!notification.isRead && (
                       <span className="h-2 w-2 rounded-full bg-blue-500" />
                     )}
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs text-gray-400 dark:text-gray-500">
                       {new Date(notification.createdAt).toLocaleDateString(
                         "pt-BR",
                         {
@@ -160,10 +160,10 @@ export function NotificationTable({
                       )}
                     </span>
                   </div>
-                  <p className="mt-1 text-sm font-medium text-gray-900">
+                  <p className="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
                     {notification.title}
                   </p>
-                  <p className="mt-0.5 text-sm text-gray-600">
+                  <p className="mt-0.5 text-sm text-gray-600 dark:text-gray-400">
                     {notification.message.replace(/\s*\[.*?\]\s*$/, "")}
                   </p>
                 </div>
@@ -171,7 +171,7 @@ export function NotificationTable({
                   <button
                     onClick={() => handleMarkAsRead(notification.id)}
                     disabled={isPending}
-                    className="shrink-0 rounded-md p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 disabled:opacity-50"
+                    className="shrink-0 rounded-md p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 disabled:opacity-50 dark:text-gray-500 dark:hover:bg-gray-700 dark:hover:text-gray-300"
                     title="Marcar como lida"
                   >
                     <Check size={16} />
@@ -186,7 +186,7 @@ export function NotificationTable({
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="mt-4 flex items-center justify-between">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Mostrando {(page - 1) * pageSize + 1}–
             {Math.min(page * pageSize, total)} de {total}
           </p>
@@ -194,7 +194,7 @@ export function NotificationTable({
             {page > 1 && (
               <a
                 href={buildUrl({ filter, page: page - 1 })}
-                className="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-1 text-sm text-gray-700 hover:bg-gray-50"
+                className="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-1 text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
               >
                 <ChevronLeft size={16} />
               </a>
@@ -209,14 +209,14 @@ export function NotificationTable({
               .map((p, i, arr) => (
                 <span key={p} className="flex items-center">
                   {i > 0 && arr[i - 1] !== p - 1 && (
-                    <span className="px-1 text-gray-400">...</span>
+                    <span className="px-1 text-gray-400 dark:text-gray-500">...</span>
                   )}
                   <a
                     href={buildUrl({ filter, page: p })}
                     className={`inline-flex h-8 w-8 items-center justify-center rounded-md text-sm ${
                       p === page
                         ? "bg-blue-700 text-white"
-                        : "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                        : "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                     }`}
                   >
                     {p}
@@ -226,7 +226,7 @@ export function NotificationTable({
             {page < totalPages && (
               <a
                 href={buildUrl({ filter, page: page + 1 })}
-                className="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-1 text-sm text-gray-700 hover:bg-gray-50"
+                className="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-1 text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
               >
                 <ChevronRight size={16} />
               </a>

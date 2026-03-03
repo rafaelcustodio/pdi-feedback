@@ -40,6 +40,10 @@ export async function generateScheduledFeedbackEvents(
   while (offset <= 12) {
     const d = new Date(now);
     d.setMonth(d.getMonth() + offset);
+    // Se cair no fim de semana, avança para a próxima segunda-feira
+    const dow = d.getDay();
+    if (dow === 0) d.setDate(d.getDate() + 1);
+    if (dow === 6) d.setDate(d.getDate() + 2);
     dates.push(d);
     offset += frequencyMonths;
   }

@@ -1,10 +1,10 @@
-import { auth } from "@/lib/auth";
+import { getEffectiveAuth } from "@/lib/impersonation";
 import { redirect } from "next/navigation";
 import { getSubordinatesForFeedback } from "../actions";
 import { FeedbackForm } from "@/components/feedback-form";
 
 export default async function NovoFeedbackPage() {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user) {
     redirect("/login");
   }

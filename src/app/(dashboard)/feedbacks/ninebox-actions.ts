@@ -76,16 +76,42 @@ export async function getEvaluatorCandidates(
 
   if (!feedback) return [];
 
-  // Get all active users except the evaluatee and the manager
-  const users = await prisma.user.findMany({
+  // Find the direct manager of the evaluatee via active hierarchy
+  const evaluateeHierarchy = await prisma.employeeHierarchy.findFirst({
     where: {
-      isActive: true,
-      id: { notIn: [feedback.employeeId, feedback.managerId] },
+      employeeId: feedback.employeeId,
+      endDate: null,
     },
-    select: { id: true, name: true, email: true },
-    orderBy: { name: "asc" },
+    select: { managerId: true },
   });
 
+  if (!evaluateeHierarchy) return [];
+
+  // Find teammates: employees who report to the same direct manager
+  const teammates = await prisma.employeeHierarchy.findMany({
+    where: {
+      managerId: evaluateeHierarchy.managerId,
+      endDate: null,
+      employeeId: { notIn: [feedback.employeeId, feedback.managerId] },
+    },
+    select: {
+      employee: {
+        select: { id: true, name: true, email: true, isActive: true },
+      },
+    },
+  });
+
+  // Filter active users and deduplicate by id
+  const seen = new Set<string>();
+  const users: EvaluatorCandidate[] = [];
+  for (const t of teammates) {
+    if (t.employee.isActive && !seen.has(t.employee.id)) {
+      seen.add(t.employee.id);
+      users.push({ id: t.employee.id, name: t.employee.name, email: t.employee.email });
+    }
+  }
+
+  users.sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""));
   return users;
 }
 

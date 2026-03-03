@@ -229,7 +229,7 @@ export async function getManagerCandidates(
     });
   }
 
-  // Show users linked to the selected org unit + admins
+  // Show users linked to the selected org unit (as employee or manager) + admins
   const usersInUnit = await prisma.user.findMany({
     where: {
       isActive: true,
@@ -237,6 +237,14 @@ export async function getManagerCandidates(
       OR: [
         {
           employeeHierarchies: {
+            some: {
+              organizationalUnitId: orgUnitId,
+              endDate: null,
+            },
+          },
+        },
+        {
+          managerHierarchies: {
             some: {
               organizationalUnitId: orgUnitId,
               endDate: null,

@@ -39,7 +39,7 @@ interface SidebarProps {
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, roles: null, evaluationModes: null },
   { href: "/calendario", label: "Calendário", icon: Calendar, roles: null, evaluationModes: null },
-  { href: "/colaboradores", label: "Colaboradores", icon: Users, roles: null, evaluationModes: null },
+  { href: "/colaboradores", label: "Colaboradores", icon: Users, roles: ["admin"] as string[], evaluationModes: null },
   { href: "/pdis", label: "PDIs", icon: ClipboardList, roles: null, evaluationModes: ["pdi"] as string[] },
   { href: "/feedbacks", label: "Feedbacks", icon: MessageSquare, roles: null, evaluationModes: ["feedback"] as string[] },
   { href: "/programacao", label: "Programação", icon: CalendarCheck, roles: ["admin", "manager"] as string[], evaluationModes: null },

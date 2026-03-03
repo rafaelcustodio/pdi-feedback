@@ -97,6 +97,12 @@ export function NineBoxForm({ evaluatorId, evaluateeName, feedbackPeriod }: Nine
           <p className="mt-2 text-sm text-gray-500">
             Sua avaliação foi registrada.
           </p>
+          <a
+            href="/feedbacks"
+            className="mt-4 inline-block rounded-lg bg-indigo-600 px-5 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
+          >
+            Voltar ao Dashboard
+          </a>
         </div>
       </div>
     );

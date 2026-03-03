@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { getEffectiveAuth } from "@/lib/impersonation";
 import { redirect, notFound } from "next/navigation";
 import { getNineBoxDashboard } from "../../ninebox-actions";
 import { NineBoxDashboard } from "@/components/ninebox-dashboard";
@@ -8,17 +8,19 @@ export default async function NineBoxPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user) {
     redirect("/login");
   }
 
   const role = (session.user as { role?: string }).role || "employee";
-  if (role === "employee") {
-    redirect("/perfil");
+  const { id } = await params;
+
+  // Employees can only view their own Nine Box
+  if (role === "employee" && id !== session.user.id) {
+    notFound();
   }
 
-  const { id } = await params;
   const result = await getNineBoxDashboard(id);
 
   if (result.error) {
@@ -26,11 +28,12 @@ export default async function NineBoxPage({
   }
 
   const data = result.data!;
+  const isEmployee = role === "employee";
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
           Nine Box — {data.employeeName}
         </h1>
         {data.current && data.current.status === "open" && (
@@ -41,11 +44,15 @@ export default async function NineBoxPage({
       </div>
 
       {!data.current ? (
-        <div className="rounded-lg border border-gray-200 bg-white p-8 text-center text-gray-500">
+        <div className="rounded-lg border border-gray-200 bg-white p-8 text-center text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
           Nenhuma avaliação Nine Box disponível para este colaborador.
         </div>
       ) : (
-        <NineBoxDashboard current={data.current} previous={data.previous} />
+        <NineBoxDashboard
+          current={data.current}
+          previous={data.previous}
+          showDescriptive={!isEmployee}
+        />
       )}
     </div>
   );

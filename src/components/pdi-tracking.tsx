@@ -1101,6 +1101,10 @@ function FollowUpsSection({
   function nextMonthDate(): string {
     const d = new Date();
     d.setMonth(d.getMonth() + 1);
+    // Se cair no fim de semana, avança para a próxima segunda-feira
+    const dow = d.getDay();
+    if (dow === 0) d.setDate(d.getDate() + 1); // Domingo → Segunda
+    if (dow === 6) d.setDate(d.getDate() + 2); // Sábado → Segunda
     return d.toISOString().slice(0, 10);
   }
 

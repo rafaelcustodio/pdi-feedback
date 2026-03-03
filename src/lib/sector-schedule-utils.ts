@@ -70,9 +70,14 @@ export async function createOnboardingFeedbacks(
 ): Promise<void> {
   const d45 = new Date(admissionDate);
   d45.setDate(d45.getDate() + 45);
+  // Se cair no fim de semana, avança para a próxima segunda-feira
+  if (d45.getDay() === 0) d45.setDate(d45.getDate() + 1);
+  if (d45.getDay() === 6) d45.setDate(d45.getDate() + 2);
 
   const d90 = new Date(admissionDate);
   d90.setDate(d90.getDate() + 90);
+  if (d90.getDay() === 0) d90.setDate(d90.getDate() + 1);
+  if (d90.getDay() === 6) d90.setDate(d90.getDate() + 2);
 
   // Check if onboarding feedbacks already exist
   const existing = await prisma.feedback.findMany({

@@ -29,7 +29,30 @@ function getQuadrantName(potencial: Faixa, desempenho: Faixa): string {
   return QUADRANT_NAMES[`${potencial}_${desempenho}`] || "";
 }
 
+// --- Question labels ---
+
+const QUESTION_LABELS: Record<string, string> = {
+  q1: "Qualidade do trabalho entregue",
+  q2: "Cumprimento de prazos e metas",
+  q3: "Conhecimento técnico e competências",
+  q4: "Capacidade de resolução de problemas",
+  q5: "Colaboração e trabalho em equipe",
+  q6: "Responsabilidade e comprometimento",
+  q7: "Capacidade de aprender novas habilidades",
+  q8: "Adaptabilidade a mudanças",
+  q9: "Iniciativa e proatividade",
+  q10: "Potencial para assumir maiores responsabilidades",
+  q11: "Habilidades de liderança e influência",
+  q12: "Visão estratégica e pensamento crítico",
+};
+
 // --- Types ---
+
+export type QuestionAverage = {
+  key: string;
+  label: string;
+  average: number;
+};
 
 export type NineBoxEvalResult = {
   evaluationId: string;
@@ -43,6 +66,7 @@ export type NineBoxEvalResult = {
   potencialFaixa: Faixa;
   completedEvaluators: number;
   totalEvaluators: number;
+  questionAverages: QuestionAverage[];
   evaluatorDetails: {
     name: string;
     q13PontosFortes: string | null;
@@ -131,6 +155,18 @@ function computeEvalResult(
   const desempenhoFaixa = getFaixa(desempenho);
   const potencialFaixa = getFaixa(potencial);
 
+  // Compute per-question averages across completed evaluators
+  const questionKeys = ["q1","q2","q3","q4","q5","q6","q7","q8","q9","q10","q11","q12"] as const;
+  const questionAverages: QuestionAverage[] = questionKeys.map((key) => {
+    const values = completed
+      .map((ev: typeof completed[number]) => ev[key])
+      .filter((v): v is number => v !== null);
+    const avg = values.length > 0
+      ? Number((values.reduce((a, b) => a + b, 0) / values.length).toFixed(2))
+      : 0;
+    return { key, label: QUESTION_LABELS[key], average: avg };
+  });
+
   return {
     evaluationId: evaluation.id,
     status: evaluation.status as "open" | "closed",
@@ -143,6 +179,7 @@ function computeEvalResult(
     potencialFaixa,
     completedEvaluators: completed.length,
     totalEvaluators: evaluation.evaluators.length,
+    questionAverages,
     evaluatorDetails: completed.map((ev: typeof completed[number]) => ({
       name: ev.evaluator.name,
       q13PontosFortes: ev.q13PontosFortes,
@@ -159,14 +196,16 @@ export async function getNineBoxDashboard(
 
   const { userId, role } = access;
 
-  // Only managers and admins can view the dashboard
+  // Employees can only view their own Nine Box
   if (role === "employee") {
-    return { error: "Acesso não autorizado" };
-  }
-
-  const hasAccess = await canAccessEmployee(userId, role, employeeId);
-  if (!hasAccess) {
-    return { error: "Acesso não autorizado" };
+    if (userId !== employeeId) {
+      return { error: "Acesso não autorizado" };
+    }
+  } else {
+    const hasAccess = await canAccessEmployee(userId, role, employeeId);
+    if (!hasAccess) {
+      return { error: "Acesso não autorizado" };
+    }
   }
 
   const employee = await prisma.user.findUnique({

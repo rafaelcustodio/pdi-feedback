@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { getEffectiveAuth } from "@/lib/impersonation";
 import { redirect } from "next/navigation";
 import {
   getFeedbacks,
@@ -20,7 +20,7 @@ export default async function FeedbacksPage({
     status?: string;
   }>;
 }) {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user) {
     redirect("/login");
   }

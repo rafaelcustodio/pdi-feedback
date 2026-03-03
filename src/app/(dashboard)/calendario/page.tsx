@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { getEffectiveAuth } from "@/lib/impersonation";
 import { redirect } from "next/navigation";
 import { getCalendarEvents, getCalendarOrgUnits } from "./actions";
 import { CalendarView } from "@/components/calendar-view";
@@ -19,7 +19,7 @@ export default async function CalendarioPage({
     tipo?: string;
   }>;
 }) {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user) redirect("/login");
 
   const params = await searchParams;
@@ -48,8 +48,8 @@ export default async function CalendarioPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-gray-900">Calendário</h1>
-        <p className="mt-1 text-sm text-gray-600">
+        <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Calendário</h1>
+        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
           Visualize os PDIs e Feedbacks agendados em formato de calendário mensal.
         </p>
       </div>

@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { getEffectiveAuth } from "@/lib/impersonation";
 import { redirect } from "next/navigation";
 import { getOrganizationalUnits, getAllSectorSchedules } from "./actions";
 import { OrgUnitTree } from "@/components/org-unit-tree";
@@ -6,7 +6,7 @@ import { OrgUnitForm } from "@/components/org-unit-form";
 import { SectorScheduleConfig } from "@/components/sector-schedule-config";
 
 export default async function ConfiguracoesPage() {
-  const session = await auth();
+  const session = await getEffectiveAuth();
 
   if (!session?.user || session.user.role !== "admin") {
     redirect("/dashboard");

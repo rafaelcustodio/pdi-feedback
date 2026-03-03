@@ -1,10 +1,10 @@
-import { auth } from "@/lib/auth";
+import { getEffectiveAuth } from "@/lib/impersonation";
 import { redirect } from "next/navigation";
 import { getAccessibleUnits } from "./actions";
 import { ProgramacaoPanel } from "@/components/programacao-panel";
 
 export default async function ProgramacaoPage() {
-  const session = await auth();
+  const session = await getEffectiveAuth();
 
   if (!session?.user) {
     redirect("/login");

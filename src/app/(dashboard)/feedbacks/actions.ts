@@ -579,17 +579,20 @@ export async function createFutureFeedback(data: {
     return { success: false, error: "Você não tem acesso a este colaborador" };
   }
 
-  const scheduledDate = new Date(data.scheduledAt);
+  // data.scheduledAt comes as "YYYY-MM-DD" from the date input
+  const [year, month, day] = data.scheduledAt.split("-").map(Number);
+  if (!year || !month || !day) {
+    return { success: false, error: "Data de agendamento inválida" };
+  }
+  const scheduledDate = new Date(year, month - 1, day);
   if (isNaN(scheduledDate.getTime())) {
     return { success: false, error: "Data de agendamento inválida" };
   }
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const scheduleDay = new Date(scheduledDate);
-  scheduleDay.setHours(0, 0, 0, 0);
 
-  if (scheduleDay <= today) {
+  if (scheduledDate <= today) {
     return { success: false, error: "A data de agendamento deve ser uma data futura" };
   }
 
@@ -600,6 +603,7 @@ export async function createFutureFeedback(data: {
   ]);
 
   if (!employee || !manager) {
+    console.error("[createFutureFeedback] NOT FOUND — employeeId:", data.employeeId, "employee:", employee, "userId:", userId, "manager:", manager);
     return { success: false, error: "Colaborador ou gestor não encontrado" };
   }
 

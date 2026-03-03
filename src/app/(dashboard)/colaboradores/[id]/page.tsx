@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { getEffectiveAuth } from "@/lib/impersonation";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { getEmployeeById, getOrgUnitsFlat, getEmployeeActivePDI } from "../actions";
@@ -10,7 +10,7 @@ export default async function EditarColaboradorPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user || session.user.role !== "admin") {
     redirect("/dashboard");
   }

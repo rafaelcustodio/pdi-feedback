@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { getImpersonationInfo } from "@/lib/impersonation";
+import { getEffectiveAuth, getImpersonationInfo } from "@/lib/impersonation";
 import { AppLayout } from "@/components/layout/app-layout";
 import { getUnreadNotificationCount } from "@/app/(dashboard)/notificacoes/actions";
 
@@ -15,19 +15,24 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
-  const [notificationCount, impersonationInfo] = await Promise.all([
+  const [notificationCount, impersonationInfo, effectiveSession] = await Promise.all([
     getUnreadNotificationCount(),
     getImpersonationInfo(),
+    getEffectiveAuth(),
   ]);
 
+  // isAdmin uses REAL session (for impersonate button in sidebar)
   const isAdmin = (session.user as { role?: string }).role === "admin";
+  // userRole/evaluationMode use EFFECTIVE session (for menu filtering during impersonation)
+  const effectiveRole = (effectiveSession?.user as { role?: string })?.role || "employee";
+  const effectiveEvalMode = (effectiveSession?.user as { evaluationMode?: string })?.evaluationMode || "feedback";
 
   return (
     <AppLayout
       userName={session.user.name}
       avatarUrl={session.user.image ?? null}
-      userRole={session.user.role}
-      evaluationMode={session.user.evaluationMode}
+      userRole={effectiveRole}
+      evaluationMode={effectiveEvalMode}
       notificationCount={notificationCount}
       isAdmin={isAdmin}
       impersonationInfo={

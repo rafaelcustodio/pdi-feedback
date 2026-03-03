@@ -83,7 +83,7 @@ export function EmployeeForm({ mode, orgUnits, initialData }: EmployeeFormProps)
   const [loading, setLoading] = useState(false);
   const [loadingManagers, setLoadingManagers] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const isInitialMount = useRef(true);
+  const initialOrgUnitId = useRef(initialData?.orgUnitId ?? "");
 
   // Fetch managers when org unit changes
   useEffect(() => {
@@ -95,11 +95,11 @@ export function EmployeeForm({ mode, orgUnits, initialData }: EmployeeFormProps)
       );
       setManagers(candidates);
 
-      // Only clear manager selection if the user changed the org unit manually (not on initial load)
-      if (!isInitialMount.current && managerId && !candidates.find((m) => m.id === managerId)) {
+      // Only clear manager selection if the user changed the org unit (not on initial load)
+      const isOrgUnitChanged = orgUnitId !== initialOrgUnitId.current;
+      if (isOrgUnitChanged && managerId && !candidates.find((m) => m.id === managerId)) {
         setManagerId("");
       }
-      isInitialMount.current = false;
 
       setLoadingManagers(false);
     }

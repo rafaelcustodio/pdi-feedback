@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { getEffectiveAuth } from "@/lib/impersonation";
 import { redirect } from "next/navigation";
 import { getEmployees } from "./actions";
 import { EmployeeTable } from "@/components/employee-table";
@@ -8,7 +8,7 @@ export default async function ColaboradoresPage({
 }: {
   searchParams: Promise<{ search?: string; page?: string }>;
 }) {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user || session.user.role !== "admin") {
     redirect("/dashboard");
   }

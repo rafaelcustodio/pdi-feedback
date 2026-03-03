@@ -29,6 +29,12 @@ export default async function NineBoxFormPage({
           <p className="mt-2 text-sm text-gray-500">
             O link que você acessou não corresponde a uma avaliação válida.
           </p>
+          <a
+            href="/feedbacks"
+            className="mt-4 inline-block rounded-lg bg-indigo-600 px-5 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
+          >
+            Voltar ao Dashboard
+          </a>
         </div>
       </div>
     );
@@ -42,6 +48,12 @@ export default async function NineBoxFormPage({
           <p className="mt-2 text-sm text-gray-500">
             Você não tem permissão para acessar esta avaliação.
           </p>
+          <a
+            href="/feedbacks"
+            className="mt-4 inline-block rounded-lg bg-indigo-600 px-5 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
+          >
+            Voltar ao Dashboard
+          </a>
         </div>
       </div>
     );
@@ -62,6 +74,12 @@ export default async function NineBoxFormPage({
           <p className="mt-2 text-sm text-gray-500">
             Você já respondeu esta avaliação. Obrigado!
           </p>
+          <a
+            href="/feedbacks"
+            className="mt-4 inline-block rounded-lg bg-indigo-600 px-5 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
+          >
+            Voltar ao Dashboard
+          </a>
         </div>
       </div>
     );
@@ -75,6 +93,12 @@ export default async function NineBoxFormPage({
           <p className="mt-2 text-sm text-gray-500">
             Esta avaliação foi encerrada.
           </p>
+          <a
+            href="/feedbacks"
+            className="mt-4 inline-block rounded-lg bg-indigo-600 px-5 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
+          >
+            Voltar ao Dashboard
+          </a>
         </div>
       </div>
     );
