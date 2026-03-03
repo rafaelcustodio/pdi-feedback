@@ -13,7 +13,9 @@ import {
   Pencil,
   GitBranch,
   UserCog,
+  FileSpreadsheet,
 } from "lucide-react";
+import { FormsImportModal } from "@/components/forms-import-modal";
 import type { EmployeeListItem } from "@/app/(dashboard)/colaboradores/actions";
 import {
   deactivateEmployee,
@@ -46,6 +48,7 @@ export function EmployeeTable({
   const router = useRouter();
   const [searchValue, setSearchValue] = useState(initialSearch);
   const [loading, setLoading] = useState<string | null>(null);
+  const [importModalOpen, setImportModalOpen] = useState(false);
   const isPending = variant === "pending";
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
@@ -122,13 +125,23 @@ export function EmployeeTable({
           </button>
         </form>
         {!isPending && (
-          <Link
-            href="/colaboradores/novo"
-            className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-          >
-            <UserPlus size={16} />
-            Novo Colaborador
-          </Link>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setImportModalOpen(true)}
+              className="inline-flex items-center gap-2 rounded-md border border-green-600 px-4 py-2 text-sm font-medium text-green-700 hover:bg-green-50 dark:border-green-500 dark:text-green-400 dark:hover:bg-green-900/20"
+            >
+              <FileSpreadsheet size={16} />
+              Importar do Forms
+            </button>
+            <Link
+              href="/colaboradores/novo"
+              className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            >
+              <UserPlus size={16} />
+              Novo Colaborador
+            </Link>
+          </div>
         )}
       </div>
 
@@ -365,6 +378,12 @@ export function EmployeeTable({
           </div>
         </div>
       )}
+
+      {/* Forms Import Modal */}
+      <FormsImportModal
+        open={importModalOpen}
+        onClose={() => setImportModalOpen(false)}
+      />
     </div>
   );
 }

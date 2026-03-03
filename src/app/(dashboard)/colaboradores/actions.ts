@@ -1682,6 +1682,60 @@ export async function createChangeRequest(
     },
   });
 
+  // Notify all active admins (email + internal notification)
+  try {
+    const [employee, admins] = await Promise.all([
+      prisma.user.findUnique({ where: { id: userId }, select: { name: true } }),
+      prisma.user.findMany({
+        where: { role: "admin", isActive: true },
+        select: { id: true, name: true, email: true },
+      }),
+    ]);
+
+    const employeeName = employee?.name || "Colaborador";
+    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+    const panelUrl = `${baseUrl}/colaboradores`;
+
+    // Create internal notifications for all admins
+    if (admins.length > 0) {
+      await prisma.notification.createMany({
+        data: admins.map((admin) => ({
+          userId: admin.id,
+          type: "change_request" as const,
+          title: `Solicitação de alteração - ${employeeName}`,
+          message: `${employeeName} solicitou alteração do campo "${fieldName}". [change_request_${changeRequest.id}]`,
+        })),
+      });
+    }
+
+    // Send emails to all admins (non-blocking)
+    const { sendEmail } = await import("@/lib/email");
+    const {
+      buildChangeRequestNotificationHtml,
+      buildChangeRequestNotificationSubject,
+    } = await import("@/lib/email-templates");
+
+    for (const admin of admins) {
+      sendEmail({
+        to: admin.email,
+        subject: buildChangeRequestNotificationSubject(employeeName, fieldName),
+        html: buildChangeRequestNotificationHtml(
+          admin.name || "Administrador",
+          employeeName,
+          fieldName,
+          oldValue,
+          newValue,
+          panelUrl
+        ),
+      }).catch((err) => {
+        console.error(`[ChangeRequest] Failed to email admin ${admin.email}:`, err);
+      });
+    }
+  } catch (err) {
+    // Don't fail the change request if notification/email fails
+    console.error("[ChangeRequest] Failed to send notifications:", err);
+  }
+
   revalidatePath("/colaboradores");
   revalidatePath("/perfil");
   return { success: true, id: changeRequest.id };
@@ -1978,4 +2032,50 @@ function parseChangeRequestValue(fieldName: string, value: string | null): unkno
   }
 
   return value;
+}
+
+// ---------------------------------------------------------------------------
+// Forms import — duplicate check
+// ---------------------------------------------------------------------------
+
+export type ExistingEmployeeCheck = {
+  email: string | null;
+  cpf: string | null;
+  existsByEmail: boolean;
+  existsByCpf: boolean;
+};
+
+/**
+ * Check whether employees already exist by email or CPF.
+ * Used by the Forms import modal to warn about duplicates.
+ */
+export async function checkExistingEmployees(
+  entries: { email?: string; cpf?: string }[]
+): Promise<ExistingEmployeeCheck[]> {
+  const session = await getEffectiveAuth();
+  if (!session?.user || session.user.role !== "admin") {
+    throw new Error("Apenas administradores podem verificar colaboradores existentes.");
+  }
+
+  const emails = entries.map((e) => e.email?.trim().toLowerCase()).filter(Boolean) as string[];
+  const cpfs = entries.map((e) => e.cpf?.replace(/\D/g, "")).filter((c) => c && c.length === 11) as string[];
+
+  const [byEmail, byCpf] = await Promise.all([
+    emails.length > 0
+      ? prisma.user.findMany({ where: { email: { in: emails } }, select: { email: true } })
+      : [],
+    cpfs.length > 0
+      ? prisma.user.findMany({ where: { cpf: { in: cpfs } }, select: { cpf: true } })
+      : [],
+  ]);
+
+  const existingEmails = new Set(byEmail.map((u) => u.email.toLowerCase()));
+  const existingCpfs = new Set(byCpf.map((u) => u.cpf).filter(Boolean));
+
+  return entries.map((entry) => ({
+    email: entry.email?.trim() ?? null,
+    cpf: entry.cpf?.replace(/\D/g, "") ?? null,
+    existsByEmail: !!(entry.email && existingEmails.has(entry.email.trim().toLowerCase())),
+    existsByCpf: !!(entry.cpf && existingCpfs.has(entry.cpf.replace(/\D/g, ""))),
+  }));
 }

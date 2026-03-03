@@ -1,12 +1,12 @@
 import { getEffectiveAuth } from "@/lib/impersonation";
 import { redirect } from "next/navigation";
-import { getEmployees, getPendingEmployees, getPendingEmployeesCount } from "./actions";
+import { getEmployees, getPendingEmployees, getPendingEmployeesCount, getChangeRequests, getPendingChangeRequestsCount } from "./actions";
 import { ColaboradoresTabs } from "@/components/colaboradores-tabs";
 
 export default async function ColaboradoresPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; page?: string; tab?: string; psearch?: string; ppage?: string }>;
+  searchParams: Promise<{ search?: string; page?: string; tab?: string; psearch?: string; ppage?: string; crsearch?: string; crpage?: string; crstatus?: string }>;
 }) {
   const session = await getEffectiveAuth();
   if (!session?.user || session.user.role !== "admin") {
@@ -19,11 +19,21 @@ export default async function ColaboradoresPage({
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
   const psearch = params.psearch ?? "";
   const ppage = Math.max(1, parseInt(params.ppage ?? "1", 10) || 1);
+  const crsearch = params.crsearch ?? "";
+  const crpage = Math.max(1, parseInt(params.crpage ?? "1", 10) || 1);
+  const crstatus = params.crstatus ?? "";
 
-  const [data, pendingData, pendingCount] = await Promise.all([
+  const [data, pendingData, pendingCount, changeRequestsData, crPendingCount] = await Promise.all([
     getEmployees(search, page, 10),
     getPendingEmployees(psearch, ppage, 10),
     getPendingEmployeesCount(),
+    getChangeRequests({
+      search: crsearch || undefined,
+      status: crstatus || undefined,
+      page: crpage,
+      pageSize: 10,
+    }),
+    getPendingChangeRequestsCount(),
   ]);
 
   return (
@@ -48,6 +58,13 @@ export default async function ColaboradoresPage({
         pendingPageSize={pendingData.pageSize}
         pendingSearch={psearch}
         pendingCount={pendingCount}
+        changeRequests={changeRequestsData.requests}
+        changeRequestsTotal={changeRequestsData.total}
+        changeRequestsPage={changeRequestsData.page}
+        changeRequestsPageSize={changeRequestsData.pageSize}
+        changeRequestsSearch={crsearch}
+        changeRequestsStatus={crstatus}
+        changeRequestsPendingCount={crPendingCount}
       />
     </div>
   );

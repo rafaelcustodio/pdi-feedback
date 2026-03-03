@@ -28,6 +28,18 @@
 - Composite string values: hasPets with "outra" uses `"outra: description"` format — parse with startsWith on init
 - ChangeRequest values are stored as strings — use `parseChangeRequestValue(fieldName, value)` helper to convert to boolean/Date/string before applying to User model
 - ChangeRequest duplicate prevention: check for existing pending request on same userId+fieldName before creating new one
+- Notification to all admins pattern: `prisma.user.findMany({ where: { role: "admin", isActive: true } })` + `prisma.notification.createMany` + fire-and-forget emails with `.catch()`
+- Adding new NotificationType enum value: create migration with `ALTER TYPE "NotificationType" ADD VALUE 'value_name';`
+- Profile editing pattern: tabs 1-4 use ChangeRequest flow (createChangeRequest per changed field), tab 5 saves directly via updateEmployeeProfile
+- ChangeRequest field comparison: serialize profile values to strings for old/new values — booleans as "true"/"false", dates as ISO date string, enums as raw value
+- Pending CR indicators: use `Set<string>` of field names from pendingChangeRequests, show amber PendingBadge component, disable inputs for pending fields
+- Profile edit flow: `getMyPendingChangeRequests` server action fetches pending CRs, passed from page → tabs → perfil-data via props, router.refresh() after save
+- Colaboradores page tabs: `colaboradores-tabs.tsx` — uses URL search params per tab (search/page, psearch/ppage, crsearch/crpage/crstatus) to preserve state across navigation
+- Forms import: `src/lib/forms-import-mapping.ts` — client-side Excel parser + question-to-field mapping + enum converters for Microsoft Forms "Talento I Narwal" export
+- Change requests table: `change-requests-table.tsx` — standalone table component with FIELD_LABELS/ENUM_LABELS maps for Portuguese localization of field names and enum values
+- Forms import pre-fill: use `sessionStorage.setItem("formsImportData", JSON.stringify(data))` to pass mapped data from modal to employee-form, then `sessionStorage.getItem/removeItem` on mount in create mode
+- FormsImportModal: `src/components/forms-import-modal.tsx` — client-side Excel parse + server-side duplicate check + preview table + sessionStorage handoff
+- `checkExistingEmployees` server action: batch-checks emails and CPFs against existing users, returns per-entry existsByEmail/existsByCpf flags
 ---
 
 ## 2026-03-03 - US-001
@@ -162,4 +174,120 @@
   - `bulkRejectChangeRequests` uses `updateMany` since no User field changes are needed — simpler than individual updates
   - `getChangeRequests` uses Prisma `include` for user/reviewedBy names, and supports search (by user name), status filter, and pagination
   - Role-based filtering pattern: admin sees all, non-admin sees only own (where.userId = currentUserId)
+---
+
+## 2026-03-03 - US-011
+- Implemented: Email and internal notification to HR admins when a ChangeRequest is created
+- Files changed: `prisma/schema.prisma` (added `change_request` to NotificationType enum), `prisma/migrations/20260303130000_add_change_request_notification_type/migration.sql`, `src/lib/email-templates.ts` (added `buildChangeRequestNotificationHtml` + `buildChangeRequestNotificationSubject`), `src/app/(dashboard)/colaboradores/actions.ts` (updated `createChangeRequest`)
+- **Learnings for future iterations:**
+  - Adding a new enum value to PostgreSQL: `ALTER TYPE "EnumName" ADD VALUE 'new_value';` — simple one-line migration
+  - Notification pattern: use `prisma.notification.createMany` with `data: admins.map(...)` to bulk-create notifications for all admins
+  - Email sending pattern: use dynamic `import()` for email modules to avoid pulling nodemailer into the server action bundle unnecessarily, then fire-and-forget with `.catch()` so email failures don't block the main operation
+  - Email template follows existing codebase pattern: amber/orange (#d97706) theme for change request notifications, inline styles, pt-BR language
+  - Always wrap notification/email logic in try-catch so the main action (creating the ChangeRequest) succeeds even if notification delivery fails
+  - Find active admins: `prisma.user.findMany({ where: { role: "admin", isActive: true } })`
+---
+
+## 2026-03-03 - US-012
+- Implemented: Expanded Profile page with full HR data in 5 read-only tabs
+- New server action: `getMyFullProfile` in `src/app/(dashboard)/perfil/actions.ts` — fetches logged-in user's own data (all fields + dependents + emergencyContacts)
+- New component: `src/components/perfil-data.tsx` — read-only view with 5 sub-tabs matching employee-form organization
+- Updated: `src/components/perfil-tabs.tsx` — accepts `profile` prop, renders `PerfilData` in the Perfil tab
+- Updated: `src/app/(dashboard)/perfil/page.tsx` — fetches profile data via `getMyFullProfile` alongside nineBoxResult using `Promise.all`
+- Files changed: `src/app/(dashboard)/perfil/actions.ts`, `src/app/(dashboard)/perfil/page.tsx`, `src/components/perfil-data.tsx` (new), `src/components/perfil-tabs.tsx`
+- **Learnings for future iterations:**
+  - Profile page uses `getEffectiveAuth()` to get user ID, then fetches directly — no `canAccessEmployee` needed since employee always has access to own data
+  - Enum label maps (GENDER_LABELS, ETHNICITY_LABELS, etc.) are duplicated from employee-form.tsx — could be extracted to a shared module if more consumers emerge
+  - Read-only Field component pattern: `<dt>` for label + `<dd>` for value with consistent dark mode classes
+  - `formatDate` uses `toLocaleDateString("pt-BR", { timeZone: "UTC" })` for server-rendered dates
+  - `calculateAge` uses UTC methods to avoid timezone-shifted day differences
+  - Hobbies displayed as colored tags (blue pill badges), social networks as key-value pairs, dependents/contacts as tables
+  - hasPets parsing: check `startsWith("outra: ")` and `slice(7)` for custom pet description — same pattern as employee-form
+  - `Promise.all` for parallel data fetching in server component page — fetches nineBoxResult and fullProfile concurrently
+---
+
+## 2026-03-03 - US-013
+- Implemented: Profile page editing with approval flow (tabs 1-4) and direct editing (tab 5)
+- New server action: `getMyPendingChangeRequests` in `src/app/(dashboard)/perfil/actions.ts` — fetches pending ChangeRequests for current user
+- Rewrote `src/components/perfil-data.tsx` — each tab now has Edit/Save/Cancel buttons, inline editing, and pending CR indicators
+- Updated `src/app/(dashboard)/perfil/page.tsx` — fetches pending CRs via `Promise.all` alongside profile and nineBox data
+- Updated `src/components/perfil-tabs.tsx` — passes `pendingChangeRequests` prop down to `PerfilData`
+- Files changed: `src/app/(dashboard)/perfil/actions.ts`, `src/app/(dashboard)/perfil/page.tsx`, `src/components/perfil-data.tsx`, `src/components/perfil-tabs.tsx`
+- **Learnings for future iterations:**
+  - Profile edit design: each tab component manages its own `editing`/`saving`/`message` state independently — keeps concerns isolated per tab
+  - ChangeRequest value serialization: booleans → `String(value)` ("true"/"false"), dates → ISO input format (YYYY-MM-DD), enums → raw value string, strings → trimmed or null
+  - Pending field tracking: `new Set(pendingChangeRequests.map(cr => cr.fieldName))` — O(1) lookup for each field in the UI
+  - Tab 5 (Sobre Mim) calls `updateEmployeeProfile` directly since employee is allowed to self-edit "About Me" fields without approval
+  - Tabs 1-4 use `submitChangeRequests` helper that iterates changes, calls `createChangeRequest` for each, collects errors
+  - After successful save, `router.refresh()` re-fetches server-side data (profile + pending CRs) and `setEditing(false)` exits edit mode
+  - Dependents and emergency contacts remain read-only on the profile page — they're separate models not covered by the scalar ChangeRequest system
+  - Shared UI components (`TabHeader`, `MessageBanner`, `PendingBadge`, `ReadField`) keep the 5 tab implementations DRY
+---
+
+## 2026-03-03 - US-014
+- Implemented: HR approval panel for employee change requests as a new tab on the Colaboradores page
+- New component: `src/components/change-requests-table.tsx` — full-featured table with:
+  - Columns: colaborador (name), campo alterado (humanized label), valor antigo, valor novo, data, status (badge), ações
+  - Per-row Aprovar/Rejeitar buttons (pending only) with confirmation modal
+  - Checkbox multi-select for pending rows + bulk approve/reject bar
+  - Status filter buttons (Todos/Pendente/Aprovado/Rejeitado)
+  - Search by employee name
+  - Pagination
+  - Success/error message banners
+  - FIELD_LABELS and ENUM_LABELS maps for Portuguese localization
+- Updated `src/components/colaboradores-tabs.tsx` — added third tab "Solicitações de Alteração" with pending count badge, renders ChangeRequestsTable
+- Updated `src/app/(dashboard)/colaboradores/page.tsx` — extended searchParams for crsearch/crpage/crstatus, fetches getChangeRequests + getPendingChangeRequestsCount via Promise.all, passes all data to ColaboradoresTabs
+- Files changed: `src/components/change-requests-table.tsx` (new), `src/components/colaboradores-tabs.tsx`, `src/app/(dashboard)/colaboradores/page.tsx`
+- **Learnings for future iterations:**
+  - Colaboradores page uses URL search params namespaced per tab: `search`/`page` for employees, `psearch`/`ppage` for pending, `crsearch`/`crpage`/`crstatus` for change requests
+  - Tab switching uses `router.replace` with `tab=<id>` param — each tab's filters are preserved independently
+  - Field label humanization: use FIELD_LABELS record (fieldName → Portuguese label) and ENUM_LABELS nested record (fieldName → {value → label}) for displaying ChangeRequest data
+  - Boolean values from ChangeRequest are stored as "true"/"false" strings — display as "Sim"/"Não"
+  - Date values displayed using `toLocaleDateString("pt-BR", { timeZone: "UTC" })`
+  - Confirmation modal pattern: `confirmAction` state holds {type, id?, bulk?}, modal renders conditionally, executeAction dispatches based on state
+  - `useTransition` from React used for server action calls — `isPending` disables buttons during processing
+  - After server action success, `router.refresh()` re-fetches server component data without navigation
+---
+
+## 2026-03-03 - US-015
+- Implemented: Forms-to-system mapping table and Excel parser utility for Microsoft Forms imports
+- Installed `xlsx` (SheetJS) via `npm install xlsx --legacy-peer-deps`
+- New file: `src/lib/forms-import-mapping.ts` with:
+  - `FORMS_FIELD_MAPPING`: maps 38 Forms question titles → system field keys (ignores Q1 consent, Q5 age, Q10/Q13 irrelevant)
+  - `parseFormsExcel(file: File)`: reads .xlsx client-side via SheetJS, returns `FormsRow[]` (Record<string, string>)
+  - `mapFormsRowToEmployee(row: FormsRow)`: converts raw row to `Partial<EmployeeFormData>` with enum conversions, multi-select (`;` separator), date parsing, address/city-state/bank info parsing
+  - Exported types: `FormsRow`, `EmployeeFormData`
+- Enum conversion maps: ETHNICITY_MAP (handles masc/fem variants), GENDER_MAP, MARITAL_STATUS_MAP (maps divorciado/viúvo to "outra"), EDUCATION_LEVEL_MAP, CONTRACT_TYPE_MAP, HEALTH_PLAN_MAP, SHIRT_SIZE_MAP (both long and short forms), BANK_ACCOUNT_MAP
+- Helper parsers: `parseDate` (handles Excel serial dates, DD/MM/YYYY, ISO), `parseAddress` (extracts street/number/complement/CEP), `parseCityState` (splits "City - UF"), `parseBankInfo` (extracts agency/account from various formats)
+- Files changed: `package.json`, `package-lock.json`, `src/lib/forms-import-mapping.ts` (new)
+- **Learnings for future iterations:**
+  - `xlsx` install requires `--legacy-peer-deps` flag due to peer dependency conflicts
+  - Forms Excel exports use question titles as column headers — mapping must match exact Portuguese text including accents
+  - `parseFormsExcel` runs client-side (uses `File.arrayBuffer()` + `XLSX.read`) — no server action needed for parsing
+  - Multi-select answers from Forms are separated by `;` (semicolons) — use `split(";")` to convert to arrays
+  - Excel serial dates (numbers > 30000) need conversion: `(serial - 25569) * 86400 * 1000` to get JS timestamp
+  - Brazilian date format DD/MM/YYYY is common in Forms exports — parse before ISO conversion
+  - Composite fields (address, city/state, bank info) require custom parsers since Forms puts them in single text answers
+---
+
+## 2026-03-03 - US-016
+- Implemented: Forms import UI with upload, preview, and pre-fill functionality
+- New component: `src/components/forms-import-modal.tsx` — modal with:
+  - Drag-and-drop upload area accepting only .xlsx files
+  - Client-side parsing via `parseFormsExcel()` from US-015 with loading spinner
+  - Preview table with columns: Nome, Email, CPF, Status (Novo/duplicate warning), Ação (Selecionar button)
+  - CPF validation: invalid CPFs shown in red with "(inválido)" label
+  - Duplicate detection: calls `checkExistingEmployees` server action to check email/CPF against existing users
+  - Amber warning badges for existing email/CPF matches
+  - On "Selecionar": stores mapped EmployeeFormData in sessionStorage, navigates to /colaboradores/novo
+- New server action: `checkExistingEmployees` in colaboradores/actions.ts — batch-checks emails and CPFs against existing users
+- Updated `src/components/employee-table.tsx` — added "Importar do Forms" button (green outline, FileSpreadsheet icon) next to "Novo Colaborador", visible only on non-pending variant, opens FormsImportModal
+- Updated `src/components/employee-form.tsx` — added useEffect that reads `formsImportData` from sessionStorage on mount in create mode, populates all form fields (personal data, address, financial, family, about me), then removes the key
+- Files changed: `src/components/forms-import-modal.tsx` (new), `src/components/employee-table.tsx`, `src/components/employee-form.tsx`, `src/app/(dashboard)/colaboradores/actions.ts`
+- **Learnings for future iterations:**
+  - sessionStorage is the simplest way to pass large data between pages in Next.js client components — set before navigation, read + remove on mount
+  - hasPets mapping from Forms uses "sim cachorros"/"sim gatos" format, but the form select uses "sim_cachorros"/"sim_gatos" — need a mapping step in the pre-fill logic
+  - `checkExistingEmployees` uses batch `findMany` with `in` clause for efficiency — single query per field type (email/CPF)
+  - FormsImportModal uses `useCallback` for processFile/handleSelect to keep references stable for event handlers
+  - The import button is in employee-table (not colaboradores-tabs) because it sits naturally next to "Novo Colaborador" in the search/action header bar
 ---
