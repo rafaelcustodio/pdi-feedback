@@ -146,26 +146,26 @@ export function ProgramEventsWizard({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="mx-4 w-full max-w-lg rounded-lg bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto">
+      <div className="mx-4 w-full max-w-lg rounded-lg bg-white dark:bg-gray-900 p-6 shadow-xl max-h-[90vh] overflow-y-auto">
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
             Programar {type === "pdi" ? "PDIs" : "Feedbacks"}
           </h3>
           <button
             onClick={onClose}
-            className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            className="rounded p-1 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
           >
             <X size={20} />
           </button>
         </div>
 
         {error && (
-          <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+          <div className="mb-4 rounded-md border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30 p-3 text-sm text-red-700 dark:text-red-400">
             {error}
           </div>
         )}
         {success && (
-          <div className="mb-4 rounded-md border border-green-200 bg-green-50 p-3 text-sm text-green-700">
+          <div className="mb-4 rounded-md border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/30 p-3 text-sm text-green-700 dark:text-green-400">
             {success}
           </div>
         )}
@@ -176,7 +176,7 @@ export function ProgramEventsWizard({
             {/* Employee selection */}
             <div>
               <div className="mb-2 flex items-center justify-between">
-                <label className="text-sm font-medium text-gray-700">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Colaboradores ({selectedIds.size}/{notScheduledEmployees.length})
                 </label>
                 <button
@@ -189,19 +189,19 @@ export function ProgramEventsWizard({
                     : "Selecionar todos"}
                 </button>
               </div>
-              <div className="max-h-40 overflow-y-auto rounded-md border border-gray-200">
+              <div className="max-h-40 overflow-y-auto rounded-md border border-gray-200 dark:border-gray-700">
                 {notScheduledEmployees.map((emp) => (
                   <label
                     key={emp.employeeId}
-                    className="flex cursor-pointer items-center gap-2 px-3 py-2 hover:bg-gray-50"
+                    className="flex cursor-pointer items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800"
                   >
                     <input
                       type="checkbox"
                       checked={selectedIds.has(emp.employeeId)}
                       onChange={() => toggleEmployee(emp.employeeId)}
-                      className="rounded border-gray-300"
+                      className="rounded border-gray-300 dark:border-gray-600"
                     />
-                    <span className="text-sm text-gray-700">{emp.employeeName}</span>
+                    <span className="text-sm text-gray-700 dark:text-gray-300">{emp.employeeName}</span>
                   </label>
                 ))}
               </div>
@@ -209,7 +209,7 @@ export function ProgramEventsWizard({
 
             {/* Per day */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
+              <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Eventos por dia
               </label>
               <div className="flex gap-4">
@@ -219,9 +219,9 @@ export function ProgramEventsWizard({
                     name="perDay"
                     checked={perDay === 1}
                     onChange={() => setPerDay(1)}
-                    className="border-gray-300 text-blue-600"
+                    className="border-gray-300 dark:border-gray-600 text-blue-600"
                   />
-                  <span className="text-sm text-gray-700">1 por dia</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">1 por dia</span>
                 </label>
                 <label className="flex cursor-pointer items-center gap-2">
                   <input
@@ -229,16 +229,16 @@ export function ProgramEventsWizard({
                     name="perDay"
                     checked={perDay === 2}
                     onChange={() => setPerDay(2)}
-                    className="border-gray-300 text-blue-600"
+                    className="border-gray-300 dark:border-gray-600 text-blue-600"
                   />
-                  <span className="text-sm text-gray-700">2 por dia</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">2 por dia</span>
                 </label>
               </div>
             </div>
 
             {/* Direction */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
+              <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Direção
               </label>
               <div className="flex flex-col gap-2">
@@ -248,9 +248,9 @@ export function ProgramEventsWizard({
                     name="direction"
                     checked={direction === "end-to-start"}
                     onChange={() => setDirection("end-to-start")}
-                    className="border-gray-300 text-blue-600"
+                    className="border-gray-300 dark:border-gray-600 text-blue-600"
                   />
-                  <span className="text-sm text-gray-700">Começar do fim do período</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">Começar do fim do período</span>
                 </label>
                 <label className="flex cursor-pointer items-center gap-2">
                   <input
@@ -258,9 +258,9 @@ export function ProgramEventsWizard({
                     name="direction"
                     checked={direction === "last-month-start"}
                     onChange={() => setDirection("last-month-start")}
-                    className="border-gray-300 text-blue-600"
+                    className="border-gray-300 dark:border-gray-600 text-blue-600"
                   />
-                  <span className="text-sm text-gray-700">Começar no início do último mês</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">Começar no início do último mês</span>
                 </label>
               </div>
             </div>
@@ -269,7 +269,7 @@ export function ProgramEventsWizard({
             <div className="flex justify-end gap-3 pt-2">
               <button
                 onClick={onClose}
-                className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
               >
                 Cancelar
               </button>
@@ -286,23 +286,23 @@ export function ProgramEventsWizard({
         ) : (
           /* Step 2: Preview */
           <div className="space-y-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               Revise as datas antes de confirmar. Você pode editar as datas individualmente.
             </p>
 
-            <div className="max-h-60 overflow-y-auto rounded-md border border-gray-200">
+            <div className="max-h-60 overflow-y-auto rounded-md border border-gray-200 dark:border-gray-700">
               {preview.map((event, idx) => (
                 <div
                   key={event.employeeId}
-                  className="flex items-center justify-between gap-3 border-b border-gray-50 px-3 py-2 last:border-b-0"
+                  className="flex items-center justify-between gap-3 border-b border-gray-50 dark:border-gray-800 px-3 py-2 last:border-b-0"
                 >
-                  <span className="text-sm text-gray-700">{event.employeeName}</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">{event.employeeName}</span>
                   <div className="flex items-center gap-2">
                     <input
                       type="date"
                       value={event.scheduledDate}
                       onChange={(e) => handleDateChange(idx, e.target.value)}
-                      className="rounded border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white px-2 py-1 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                     {event.wasSnapped && (
                       <span className="text-xs text-amber-600" title="Auto-corrigido para dia útil">
@@ -317,7 +317,7 @@ export function ProgramEventsWizard({
             <div className="flex justify-end gap-3 pt-2">
               <button
                 onClick={() => setPreview(null)}
-                className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
               >
                 Voltar
               </button>

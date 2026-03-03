@@ -37,8 +37,8 @@ const statusLabels: Record<string, string> = {
 };
 
 const statusColors: Record<string, string> = {
-  active: "bg-blue-100 text-blue-700",
-  cancelled: "bg-gray-100 text-gray-500",
+  active: "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300",
+  cancelled: "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400",
 };
 
 const goalStatusLabels: Record<string, string> = {
@@ -48,9 +48,9 @@ const goalStatusLabels: Record<string, string> = {
 };
 
 const goalStatusColors: Record<string, string> = {
-  pending: "bg-gray-100 text-gray-600",
-  in_progress: "bg-blue-100 text-blue-700",
-  completed: "bg-green-100 text-green-700",
+  pending: "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400",
+  in_progress: "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300",
+  completed: "bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300",
 };
 
 const goalStatusIcons: Record<string, typeof Circle> = {
@@ -105,24 +105,24 @@ export function PDITracking({ pdi, userId, userRole }: PDITrackingProps) {
       <div className="flex items-center gap-3">
         <Link
           href="/pdis"
-          className="rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+          className="rounded-md p-2 text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-600 dark:hover:text-gray-400"
         >
           <ArrowLeft size={20} />
         </Link>
         <div className="flex-1">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-semibold text-gray-900">
+            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
               PDI - {pdi.employeeName}
             </h1>
             <span
               className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                statusColors[pdi.status] ?? "bg-gray-100 text-gray-500"
+                statusColors[pdi.status] ?? "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
               }`}
             >
               {statusLabels[pdi.status] ?? pdi.status}
             </span>
           </div>
-          <p className="mt-1 text-sm text-gray-600">
+          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
             Gestor: {pdi.managerName}
           </p>
         </div>
@@ -179,14 +179,14 @@ export function PDITracking({ pdi, userId, userRole }: PDITrackingProps) {
 
       {/* Progress Bar */}
       {pdi.goals.length > 0 && (
-        <div className="rounded-lg border border-gray-200 bg-white p-4">
+        <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4">
           <div className="mb-2 flex items-center justify-between text-sm">
-            <span className="font-medium text-gray-700">Progresso</span>
-            <span className="text-gray-500">
+            <span className="font-medium text-gray-700 dark:text-gray-300">Progresso</span>
+            <span className="text-gray-500 dark:text-gray-400">
               {completedGoals}/{pdi.goals.length} metas ({progressPct}%)
             </span>
           </div>
-          <div className="h-2.5 w-full rounded-full bg-gray-200">
+          <div className="h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
             <div
               className="h-2.5 rounded-full bg-blue-600 transition-all"
               style={{ width: `${progressPct}%` }}
@@ -196,9 +196,9 @@ export function PDITracking({ pdi, userId, userRole }: PDITrackingProps) {
       )}
 
       {/* Goals - Active/In Progress */}
-      <div className="rounded-lg border border-gray-200 bg-white p-6">
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-medium text-gray-900">
+          <h2 className="text-lg font-medium text-gray-900 dark:text-white">
             Metas ({pdi.goals.length})
           </h2>
           {isManager && pdi.status === "active" && (
@@ -225,7 +225,7 @@ export function PDITracking({ pdi, userId, userRole }: PDITrackingProps) {
         )}
 
         {activeGoals.length === 0 && doneGoals.length === 0 ? (
-          <p className="text-sm text-gray-500">Nenhuma meta cadastrada.</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Nenhuma meta cadastrada.</p>
         ) : (
           <div className="space-y-4">
             {activeGoals.map((goal) => (
@@ -250,7 +250,7 @@ export function PDITracking({ pdi, userId, userRole }: PDITrackingProps) {
           <div className="mt-4">
             <button
               onClick={() => setShowCompleted(!showCompleted)}
-              className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-700"
+              className="flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
             >
               {showCompleted ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
               Metas concluídas ({doneGoals.length})
@@ -294,7 +294,7 @@ export function PDITracking({ pdi, userId, userRole }: PDITrackingProps) {
       />
 
       {/* Metadata */}
-      <div className="text-xs text-gray-400">
+      <div className="text-xs text-gray-400 dark:text-gray-500">
         {pdi.conductedAt && (
           <>
             Realizado em{" "}
@@ -362,16 +362,16 @@ function AddGoalForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
-      <p className="mb-3 text-sm font-medium text-blue-800">Nova Meta</p>
+    <form onSubmit={handleSubmit} className="mb-4 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/30 p-4">
+      <p className="mb-3 text-sm font-medium text-blue-800 dark:text-blue-300">Nova Meta</p>
       {error && (
-        <div className="mb-3 rounded-md border border-red-200 bg-red-50 p-2 text-sm text-red-700">
+        <div className="mb-3 rounded-md border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30 p-2 text-sm text-red-700 dark:text-red-300">
           {error}
         </div>
       )}
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="sm:col-span-2">
-          <label className="mb-1 block text-xs font-medium text-gray-700">
+          <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">
             Objetivo de Desenvolvimento *
           </label>
           <input
@@ -379,13 +379,13 @@ function AddGoalForm({
             value={objective}
             onChange={(e) => setObjective(e.target.value)}
             placeholder="Ex: Concluir certificação AWS"
-            className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             disabled={loading}
             required
           />
         </div>
         <div className="sm:col-span-2">
-          <label className="mb-1 block text-xs font-medium text-gray-700">
+          <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">
             Ações / Atividades
           </label>
           <textarea
@@ -393,46 +393,46 @@ function AddGoalForm({
             onChange={(e) => setActions(e.target.value)}
             rows={2}
             placeholder="Detalhes sobre as ações..."
-            className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             disabled={loading}
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-700">Início</label>
+          <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">Início</label>
           <input
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             disabled={loading}
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-700">Prazo Final</label>
+          <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">Prazo Final</label>
           <input
             type="date"
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
-            className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             disabled={loading}
           />
         </div>
         <div className="sm:col-span-2">
-          <label className="mb-1 block text-xs font-medium text-gray-700">Resultados Esperados</label>
+          <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">Resultados Esperados</label>
           <textarea
             value={expectedResults}
             onChange={(e) => setExpectedResults(e.target.value)}
             rows={2}
-            className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             disabled={loading}
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-700">Responsável</label>
+          <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">Responsável</label>
           <select
             value={responsibleId}
             onChange={(e) => setResponsibleId(e.target.value)}
-            className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             disabled={loading}
           >
             <option value="">Selecione</option>
@@ -441,13 +441,13 @@ function AddGoalForm({
           </select>
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-700">Métricas de Sucesso</label>
+          <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">Métricas de Sucesso</label>
           <input
             type="text"
             value={successMetrics}
             onChange={(e) => setSuccessMetrics(e.target.value)}
             placeholder="Ex: Nota >= 80%"
-            className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             disabled={loading}
           />
         </div>
@@ -457,7 +457,7 @@ function AddGoalForm({
           type="button"
           onClick={onClose}
           disabled={loading}
-          className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+          className="rounded-md border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50"
         >
           Cancelar
         </button>
@@ -592,7 +592,7 @@ function GoalCard({
   }
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-gray-50">
+    <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
       {/* Goal Header */}
       <div
         className="cursor-pointer p-4"
@@ -608,17 +608,17 @@ function GoalCard({
                     ? "text-green-500"
                     : goal.status === "in_progress"
                       ? "text-blue-500"
-                      : "text-gray-400"
+                      : "text-gray-400 dark:text-gray-500"
                 }
               />
-              <h3 className="font-medium text-gray-900">{goal.developmentObjective}</h3>
+              <h3 className="font-medium text-gray-900 dark:text-white">{goal.developmentObjective}</h3>
             </div>
             {goal.actions && (
-              <p className="mt-1 pl-6 text-sm text-gray-600">
+              <p className="mt-1 pl-6 text-sm text-gray-600 dark:text-gray-400">
                 {goal.actions}
               </p>
             )}
-            <div className="mt-2 flex flex-wrap items-center gap-3 pl-6 text-xs text-gray-500">
+            <div className="mt-2 flex flex-wrap items-center gap-3 pl-6 text-xs text-gray-500 dark:text-gray-400">
               {goal.dueDate && (
                 <span className="inline-flex items-center gap-1">
                   <Calendar size={12} />
@@ -642,7 +642,7 @@ function GoalCard({
                   setExpanded(true);
                   setEditingGoal(true);
                 }}
-                className="rounded p-1 text-gray-400 hover:text-blue-600"
+                className="rounded p-1 text-gray-400 dark:text-gray-500 hover:text-blue-600"
                 title="Editar meta"
               >
                 <Pencil size={14} />
@@ -650,15 +650,15 @@ function GoalCard({
             )}
             <span
               className={`inline-flex whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium ${
-                goalStatusColors[goal.status] ?? "bg-gray-100 text-gray-600"
+                goalStatusColors[goal.status] ?? "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
               }`}
             >
               {goalStatusLabels[goal.status] ?? goal.status}
             </span>
             {expanded ? (
-              <ChevronUp size={16} className="text-gray-400" />
+              <ChevronUp size={16} className="text-gray-400 dark:text-gray-500" />
             ) : (
-              <ChevronDown size={16} className="text-gray-400" />
+              <ChevronDown size={16} className="text-gray-400 dark:text-gray-500" />
             )}
           </div>
         </div>
@@ -666,9 +666,9 @@ function GoalCard({
 
       {/* Expanded Content */}
       {expanded && (
-        <div className="border-t border-gray-200 p-4">
+        <div className="border-t border-gray-200 dark:border-gray-700 p-4">
           {error && (
-            <div className="mb-3 rounded-md border border-red-200 bg-red-50 p-2 text-sm text-red-700">
+            <div className="mb-3 rounded-md border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30 p-2 text-sm text-red-700 dark:text-red-300">
               {error}
             </div>
           )}
@@ -745,59 +745,59 @@ function GoalCard({
 
           {/* Goal Edit Form */}
           {editingGoal && (
-            <div className="mb-4 rounded-md border border-blue-200 bg-blue-50 p-4">
-              <p className="mb-3 text-xs font-medium text-blue-700">Editar Meta</p>
+            <div className="mb-4 rounded-md border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/30 p-4">
+              <p className="mb-3 text-xs font-medium text-blue-700 dark:text-blue-300">Editar Meta</p>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="sm:col-span-2">
-                  <label className="mb-1 block text-xs font-medium text-gray-700">
+                  <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">
                     Objetivo de Desenvolvimento *
                   </label>
                   <input
                     type="text"
                     value={editObjective}
                     onChange={(e) => setEditObjective(e.target.value)}
-                    className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     disabled={loading}
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="mb-1 block text-xs font-medium text-gray-700">
+                  <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">
                     Ações / Atividades
                   </label>
                   <textarea
                     value={editActions}
                     onChange={(e) => setEditActions(e.target.value)}
                     rows={2}
-                    className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     disabled={loading}
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-gray-700">
+                  <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">
                     Início
                   </label>
                   <input
                     type="date"
                     value={editStartDate}
                     onChange={(e) => setEditStartDate(e.target.value)}
-                    className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     disabled={loading}
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-gray-700">
+                  <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">
                     Prazo Final
                   </label>
                   <input
                     type="date"
                     value={editDueDate}
                     onChange={(e) => setEditDueDate(e.target.value)}
-                    className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     disabled={loading}
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="mb-1 block text-xs font-medium text-gray-700">
+                  <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">
                     Resultados Esperados
                   </label>
                   <textarea
@@ -805,18 +805,18 @@ function GoalCard({
                     onChange={(e) => setEditExpectedResults(e.target.value)}
                     rows={2}
                     placeholder="Descreva os resultados esperados..."
-                    className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     disabled={loading}
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-gray-700">
+                  <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">
                     Responsável
                   </label>
                   <select
                     value={editResponsibleId}
                     onChange={(e) => setEditResponsibleId(e.target.value)}
-                    className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     disabled={loading}
                   >
                     <option value="">Selecione</option>
@@ -825,7 +825,7 @@ function GoalCard({
                   </select>
                 </div>
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-gray-700">
+                  <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">
                     Métricas de Sucesso
                   </label>
                   <input
@@ -833,24 +833,24 @@ function GoalCard({
                     value={editSuccessMetrics}
                     onChange={(e) => setEditSuccessMetrics(e.target.value)}
                     placeholder="Ex: Nota >= 80% no exame"
-                    className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     disabled={loading}
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-gray-700">
+                  <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">
                     Término
                   </label>
                   <input
                     type="date"
                     value={editCompletedAt}
                     onChange={(e) => setEditCompletedAt(e.target.value)}
-                    className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400"
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 dark:disabled:bg-gray-700 disabled:text-gray-400 dark:disabled:text-gray-500"
                     disabled={loading || goal.status !== "completed"}
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-gray-700">
+                  <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">
                     Resultados Obtidos
                   </label>
                   <input
@@ -858,7 +858,7 @@ function GoalCard({
                     value={editAchievedResults}
                     onChange={(e) => setEditAchievedResults(e.target.value)}
                     placeholder="Descreva os resultados obtidos..."
-                    className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400"
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 dark:disabled:bg-gray-700 disabled:text-gray-400 dark:disabled:text-gray-500"
                     disabled={loading || goal.status !== "completed"}
                   />
                 </div>
@@ -867,7 +867,7 @@ function GoalCard({
                 <button
                   onClick={() => setEditingGoal(false)}
                   disabled={loading}
-                  className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                  className="rounded-md border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50"
                 >
                   Cancelar
                 </button>
@@ -885,7 +885,7 @@ function GoalCard({
           {/* Status Actions */}
           {isActive && (isEmployee || isManager) && (
             <div className="mb-4">
-              <p className="mb-2 text-xs font-medium text-gray-500">
+              <p className="mb-2 text-xs font-medium text-gray-500 dark:text-gray-400">
                 Alterar Status:
               </p>
               <div className="flex flex-wrap gap-2">
@@ -893,7 +893,7 @@ function GoalCard({
                   <button
                     onClick={() => handleStatusChange("in_progress")}
                     disabled={loading}
-                    className="inline-flex items-center gap-1.5 rounded-md bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100 disabled:opacity-50"
+                    className="inline-flex items-center gap-1.5 rounded-md bg-blue-50 dark:bg-blue-900/30 px-3 py-1.5 text-xs font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50 disabled:opacity-50"
                   >
                     <Clock size={12} />
                     Marcar Em Andamento
@@ -903,7 +903,7 @@ function GoalCard({
                   <button
                     onClick={() => handleStatusChange("completed")}
                     disabled={loading}
-                    className="inline-flex items-center gap-1.5 rounded-md bg-green-50 px-3 py-1.5 text-xs font-medium text-green-700 hover:bg-green-100 disabled:opacity-50"
+                    className="inline-flex items-center gap-1.5 rounded-md bg-green-50 dark:bg-green-900/30 px-3 py-1.5 text-xs font-medium text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/50 disabled:opacity-50"
                   >
                     <CheckCircle2 size={12} />
                     Marcar Concluída
@@ -913,14 +913,14 @@ function GoalCard({
                   <button
                     onClick={() => handleStatusChange("in_progress")}
                     disabled={loading}
-                    className="inline-flex items-center gap-1.5 rounded-md bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-100 disabled:opacity-50"
+                    className="inline-flex items-center gap-1.5 rounded-md bg-red-50 dark:bg-red-900/30 px-3 py-1.5 text-xs font-medium text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/50 disabled:opacity-50"
                   >
                     <XCircle size={12} />
                     Rejeitar Conclusão
                   </button>
                 )}
                 {isManager && goal.status === "completed" && (
-                  <span className="inline-flex items-center gap-1.5 rounded-md bg-green-50 px-3 py-1.5 text-xs font-medium text-green-700">
+                  <span className="inline-flex items-center gap-1.5 rounded-md bg-green-50 dark:bg-green-900/30 px-3 py-1.5 text-xs font-medium text-green-700 dark:text-green-300">
                     <CheckCircle2 size={12} />
                     Aprovada
                   </span>
@@ -932,14 +932,14 @@ function GoalCard({
           {/* Evidences List */}
           {goal.evidences.length > 0 && (
             <div className="mb-4">
-              <p className="mb-2 text-xs font-medium text-gray-500">
+              <p className="mb-2 text-xs font-medium text-gray-500 dark:text-gray-400">
                 Evidências ({goal.evidences.length}):
               </p>
               <div className="space-y-2">
                 {goal.evidences.map((ev) => (
                   <div
                     key={ev.id}
-                    className="rounded-md border border-gray-200 bg-white p-3"
+                    className="rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3"
                   >
                     {editingEvidenceId === ev.id ? (
                       <>
@@ -947,14 +947,14 @@ function GoalCard({
                           value={editingEvidenceText}
                           onChange={(e) => setEditingEvidenceText(e.target.value)}
                           rows={3}
-                          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                           disabled={loading}
                         />
                         <div className="mt-2 flex justify-end gap-2">
                           <button
                             onClick={() => setEditingEvidenceId(null)}
                             disabled={loading}
-                            className="rounded-md border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                            className="rounded-md border border-gray-300 dark:border-gray-600 px-3 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50"
                           >
                             Cancelar
                           </button>
@@ -969,9 +969,9 @@ function GoalCard({
                       </>
                     ) : (
                       <>
-                        <p className="text-sm text-gray-700">{ev.description}</p>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">{ev.description}</p>
                         <div className="mt-1 flex items-center justify-between">
-                          <p className="text-xs text-gray-400">
+                          <p className="text-xs text-gray-400 dark:text-gray-500">
                             {new Date(ev.createdAt).toLocaleDateString("pt-BR", {
                               day: "2-digit",
                               month: "2-digit",
@@ -986,7 +986,7 @@ function GoalCard({
                                 setEditingEvidenceId(ev.id);
                                 setEditingEvidenceText(ev.description);
                               }}
-                              className="rounded p-0.5 text-gray-400 hover:text-blue-600"
+                              className="rounded p-0.5 text-gray-400 dark:text-gray-500 hover:text-blue-600"
                               title="Editar evidência"
                             >
                               <Pencil size={12} />
@@ -1007,14 +1007,14 @@ function GoalCard({
               {!showEvidenceForm ? (
                 <button
                   onClick={() => setShowEvidenceForm(true)}
-                  className="inline-flex items-center gap-1.5 rounded-md bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-200"
+                  className="inline-flex items-center gap-1.5 rounded-md bg-gray-100 dark:bg-gray-700 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
                 >
                   <Plus size={12} />
                   Adicionar Evidência
                 </button>
               ) : (
-                <div className="rounded-md border border-gray-200 bg-white p-3">
-                  <p className="mb-2 text-xs font-medium text-gray-500">
+                <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3">
+                  <p className="mb-2 text-xs font-medium text-gray-500 dark:text-gray-400">
                     Nova Evidência:
                   </p>
                   <textarea
@@ -1022,7 +1022,7 @@ function GoalCard({
                     onChange={(e) => setEvidenceDesc(e.target.value)}
                     placeholder="Descreva a evidência de progresso..."
                     rows={3}
-                    className="mb-2 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="mb-2 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     disabled={loading}
                   />
                   <div className="flex justify-end gap-2">
@@ -1032,7 +1032,7 @@ function GoalCard({
                         setEvidenceDesc("");
                       }}
                       disabled={loading}
-                      className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                      className="rounded-md border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50"
                     >
                       Cancelar
                     </button>
@@ -1066,9 +1066,9 @@ const followUpStatusLabels: Record<string, string> = {
 };
 
 const followUpStatusColors: Record<string, string> = {
-  scheduled: "bg-yellow-100 text-yellow-700",
-  completed: "bg-green-100 text-green-700",
-  cancelled: "bg-gray-100 text-gray-500",
+  scheduled: "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-400",
+  completed: "bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300",
+  cancelled: "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400",
 };
 
 function FollowUpsSection({
@@ -1170,9 +1170,9 @@ function FollowUpsSection({
   }
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6">
+    <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-medium text-gray-900">
+        <h2 className="text-lg font-medium text-gray-900 dark:text-white">
           Acompanhamentos ({followUps.length})
         </h2>
         {isManager && isActive && (
@@ -1187,27 +1187,27 @@ function FollowUpsSection({
       </div>
 
       {error && (
-        <div className="mb-3 rounded-md border border-red-200 bg-red-50 p-2 text-sm text-red-700">
+        <div className="mb-3 rounded-md border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30 p-2 text-sm text-red-700 dark:text-red-300">
           {error}
         </div>
       )}
 
       {/* Schedule Form */}
       {showScheduleForm && (
-        <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
-          <p className="mb-3 text-sm font-medium text-blue-800">
+        <div className="mb-4 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/30 p-4">
+          <p className="mb-3 text-sm font-medium text-blue-800 dark:text-blue-300">
             Agendar Novo Acompanhamento
           </p>
           <div className="flex items-end gap-3">
             <div className="flex-1">
-              <label className="mb-1 block text-xs font-medium text-gray-700">
+              <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">
                 Data do Acompanhamento *
               </label>
               <input
                 type="date"
                 value={scheduleDate}
                 onChange={(e) => setScheduleDate(e.target.value)}
-                className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 disabled={loading}
               />
             </div>
@@ -1231,7 +1231,7 @@ function FollowUpsSection({
                   setScheduleTime("09:00");
                 }}
                 disabled={loading}
-                className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                className="rounded-md border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50"
               >
                 Cancelar
               </button>
@@ -1249,25 +1249,25 @@ function FollowUpsSection({
 
       {/* Complete Follow-Up Modal */}
       {completingId && (
-        <div className="mb-4 rounded-lg border border-green-200 bg-green-50 p-4">
-          <p className="mb-3 text-sm font-medium text-green-800">
+        <div className="mb-4 rounded-lg border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/30 p-4">
+          <p className="mb-3 text-sm font-medium text-green-800 dark:text-green-300">
             Registrar Acompanhamento Realizado
           </p>
           <div className="grid gap-3">
             <div>
-              <label className="mb-1 block text-xs font-medium text-gray-700">
+              <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">
                 Data de Realização
               </label>
               <input
                 type="date"
                 value={completeConductedAt}
                 onChange={(e) => setCompleteConductedAt(e.target.value)}
-                className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 disabled={loading}
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-gray-700">
+              <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">
                 Observações
               </label>
               <textarea
@@ -1275,7 +1275,7 @@ function FollowUpsSection({
                 onChange={(e) => setCompleteNotes(e.target.value)}
                 rows={3}
                 placeholder="Observações sobre o acompanhamento..."
-                className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 disabled={loading}
               />
             </div>
@@ -1288,7 +1288,7 @@ function FollowUpsSection({
                 setCompleteConductedAt("");
               }}
               disabled={loading}
-              className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              className="rounded-md border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50"
             >
               Cancelar
             </button>
@@ -1366,7 +1366,7 @@ function FollowUpsSection({
 
       {/* Follow-Ups List */}
       {followUps.length === 0 ? (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           Nenhum acompanhamento agendado.
         </p>
       ) : (
@@ -1375,12 +1375,12 @@ function FollowUpsSection({
           {scheduledFollowUps.map((fu) => (
             <div
               key={fu.id}
-              className="flex items-center justify-between rounded-md border border-yellow-200 bg-yellow-50 p-3"
+              className="flex items-center justify-between rounded-md border border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/30 p-3"
             >
               <div className="flex items-center gap-3">
-                <Calendar size={16} className="text-yellow-600" />
+                <Calendar size={16} className="text-yellow-600 dark:text-yellow-400" />
                 <div>
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
                     {new Date(fu.scheduledAt).toLocaleDateString("pt-BR", {
                       day: "2-digit",
                       month: "long",
@@ -1413,7 +1413,7 @@ function FollowUpsSection({
                   <button
                     onClick={() => handleCancel(fu.id)}
                     disabled={loading}
-                    className="inline-flex items-center gap-1 rounded-md bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-100 disabled:opacity-50"
+                    className="inline-flex items-center gap-1 rounded-md bg-red-50 dark:bg-red-900/30 px-3 py-1.5 text-xs font-medium text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/50 disabled:opacity-50"
                   >
                     <XCircle size={12} />
                     Cancelar
@@ -1429,8 +1429,8 @@ function FollowUpsSection({
               key={fu.id}
               className={`rounded-md border p-3 ${
                 fu.status === "completed"
-                  ? "border-green-200 bg-green-50"
-                  : "border-gray-200 bg-gray-50"
+                  ? "border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/30"
+                  : "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800"
               }`}
             >
               <div className="flex items-center justify-between">
@@ -1438,10 +1438,10 @@ function FollowUpsSection({
                   {fu.status === "completed" ? (
                     <CheckCircle2 size={16} className="text-green-600" />
                   ) : (
-                    <XCircle size={16} className="text-gray-400" />
+                    <XCircle size={16} className="text-gray-400 dark:text-gray-500" />
                   )}
                   <div>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">
                       {fu.conductedAt
                         ? new Date(fu.conductedAt).toLocaleDateString("pt-BR", {
                             day: "2-digit",
@@ -1465,7 +1465,7 @@ function FollowUpsSection({
                 </div>
               </div>
               {fu.notes && (
-                <p className="mt-2 pl-7 text-sm text-gray-600">{fu.notes}</p>
+                <p className="mt-2 pl-7 text-sm text-gray-600 dark:text-gray-400">{fu.notes}</p>
               )}
             </div>
           ))}
@@ -1526,15 +1526,15 @@ function CommentsSection({
   }
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6">
-      <h2 className="mb-4 text-lg font-medium text-gray-900">
+    <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6">
+      <h2 className="mb-4 text-lg font-medium text-gray-900 dark:text-white">
         Comentários ({comments.length})
       </h2>
 
       {/* Comments List */}
       <div className="mb-4 max-h-96 space-y-3 overflow-y-auto">
         {comments.length === 0 ? (
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Nenhum comentário ainda. Inicie uma conversa sobre este PDI.
           </p>
         ) : (
@@ -1548,8 +1548,8 @@ function CommentsSection({
                 <div
                   className={`max-w-[80%] rounded-lg px-4 py-2 ${
                     isOwn
-                      ? "bg-blue-50 text-blue-900"
-                      : "bg-gray-100 text-gray-900"
+                      ? "bg-blue-50 dark:bg-blue-900/30 text-blue-900 dark:text-blue-100"
+                      : "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
                   }`}
                 >
                   <p className="text-xs font-medium">
@@ -1561,14 +1561,14 @@ function CommentsSection({
                         value={editingCommentText}
                         onChange={(e) => setEditingCommentText(e.target.value)}
                         rows={3}
-                        className="w-full rounded-md border border-gray-300 px-2 py-1 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1 text-sm text-gray-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                         disabled={loading}
                       />
                       <div className="mt-1 flex justify-end gap-2">
                         <button
                           onClick={() => setEditingCommentId(null)}
                           disabled={loading}
-                          className="rounded px-2 py-0.5 text-xs text-gray-600 hover:bg-gray-200 disabled:opacity-50"
+                          className="rounded px-2 py-0.5 text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50"
                         >
                           Cancelar
                         </button>
@@ -1587,7 +1587,7 @@ function CommentsSection({
                         {comment.content}
                       </p>
                       <div className="mt-1 flex items-center justify-between gap-2">
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-gray-400 dark:text-gray-500">
                           {new Date(comment.createdAt).toLocaleDateString("pt-BR", {
                             day: "2-digit",
                             month: "2-digit",
@@ -1602,7 +1602,7 @@ function CommentsSection({
                               setEditingCommentId(comment.id);
                               setEditingCommentText(comment.content);
                             }}
-                            className="rounded p-0.5 text-gray-400 hover:text-blue-600"
+                            className="rounded p-0.5 text-gray-400 dark:text-gray-500 hover:text-blue-600"
                             title="Editar comentário"
                           >
                             <Pencil size={11} />
@@ -1621,7 +1621,7 @@ function CommentsSection({
 
       {/* Comment Input */}
       {error && (
-        <div className="mb-2 rounded-md border border-red-200 bg-red-50 p-2 text-sm text-red-700">
+        <div className="mb-2 rounded-md border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30 p-2 text-sm text-red-700 dark:text-red-300">
           {error}
         </div>
       )}
@@ -1631,7 +1631,7 @@ function CommentsSection({
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Escreva um comentário..."
-          className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           disabled={loading}
         />
         <button

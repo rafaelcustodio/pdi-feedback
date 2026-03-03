@@ -28,6 +28,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var d=document.documentElement;var t=localStorage.getItem('theme');if(t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme:dark)').matches)){d.classList.add('dark')}}catch(e){}})()`,
+          }}
+        />
+      </head>
       <body className={`${kanit.variable} ${geistMono.variable} antialiased`}>
         <ThemeProvider>
           <SessionProvider>{children}</SessionProvider>

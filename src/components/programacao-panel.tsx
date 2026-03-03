@@ -114,10 +114,10 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
   return (
     <div className="space-y-4">
       {/* Filters */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4">
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
               Unidade Organizacional
             </label>
             <select
@@ -127,7 +127,7 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
                 setSelectedPeriod("");
                 setEmployees([]);
               }}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
               <option value="">Selecione...</option>
               {units.map((u) => (
@@ -139,14 +139,14 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
               Período
             </label>
             <select
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value)}
               disabled={loadingPeriods || periods.length === 0}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
+              className="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
             >
               {periods.length === 0 && (
                 <option value="">
@@ -164,19 +164,19 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
       </div>
 
       {noConfig && unitId && (
-        <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center">
-          <CalendarCheck className="mx-auto mb-3 text-gray-400" size={40} />
-          <p className="text-sm text-gray-500">
+        <div className="rounded-lg border border-dashed border-gray-300 dark:border-gray-600 p-8 text-center">
+          <CalendarCheck className="mx-auto mb-3 text-gray-400 dark:text-gray-500" size={40} />
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Setor sem configuração de recorrência para Feedback.
           </p>
-          <p className="mt-1 text-xs text-gray-400">
+          <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
             Configure a recorrência em Configurações antes de programar eventos.
           </p>
         </div>
       )}
 
       {loading && (
-        <div className="py-8 text-center text-sm text-gray-500">
+        <div className="py-8 text-center text-sm text-gray-500 dark:text-gray-400">
           Carregando...
         </div>
       )}
@@ -184,8 +184,8 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
       {!loading && !noConfig && employees.length > 0 && (
         <div className="space-y-4">
           {/* Progress bar and counters */}
-          <div className="rounded-lg border border-gray-200 bg-white p-4">
-            <div className="mb-3 flex h-3 overflow-hidden rounded-full bg-gray-100">
+          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4">
+            <div className="mb-3 flex h-3 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
               {doneCount > 0 && (
                 <div
                   className="bg-green-500 transition-all"
@@ -200,20 +200,20 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
               )}
               {notScheduledCount > 0 && (
                 <div
-                  className="bg-gray-300 transition-all"
+                  className="bg-gray-300 dark:bg-gray-600 transition-all"
                   style={{ width: `${(notScheduledCount / total) * 100}%` }}
                 />
               )}
             </div>
 
-            <p className="text-sm text-gray-600">
-              <span className="font-medium text-gray-400">{notScheduledCount} não programados</span>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              <span className="font-medium text-gray-400 dark:text-gray-500">{notScheduledCount} não programados</span>
               {" / "}
               <span className="font-medium text-blue-600">{scheduledCount} programados</span>
               {" / "}
               <span className="font-medium text-green-600">{doneCount} realizados</span>
               {" de "}
-              <span className="font-medium text-gray-800">{total} total</span>
+              <span className="font-medium text-gray-800 dark:text-gray-100">{total} total</span>
             </p>
           </div>
 
@@ -223,7 +223,7 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
-                className="rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 <option value="all">Todos</option>
                 <option value="not_scheduled">Não programado</option>
@@ -245,30 +245,30 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
           </div>
 
           {/* Table */}
-          <div className="rounded-lg border border-gray-200 bg-white">
+          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-gray-100 bg-gray-50">
-                    <th className="px-4 py-3 text-left font-medium text-gray-600">Nome</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-600">Cargo</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-600">Status</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-600">Data</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-600">Ação</th>
+                  <tr className="border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800">
+                    <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-gray-400">Nome</th>
+                    <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-gray-400">Cargo</th>
+                    <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-gray-400">Status</th>
+                    <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-gray-400">Data</th>
+                    <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-gray-400">Ação</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-50">
+                <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
                   {filteredEmployees.map((emp) => (
                     <tr
                       key={emp.employeeId}
                       className={
-                        emp.status === "not_scheduled" ? "bg-yellow-50/50" : ""
+                        emp.status === "not_scheduled" ? "bg-yellow-50/50 dark:bg-yellow-900/20" : ""
                       }
                     >
-                      <td className="px-4 py-3 font-medium text-gray-800">
+                      <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-100">
                         {emp.employeeName}
                       </td>
-                      <td className="px-4 py-3 text-gray-600">{emp.position}</td>
+                      <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{emp.position}</td>
                       <td className="px-4 py-3">
                         <StatusBadge
                           status={emp.status}
@@ -276,7 +276,7 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
                           onboardingLabel={emp.onboardingLabel}
                         />
                       </td>
-                      <td className="px-4 py-3 text-gray-600">
+                      <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
                         {emp.eventDate
                           ? new Date(emp.eventDate).toLocaleDateString("pt-BR", { timeZone: "UTC" })
                           : "—"}
@@ -290,7 +290,7 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
                             Ver
                           </a>
                         ) : (
-                          <span className="text-gray-400">—</span>
+                          <span className="text-gray-400 dark:text-gray-500">—</span>
                         )}
                       </td>
                     </tr>
@@ -303,8 +303,8 @@ export function ProgramacaoPanel({ units }: ProgramacaoPanelProps) {
       )}
 
       {!loading && !noConfig && unitId && selectedPeriod && employees.length === 0 && (
-        <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center">
-          <p className="text-sm text-gray-500">
+        <div className="rounded-lg border border-dashed border-gray-300 dark:border-gray-600 p-8 text-center">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Nenhum colaborador encontrado para este setor e período.
           </p>
         </div>
@@ -351,7 +351,7 @@ function StatusBadge({
 }) {
   if (isOnboarding && onboardingLabel) {
     return (
-      <span className="inline-flex rounded-full bg-purple-100 px-2.5 py-0.5 text-xs font-medium text-purple-800">
+      <span className="inline-flex rounded-full bg-purple-100 dark:bg-purple-900/50 px-2.5 py-0.5 text-xs font-medium text-purple-800 dark:text-purple-300">
         {onboardingLabel}
       </span>
     );
@@ -360,19 +360,19 @@ function StatusBadge({
   switch (status) {
     case "done":
       return (
-        <span className="inline-flex rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+        <span className="inline-flex rounded-full bg-green-100 dark:bg-green-900/50 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:text-green-300">
           Realizado
         </span>
       );
     case "scheduled":
       return (
-        <span className="inline-flex rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+        <span className="inline-flex rounded-full bg-blue-100 dark:bg-blue-900/50 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:text-blue-300">
           Programado
         </span>
       );
     default:
       return (
-        <span className="inline-flex rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">
+        <span className="inline-flex rounded-full bg-gray-100 dark:bg-gray-700 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:text-gray-400">
           Não programado
         </span>
       );

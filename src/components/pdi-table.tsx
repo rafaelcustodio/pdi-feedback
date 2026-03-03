@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Search,
@@ -29,8 +30,8 @@ const statusLabels: Record<string, string> = {
 };
 
 const statusColors: Record<string, string> = {
-  active: "bg-blue-100 text-blue-700",
-  cancelled: "bg-gray-100 text-gray-500",
+  active: "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300",
+  cancelled: "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400",
 };
 
 export function PDITable({
@@ -43,6 +44,7 @@ export function PDITable({
   conductedAtTo: initialConductedAtTo = "",
   statusFilter: initialStatusFilter = "",
 }: PDITableProps) {
+  const router = useRouter();
   const [searchValue, setSearchValue] = useState(initialSearch);
   const [conductedAtFromValue, setConductedAtFromValue] = useState(initialConductedAtFrom);
   const [conductedAtToValue, setConductedAtToValue] = useState(initialConductedAtTo);
@@ -73,22 +75,22 @@ export function PDITable({
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    window.location.href = buildUrl({ search: searchValue, page: "1" });
+    router.replace(buildUrl({ search: searchValue, page: "1" }));
   }
 
   function handleConductedAtFilter(from: string, to: string) {
     setConductedAtFromValue(from);
     setConductedAtToValue(to);
-    window.location.href = buildUrl({ conductedAtFrom: from, conductedAtTo: to, page: "1" });
+    router.replace(buildUrl({ conductedAtFrom: from, conductedAtTo: to, page: "1" }));
   }
 
   function handleStatusFilter(newStatus: string) {
     setStatusFilterValue(newStatus);
-    window.location.href = buildUrl({ status: newStatus, page: "1" });
+    router.replace(buildUrl({ status: newStatus, page: "1" }));
   }
 
   function goToPage(p: number) {
-    window.location.href = buildUrl({ page: String(p) });
+    router.replace(buildUrl({ page: String(p) }));
   }
 
   const statusOptions = [
@@ -106,29 +108,29 @@ export function PDITable({
             <div className="relative flex-1 sm:max-w-xs">
               <Search
                 size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"
               />
               <input
                 type="text"
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 placeholder="Buscar por colaborador..."
-                className="w-full rounded-md border border-gray-300 py-2 pl-9 pr-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 py-2 pl-9 pr-3 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
             <button
               type="submit"
-              className="rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
+              className="rounded-md bg-gray-100 dark:bg-gray-700 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
             >
               Buscar
             </button>
           </form>
           <div className="flex items-center gap-1.5">
-            <Filter size={14} className="text-gray-400" />
+            <Filter size={14} className="text-gray-400 dark:text-gray-500" />
             <select
               value={statusFilterValue}
               onChange={(e) => handleStatusFilter(e.target.value)}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
               {statusOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -143,25 +145,25 @@ export function PDITable({
 
       {/* Date range filter for conductedAt */}
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-xs font-medium text-gray-500">Realizado de:</span>
+        <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Realizado de:</span>
         <input
           type="date"
           value={conductedAtFromValue}
           onChange={(e) => handleConductedAtFilter(e.target.value, conductedAtToValue)}
-          className="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
         />
-        <span className="text-xs font-medium text-gray-500">até:</span>
+        <span className="text-xs font-medium text-gray-500 dark:text-gray-400">até:</span>
         <input
           type="date"
           value={conductedAtToValue}
           onChange={(e) => handleConductedAtFilter(conductedAtFromValue, e.target.value)}
-          className="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
         />
         {(conductedAtFromValue || conductedAtToValue) && (
           <button
             type="button"
             onClick={() => handleConductedAtFilter("", "")}
-            className="rounded-md px-2 py-1.5 text-xs text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+            className="rounded-md px-2 py-1.5 text-xs text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-300"
           >
             Limpar
           </button>
@@ -169,65 +171,65 @@ export function PDITable({
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                 Colaborador
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                 Gestor
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                 Metas
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                 Status
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                 Data de Realização
               </th>
-              <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                 Ações
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
             {pdis.length === 0 ? (
               <tr>
                 <td
                   colSpan={6}
-                  className="px-4 py-8 text-center text-sm text-gray-500"
+                  className="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400"
                 >
                   Nenhum PDI encontrado.
                 </td>
               </tr>
             ) : (
               pdis.map((pdi) => (
-                <tr key={pdi.id} className="hover:bg-gray-50">
-                  <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-900">
+                <tr key={pdi.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                  <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-900 dark:text-white">
                     {pdi.employeeName}
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
+                  <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
                     {pdi.managerName}
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
+                  <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
                     <span className="inline-flex items-center gap-1">
-                      <Target size={14} className="text-gray-400" />
+                      <Target size={14} className="text-gray-400 dark:text-gray-500" />
                       {pdi.completedGoalCount}/{pdi.goalCount}
                     </span>
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm">
                     <span
                       className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                        statusColors[pdi.status] ?? "bg-gray-100 text-gray-500"
+                        statusColors[pdi.status] ?? "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
                       }`}
                     >
                       {statusLabels[pdi.status] ?? pdi.status}
                     </span>
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
+                  <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
                     {pdi.conductedAt
                       ? new Date(pdi.conductedAt).toLocaleDateString("pt-BR", { timeZone: "UTC" })
                       : "—"}
@@ -236,7 +238,7 @@ export function PDITable({
                     <div className="flex items-center justify-end gap-1">
                       <Link
                         href={`/pdis/${pdi.id}`}
-                        className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-blue-600"
+                        className="rounded p-1.5 text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-blue-600"
                         title="Visualizar"
                       >
                         <Eye size={14} />
@@ -253,7 +255,7 @@ export function PDITable({
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Mostrando {(page - 1) * pageSize + 1}–
             {Math.min(page * pageSize, total)} de {total} PDIs
           </p>
@@ -261,7 +263,7 @@ export function PDITable({
             <button
               onClick={() => goToPage(page - 1)}
               disabled={page <= 1}
-              className="rounded-md border border-gray-300 p-2 text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+              className="rounded-md border border-gray-300 dark:border-gray-600 p-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50"
             >
               <ChevronLeft size={16} />
             </button>
@@ -275,14 +277,14 @@ export function PDITable({
               .map((p, idx, arr) => (
                 <span key={p} className="flex items-center">
                   {idx > 0 && arr[idx - 1] !== p - 1 && (
-                    <span className="px-1 text-gray-400">...</span>
+                    <span className="px-1 text-gray-400 dark:text-gray-500">...</span>
                   )}
                   <button
                     onClick={() => goToPage(p)}
                     className={`rounded-md px-3 py-1.5 text-sm font-medium ${
                       p === page
                         ? "bg-blue-600 text-white"
-                        : "border border-gray-300 text-gray-600 hover:bg-gray-50"
+                        : "border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
                     }`}
                   >
                     {p}
@@ -292,7 +294,7 @@ export function PDITable({
             <button
               onClick={() => goToPage(page + 1)}
               disabled={page >= totalPages}
-              className="rounded-md border border-gray-300 p-2 text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+              className="rounded-md border border-gray-300 dark:border-gray-600 p-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50"
             >
               <ChevronRight size={16} />
             </button>

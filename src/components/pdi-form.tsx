@@ -112,38 +112,38 @@ export function PDIForm({
       <div className="flex items-center gap-3">
         <Link
           href="/pdis"
-          className="rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+          className="rounded-md p-2 text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-600 dark:hover:text-gray-400"
         >
           <ArrowLeft size={20} />
         </Link>
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
             Editar PDI
           </h1>
-          <p className="mt-1 text-sm text-gray-600">
+          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
             Edite o PDI de {initialData.employeeName}.
           </p>
         </div>
       </div>
 
       {error && (
-        <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+        <div className="rounded-md border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30 p-3 text-sm text-red-700 dark:text-red-300">
           {error}
         </div>
       )}
 
       {/* Basic Info */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4">
-        <h2 className="mb-3 text-lg font-medium text-gray-900">
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4">
+        <h2 className="mb-3 text-lg font-medium text-gray-900 dark:text-white">
           Informações Gerais
         </h2>
         <div className="space-y-3">
           {/* Employee name (read only) */}
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
               Colaborador
             </label>
-            <p className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700">
+            <p className="rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-sm text-gray-700 dark:text-gray-300">
               {initialData.employeeName}
             </p>
           </div>
@@ -152,7 +152,7 @@ export function PDIForm({
           <div className="sm:w-1/2">
             <label
               htmlFor="pdi-conducted-at"
-              className="mb-1 block text-sm font-medium text-gray-700"
+              className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
             >
               Data de realização
             </label>
@@ -161,7 +161,7 @@ export function PDIForm({
               type="date"
               value={conductedAt}
               onChange={(e) => setConductedAt(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               disabled={loading}
             />
           </div>
@@ -169,16 +169,16 @@ export function PDIForm({
       </div>
 
       {/* Goals Section */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4">
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4">
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-lg font-medium text-gray-900">
+          <h2 className="text-lg font-medium text-gray-900 dark:text-white">
             Metas ({goals.length})
           </h2>
           <button
             type="button"
             onClick={addGoal}
             disabled={loading}
-            className="inline-flex items-center gap-1.5 rounded-md bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-200 disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-md bg-gray-100 dark:bg-gray-700 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50"
           >
             <Plus size={14} />
             Adicionar Meta
@@ -189,10 +189,10 @@ export function PDIForm({
           {goals.map((goal, index) => (
             <div
               key={index}
-              className="rounded-lg border border-gray-200 bg-gray-50 p-3"
+              className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3"
             >
               <div className="mb-2 flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Meta {index + 1}
                 </span>
                 {goals.length > 1 && (
@@ -200,7 +200,7 @@ export function PDIForm({
                     type="button"
                     onClick={() => removeGoal(index)}
                     disabled={loading}
-                    className="rounded p-1 text-gray-400 hover:bg-gray-200 hover:text-red-500 disabled:opacity-50"
+                    className="rounded p-1 text-gray-400 dark:text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-600 hover:text-red-500 disabled:opacity-50"
                     title="Remover meta"
                   >
                     <Trash2 size={14} />
@@ -213,7 +213,7 @@ export function PDIForm({
                 <div className="sm:col-span-2">
                   <label
                     htmlFor={`goal-obj-${index}`}
-                    className="mb-1 block text-xs font-medium text-gray-600"
+                    className="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-400"
                   >
                     Objetivo de Desenvolvimento *
                   </label>
@@ -223,7 +223,7 @@ export function PDIForm({
                     value={goal.developmentObjective}
                     onChange={(e) => updateGoal(index, "developmentObjective", e.target.value)}
                     placeholder="Ex: Concluir certificação AWS"
-                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     disabled={loading}
                   />
                 </div>
@@ -232,7 +232,7 @@ export function PDIForm({
                 <div className="sm:col-span-2">
                   <label
                     htmlFor={`goal-actions-${index}`}
-                    className="mb-1 block text-xs font-medium text-gray-600"
+                    className="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-400"
                   >
                     Ações / Atividades
                   </label>
@@ -244,7 +244,7 @@ export function PDIForm({
                     }
                     placeholder="Detalhes sobre as ações e atividades para atingir o objetivo..."
                     rows={2}
-                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     disabled={loading}
                   />
                 </div>
@@ -253,7 +253,7 @@ export function PDIForm({
                 <div>
                   <label
                     htmlFor={`goal-startdate-${index}`}
-                    className="mb-1 block text-xs font-medium text-gray-600"
+                    className="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-400"
                   >
                     Início
                   </label>
@@ -264,7 +264,7 @@ export function PDIForm({
                     onChange={(e) =>
                       updateGoal(index, "startDate", e.target.value)
                     }
-                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     disabled={loading}
                   />
                 </div>
@@ -273,7 +273,7 @@ export function PDIForm({
                 <div>
                   <label
                     htmlFor={`goal-duedate-${index}`}
-                    className="mb-1 block text-xs font-medium text-gray-600"
+                    className="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-400"
                   >
                     Prazo Final
                   </label>
@@ -284,7 +284,7 @@ export function PDIForm({
                     onChange={(e) =>
                       updateGoal(index, "dueDate", e.target.value)
                     }
-                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     disabled={loading}
                   />
                 </div>
@@ -293,7 +293,7 @@ export function PDIForm({
                 <div className="sm:col-span-2">
                   <label
                     htmlFor={`goal-expected-${index}`}
-                    className="mb-1 block text-xs font-medium text-gray-600"
+                    className="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-400"
                   >
                     Resultados Esperados
                   </label>
@@ -305,7 +305,7 @@ export function PDIForm({
                     }
                     placeholder="Descreva os resultados esperados..."
                     rows={2}
-                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     disabled={loading}
                   />
                 </div>
@@ -314,7 +314,7 @@ export function PDIForm({
                 <div>
                   <label
                     htmlFor={`goal-responsible-${index}`}
-                    className="mb-1 block text-xs font-medium text-gray-600"
+                    className="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-400"
                   >
                     Responsável
                   </label>
@@ -324,7 +324,7 @@ export function PDIForm({
                     onChange={(e) =>
                       updateGoal(index, "responsibleId", e.target.value)
                     }
-                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     disabled={loading}
                   >
                     <option value="">Selecione</option>
@@ -343,7 +343,7 @@ export function PDIForm({
                 <div>
                   <label
                     htmlFor={`goal-metrics-${index}`}
-                    className="mb-1 block text-xs font-medium text-gray-600"
+                    className="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-400"
                   >
                     Métricas de Sucesso
                   </label>
@@ -355,7 +355,7 @@ export function PDIForm({
                       updateGoal(index, "successMetrics", e.target.value)
                     }
                     placeholder="Ex: Aprovação no exame com nota >= 80%"
-                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     disabled={loading}
                   />
                 </div>
@@ -364,7 +364,7 @@ export function PDIForm({
                 <div>
                   <label
                     htmlFor={`goal-completed-${index}`}
-                    className="mb-1 block text-xs font-medium text-gray-600"
+                    className="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-400"
                   >
                     Término
                   </label>
@@ -375,7 +375,7 @@ export function PDIForm({
                     onChange={(e) =>
                       updateGoal(index, "completedAt", e.target.value)
                     }
-                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400"
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 dark:disabled:bg-gray-700 disabled:text-gray-400 dark:disabled:text-gray-500"
                     disabled={loading || goal.status !== "completed"}
                   />
                 </div>
@@ -384,7 +384,7 @@ export function PDIForm({
                 <div>
                   <label
                     htmlFor={`goal-achieved-${index}`}
-                    className="mb-1 block text-xs font-medium text-gray-600"
+                    className="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-400"
                   >
                     Resultados Obtidos
                   </label>
@@ -396,7 +396,7 @@ export function PDIForm({
                       updateGoal(index, "achievedResults", e.target.value)
                     }
                     placeholder="Descreva os resultados obtidos..."
-                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400"
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 dark:disabled:bg-gray-700 disabled:text-gray-400 dark:disabled:text-gray-500"
                     disabled={loading || goal.status !== "completed"}
                   />
                 </div>
@@ -410,7 +410,7 @@ export function PDIForm({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Link
           href="/pdis"
-          className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          className="rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
         >
           Cancelar
         </Link>
