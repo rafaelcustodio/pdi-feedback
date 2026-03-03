@@ -34,6 +34,88 @@ export const ScheduleType = {
 export type ScheduleType = (typeof ScheduleType)[keyof typeof ScheduleType]
 
 
+export const Ethnicity = {
+  branco: 'branco',
+  preto: 'preto',
+  amarelo: 'amarelo',
+  indigena: 'indigena',
+  pardo: 'pardo'
+} as const
+
+export type Ethnicity = (typeof Ethnicity)[keyof typeof Ethnicity]
+
+
+export const Gender = {
+  masculino: 'masculino',
+  feminino: 'feminino',
+  outra: 'outra'
+} as const
+
+export type Gender = (typeof Gender)[keyof typeof Gender]
+
+
+export const MaritalStatus = {
+  solteiro: 'solteiro',
+  casado: 'casado',
+  outra: 'outra'
+} as const
+
+export type MaritalStatus = (typeof MaritalStatus)[keyof typeof MaritalStatus]
+
+
+export const EducationLevel = {
+  ensino_medio: 'ensino_medio',
+  ensino_tecnico: 'ensino_tecnico',
+  superior_incompleto: 'superior_incompleto',
+  superior_completo: 'superior_completo',
+  pos_graduado: 'pos_graduado'
+} as const
+
+export type EducationLevel = (typeof EducationLevel)[keyof typeof EducationLevel]
+
+
+export const ContractType = {
+  efetivo: 'efetivo',
+  estagio: 'estagio'
+} as const
+
+export type ContractType = (typeof ContractType)[keyof typeof ContractType]
+
+
+export const HealthPlanOption = {
+  regional: 'regional',
+  nacional: 'nacional',
+  nao: 'nao'
+} as const
+
+export type HealthPlanOption = (typeof HealthPlanOption)[keyof typeof HealthPlanOption]
+
+
+export const ShirtSize = {
+  p_fem: 'p_fem',
+  m_fem: 'm_fem',
+  g_fem: 'g_fem',
+  gg_fem: 'gg_fem',
+  xg_fem: 'xg_fem',
+  p_masc: 'p_masc',
+  m_masc: 'm_masc',
+  g_masc: 'g_masc',
+  gg_masc: 'gg_masc',
+  xg_masc: 'xg_masc'
+} as const
+
+export type ShirtSize = (typeof ShirtSize)[keyof typeof ShirtSize]
+
+
+export const BankAccountOption = {
+  sim: 'sim',
+  nao: 'nao',
+  outra: 'outra'
+} as const
+
+export type BankAccountOption = (typeof BankAccountOption)[keyof typeof BankAccountOption]
+
+
 export const PDIStatus = {
   active: 'active',
   cancelled: 'cancelled'

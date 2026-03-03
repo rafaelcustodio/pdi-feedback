@@ -27,6 +27,64 @@ enum ScheduleType {
   feedback
 }
 
+enum Ethnicity {
+  branco
+  preto
+  amarelo
+  indigena
+  pardo
+}
+
+enum Gender {
+  masculino
+  feminino
+  outra
+}
+
+enum MaritalStatus {
+  solteiro
+  casado
+  outra
+}
+
+enum EducationLevel {
+  ensino_medio
+  ensino_tecnico
+  superior_incompleto
+  superior_completo
+  pos_graduado
+}
+
+enum ContractType {
+  efetivo
+  estagio
+}
+
+enum HealthPlanOption {
+  regional
+  nacional
+  nao
+}
+
+enum ShirtSize {
+  p_fem
+  m_fem
+  g_fem
+  gg_fem
+  xg_fem
+  p_masc
+  m_masc
+  g_masc
+  gg_masc
+  xg_masc
+}
+
+enum BankAccountOption {
+  sim
+  nao
+  outra
+}
+
 model User {
   id          String    @id @default(cuid())
   name        String
@@ -50,6 +108,47 @@ model User {
   city        String?
   state       String?
   zipCode     String?
+
+  // Personal data fields
+  rg              String?
+  ethnicity       Ethnicity?
+  gender          Gender?
+  maritalStatus   MaritalStatus?
+  educationLevel  EducationLevel?
+  livesWithDescription String?
+
+  // Contact
+  personalEmail     String?
+  addressNumber     String?
+  addressComplement String?
+
+  // Financial & Benefits
+  hasBradescoAccount  BankAccountOption?
+  bankAgency          String?
+  bankAccount         String?
+  hasOtherEmployment  Boolean?
+  healthPlanOption    HealthPlanOption?
+  wantsTransportVoucher Boolean?
+  contractType        ContractType?
+  shirtSize           ShirtSize?
+
+  // Family
+  hasChildren      Boolean?
+  childrenAges     String?
+  hasIRDependents  Boolean?
+
+  // About Me
+  hobbies                  String[]
+  socialNetworks           Json?
+  favoriteBookMovieGenres  String?
+  favoriteBooks            String?
+  favoriteMovies           String?
+  favoriteMusic            String?
+  admiredValues            String?
+  foodAllergies            String?
+  hasPets                  String?
+  participateInVideos      Boolean?
+
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

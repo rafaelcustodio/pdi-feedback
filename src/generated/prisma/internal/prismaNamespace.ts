@@ -1515,6 +1515,36 @@ export const UserScalarFieldEnum = {
   city: 'city',
   state: 'state',
   zipCode: 'zipCode',
+  rg: 'rg',
+  ethnicity: 'ethnicity',
+  gender: 'gender',
+  maritalStatus: 'maritalStatus',
+  educationLevel: 'educationLevel',
+  livesWithDescription: 'livesWithDescription',
+  personalEmail: 'personalEmail',
+  addressNumber: 'addressNumber',
+  addressComplement: 'addressComplement',
+  hasBradescoAccount: 'hasBradescoAccount',
+  bankAgency: 'bankAgency',
+  bankAccount: 'bankAccount',
+  hasOtherEmployment: 'hasOtherEmployment',
+  healthPlanOption: 'healthPlanOption',
+  wantsTransportVoucher: 'wantsTransportVoucher',
+  contractType: 'contractType',
+  shirtSize: 'shirtSize',
+  hasChildren: 'hasChildren',
+  childrenAges: 'childrenAges',
+  hasIRDependents: 'hasIRDependents',
+  hobbies: 'hobbies',
+  socialNetworks: 'socialNetworks',
+  favoriteBookMovieGenres: 'favoriteBookMovieGenres',
+  favoriteBooks: 'favoriteBooks',
+  favoriteMovies: 'favoriteMovies',
+  favoriteMusic: 'favoriteMusic',
+  admiredValues: 'admiredValues',
+  foodAllergies: 'foodAllergies',
+  hasPets: 'hasPets',
+  participateInVideos: 'participateInVideos',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1722,12 +1752,29 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
 export const NullsOrder = {
@@ -1804,6 +1851,132 @@ export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
  * Reference to a field of type 'Boolean'
  */
 export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
+ * Reference to a field of type 'Ethnicity'
+ */
+export type EnumEthnicityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Ethnicity'>
+    
+
+
+/**
+ * Reference to a field of type 'Ethnicity[]'
+ */
+export type ListEnumEthnicityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Ethnicity[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Gender'
+ */
+export type EnumGenderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Gender'>
+    
+
+
+/**
+ * Reference to a field of type 'Gender[]'
+ */
+export type ListEnumGenderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Gender[]'>
+    
+
+
+/**
+ * Reference to a field of type 'MaritalStatus'
+ */
+export type EnumMaritalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MaritalStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'MaritalStatus[]'
+ */
+export type ListEnumMaritalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MaritalStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'EducationLevel'
+ */
+export type EnumEducationLevelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EducationLevel'>
+    
+
+
+/**
+ * Reference to a field of type 'EducationLevel[]'
+ */
+export type ListEnumEducationLevelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EducationLevel[]'>
+    
+
+
+/**
+ * Reference to a field of type 'BankAccountOption'
+ */
+export type EnumBankAccountOptionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BankAccountOption'>
+    
+
+
+/**
+ * Reference to a field of type 'BankAccountOption[]'
+ */
+export type ListEnumBankAccountOptionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BankAccountOption[]'>
+    
+
+
+/**
+ * Reference to a field of type 'HealthPlanOption'
+ */
+export type EnumHealthPlanOptionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'HealthPlanOption'>
+    
+
+
+/**
+ * Reference to a field of type 'HealthPlanOption[]'
+ */
+export type ListEnumHealthPlanOptionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'HealthPlanOption[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ContractType'
+ */
+export type EnumContractTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ContractType'>
+    
+
+
+/**
+ * Reference to a field of type 'ContractType[]'
+ */
+export type ListEnumContractTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ContractType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ShirtSize'
+ */
+export type EnumShirtSizeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ShirtSize'>
+    
+
+
+/**
+ * Reference to a field of type 'ShirtSize[]'
+ */
+export type ListEnumShirtSizeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ShirtSize[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 

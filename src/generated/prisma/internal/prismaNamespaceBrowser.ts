@@ -106,6 +106,36 @@ export const UserScalarFieldEnum = {
   city: 'city',
   state: 'state',
   zipCode: 'zipCode',
+  rg: 'rg',
+  ethnicity: 'ethnicity',
+  gender: 'gender',
+  maritalStatus: 'maritalStatus',
+  educationLevel: 'educationLevel',
+  livesWithDescription: 'livesWithDescription',
+  personalEmail: 'personalEmail',
+  addressNumber: 'addressNumber',
+  addressComplement: 'addressComplement',
+  hasBradescoAccount: 'hasBradescoAccount',
+  bankAgency: 'bankAgency',
+  bankAccount: 'bankAccount',
+  hasOtherEmployment: 'hasOtherEmployment',
+  healthPlanOption: 'healthPlanOption',
+  wantsTransportVoucher: 'wantsTransportVoucher',
+  contractType: 'contractType',
+  shirtSize: 'shirtSize',
+  hasChildren: 'hasChildren',
+  childrenAges: 'childrenAges',
+  hasIRDependents: 'hasIRDependents',
+  hobbies: 'hobbies',
+  socialNetworks: 'socialNetworks',
+  favoriteBookMovieGenres: 'favoriteBookMovieGenres',
+  favoriteBooks: 'favoriteBooks',
+  favoriteMovies: 'favoriteMovies',
+  favoriteMusic: 'favoriteMusic',
+  admiredValues: 'admiredValues',
+  foodAllergies: 'foodAllergies',
+  hasPets: 'hasPets',
+  participateInVideos: 'participateInVideos',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -313,12 +343,29 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
 export const NullsOrder = {
