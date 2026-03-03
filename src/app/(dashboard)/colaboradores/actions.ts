@@ -316,9 +316,26 @@ export async function createEmployee(data: {
   birthDate?: string;
   jobTitle?: string;
   address?: string;
+  addressNumber?: string;
+  addressComplement?: string;
   city?: string;
   state?: string;
   zipCode?: string;
+  personalEmail?: string;
+  rg?: string;
+  gender?: string;
+  ethnicity?: string;
+  maritalStatus?: string;
+  educationLevel?: string;
+  livesWithDescription?: string;
+  hasBradescoAccount?: string;
+  bankAgency?: string;
+  bankAccount?: string;
+  hasOtherEmployment?: boolean;
+  healthPlanOption?: string;
+  wantsTransportVoucher?: boolean;
+  contractType?: string;
+  shirtSize?: string;
 }): Promise<{ success: boolean; error?: string; id?: string }> {
   const session = await requireAdmin();
   if (!session) {
@@ -386,9 +403,26 @@ export async function createEmployee(data: {
       birthDate: data.birthDate ? new Date(data.birthDate) : null,
       jobTitle: data.jobTitle?.trim() || null,
       address: data.address?.trim() || null,
+      addressNumber: data.addressNumber?.trim() || null,
+      addressComplement: data.addressComplement?.trim() || null,
       city: data.city?.trim() || null,
       state: data.state?.trim() || null,
       zipCode: data.zipCode?.replace(/\D/g, "") || null,
+      personalEmail: data.personalEmail?.trim() || null,
+      rg: data.rg?.trim() || null,
+      gender: (data.gender as never) || null,
+      ethnicity: (data.ethnicity as never) || null,
+      maritalStatus: (data.maritalStatus as never) || null,
+      educationLevel: (data.educationLevel as never) || null,
+      livesWithDescription: data.livesWithDescription?.trim() || null,
+      hasBradescoAccount: (data.hasBradescoAccount as never) || null,
+      bankAgency: data.bankAgency?.trim() || null,
+      bankAccount: data.bankAccount?.trim() || null,
+      hasOtherEmployment: data.hasOtherEmployment ?? null,
+      healthPlanOption: (data.healthPlanOption as never) || null,
+      wantsTransportVoucher: data.wantsTransportVoucher ?? null,
+      contractType: (data.contractType as never) || null,
+      shirtSize: (data.shirtSize as never) || null,
     },
   });
 
@@ -431,9 +465,26 @@ export async function updateEmployee(
     birthDate?: string;
     jobTitle?: string;
     address?: string;
+    addressNumber?: string;
+    addressComplement?: string;
     city?: string;
     state?: string;
     zipCode?: string;
+    personalEmail?: string;
+    rg?: string;
+    gender?: string;
+    ethnicity?: string;
+    maritalStatus?: string;
+    educationLevel?: string;
+    livesWithDescription?: string;
+    hasBradescoAccount?: string;
+    bankAgency?: string;
+    bankAccount?: string;
+    hasOtherEmployment?: boolean;
+    healthPlanOption?: string;
+    wantsTransportVoucher?: boolean;
+    contractType?: string;
+    shirtSize?: string;
     generateOnboarding?: boolean;
   }
 ): Promise<{ success: boolean; error?: string }> {
@@ -505,9 +556,26 @@ export async function updateEmployee(
       birthDate: data.birthDate ? new Date(data.birthDate) : null,
       jobTitle: data.jobTitle?.trim() || null,
       address: data.address?.trim() || null,
+      addressNumber: data.addressNumber?.trim() || null,
+      addressComplement: data.addressComplement?.trim() || null,
       city: data.city?.trim() || null,
       state: data.state?.trim() || null,
       zipCode: data.zipCode?.replace(/\D/g, "") || null,
+      personalEmail: data.personalEmail?.trim() || null,
+      rg: data.rg?.trim() || null,
+      gender: (data.gender as never) || null,
+      ethnicity: (data.ethnicity as never) || null,
+      maritalStatus: (data.maritalStatus as never) || null,
+      educationLevel: (data.educationLevel as never) || null,
+      livesWithDescription: data.livesWithDescription?.trim() || null,
+      hasBradescoAccount: (data.hasBradescoAccount as never) || null,
+      bankAgency: data.bankAgency?.trim() || null,
+      bankAccount: data.bankAccount?.trim() || null,
+      hasOtherEmployment: data.hasOtherEmployment ?? null,
+      healthPlanOption: (data.healthPlanOption as never) || null,
+      wantsTransportVoucher: data.wantsTransportVoucher ?? null,
+      contractType: (data.contractType as never) || null,
+      shirtSize: (data.shirtSize as never) || null,
     },
   });
 

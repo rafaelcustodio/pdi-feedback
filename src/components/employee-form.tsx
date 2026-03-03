@@ -80,6 +80,40 @@ const EDUCATION_LEVEL_OPTIONS = [
   { value: "pos_graduado", label: "Pós-Graduado" },
 ];
 
+const BANK_ACCOUNT_OPTIONS = [
+  { value: "", label: "Selecione" },
+  { value: "sim", label: "Sim" },
+  { value: "nao", label: "Não" },
+  { value: "outra", label: "Outra" },
+];
+
+const HEALTH_PLAN_OPTIONS = [
+  { value: "", label: "Selecione" },
+  { value: "regional", label: "Regional" },
+  { value: "nacional", label: "Nacional" },
+  { value: "nao", label: "Não" },
+];
+
+const CONTRACT_TYPE_OPTIONS = [
+  { value: "", label: "Selecione" },
+  { value: "efetivo", label: "Efetivo" },
+  { value: "estagio", label: "Estágio" },
+];
+
+const SHIRT_SIZE_OPTIONS = [
+  { value: "", label: "Selecione" },
+  { value: "p_fem", label: "P Feminino" },
+  { value: "m_fem", label: "M Feminino" },
+  { value: "g_fem", label: "G Feminino" },
+  { value: "gg_fem", label: "GG Feminino" },
+  { value: "xg_fem", label: "XG Feminino" },
+  { value: "p_masc", label: "P Masculino" },
+  { value: "m_masc", label: "M Masculino" },
+  { value: "g_masc", label: "G Masculino" },
+  { value: "gg_masc", label: "GG Masculino" },
+  { value: "xg_masc", label: "XG Masculino" },
+];
+
 const TAB_LABELS = [
   "Dados Pessoais",
   "Endereço e Contato",
@@ -255,9 +289,26 @@ export function EmployeeForm({ mode, orgUnits, isPending = false, initialData }:
         birthDate: birthDate || undefined,
         jobTitle: jobTitle || undefined,
         address: address || undefined,
+        addressNumber: addressNumber || undefined,
+        addressComplement: addressComplement || undefined,
         city: city || undefined,
         state: state || undefined,
         zipCode: zipCode || undefined,
+        personalEmail: personalEmail || undefined,
+        rg: rg || undefined,
+        gender: gender || undefined,
+        ethnicity: ethnicity || undefined,
+        maritalStatus: maritalStatus || undefined,
+        educationLevel: educationLevel || undefined,
+        livesWithDescription: livesWithDescription || undefined,
+        hasBradescoAccount: hasBradescoAccount || undefined,
+        bankAgency: bankAgency || undefined,
+        bankAccount: bankAccount || undefined,
+        hasOtherEmployment,
+        healthPlanOption: healthPlanOption || undefined,
+        wantsTransportVoucher,
+        contractType: contractType || undefined,
+        shirtSize: shirtSize || undefined,
       });
     } else {
       result = await updateEmployee(initialData!.id, {
@@ -273,9 +324,26 @@ export function EmployeeForm({ mode, orgUnits, isPending = false, initialData }:
         birthDate: birthDate || undefined,
         jobTitle: jobTitle || undefined,
         address: address || undefined,
+        addressNumber: addressNumber || undefined,
+        addressComplement: addressComplement || undefined,
         city: city || undefined,
         state: state || undefined,
         zipCode: zipCode || undefined,
+        personalEmail: personalEmail || undefined,
+        rg: rg || undefined,
+        gender: gender || undefined,
+        ethnicity: ethnicity || undefined,
+        maritalStatus: maritalStatus || undefined,
+        educationLevel: educationLevel || undefined,
+        livesWithDescription: livesWithDescription || undefined,
+        hasBradescoAccount: hasBradescoAccount || undefined,
+        bankAgency: bankAgency || undefined,
+        bankAccount: bankAccount || undefined,
+        hasOtherEmployment,
+        healthPlanOption: healthPlanOption || undefined,
+        wantsTransportVoucher,
+        contractType: contractType || undefined,
+        shirtSize: shirtSize || undefined,
         generateOnboarding,
       });
     }
@@ -324,14 +392,6 @@ export function EmployeeForm({ mode, orgUnits, isPending = false, initialData }:
   const age = calculateAge(birthDate);
 
   // Suppress unused variable warnings for state that will be used in future US stories
-  void hasBradescoAccount; void setHasBradescoAccount;
-  void bankAgency; void setBankAgency;
-  void bankAccount; void setBankAccount;
-  void hasOtherEmployment; void setHasOtherEmployment;
-  void healthPlanOption; void setHealthPlanOption;
-  void wantsTransportVoucher; void setWantsTransportVoucher;
-  void contractType; void setContractType;
-  void shirtSize; void setShirtSize;
   void hasChildren; void setHasChildren;
   void childrenAges; void setChildrenAges;
   void hasIRDependents; void setHasIRDependents;
@@ -844,10 +904,157 @@ export function EmployeeForm({ mode, orgUnits, isPending = false, initialData }:
             </div>
           )}
 
-          {/* Tab 3: Financeiro e Benefícios (placeholder for US-007) */}
+          {/* Tab 3: Financeiro e Benefícios */}
           {activeTab === 2 && (
-            <div className="py-8 text-center text-sm text-gray-500 dark:text-gray-400">
-              Seção de Financeiro e Benefícios será implementada em breve.
+            <div className="grid gap-4 sm:grid-cols-2">
+              {/* Conta Bradesco */}
+              <div>
+                <label htmlFor="emp-bradesco" className={labelClass}>
+                  Conta Bradesco
+                </label>
+                <select
+                  id="emp-bradesco"
+                  value={hasBradescoAccount}
+                  onChange={(e) => setHasBradescoAccount(e.target.value)}
+                  className={inputClass}
+                  disabled={loading}
+                >
+                  {BANK_ACCOUNT_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Placeholder for grid alignment */}
+              <div />
+
+              {/* Bank Agency - visible only when hasBradescoAccount = "sim" */}
+              {hasBradescoAccount === "sim" && (
+                <>
+                  <div>
+                    <label htmlFor="emp-bankagency" className={labelClass}>
+                      Agência
+                    </label>
+                    <input
+                      id="emp-bankagency"
+                      type="text"
+                      value={bankAgency}
+                      onChange={(e) => setBankAgency(e.target.value)}
+                      placeholder="Nº da agência"
+                      className={inputClass}
+                      disabled={loading}
+                    />
+                  </div>
+
+                  {/* Bank Account */}
+                  <div>
+                    <label htmlFor="emp-bankaccount" className={labelClass}>
+                      Conta
+                    </label>
+                    <input
+                      id="emp-bankaccount"
+                      type="text"
+                      value={bankAccount}
+                      onChange={(e) => setBankAccount(e.target.value)}
+                      placeholder="Nº da conta"
+                      className={inputClass}
+                      disabled={loading}
+                    />
+                  </div>
+                </>
+              )}
+
+              {/* Outro emprego registrado */}
+              <div className="flex items-center gap-3 sm:col-span-2">
+                <input
+                  id="emp-otheremployment"
+                  type="checkbox"
+                  checked={hasOtherEmployment}
+                  onChange={(e) => setHasOtherEmployment(e.target.checked)}
+                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                  disabled={loading}
+                />
+                <label htmlFor="emp-otheremployment" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Possui outro emprego registrado
+                </label>
+              </div>
+
+              {/* Plano de Saúde Unimed */}
+              <div>
+                <label htmlFor="emp-healthplan" className={labelClass}>
+                  Plano de Saúde Unimed
+                </label>
+                <select
+                  id="emp-healthplan"
+                  value={healthPlanOption}
+                  onChange={(e) => setHealthPlanOption(e.target.value)}
+                  className={inputClass}
+                  disabled={loading}
+                >
+                  {HEALTH_PLAN_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Vale Transporte */}
+              <div className="flex items-center gap-3">
+                <input
+                  id="emp-transportvoucher"
+                  type="checkbox"
+                  checked={wantsTransportVoucher}
+                  onChange={(e) => setWantsTransportVoucher(e.target.checked)}
+                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                  disabled={loading}
+                />
+                <label htmlFor="emp-transportvoucher" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Deseja vale transporte
+                </label>
+              </div>
+
+              {/* Formato de Contratação */}
+              <div>
+                <label htmlFor="emp-contracttype" className={labelClass}>
+                  Formato de Contratação
+                </label>
+                <select
+                  id="emp-contracttype"
+                  value={contractType}
+                  onChange={(e) => setContractType(e.target.value)}
+                  className={inputClass}
+                  disabled={loading}
+                >
+                  {CONTRACT_TYPE_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Tamanho Camiseta */}
+              <div>
+                <label htmlFor="emp-shirtsize" className={labelClass}>
+                  Tamanho da Camiseta
+                </label>
+                <select
+                  id="emp-shirtsize"
+                  value={shirtSize}
+                  onChange={(e) => setShirtSize(e.target.value)}
+                  className={inputClass}
+                  disabled={loading}
+                >
+                  {SHIRT_SIZE_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           )}
 
