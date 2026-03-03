@@ -2,6 +2,8 @@
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { sendEmail } from "@/lib/email";
+import { buildNineBoxInviteHtml } from "@/lib/email-templates";
 import { revalidatePath } from "next/cache";
 
 export type NineBoxStatusData = {
@@ -139,7 +141,7 @@ export async function startNineBoxEvaluation(
   }
 
   // Create the evaluation with evaluators
-  await prisma.nineBoxEvaluation.create({
+  const evaluation = await prisma.nineBoxEvaluation.create({
     data: {
       feedbackId,
       evaluateeId: feedback.employeeId,
@@ -152,7 +154,43 @@ export async function startNineBoxEvaluation(
         })),
       },
     },
+    include: {
+      evaluatee: { select: { name: true } },
+      evaluators: {
+        include: {
+          evaluator: { select: { name: true, email: true } },
+        },
+      },
+    },
   });
+
+  // Send notifications and emails to each evaluator
+  const evaluateeName = evaluation.evaluatee.name;
+  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+
+  for (const evaluatorRecord of evaluation.evaluators) {
+    // Create in-app notification
+    await prisma.notification.create({
+      data: {
+        userId: evaluatorRecord.evaluatorId,
+        type: "ninebox_invite",
+        title: `Avaliação Nine Box — ${evaluateeName}`,
+        message: `Você foi convidado para avaliar ${evaluateeName}. Acesse o formulário para responder.`,
+      },
+    });
+
+    // Send email
+    const formUrl = `${baseUrl}/ninebox/${evaluatorRecord.id}`;
+    await sendEmail({
+      to: evaluatorRecord.evaluator.email,
+      subject: `Convite: Avaliação Nine Box de ${evaluateeName}`,
+      html: buildNineBoxInviteHtml(
+        evaluatorRecord.evaluator.name,
+        evaluateeName,
+        formUrl
+      ),
+    });
+  }
 
   revalidatePath(`/feedbacks/${feedbackId}`);
   return { success: true };

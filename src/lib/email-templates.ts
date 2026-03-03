@@ -182,6 +182,57 @@ export function buildFeedbackSubmittedEmployeeHtml(
 }
 
 /**
+ * Build the HTML email sent to an evaluator invited to a Nine Box evaluation.
+ */
+export function buildNineBoxInviteHtml(
+  evaluatorName: string,
+  evaluateeName: string,
+  formUrl: string
+): string {
+  return `
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; background: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <div style="max-width: 640px; margin: 0 auto; padding: 32px 16px;">
+    <div style="background: #7c3aed; color: #fff; padding: 24px 32px; border-radius: 8px 8px 0 0;">
+      <h1 style="margin: 0; font-size: 22px; font-weight: 600;">
+        Avaliação Nine Box
+      </h1>
+      <p style="margin: 8px 0 0; font-size: 14px; opacity: 0.9;">
+        Você foi convidado para avaliar um colega
+      </p>
+    </div>
+    <div style="background: #fff; padding: 24px 32px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
+      <p style="color: #374151; font-size: 15px; line-height: 1.6; margin-top: 0;">
+        Olá <strong>${evaluatorName}</strong>,
+      </p>
+      <p style="color: #374151; font-size: 15px; line-height: 1.6;">
+        Você foi convidado para avaliar <strong>${evaluateeName}</strong> na avaliação Nine Box.
+      </p>
+      <p style="color: #374151; font-size: 15px; line-height: 1.6;">
+        Clique no botão abaixo para acessar o formulário e registrar sua avaliação.
+      </p>
+      <div style="margin-top: 24px; text-align: center;">
+        <a href="${formUrl}" style="display: inline-block; padding: 12px 32px; background: #7c3aed; color: #fff; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 15px;">
+          Responder Avaliação
+        </a>
+      </div>
+    </div>
+    <div style="text-align: center; padding: 16px; font-size: 12px; color: #9ca3af;">
+      Este é um e-mail automático do sistema PDI &amp; Feedback HR.
+      <br>
+      Não responda a este e-mail.
+    </div>
+  </div>
+</body>
+</html>`;
+}
+
+/**
  * Build the HTML email sent to a manager confirming their scheduled feedback was auto-submitted.
  */
 export function buildFeedbackSubmittedManagerHtml(
