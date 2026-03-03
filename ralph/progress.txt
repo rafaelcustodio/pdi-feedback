@@ -28,6 +28,8 @@
 - Composite string values: hasPets with "outra" uses `"outra: description"` format — parse with startsWith on init
 - ChangeRequest values are stored as strings — use `parseChangeRequestValue(fieldName, value)` helper to convert to boolean/Date/string before applying to User model
 - ChangeRequest duplicate prevention: check for existing pending request on same userId+fieldName before creating new one
+- Notification to all admins pattern: `prisma.user.findMany({ where: { role: "admin", isActive: true } })` + `prisma.notification.createMany` + fire-and-forget emails with `.catch()`
+- Adding new NotificationType enum value: create migration with `ALTER TYPE "NotificationType" ADD VALUE 'value_name';`
 ---
 
 ## 2026-03-03 - US-001
@@ -162,4 +164,34 @@
   - `bulkRejectChangeRequests` uses `updateMany` since no User field changes are needed — simpler than individual updates
   - `getChangeRequests` uses Prisma `include` for user/reviewedBy names, and supports search (by user name), status filter, and pagination
   - Role-based filtering pattern: admin sees all, non-admin sees only own (where.userId = currentUserId)
+---
+
+## 2026-03-03 - US-011
+- Implemented: Email and internal notification to HR admins when a ChangeRequest is created
+- Files changed: `prisma/schema.prisma` (added `change_request` to NotificationType enum), `prisma/migrations/20260303130000_add_change_request_notification_type/migration.sql`, `src/lib/email-templates.ts` (added `buildChangeRequestNotificationHtml` + `buildChangeRequestNotificationSubject`), `src/app/(dashboard)/colaboradores/actions.ts` (updated `createChangeRequest`)
+- **Learnings for future iterations:**
+  - Adding a new enum value to PostgreSQL: `ALTER TYPE "EnumName" ADD VALUE 'new_value';` — simple one-line migration
+  - Notification pattern: use `prisma.notification.createMany` with `data: admins.map(...)` to bulk-create notifications for all admins
+  - Email sending pattern: use dynamic `import()` for email modules to avoid pulling nodemailer into the server action bundle unnecessarily, then fire-and-forget with `.catch()` so email failures don't block the main operation
+  - Email template follows existing codebase pattern: amber/orange (#d97706) theme for change request notifications, inline styles, pt-BR language
+  - Always wrap notification/email logic in try-catch so the main action (creating the ChangeRequest) succeeds even if notification delivery fails
+  - Find active admins: `prisma.user.findMany({ where: { role: "admin", isActive: true } })`
+---
+
+## 2026-03-03 - US-012
+- Implemented: Expanded Profile page with full HR data in 5 read-only tabs
+- New server action: `getMyFullProfile` in `src/app/(dashboard)/perfil/actions.ts` — fetches logged-in user's own data (all fields + dependents + emergencyContacts)
+- New component: `src/components/perfil-data.tsx` — read-only view with 5 sub-tabs matching employee-form organization
+- Updated: `src/components/perfil-tabs.tsx` — accepts `profile` prop, renders `PerfilData` in the Perfil tab
+- Updated: `src/app/(dashboard)/perfil/page.tsx` — fetches profile data via `getMyFullProfile` alongside nineBoxResult using `Promise.all`
+- Files changed: `src/app/(dashboard)/perfil/actions.ts`, `src/app/(dashboard)/perfil/page.tsx`, `src/components/perfil-data.tsx` (new), `src/components/perfil-tabs.tsx`
+- **Learnings for future iterations:**
+  - Profile page uses `getEffectiveAuth()` to get user ID, then fetches directly — no `canAccessEmployee` needed since employee always has access to own data
+  - Enum label maps (GENDER_LABELS, ETHNICITY_LABELS, etc.) are duplicated from employee-form.tsx — could be extracted to a shared module if more consumers emerge
+  - Read-only Field component pattern: `<dt>` for label + `<dd>` for value with consistent dark mode classes
+  - `formatDate` uses `toLocaleDateString("pt-BR", { timeZone: "UTC" })` for server-rendered dates
+  - `calculateAge` uses UTC methods to avoid timezone-shifted day differences
+  - Hobbies displayed as colored tags (blue pill badges), social networks as key-value pairs, dependents/contacts as tables
+  - hasPets parsing: check `startsWith("outra: ")` and `slice(7)` for custom pet description — same pattern as employee-form
+  - `Promise.all` for parallel data fetching in server component page — fetches nineBoxResult and fullProfile concurrently
 ---

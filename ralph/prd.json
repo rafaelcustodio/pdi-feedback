@@ -204,8 +204,8 @@
         "Typecheck passes"
       ],
       "priority": 11,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Added change_request to NotificationType enum with migration. Created buildChangeRequestNotificationHtml and buildChangeRequestNotificationSubject templates in email-templates.ts. Updated createChangeRequest to: fetch employee name + all active admins, create internal notifications via createMany, send emails to each admin (non-blocking with catch). Fallback to console.log if SMTP not configured (project default)."
     },
     {
       "id": "US-012",
@@ -225,8 +225,8 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 12,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Created getMyFullProfile server action in perfil/actions.ts (fetches logged-in user's own full profile). Created perfil-data.tsx with 5 read-only tabs: Dados Pessoais (name, birthDate, age, gender, ethnicity, maritalStatus, CPF, RG, educationLevel, livesWithDescription), Endereço e Contato (address, CEP, city, state, personalEmail, phone), Financeiro e Benefícios (bank, health plan, transport, contract, shirt size), Família e Dependentes (children, IR dependents table, emergency contacts table), Sobre Mim (hobbies tags, social networks, favorites, allergies, pets, videos). Updated perfil-tabs.tsx and page.tsx to fetch and render profile data. Dark mode applied throughout."
     },
     {
       "id": "US-013",
