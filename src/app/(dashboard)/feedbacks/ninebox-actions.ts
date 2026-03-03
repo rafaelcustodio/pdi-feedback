@@ -196,6 +196,59 @@ export async function startNineBoxEvaluation(
   return { success: true };
 }
 
+export async function closeNineBoxEvaluation(
+  evaluationId: string
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  if (role === "employee") {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const evaluation = await prisma.nineBoxEvaluation.findUnique({
+    where: { id: evaluationId },
+    include: {
+      feedback: { select: { managerId: true } },
+      evaluators: { select: { status: true } },
+    },
+  });
+
+  if (!evaluation) {
+    return { success: false, error: "Avaliação não encontrada" };
+  }
+
+  // Only the feedback manager or admin can close
+  if (role !== "admin" && evaluation.feedback.managerId !== userId) {
+    return { success: false, error: "Apenas o gestor do feedback pode encerrar a avaliação" };
+  }
+
+  if (evaluation.status === "closed") {
+    return { success: false, error: "Avaliação já está encerrada" };
+  }
+
+  // Must have at least 1 completed evaluator
+  const hasCompleted = evaluation.evaluators.some(
+    (e: { status: string }) => e.status === "completed"
+  );
+  if (!hasCompleted) {
+    return { success: false, error: "É necessário pelo menos 1 avaliador ter respondido para encerrar" };
+  }
+
+  await prisma.nineBoxEvaluation.update({
+    where: { id: evaluationId },
+    data: { status: "closed" },
+  });
+
+  revalidatePath(`/feedbacks/${evaluation.feedbackId}`);
+  return { success: true };
+}
+
 export type NineBoxEvaluatorFormData = {
   evaluatorId: string;
   evaluateeName: string;

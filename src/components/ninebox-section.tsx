@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
   startNineBoxEvaluation,
+  closeNineBoxEvaluation,
 } from "@/app/(dashboard)/feedbacks/ninebox-actions";
 import type {
   NineBoxStatusData,
@@ -88,17 +89,16 @@ export function NineBoxSection({
     );
   }
 
-  // Evaluation exists — show status
+  // Evaluation exists — show status with evaluator details
+  const isOpen = nineBoxStatus.status === "open";
+  const canClose = isOpen && nineBoxStatus.completedEvaluators > 0;
+
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6">
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium text-gray-700">Nine Box</h3>
-        <span className="inline-flex rounded-full bg-orange-100 px-2.5 py-1 text-xs font-medium text-orange-700">
-          Nine Box em andamento — {nineBoxStatus.completedEvaluators}/
-          {nineBoxStatus.totalEvaluators} respondidos
-        </span>
-      </div>
-    </div>
+    <NineBoxStatusPanel
+      nineBoxStatus={nineBoxStatus}
+      isOpen={isOpen}
+      canClose={canClose}
+    />
   );
 }
 
@@ -222,6 +222,96 @@ function StartNineBoxModal({
           </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+function NineBoxStatusPanel({
+  nineBoxStatus,
+  isOpen,
+  canClose,
+}: {
+  nineBoxStatus: NineBoxStatusData;
+  isOpen: boolean;
+  canClose: boolean;
+}) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+
+  const handleClose = () => {
+    setError(null);
+    startTransition(async () => {
+      const result = await closeNineBoxEvaluation(nineBoxStatus.evaluationId);
+      if (result.success) {
+        router.refresh();
+      } else {
+        setError(result.error || "Erro ao encerrar avaliação");
+      }
+    });
+  };
+
+  return (
+    <div className="rounded-lg border border-gray-200 bg-white p-6">
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-medium text-gray-700">Nine Box</h3>
+        {isOpen ? (
+          <span className="inline-flex rounded-full bg-orange-100 px-2.5 py-1 text-xs font-medium text-orange-700">
+            Em andamento
+          </span>
+        ) : (
+          <span className="inline-flex rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">
+            Encerrado
+          </span>
+        )}
+      </div>
+
+      <p className="mt-3 text-sm text-gray-600">
+        {nineBoxStatus.completedEvaluators} de {nineBoxStatus.totalEvaluators}{" "}
+        avaliadores responderam
+      </p>
+
+      {/* Evaluator list */}
+      <ul className="mt-3 divide-y divide-gray-100">
+        {nineBoxStatus.evaluators.map((evaluator) => (
+          <li
+            key={evaluator.id}
+            className="flex items-center justify-between py-2"
+          >
+            <span className="text-sm text-gray-800">
+              {evaluator.evaluatorName}
+            </span>
+            {evaluator.status === "completed" ? (
+              <span className="inline-flex rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+                Respondido
+              </span>
+            ) : (
+              <span className="inline-flex rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-700">
+                Pendente
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+
+      {error && (
+        <div className="mt-3 rounded-md bg-red-50 p-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
+      {canClose && (
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={handleClose}
+            disabled={isPending}
+            className="rounded-md bg-gray-800 px-4 py-2 text-sm font-medium text-white hover:bg-gray-900 disabled:opacity-50"
+          >
+            {isPending ? "Encerrando..." : "Encerrar Avaliação"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

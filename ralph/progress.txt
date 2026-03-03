@@ -69,3 +69,15 @@
   - Next.js 16 App Router `params` is a Promise — must `await params` in server components
   - For form pages with multiple states (pending/completed/closed/unauthorized), handle all states in the server component and only render the form for the valid "pending" state
 ---
+
+## 2026-03-02 - US-005
+- What was implemented: Manager can now track evaluator status and close Nine Box evaluations from the feedback detail page
+- Files changed:
+  - `src/app/(dashboard)/feedbacks/ninebox-actions.ts` — Added `closeNineBoxEvaluation` server action with access control (manager/admin), status validation, and minimum 1 completed evaluator check
+  - `src/components/ninebox-section.tsx` — Replaced simple status badge with full evaluator tracking panel: status badge (orange "Em andamento" / grey "Encerrado"), counter, evaluator list with individual status badges (green "Respondido" / yellow "Pendente"), and "Encerrar Avaliação" button
+- **Learnings for future iterations:**
+  - The NineBoxStatusData type already included evaluator details (name, status) from US-002, so no server-side data changes were needed
+  - Extracted the status panel into a separate `NineBoxStatusPanel` component to keep hooks (useTransition, useRouter, useState) at the component level — the parent `NineBoxSection` conditionally returns different views and can't use hooks after early returns
+  - The "Encerrar Avaliação" button only appears when status is open AND at least 1 evaluator has responded — both conditions checked client-side and server-side
+  - `revalidatePath` in `closeNineBoxEvaluation` is safe because it's called from a user action (button click), unlike the warning about `generateScheduleNotifications`
+---
