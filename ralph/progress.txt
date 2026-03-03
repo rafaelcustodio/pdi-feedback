@@ -1,0 +1,43 @@
+## Codebase Patterns
+- Prisma schema at `prisma/schema.prisma`, generated client at `src/generated/prisma/` (gitignored)
+- In this sandboxed dev environment, `prisma generate` and `prisma migrate` cannot download engine binaries (network restricted). Manually create migration SQL and update generated client files (enums.ts, models.ts, model type files) instead.
+- Migration SQL files go in `prisma/migrations/YYYYMMDDHHMMSS_name/migration.sql`
+- Generated enums live in `src/generated/prisma/enums.ts`, model types in `src/generated/prisma/models/`
+- Existing lint errors in theme-provider.tsx and programacao/actions.ts are pre-existing; lint will always show 1 error + 4 warnings
+- Server Actions pattern: `src/app/(dashboard)/[feature]/actions.ts` for mutations/queries
+- Access control: always use `getAccessibleEmployeeIds()` or filter helpers before querying
+- To use NineBox models in Prisma queries, add `nineBoxEvaluation: any; nineBoxEvaluator: any` to `PrismaClientExtended` in `src/lib/prisma.ts` and add delegate getters to `src/generated/prisma/internal/class.ts`
+- Modals follow pattern: `useState` boolean + `fixed inset-0 z-50 bg-black/50` overlay + centered white card
+- NineBox server actions live in `src/app/(dashboard)/feedbacks/ninebox-actions.ts` (separate from main actions.ts)
+---
+
+## 2026-03-02 - US-001
+- What was implemented: Added NineBoxEvaluation and NineBoxEvaluator Prisma models, NineBoxStatus and NineBoxEvaluatorStatus enums, ninebox_invite NotificationType value, relations on User and Feedback models
+- Files changed:
+  - `prisma/schema.prisma` — Added enums, models, and relations
+  - `prisma/migrations/20260302210000_add_ninebox_models/migration.sql` — Manual migration SQL
+  - `src/generated/prisma/enums.ts` — Added NineBoxStatus, NineBoxEvaluatorStatus, ninebox_invite
+  - `src/generated/prisma/models.ts` — Added barrel exports for new models
+  - `src/generated/prisma/models/NineBoxEvaluation.ts` — Minimal model types
+  - `src/generated/prisma/models/NineBoxEvaluator.ts` — Minimal model types
+- **Learnings for future iterations:**
+  - Prisma engine binaries can't be downloaded in this sandbox — must manually write migration SQL and update generated client files
+  - The generated client files under `src/generated/prisma/` are gitignored, so only schema and migration SQL get committed
+  - Typecheck passes as long as no code references types that don't exist in the generated client
+  - For future stories that use NineBox models in queries, the `internal/class.ts` and `internal/prismaNamespace.ts` files would also need updates, but this might require running `prisma generate` in a full environment
+---
+
+## 2026-03-02 - US-002
+- What was implemented: Manager can start Nine Box evaluation from feedback detail page, with modal for selecting evaluators and status display
+- Files changed:
+  - `src/app/(dashboard)/feedbacks/ninebox-actions.ts` — New server actions: getNineBoxStatus, getEvaluatorCandidates, startNineBoxEvaluation
+  - `src/components/ninebox-section.tsx` — Client component with "Iniciar Nine Box" button, evaluator selection modal, and status display
+  - `src/app/(dashboard)/feedbacks/[id]/page.tsx` — Integrated NineBoxSection into both edit and read-only views
+  - `src/lib/prisma.ts` — Added nineBoxEvaluation and nineBoxEvaluator to PrismaClientExtended type
+  - `src/generated/prisma/internal/class.ts` — Added delegate getters for NineBox models
+- **Learnings for future iterations:**
+  - To add new Prisma model accessors without running `prisma generate`, add `any`-typed getters to `class.ts` and update `PrismaClientExtended` in `prisma.ts`
+  - The feedback detail page renders FeedbackForm for editable feedbacks and FeedbackReadOnly for submitted ones — NineBox section appears below both
+  - NineBox button visibility: only shown to manager of the feedback (or admin), hidden when feedback is cancelled or already has an evaluation
+  - Server Actions in separate ninebox-actions.ts to keep the main actions.ts clean
+---

@@ -1,8 +1,10 @@
 import { auth } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
 import { getFeedbackById } from "../actions";
+import { getNineBoxStatus, getEvaluatorCandidates } from "../ninebox-actions";
 import { FeedbackForm } from "@/components/feedback-form";
 import { FeedbackReadOnly } from "@/components/feedback-read-only";
+import { NineBoxSection } from "@/components/ninebox-section";
 
 export default async function FeedbackDetailPage({
   params,
@@ -29,6 +31,17 @@ export default async function FeedbackDetailPage({
     (feedback.status === "draft" || feedback.status === "scheduled") &&
     (role === "admin" || feedback.managerId === userId);
 
+  // Check if user is the manager of this feedback (or admin)
+  const isManager = role === "admin" || feedback.managerId === userId;
+
+  // Fetch Nine Box data in parallel for managers
+  const [nineBoxStatus, candidates] = isManager
+    ? await Promise.all([
+        getNineBoxStatus(id),
+        getEvaluatorCandidates(id),
+      ])
+    : [null, []];
+
   if (canEdit) {
     return (
       <div className="mx-auto max-w-3xl">
@@ -53,6 +66,15 @@ export default async function FeedbackDetailPage({
               : undefined,
           }}
         />
+        <div className="mt-6">
+          <NineBoxSection
+            feedbackId={id}
+            isManager={isManager}
+            isCancelled={feedback.status === "cancelled"}
+            nineBoxStatus={nineBoxStatus}
+            candidates={candidates}
+          />
+        </div>
       </div>
     );
   }
@@ -61,6 +83,15 @@ export default async function FeedbackDetailPage({
   return (
     <div className="mx-auto max-w-3xl">
       <FeedbackReadOnly feedback={feedback} />
+      <div className="mt-6">
+        <NineBoxSection
+          feedbackId={id}
+          isManager={isManager}
+          isCancelled={feedback.status === "cancelled"}
+          nineBoxStatus={nineBoxStatus}
+          candidates={candidates}
+        />
+      </div>
     </div>
   );
 }

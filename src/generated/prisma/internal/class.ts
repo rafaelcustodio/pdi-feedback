@@ -307,6 +307,16 @@ export interface PrismaClient<
     * ```
     */
   get notification(): Prisma.NotificationDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.nineBoxEvaluation`: Exposes CRUD operations for the **NineBoxEvaluation** model.
+    */
+  get nineBoxEvaluation(): any;
+
+  /**
+   * `prisma.nineBoxEvaluator`: Exposes CRUD operations for the **NineBoxEvaluator** model.
+    */
+  get nineBoxEvaluator(): any;
 }
 
 export function getPrismaClientClass(): PrismaClientConstructor {

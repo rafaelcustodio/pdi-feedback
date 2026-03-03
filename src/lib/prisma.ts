@@ -8,7 +8,7 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type PrismaClientExtended = PrismaClient & { pDIFollowUp: any };
+type PrismaClientExtended = PrismaClient & { pDIFollowUp: any; nineBoxEvaluation: any; nineBoxEvaluator: any };
 
 export const prisma = (globalForPrisma.prisma ??
   new PrismaClient({

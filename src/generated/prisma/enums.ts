@@ -75,7 +75,24 @@ export const NotificationType = {
   feedback_reminder: 'feedback_reminder',
   feedback_scheduled: 'feedback_scheduled',
   feedback_submitted_auto: 'feedback_submitted_auto',
+  ninebox_invite: 'ninebox_invite',
   general: 'general'
 } as const
 
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
+
+
+export const NineBoxStatus = {
+  open: 'open',
+  closed: 'closed'
+} as const
+
+export type NineBoxStatus = (typeof NineBoxStatus)[keyof typeof NineBoxStatus]
+
+
+export const NineBoxEvaluatorStatus = {
+  pending: 'pending',
+  completed: 'completed'
+} as const
+
+export type NineBoxEvaluatorStatus = (typeof NineBoxEvaluatorStatus)[keyof typeof NineBoxEvaluatorStatus]
