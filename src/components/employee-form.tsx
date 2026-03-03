@@ -308,6 +308,71 @@ export function EmployeeForm({ mode, orgUnits, isPending = false, initialData }:
   const [showOnboardingModal, setShowOnboardingModal] = useState(false);
   const initialOrgUnitId = useRef(initialData?.orgUnitId ?? "");
 
+  // Pre-fill from Forms import (sessionStorage) on create mode
+  useEffect(() => {
+    if (mode !== "create") return;
+    const raw = sessionStorage.getItem("formsImportData");
+    if (!raw) return;
+    sessionStorage.removeItem("formsImportData");
+    try {
+      const d = JSON.parse(raw) as Record<string, unknown>;
+      if (d.name) setName(d.name as string);
+      if (d.birthDate) setBirthDate(d.birthDate as string);
+      if (d.gender) setGender(d.gender as string);
+      if (d.ethnicity) setEthnicity(d.ethnicity as string);
+      if (d.maritalStatus) setMaritalStatus(d.maritalStatus as string);
+      if (d.cpf) setCpf(maskCPF(d.cpf as string));
+      if (d.rg) setRg(d.rg as string);
+      if (d.educationLevel) setEducationLevel(d.educationLevel as string);
+      if (d.livesWithDescription) setLivesWithDescription(d.livesWithDescription as string);
+      if (d.address) setAddress(d.address as string);
+      if (d.addressNumber) setAddressNumber(d.addressNumber as string);
+      if (d.addressComplement) setAddressComplement(d.addressComplement as string);
+      if (d.city) setCity(d.city as string);
+      if (d.state) setState(d.state as string);
+      if (d.zipCode) setZipCode(maskZip(d.zipCode as string));
+      if (d.personalEmail) setPersonalEmail(d.personalEmail as string);
+      if (d.phone) setPhone(maskPhone(d.phone as string));
+      if (d.hasBradescoAccount) setHasBradescoAccount(d.hasBradescoAccount as string);
+      if (d.bankAgency) setBankAgency(d.bankAgency as string);
+      if (d.bankAccount) setBankAccount(d.bankAccount as string);
+      if (typeof d.hasOtherEmployment === "boolean") setHasOtherEmployment(d.hasOtherEmployment);
+      if (d.healthPlanOption) setHealthPlanOption(d.healthPlanOption as string);
+      if (typeof d.wantsTransportVoucher === "boolean") setWantsTransportVoucher(d.wantsTransportVoucher);
+      if (d.contractType) setContractType(d.contractType as string);
+      if (d.shirtSize) setShirtSize(d.shirtSize as string);
+      if (typeof d.hasChildren === "boolean") setHasChildren(d.hasChildren);
+      if (d.childrenAges) setChildrenAges(d.childrenAges as string);
+      if (typeof d.hasIRDependents === "boolean") setHasIRDependents(d.hasIRDependents);
+      if (Array.isArray(d.hobbies)) setHobbies(d.hobbies as string[]);
+      if (d.socialNetworks && typeof d.socialNetworks === "object") setSocialNetworks(d.socialNetworks as Record<string, string>);
+      if (d.favoriteBookMovieGenres) setFavoriteBookMovieGenres(d.favoriteBookMovieGenres as string);
+      if (d.favoriteBooks) setFavoriteBooks(d.favoriteBooks as string);
+      if (d.favoriteMovies) setFavoriteMovies(d.favoriteMovies as string);
+      if (d.favoriteMusic) setFavoriteMusic(d.favoriteMusic as string);
+      if (d.admiredValues) setAdmiredValues(d.admiredValues as string);
+      if (d.foodAllergies) setFoodAllergies(d.foodAllergies as string);
+      if (d.hasPets) {
+        const petVal = d.hasPets as string;
+        if (petVal.startsWith("outra: ")) {
+          setHasPets("outra");
+          setPetsDescription(petVal.slice(7));
+        } else {
+          // Map "sim cachorros" → "sim_cachorros", "sim gatos" → "sim_gatos", "não" → "nao"
+          const petMap: Record<string, string> = {
+            "sim cachorros": "sim_cachorros",
+            "sim gatos": "sim_gatos",
+            "não": "nao",
+          };
+          setHasPets(petMap[petVal] ?? petVal);
+        }
+      }
+      if (typeof d.participateInVideos === "boolean") setParticipateInVideos(d.participateInVideos);
+    } catch {
+      // Ignore invalid JSON
+    }
+  }, [mode]);
+
   // Fetch managers when org unit changes
   useEffect(() => {
     async function fetchManagers() {
