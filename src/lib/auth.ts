@@ -48,6 +48,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       issuer: process.env.AZURE_AD_TENANT_ID
         ? `https://login.microsoftonline.com/${process.env.AZURE_AD_TENANT_ID}/v2.0`
         : undefined,
+      authorization: {
+        params: {
+          scope: "openid profile email Calendars.ReadWrite offline_access",
+        },
+      },
     }),
   ],
   session: {
@@ -120,6 +125,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           token.id = dbUser.id;
           token.role = dbUser.role;
           token.evaluationMode = dbUser.evaluationMode;
+
+          // Persist Microsoft OAuth tokens for Graph API calendar access
+          await prisma.user.update({
+            where: { id: dbUser.id },
+            data: {
+              msAccessToken: account.access_token ?? null,
+              msRefreshToken: account.refresh_token ?? null,
+              msTokenExpiresAt: account.expires_at
+                ? new Date(account.expires_at * 1000)
+                : null,
+            },
+          });
         }
       }
       return token;
