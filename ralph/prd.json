@@ -188,8 +188,8 @@
         "Typecheck passes"
       ],
       "priority": 10,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Added 7 server actions: createChangeRequest (employee self-only, checks for pending duplicates), getChangeRequests (admin=all, employee=own, with search/status/pagination), approveChangeRequest (admin, applies field change + marks approved in transaction), rejectChangeRequest (admin), bulkApproveChangeRequests (admin, transaction), bulkRejectChangeRequests (admin), getPendingChangeRequestsCount. Helper parseChangeRequestValue converts string values to correct types (boolean/date/string) for User model updates."
     },
     {
       "id": "US-011",

@@ -26,6 +26,8 @@
 - Multi-select checkboxes pattern: array state + includes check + filter/spread for toggle
 - Social networks stored as JSON object `{networkName: handle}` — use `Object.keys()` to derive selected networks
 - Composite string values: hasPets with "outra" uses `"outra: description"` format — parse with startsWith on init
+- ChangeRequest values are stored as strings — use `parseChangeRequestValue(fieldName, value)` helper to convert to boolean/Date/string before applying to User model
+- ChangeRequest duplicate prevention: check for existing pending request on same userId+fieldName before creating new one
 ---
 
 ## 2026-03-03 - US-001
@@ -145,4 +147,19 @@
   - Social networks as JSON: store as `{networkName: handle}` object — use `Object.keys()` to derive selected networks, spread + delete for toggling
   - Composite string value pattern for hasPets: when "outra" is selected, store as `"outra: description"` — on form init, parse with `startsWith("outra: ")` and `slice(7)` to extract description
   - Removed all `void` suppressions from Tab 5 state since all variables are now used in JSX
+---
+
+## 2026-03-03 - US-010
+- Implemented: 7 ChangeRequest server actions in `src/app/(dashboard)/colaboradores/actions.ts`
+- Actions: `createChangeRequest`, `getChangeRequests`, `approveChangeRequest`, `rejectChangeRequest`, `bulkApproveChangeRequests`, `bulkRejectChangeRequests`, `getPendingChangeRequestsCount`
+- Helper: `parseChangeRequestValue` — converts string values from ChangeRequest to correct User model types (boolean, Date, or string)
+- Files changed: `src/app/(dashboard)/colaboradores/actions.ts`
+- **Learnings for future iterations:**
+  - ChangeRequest stores all values as strings — `parseChangeRequestValue` helper converts to boolean/Date/string based on field name sets (BOOLEAN_FIELDS, DATE_FIELDS)
+  - `createChangeRequest` checks for existing pending request on same userId+fieldName to prevent duplicates
+  - `approveChangeRequest` uses `prisma.$transaction` to atomically apply the User field update and mark the request as approved
+  - `bulkApproveChangeRequests` builds a flat array of operations (user update + CR update per request) and runs them all in a single `$transaction`
+  - `bulkRejectChangeRequests` uses `updateMany` since no User field changes are needed — simpler than individual updates
+  - `getChangeRequests` uses Prisma `include` for user/reviewedBy names, and supports search (by user name), status filter, and pagination
+  - Role-based filtering pattern: admin sees all, non-admin sees only own (where.userId = currentUserId)
 ---
