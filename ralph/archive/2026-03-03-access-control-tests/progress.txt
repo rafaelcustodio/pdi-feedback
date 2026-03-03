@@ -1,0 +1,92 @@
+## Codebase Patterns
+- Prisma schema at `prisma/schema.prisma`, generated client at `src/generated/prisma/` (gitignored)
+- In this sandboxed dev environment, `prisma generate` and `prisma migrate` cannot download engine binaries (network restricted). Manually create migration SQL and update generated client files (enums.ts, models.ts, model type files) instead.
+- Migration SQL files go in `prisma/migrations/YYYYMMDDHHMMSS_name/migration.sql`
+- Generated enums live in `src/generated/prisma/enums.ts`, model types in `src/generated/prisma/models/`
+- Existing lint errors in theme-provider.tsx and programacao/actions.ts are pre-existing; lint will always show 1 error + 4 warnings
+- When mocking `impersonation.ts`, mock `@/lib/auth`, `@/lib/prisma`, and `next/headers`. Use `vi.fn()` wrappers (not direct `vi.fn()` exports) so mock functions can be reset per-test with `.mockReset()`
+- For cookie mocking: `cookies` mock should return `{ get: mockCookieGet }` — the `get()` returns `{ value: string }` or `undefined`
+- Server Actions pattern: `src/app/(dashboard)/[feature]/actions.ts` for mutations/queries
+- Access control: always use `getAccessibleEmployeeIds()` or filter helpers before querying
+- To use NineBox models in Prisma queries, add `nineBoxEvaluation: any; nineBoxEvaluator: any` to `PrismaClientExtended` in `src/lib/prisma.ts` and add delegate getters to `src/generated/prisma/internal/class.ts`
+- Modals follow pattern: `useState` boolean + `fixed inset-0 z-50 bg-black/50` overlay + centered white card
+- NineBox server actions live in `src/app/(dashboard)/feedbacks/ninebox-actions.ts` (separate from main actions.ts) for feedback-related operations
+- NineBox dashboard server actions live in `src/app/(dashboard)/colaboradores/ninebox-actions.ts` for dashboard/reporting data
+- NineBoxGrid is a reusable pure component at `src/components/ninebox-grid.tsx` — takes desempenhoFaixa and potencialFaixa props
+- NineBoxDashboard is a server component at `src/components/ninebox-dashboard.tsx` — takes current and previous NineBoxEvalResult
+- Employee-facing NineBox view uses `src/app/(dashboard)/perfil/actions.ts` for `getMyNineBoxResult` — only returns closed evaluations, strips evaluator details
+- Perfil page uses tab pattern: `PerfilTabs` client component with `useState` for tab switching, server component passes pre-fetched data as ReactNode
+- Routes outside the (dashboard) group (e.g., `/ninebox/[evaluatorId]`) are still auth-protected by middleware matcher; they just don't have the dashboard sidebar/layout
+- For standalone form pages outside the dashboard, create route at `src/app/[feature]/[param]/page.tsx` as a server component that calls `auth()` and renders a client form component
+- Dashboard page at `src/app/(dashboard)/dashboard/page.tsx` uses `getDashboardData()` from `./actions.ts`; `DashboardData` type exported from actions; add new queries alongside existing ones
+- `getMyNineBoxEvaluations()` returns `MyNineBoxEvaluations` type with `pending` and `completed` arrays — types exported from dashboard actions.ts
+---
+
+## 2026-03-02 - US-001
+- Implemented `getMyNineBoxEvaluations()` server action in `src/app/(dashboard)/dashboard/actions.ts`
+- Added types: `NineBoxEvaluationItem`, `NineBoxEvaluationCompletedItem`, `MyNineBoxEvaluations`
+- Queries NineBoxEvaluator by `evaluatorId = userId`, joins through NineBoxEvaluation to get evaluatee name and Feedback period
+- Pending: filters `status=pending` AND `evaluation.status=open`, ordered by `createdAt ASC`
+- Completed: filters `status=completed`, ordered by `completedAt DESC`
+- Files changed: `src/app/(dashboard)/dashboard/actions.ts`
+- **Learnings for future iterations:**
+  - The any-typed Prisma NineBox getters work fine with `include` and nested relations — no special workarounds needed
+  - Use `typeof records[number]` type annotation in `.map()` callbacks to satisfy TypeScript with any-typed Prisma delegates
+---
+
+## 2026-03-02 - US-002
+- Implemented NineBox evaluations section on the dashboard page
+- Created `src/components/ninebox-evaluations-section.tsx` — client component with pending/completed subsections
+- Modified `src/app/(dashboard)/dashboard/page.tsx` — imports component, fetches NineBox data via `getMyNineBoxEvaluations()` in parallel with `getDashboardData()`
+- Pending subsection: shows badge count, evaluatee name, feedback period, invite date, and "Responder" link to `/ninebox/[evaluatorId]`
+- Completed subsection: collapsed by default with chevron toggle (useState), limited to 5 items in v1
+- Section completely omitted when both arrays are empty (null check on parent + component returns null)
+- Files changed: `src/components/ninebox-evaluations-section.tsx` (new), `src/app/(dashboard)/dashboard/page.tsx` (modified)
+- **Learnings for future iterations:**
+  - Dashboard page passes NineBox data as separate prop — does not alter DashboardData type, keeping concerns separated
+  - Use `Promise.all` to parallelize independent server action calls in server components for better perf
+  - The NineBoxEvaluationsSection component imports types directly from dashboard actions.ts — this pattern works for client components importing server action types
+---
+
+## 2026-03-03 - US-001 (Access Control Tests PRD)
+- Created `src/lib/__tests__/fixtures.ts` with static user fixtures (ADMIN, MANAGER_A, COORD_A, EMP_A1, EMP_A2, MANAGER_B, EMP_B1)
+- Exported MOCK_HIERARCHIES array with 6 hierarchy relations (mgr-a→admin-1, coord-a→mgr-a, emp-a1→coord-a, emp-a2→coord-a, mgr-b→admin-1, emp-b1→mgr-b)
+- Exported helpers: mockSession(user), mockPDI(overrides?), mockFeedback(overrides?)
+- No Prisma imports, no vi.mock — pure data file
+- All fields match Prisma User model with placeholder values for non-critical fields
+- **Learnings for future iterations:**
+  - UserFixture type mirrors Prisma User model fields but uses string literal unions instead of Prisma enums to avoid importing Prisma
+  - makeUser() internal helper reduces fixture boilerplate — all non-essential fields default to null/BASE_DATE
+  - vitest.config.ts includes `src/**/*.test.ts` pattern — fixture files (`.ts` without `.test.`) are not run as tests
+- When testing `access-control.ts` (which has `"use server"`), mock both `@/lib/prisma` and `@/lib/impersonation` to prevent transitive imports of `@/lib/auth` and `next/headers`
+- Use `as never` cast when passing MOCK_HIERARCHIES to `mockResolvedValue` to satisfy TypeScript with mocked Prisma types
+- `mockFindMany.mockReset()` in `beforeEach` ensures clean state between tests — important when some tests override the default mock return value
+---
+
+## 2026-03-03 - US-002 (Access Control Tests PRD)
+- Extended `src/lib/__tests__/access-control.test.ts` with 4 new describe blocks (16 new tests)
+- `getAccessibleEmployeeIds`: admin→'all', employee→[self], manager→[self+subordinates], manager-no-subs→[self]
+- `canAccessEmployee`: admin→any true, employee→self only, manager→subordinates only, cross-branch→false, peer→false
+- `getPDIAccessFilter`: admin→{}, employee→{employeeId:{in:[self]}}, manager→{employeeId:{in:[self+subs]}}
+- `getFeedbackAccessFilter`: same pattern as PDI filter
+- Mocked `@/lib/prisma` (prisma.employeeHierarchy.findMany) and `@/lib/impersonation` (to prevent transitive auth/headers imports)
+- Files changed: `src/lib/__tests__/access-control.test.ts`
+- **Learnings for future iterations:**
+  - `"use server"` directive in source files doesn't affect vitest — just a string literal that gets ignored
+  - Must mock `@/lib/impersonation` even if tests don't use it, because `access-control.ts` imports it at the top level, triggering transitive imports of `@/lib/auth` and `next/headers`
+  - `vi.mocked()` wrapper gives proper TypeScript types for mock functions — use with `prisma` import from the mocked module
+  - Existing `computeSubordinates` tests (pure function, no mocks) coexist fine with mocked tests in the same file
+---
+
+## 2026-03-03 - US-003 (Access Control Tests PRD)
+- Created `src/lib/__tests__/impersonation.test.ts` with 9 tests across 2 describe blocks
+- `getEffectiveAuth`: null session→null, employee→original session (no cookie/DB), manager→original session (no cookie/DB), admin no cookie→original, admin valid cookie→overridden session, admin invalid cookie→original
+- `getImpersonationInfo`: employee→null, admin no cookie→null, admin with cookie→target user {id, name, role}
+- Mocked `@/lib/auth` (auth fn), `@/lib/prisma` (prisma.user.findUnique), `next/headers` (cookies().get())
+- Verified that non-admin roles never trigger cookie or DB lookups (mockCookieGet/mockFindUnique not called)
+- Files changed: `src/lib/__tests__/impersonation.test.ts` (new)
+- **Learnings for future iterations:**
+  - Use vi.fn() wrapper pattern (`const mockAuth = vi.fn(); vi.mock("@/lib/auth", () => ({ auth: (...args) => mockAuth(...args) }))`) instead of direct vi.fn() in mock factory — allows `mockReset()` per test
+  - `cookies()` from `next/headers` is async (returns Promise) — mock with `vi.fn().mockResolvedValue({ get: mockCookieGet })`
+  - The `impersonation.ts` file has `"use server"` directive but vitest ignores it — no special handling needed
+---

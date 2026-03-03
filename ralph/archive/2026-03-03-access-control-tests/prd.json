@@ -1,0 +1,292 @@
+{
+  "project": "pdi-feedback",
+  "branchName": "ralph/access-control-tests",
+  "description": "Plano de Testes de Controle de Acesso — suíte de testes unitários e de integração para garantir que nenhum dado seja exposto fora da hierarquia organizacional permitida (roles: admin, manager, employee).",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Fixtures e factories de mock reutilizáveis",
+      "description": "As a developer, I want static fixtures and helper factories so that all tests share consistent, readable mock data without duplication.",
+      "acceptanceCriteria": [
+        "Criar src/lib/__tests__/fixtures.ts com os objetos ADMIN ({ id: 'admin-1', role: 'admin' }), MANAGER_A ({ id: 'mgr-a', role: 'manager' }), COORD_A ({ id: 'coord-a', role: 'manager' }), EMP_A1 ({ id: 'emp-a1', role: 'employee' }), EMP_A2 ({ id: 'emp-a2', role: 'employee' }), MANAGER_B ({ id: 'mgr-b', role: 'manager' }), EMP_B1 ({ id: 'emp-b1', role: 'employee' })",
+        "Exportar o array MOCK_HIERARCHIES com as relações: mgr-a→admin-1, coord-a→mgr-a, emp-a1→coord-a, emp-a2→coord-a, mgr-b→admin-1, emp-b1→mgr-b (todos com endDate: null)",
+        "Cada fixture deve ter todos os campos obrigatórios do modelo User do Prisma (valores placeholder aceitáveis para campos não-críticos como email, name, createdAt, updatedAt, evaluationMode, isActive)",
+        "Exportar helper mockSession(user) que retorna { user: { id, name, email, role, image, evaluationMode } } compatível com o retorno de getEffectiveAuth()",
+        "Exportar helper mockPDI(overrides?) que retorna um objeto com campos padrão de PDI (id, employeeId, managerId, status: 'active', createdAt, updatedAt)",
+        "Exportar helper mockFeedback(overrides?) que retorna um objeto com campos padrão de Feedback (id, employeeId, managerId, status: 'scheduled', period, createdAt, updatedAt)",
+        "O arquivo fixtures.ts não importa Prisma, não faz chamadas de rede, não usa vi.mock",
+        "Typecheck passes",
+        "npm run test passa sem erros"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-002",
+      "title": "Testes unitários de access-control.ts — getAccessibleEmployeeIds e canAccessEmployee",
+      "description": "As a developer, I want unit tests for getAccessibleEmployeeIds and canAccessEmployee so that I know the core access logic is correct for all role/hierarchy combinations.",
+      "acceptanceCriteria": [
+        "Estender src/lib/__tests__/access-control.test.ts com describe('getAccessibleEmployeeIds')",
+        "admin retorna 'all' (string literal)",
+        "employee retorna array com apenas [userId]",
+        "manager_a retorna ['mgr-a', 'coord-a', 'emp-a1', 'emp-a2'] (self + todos subordinados indiretos)",
+        "manager sem subordinados retorna apenas [self]",
+        "Adicionar describe('canAccessEmployee')",
+        "admin pode acessar qualquer employeeId → retorna true",
+        "employee pode acessar apenas próprio id → retorna true para self, false para qualquer outro",
+        "manager_a pode acessar coord_a, emp_a1, emp_a2 → retorna true",
+        "manager_a NÃO pode acessar emp_b1 (ramo diferente) → retorna false",
+        "manager_a NÃO pode acessar manager_b (peer no mesmo nível) → retorna false",
+        "Adicionar describe('getPDIAccessFilter') e describe('getFeedbackAccessFilter')",
+        "admin retorna {} (sem filtro)",
+        "employee retorna { employeeId: { in: ['emp-a1'] } }",
+        "manager_a retorna { employeeId: { in: ['mgr-a', 'coord-a', 'emp-a1', 'emp-a2'] } }",
+        "Todos os testes mockam prisma.employeeHierarchy.findMany via vi.mock('@/lib/prisma') usando MOCK_HIERARCHIES de fixtures.ts",
+        "Typecheck passes",
+        "npm run test passa"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-003",
+      "title": "Testes unitários de getEffectiveAuth() e getImpersonationInfo()",
+      "description": "As a developer, I want unit tests for impersonation logic so that I know the session override works correctly and is strictly limited to admins.",
+      "acceptanceCriteria": [
+        "Criar src/lib/__tests__/impersonation.test.ts",
+        "Mockar '@/lib/auth' com vi.mock retornando auth: vi.fn()",
+        "Mockar '@/lib/prisma' com vi.mock retornando prisma.user.findUnique: vi.fn()",
+        "Mockar 'next/headers' com vi.mock retornando cookies: vi.fn() que retorna objeto com .get() mockado",
+        "getEffectiveAuth() — sessão null → retorna null",
+        "getEffectiveAuth() — role employee → retorna sessão original sem consultar cookie nem DB",
+        "getEffectiveAuth() — role manager → retorna sessão original sem consultar cookie nem DB",
+        "getEffectiveAuth() — role admin, cookie __impersonate ausente → retorna sessão original",
+        "getEffectiveAuth() — role admin, cookie presente com userId válido → retorna sessão com id/name/email/role/evaluationMode do usuário-alvo (mockado via prisma.user.findUnique)",
+        "getEffectiveAuth() — role admin, cookie com userId inválido (findUnique retorna null) → retorna sessão original",
+        "getImpersonationInfo() — role employee → retorna null",
+        "getImpersonationInfo() — role admin, cookie ausente → retorna null",
+        "getImpersonationInfo() — role admin, cookie presente → retorna { id, name, role } do usuário-alvo",
+        "Typecheck passes",
+        "npm run test passa"
+      ],
+      "priority": 3,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-004",
+      "title": "Testes da API route /api/impersonate (POST e DELETE)",
+      "description": "As a developer, I want tests for the impersonation API routes so that I know only admins can activate impersonation and the cookie is set/cleared correctly.",
+      "acceptanceCriteria": [
+        "Criar src/app/api/impersonate/__tests__/route.test.ts",
+        "Mockar '@/lib/auth' e '@/lib/prisma' via vi.mock",
+        "Mockar 'next/headers' para controlar cookies.set() e cookies.delete()",
+        "POST sem sessão (auth retorna null) → resposta com status 403",
+        "POST com sessão role employee → resposta com status 403",
+        "POST com sessão role manager → resposta com status 403",
+        "POST com sessão admin, body sem userId → resposta com status 400",
+        "POST com sessão admin, userId === session.user.id (próprio) → resposta com status 400 e mensagem 'Cannot impersonate yourself'",
+        "POST com sessão admin, userId de usuário inexistente (findUnique retorna null) → resposta com status 404",
+        "POST com sessão admin, userId válido (findUnique retorna o usuário) → resposta com status 200 { ok: true } e cookies.set chamado com '__impersonate' e o userId",
+        "DELETE sem sessão → resposta com status 403",
+        "DELETE com sessão employee → resposta com status 403",
+        "DELETE com sessão admin → resposta com status 200 { ok: true } e cookies.delete chamado com '__impersonate'",
+        "Typecheck passes",
+        "npm run test passa"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-005",
+      "title": "Testes da API route /api/impersonate/users (GET)",
+      "description": "As a developer, I want tests for the users listing route so that I know it only returns data to admins and excludes the admin themselves from the list.",
+      "acceptanceCriteria": [
+        "Criar src/app/api/impersonate/users/__tests__/route.test.ts",
+        "Mockar '@/lib/auth' e '@/lib/prisma' via vi.mock",
+        "GET com sessão employee → resposta com status 403",
+        "GET com sessão manager → resposta com status 403",
+        "GET com sessão admin → resposta com status 200 retornando array de usuários",
+        "Verificar que prisma.user.findMany foi chamado com where: { id: { not: session.user.id } } (admin excluído da lista)",
+        "Typecheck passes",
+        "npm run test passa"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-006",
+      "title": "Testes de server action — Dashboard (getDashboardData)",
+      "description": "As a developer, I want tests for the dashboard action so that I know each role only receives aggregated data within their access scope.",
+      "acceptanceCriteria": [
+        "Criar src/app/(dashboard)/dashboard/__tests__/actions.test.ts",
+        "Mockar '@/lib/impersonation' com getEffectiveAuth: vi.fn() e '@/lib/prisma' via vi.mock",
+        "Sessão null → getDashboardData retorna null",
+        "Sessão employee (EMP_A1) → as queries de PDI e Feedback ao prisma incluem filtro employeeId: { in: ['emp-a1'] }",
+        "Sessão manager_a → as queries incluem filtro employeeId: { in: ['mgr-a', 'coord-a', 'emp-a1', 'emp-a2'] }",
+        "Sessão admin → as queries são feitas sem filtro de employeeId (objeto vazio {})",
+        "Typecheck passes",
+        "npm run test passa"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-007",
+      "title": "Testes de server action — PDIs (leitura, criação e atualização)",
+      "description": "As a developer, I want tests for the PDI actions so that I know employees cannot read or modify PDIs outside their access scope.",
+      "acceptanceCriteria": [
+        "Criar src/app/(dashboard)/pdis/__tests__/actions.test.ts",
+        "Mockar '@/lib/impersonation' e '@/lib/prisma' via vi.mock",
+        "Leitura — employee: query filtrada por employeeId = 'emp-a1'",
+        "Leitura — manager_a: query filtrada por employeeId in ['mgr-a', 'coord-a', 'emp-a1', 'emp-a2']",
+        "Leitura — admin: query sem filtro de employeeId",
+        "Criação — employee tentando criar PDI para outro employee (emp_a2) → retorna null ou lança erro, prisma.pDI.create NÃO é chamado",
+        "Criação — manager_a criando PDI para emp_b1 (fora da hierarquia) → retorna null ou lança erro, prisma.pDI.create NÃO é chamado",
+        "Criação — manager_a criando PDI para emp_a1 → prisma.pDI.create é chamado com os dados corretos",
+        "Criação — admin criando PDI para qualquer usuário → prisma.pDI.create é chamado",
+        "Atualização — employee tentando atualizar PDI de emp_a2 → retorna null ou lança erro, prisma.pDI.update NÃO é chamado",
+        "Atualização — manager_a atualizando PDI de emp_b1 → retorna null ou lança erro, prisma.pDI.update NÃO é chamado",
+        "Typecheck passes",
+        "npm run test passa"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-008",
+      "title": "Testes de server action — Feedbacks (leitura, criação e submissão)",
+      "description": "As a developer, I want tests for the feedback actions so that feedback data cannot be accessed across organizational branches.",
+      "acceptanceCriteria": [
+        "Criar src/app/(dashboard)/feedbacks/__tests__/actions.test.ts",
+        "Mockar '@/lib/impersonation' e '@/lib/prisma' via vi.mock",
+        "Leitura — employee (emp_a1): query filtrada por employeeId = 'emp-a1'",
+        "Leitura — manager_a: query filtrada por employeeId in ['mgr-a', 'coord-a', 'emp-a1', 'emp-a2']",
+        "Leitura — manager_a: emp_b1 NÃO está no filtro (verificar array passado ao Prisma)",
+        "Leitura — admin: sem filtro de employeeId",
+        "Criação — manager_a tentando criar feedback para emp_b1 → retorna null ou lança erro, prisma.feedback.create NÃO é chamado",
+        "Criação — employee tentando criar feedback → retorna null ou lança erro",
+        "Criação — manager_a criando feedback para emp_a1 → prisma.feedback.create é chamado",
+        "Submissão — usuário sem acesso ao feedback (outro employeeId) → retorna null ou lança erro, prisma.feedback.update NÃO é chamado",
+        "Typecheck passes",
+        "npm run test passa"
+      ],
+      "priority": 8,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-009",
+      "title": "Testes de server action — Colaboradores e Notificações",
+      "description": "As a developer, I want tests for the collaborators and notifications actions so that data is strictly scoped to each user's hierarchy.",
+      "acceptanceCriteria": [
+        "Criar src/app/(dashboard)/colaboradores/__tests__/actions.test.ts",
+        "Mockar '@/lib/impersonation' e '@/lib/prisma' via vi.mock",
+        "employee (emp_a1): query de colaboradores filtrada por id in ['emp-a1'] (apenas self)",
+        "manager_a: query filtrada por id in ['mgr-a', 'coord-a', 'emp-a1', 'emp-a2']",
+        "manager_a: emp_b1 e mgr-b NÃO estão no filtro",
+        "admin: query sem filtro de id",
+        "Criar src/app/(dashboard)/notificacoes/__tests__/actions.test.ts",
+        "Leitura de notificações sempre filtrada por userId = session.user.id (independente de role)",
+        "emp_a1 não vê notificações de emp_a2 — verificar filtro userId na query",
+        "markAsRead de notificação com userId diferente → retorna null ou lança erro, prisma.notification.update NÃO é chamado",
+        "admin vê apenas suas próprias notificações (userId = 'admin-1')",
+        "Typecheck passes",
+        "npm run test passa"
+      ],
+      "priority": 9,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-010",
+      "title": "Testes de fluxo de impersonação ponta-a-ponta (unit com mocks)",
+      "description": "As a developer, I want tests that simulate the full impersonation flow so that I know an admin impersonating a user sees exactly what that user would see.",
+      "acceptanceCriteria": [
+        "Criar src/lib/__tests__/impersonation-flow.test.ts",
+        "Mockar '@/lib/auth', '@/lib/prisma' e 'next/headers' via vi.mock",
+        "Admin impersonando emp_a1: getEffectiveAuth() retorna sessão com id='emp-a1' e role='employee'",
+        "Admin impersonando emp_a1: getAccessibleEmployeeIds chamado com (emp_a1.id, 'employee') retorna ['emp-a1']",
+        "Admin impersonando emp_a1: getPDIAccessFilter retorna { employeeId: { in: ['emp-a1'] } }",
+        "Admin impersonando manager_a: getEffectiveAuth() retorna sessão com id='mgr-a' e role='manager'",
+        "Admin impersonando manager_a: getAccessibleEmployeeIds retorna ['mgr-a', 'coord-a', 'emp-a1', 'emp-a2']",
+        "Admin impersonando manager_a: 'emp-b1' NÃO está no array retornado",
+        "Admin SEM impersonação (cookie ausente): getEffectiveAuth() retorna sessão original com role='admin'",
+        "Admin SEM impersonação: getAccessibleEmployeeIds retorna 'all'",
+        "Typecheck passes",
+        "npm run test passa"
+      ],
+      "priority": 10,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-011",
+      "title": "Testes de componente — ImpersonationBanner",
+      "description": "As a developer, I want component tests for ImpersonationBanner so that I know it renders correctly and the exit button triggers the right API call.",
+      "acceptanceCriteria": [
+        "Instalar @testing-library/react e @testing-library/user-event como devDependencies se não estiverem presentes (verificar package.json antes)",
+        "Criar src/components/__tests__/impersonation-banner.test.tsx",
+        "Mockar 'next/navigation' com useRouter: vi.fn() retornando { refresh: vi.fn() }",
+        "Mockar fetch globalmente com vi.stubGlobal para capturar chamadas",
+        "Renderiza o nome do usuário impersonado no texto do banner",
+        "Renderiza o role em português ('Colaborador' para 'employee', 'Gestor' para 'manager')",
+        "Clicar no botão 'Sair da visualização' chama fetch('/api/impersonate', { method: 'DELETE' })",
+        "Após o clique, router.refresh() é chamado",
+        "Typecheck passes",
+        "npm run test passa"
+      ],
+      "priority": 11,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-012",
+      "title": "Testes de componente — ImpersonationSelector",
+      "description": "As a developer, I want component tests for ImpersonationSelector so that I know the modal opens, filters users correctly, and posts the right userId.",
+      "acceptanceCriteria": [
+        "Criar src/components/__tests__/impersonation-selector.test.tsx",
+        "Mockar 'next/navigation' com useRouter: vi.fn() retornando { refresh: vi.fn() }",
+        "Mockar fetch globalmente: GET /api/impersonate/users retorna [EMP_A1, EMP_A2, MANAGER_B], POST /api/impersonate retorna { ok: true }",
+        "Ao renderizar, botão 'Simular usuário' está visível",
+        "Clicar no botão abre o modal (verificar que os nomes dos usuários aparecem na tela)",
+        "Digitar no campo de busca filtra a lista — texto que não corresponde a nenhum nome mostra 'Nenhum usuário encontrado.'",
+        "Clicar em um usuário da lista chama fetch('/api/impersonate', { method: 'POST', body: JSON.stringify({ userId: user.id }) })",
+        "Após selecionar, router.refresh() é chamado",
+        "Tecla Escape fecha o modal",
+        "Typecheck passes",
+        "npm run test passa"
+      ],
+      "priority": 12,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-013",
+      "title": "Testes de integração com banco real (DATABASE_URL_TEST)",
+      "description": "As a developer, I want integration tests against a real database so that I know Prisma filters actually restrict data at the query level.",
+      "acceptanceCriteria": [
+        "Criar src/lib/__tests__/integration/access-control.integration.test.ts",
+        "No início do arquivo, usar vi.skipIf(!process.env.DATABASE_URL_TEST) para pular automaticamente quando a variável não estiver definida",
+        "Setup: antes dos testes, rodar seed com os dados de prisma/seed.ts (ou inserir usuários e hierarquias diretamente via prisma real)",
+        "Teardown: limpar tabelas após os testes (prisma.employeeHierarchy.deleteMany, prisma.user.deleteMany onde id in fixtures)",
+        "Query real de PDI com filtro de employee não retorna PDIs de outros usuários",
+        "Query real de PDI com filtro de manager_a não retorna PDIs de emp_b1",
+        "Query real de PDI com filtro de admin retorna todos os PDIs",
+        "Query real de Feedback com filtro de manager_a não inclui feedbacks de emp_b1",
+        "Documentar no README.md do projeto como configurar DATABASE_URL_TEST para rodar os testes de integração localmente",
+        "Typecheck passes",
+        "npm run test passa (stories são ignoradas se DATABASE_URL_TEST não estiver definida)"
+      ],
+      "priority": 13,
+      "passes": false,
+      "notes": ""
+    }
+  ]
+}
