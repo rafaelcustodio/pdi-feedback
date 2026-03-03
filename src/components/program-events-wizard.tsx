@@ -1,10 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import { X, Eye, Check } from "lucide-react";
-import { programEvents } from "@/app/(dashboard)/programacao/actions";
-import type { ComplianceEmployee } from "@/app/(dashboard)/programacao/actions";
-import { snapToBusinessDay } from "@/lib/sector-schedule-pure-utils";
+import { useState, useEffect } from "react";
+import { X, Eye, Check, MapPin } from "lucide-react";
+import {
+  programEvents,
+  hasMicrosoftTokenForWizard,
+  fetchRoomsForWizard,
+  fetchRoomScheduleForPeriod,
+} from "@/app/(dashboard)/programacao/actions";
+import type {
+  ComplianceEmployee,
+  EventRoomSelection,
+  WizardRoom,
+} from "@/app/(dashboard)/programacao/actions";
+import {
+  snapToBusinessDay,
+  getBusinessDays,
+  distributeEventsWithTimeSlots,
+  BUSINESS_TIME_SLOTS,
+} from "@/lib/sector-schedule-pure-utils";
+import { RoomPicker, RoomPickerCompact } from "@/components/room-picker";
 
 interface ProgramEventsWizardProps {
   unitId: string;
@@ -19,8 +34,11 @@ interface ProgramEventsWizardProps {
 interface PreviewEvent {
   employeeId: string;
   employeeName: string;
-  scheduledDate: string; // ISO string
+  scheduledDate: string; // YYYY-MM-DD
+  scheduledTime: string; // HH:mm
   wasSnapped: boolean;
+  roomEmail?: string;
+  roomDisplayName?: string;
 }
 
 export function ProgramEventsWizard({
@@ -38,9 +56,35 @@ export function ProgramEventsWizard({
   const [perDay, setPerDay] = useState<1 | 2>(1);
   const [direction, setDirection] = useState<"end-to-start" | "last-month-start">("end-to-start");
   const [preview, setPreview] = useState<PreviewEvent[] | null>(null);
+  const [expandedRoomPicker, setExpandedRoomPicker] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  // Room state for Step 1
+  const [hasToken, setHasToken] = useState<boolean | null>(null);
+  const [wizardRooms, setWizardRooms] = useState<WizardRoom[]>([]);
+  const [roomsLoading, setRoomsLoading] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState<{ email: string; displayName: string } | null>(null);
+
+  // Check for MS token and fetch rooms on mount
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const token = await hasMicrosoftTokenForWizard();
+      if (cancelled) return;
+      setHasToken(token);
+      if (token) {
+        setRoomsLoading(true);
+        const rooms = await fetchRoomsForWizard();
+        if (!cancelled) {
+          setWizardRooms(rooms);
+          setRoomsLoading(false);
+        }
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   function toggleEmployee(id: string) {
     setSelectedIds((prev) => {
@@ -69,32 +113,72 @@ export function ProgramEventsWizard({
     setError(null);
     setPreview(null);
 
-    const result = await programEvents({
-      unitId,
-      type,
-      periodStart: new Date(periodStart),
-      periodEnd: new Date(periodEnd),
-      employeeIds: [...selectedIds],
-      perDay,
-      direction,
-      dryRun: true,
-    });
+    try {
+      // Get business days for the period
+      const businessDays = getBusinessDays(new Date(periodStart), new Date(periodEnd));
 
-    setLoading(false);
+      // Build employee list from selected IDs
+      const employees = notScheduledEmployees
+        .filter((e) => selectedIds.has(e.employeeId))
+        .map((e) => ({ id: e.employeeId, name: e.employeeName }));
 
-    if (!result.success) {
-      setError(result.error ?? "Erro ao gerar preview");
-      return;
+      // Fetch room schedule if a room is selected
+      let roomSchedule: Map<string, string> | undefined;
+      if (selectedRoom) {
+        const startStr = new Date(periodStart).toISOString().slice(0, 10);
+        const endStr = new Date(periodEnd).toISOString().slice(0, 10);
+        const scheduleObj = await fetchRoomScheduleForPeriod(selectedRoom.email, startStr, endStr);
+        roomSchedule = new Map(Object.entries(scheduleObj));
+      }
+
+      // Distribute with time slots
+      const distributed = distributeEventsWithTimeSlots(
+        employees,
+        businessDays,
+        perDay,
+        direction,
+        roomSchedule
+      );
+
+      // Also do a dry run to check for duplicates on the server side
+      const result = await programEvents({
+        unitId,
+        type,
+        periodStart: new Date(periodStart),
+        periodEnd: new Date(periodEnd),
+        employeeIds: [...selectedIds],
+        perDay,
+        direction,
+        dryRun: true,
+      });
+
+      if (!result.success) {
+        setError(result.error ?? "Erro ao gerar preview");
+        setLoading(false);
+        return;
+      }
+
+      // Build a set of employee IDs that passed the server dry run (not skipped)
+      const serverApprovedIds = new Set(result.events.map((e) => e.employeeId));
+
+      // Use distributed events (with time slots) but filter to only server-approved ones
+      const previewEvents: PreviewEvent[] = distributed
+        .filter((e) => serverApprovedIds.has(e.employeeId))
+        .map((e) => ({
+          employeeId: e.employeeId,
+          employeeName: e.employeeName,
+          scheduledDate: e.scheduledDate.toISOString().slice(0, 10),
+          scheduledTime: e.scheduledTime,
+          wasSnapped: false,
+          roomEmail: selectedRoom?.email,
+          roomDisplayName: selectedRoom?.displayName,
+        }));
+
+      setPreview(previewEvents);
+    } catch {
+      setError("Erro ao gerar preview");
     }
-
-    setPreview(
-      result.events.map((e) => ({
-        employeeId: e.employeeId,
-        employeeName: e.employeeName,
-        scheduledDate: new Date(e.scheduledDate).toISOString().slice(0, 10),
-        wasSnapped: false,
-      }))
-    );
+    setLoading(false);
   }
 
   function handleDateChange(index: number, newDate: string) {
@@ -114,11 +198,54 @@ export function ProgramEventsWizard({
     );
   }
 
+  function handleTimeChange(index: number, newTime: string) {
+    if (!preview) return;
+    setPreview((prev) =>
+      prev!.map((item, i) =>
+        i === index ? { ...item, scheduledTime: newTime } : item
+      )
+    );
+  }
+
+  function handleRoomChangeForEvent(index: number, room: { email: string; displayName: string } | null) {
+    if (!preview) return;
+    setPreview((prev) =>
+      prev!.map((item, i) =>
+        i === index
+          ? {
+              ...item,
+              roomEmail: room?.email,
+              roomDisplayName: room?.displayName,
+            }
+          : item
+      )
+    );
+    setExpandedRoomPicker(null);
+  }
+
   async function handleConfirm() {
     if (!preview || preview.length === 0) return;
 
     setLoading(true);
     setError(null);
+
+    // Build event room and time selections
+    const roomSelections: EventRoomSelection[] = [];
+    const eventTimes: Array<{ employeeId: string; scheduledTime: string }> = [];
+
+    for (const event of preview) {
+      if (event.roomEmail && event.roomDisplayName) {
+        roomSelections.push({
+          employeeId: event.employeeId,
+          roomEmail: event.roomEmail,
+          roomDisplayName: event.roomDisplayName,
+        });
+      }
+      eventTimes.push({
+        employeeId: event.employeeId,
+        scheduledTime: event.scheduledTime,
+      });
+    }
 
     const result = await programEvents({
       unitId,
@@ -128,6 +255,8 @@ export function ProgramEventsWizard({
       employeeIds: preview.map((e) => e.employeeId),
       perDay,
       direction,
+      eventRooms: roomSelections.length > 0 ? roomSelections : undefined,
+      eventTimes: eventTimes.length > 0 ? eventTimes : undefined,
     });
 
     setLoading(false);
@@ -265,6 +394,16 @@ export function ProgramEventsWizard({
               </div>
             </div>
 
+            {/* Room picker (Step 1) — only for feedback and if MS token is available */}
+            {type === "feedback" && hasToken === true && (
+              <RoomPickerCompact
+                rooms={wizardRooms}
+                selectedRoomEmail={selectedRoom?.email}
+                onSelect={setSelectedRoom}
+                loading={roomsLoading}
+              />
+            )}
+
             {/* Actions */}
             <div className="flex justify-end gap-3 pt-2">
               <button
@@ -287,29 +426,79 @@ export function ProgramEventsWizard({
           /* Step 2: Preview */
           <div className="space-y-4">
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Revise as datas antes de confirmar. Você pode editar as datas individualmente.
+              Revise as datas e horários antes de confirmar. Você pode editar individualmente.
             </p>
 
-            <div className="max-h-60 overflow-y-auto rounded-md border border-gray-200 dark:border-gray-700">
+            <div className="max-h-80 overflow-y-auto rounded-md border border-gray-200 dark:border-gray-700">
               {preview.map((event, idx) => (
                 <div
                   key={event.employeeId}
-                  className="flex items-center justify-between gap-3 border-b border-gray-50 dark:border-gray-800 px-3 py-2 last:border-b-0"
+                  className="border-b border-gray-100 dark:border-gray-800 px-3 py-2.5 last:border-b-0"
                 >
-                  <span className="text-sm text-gray-700 dark:text-gray-300">{event.employeeName}</span>
+                  {/* Single row: Name | Date | Time | Room */}
                   <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate min-w-0 flex-1">
+                      {event.employeeName}
+                    </span>
                     <input
                       type="date"
                       value={event.scheduledDate}
                       onChange={(e) => handleDateChange(idx, e.target.value)}
-                      className="rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white px-2 py-1 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="shrink-0 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white px-2 py-1 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
+                    <select
+                      value={event.scheduledTime}
+                      onChange={(e) => handleTimeChange(idx, e.target.value)}
+                      className="shrink-0 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white px-2 py-1 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    >
+                      {!(BUSINESS_TIME_SLOTS as readonly string[]).includes(event.scheduledTime) && (
+                        <option value={event.scheduledTime}>{event.scheduledTime}</option>
+                      )}
+                      {BUSINESS_TIME_SLOTS.map((slot) => (
+                        <option key={slot} value={slot}>{slot}</option>
+                      ))}
+                    </select>
+                    {type === "feedback" && (
+                      event.roomDisplayName ? (
+                        <button
+                          type="button"
+                          onClick={() => setExpandedRoomPicker(expandedRoomPicker === event.employeeId ? null : event.employeeId)}
+                          className="shrink-0 inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/70 transition-colors"
+                          title="Trocar sala"
+                        >
+                          <MapPin size={10} />
+                          <span className="max-w-[80px] truncate">{event.roomDisplayName}</span>
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => setExpandedRoomPicker(expandedRoomPicker === event.employeeId ? null : event.employeeId)}
+                          className="shrink-0 rounded px-2 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                          title="Selecionar sala"
+                        >
+                          Sala
+                        </button>
+                      )
+                    )}
                     {event.wasSnapped && (
-                      <span className="text-xs text-amber-600" title="Auto-corrigido para dia útil">
-                        (ajustado)
+                      <span className="shrink-0 text-xs text-amber-600" title="Auto-corrigido para dia útil">
+                        !
                       </span>
                     )}
                   </div>
+
+                  {/* Room picker expandido */}
+                  {expandedRoomPicker === event.employeeId && (
+                    <div className="mt-2">
+                      <RoomPicker
+                        date={event.scheduledDate}
+                        startTime={event.scheduledTime}
+                        endTime={`${String(parseInt(event.scheduledTime.split(":")[0]) + 1).padStart(2, "0")}:${event.scheduledTime.split(":")[1]}`}
+                        selectedRoomEmail={event.roomEmail}
+                        onSelect={(room) => handleRoomChangeForEvent(idx, room)}
+                      />
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

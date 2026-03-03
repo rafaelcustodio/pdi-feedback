@@ -16,8 +16,11 @@ import {
   createCalendarEvent,
   deleteCalendarEvent,
   updateCalendarEvent,
+  listMeetingRooms,
+  getRoomsAvailability,
 } from "@/lib/microsoft-graph";
-import type { GraphCalendarEvent } from "@/lib/microsoft-graph";
+import type { GraphCalendarEvent, RoomAvailability } from "@/lib/microsoft-graph";
+export type { RoomAvailability, MeetingRoom } from "@/lib/microsoft-graph";
 
 export type FeedbackListItem = {
   id: string;
@@ -377,7 +380,7 @@ export async function createFeedback(data: {
         employee.name,
         manager.name,
         data.period.trim(),
-        feedbackUrl
+        baseUrl
       );
       await sendEmail({
         to: employee.email,
@@ -495,7 +498,7 @@ export async function updateFeedback(
         employee.name,
         manager.name,
         data.period.trim(),
-        feedbackUrl
+        baseUrl
       );
       await sendEmail({
         to: employee.email,
@@ -553,9 +556,57 @@ export async function getAvailableYears(): Promise<number[]> {
   return Array.from(years).sort((a, b) => b - a);
 }
 
+export async function hasMicrosoftToken(): Promise<boolean> {
+  const session = await getEffectiveAuth();
+  if (!session?.user?.id) return false;
+  const token = await getUserToken(session.user.id);
+  return token !== null;
+}
+
+export async function fetchRoomsWithAvailability(
+  date: string,
+  startTime: string,
+  endTime: string
+): Promise<RoomAvailability[]> {
+  const session = await getEffectiveAuth();
+  if (!session?.user?.id) return [];
+
+  const token = await getUserToken(session.user.id);
+  if (!token) return [];
+
+  const rooms = await listMeetingRooms(token);
+  if (rooms.length === 0) return [];
+
+  const startDateTime = `${date}T${startTime}:00`;
+  const endDateTime = `${date}T${endTime}:00`;
+
+  const availabilityMap = await getRoomsAvailability(
+    token,
+    rooms.map((r) => r.emailAddress),
+    startDateTime,
+    endDateTime
+  );
+
+  const result: RoomAvailability[] = rooms.map((room) => ({
+    room,
+    available: availabilityMap.get(room.emailAddress.toLowerCase()) ?? true,
+  }));
+
+  // Sort: available first, then by name
+  result.sort((a, b) => {
+    if (a.available !== b.available) return a.available ? -1 : 1;
+    return a.room.displayName.localeCompare(b.room.displayName);
+  });
+
+  return result;
+}
+
 export async function scheduleFeedback(
   id: string,
-  scheduledAt: string
+  scheduledAt: string,
+  scheduledTime?: string,
+  roomEmail?: string,
+  roomDisplayName?: string
 ): Promise<{ success: boolean; error?: string }> {
   const session = await getEffectiveAuth();
   if (!session?.user?.id) {
@@ -627,21 +678,36 @@ export async function scheduleFeedback(
   ]);
 
   if (employee && manager) {
-    const startDateTime = `${scheduledAt.split("T")[0]}T09:00:00`;
-    const endDateTime = `${scheduledAt.split("T")[0]}T10:00:00`;
+    const time = scheduledTime || "09:00";
+    const dateStr = scheduledAt.split("T")[0];
+    const startDateTime = `${dateStr}T${time}:00`;
+    const [h, m] = time.split(":").map(Number);
+    const endDateTime = `${dateStr}T${String(h + 1).padStart(2, "0")}:${String(m).padStart(2, "0")}:00`;
 
+    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
     const calendarEvent: GraphCalendarEvent = {
       subject: `Feedback — ${employee.name}`,
       start: { dateTime: startDateTime, timeZone: "America/Sao_Paulo" },
       end: { dateTime: endDateTime, timeZone: "America/Sao_Paulo" },
       body: {
         contentType: "text",
-        content: `Feedback agendado pelo sistema. Acesse: ${process.env.NEXTAUTH_URL}/feedbacks/${id}`,
+        content: `Você tem um feedback agendado com seu gestor ${manager.name}.\n\nO feedback é uma ferramenta essencial para o seu desenvolvimento profissional. Aproveite este momento para refletir sobre sua atuação, seus pontos fortes e oportunidades de melhoria.\n\nAcesse o sistema para mais detalhes: ${baseUrl}`,
       },
       attendees: [
         { emailAddress: { address: employee.email, name: employee.name }, type: "required" },
       ],
     };
+
+    if (roomEmail && roomDisplayName) {
+      calendarEvent.attendees.push({
+        emailAddress: { address: roomEmail, name: roomDisplayName },
+        type: "resource",
+      });
+      calendarEvent.location = {
+        displayName: roomDisplayName,
+        locationEmailAddress: roomEmail,
+      };
+    }
 
     const [managerToken, employeeToken] = await Promise.allSettled([
       getUserToken(userId),
@@ -677,6 +743,8 @@ export async function createFutureFeedback(data: {
   employeeId: string;
   scheduledAt: string;
   scheduledTime?: string;
+  roomEmail?: string;
+  roomDisplayName?: string;
 }): Promise<{ success: boolean; error?: string; id?: string }> {
   const session = await getEffectiveAuth();
   if (!session?.user?.id) {
@@ -752,18 +820,30 @@ export async function createFutureFeedback(data: {
   const endHours = hours + 1;
   const endDateTime = `${data.scheduledAt}T${String(endHours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00`;
 
+  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
   const calendarEvent: GraphCalendarEvent = {
     subject: `Feedback — ${employee.name}`,
     start: { dateTime: startDateTime, timeZone: "America/Sao_Paulo" },
     end: { dateTime: endDateTime, timeZone: "America/Sao_Paulo" },
     body: {
       contentType: "text",
-      content: `Feedback agendado pelo sistema. Acesse: ${process.env.NEXTAUTH_URL}/feedbacks/${feedback.id}`,
+      content: `Você tem um feedback agendado com seu gestor ${manager.name}.\n\nO feedback é uma ferramenta essencial para o seu desenvolvimento profissional. Aproveite este momento para refletir sobre sua atuação, seus pontos fortes e oportunidades de melhoria.\n\nAcesse o sistema para mais detalhes: ${baseUrl}`,
     },
     attendees: [
       { emailAddress: { address: employee.email, name: employee.name }, type: "required" },
     ],
   };
+
+  if (data.roomEmail && data.roomDisplayName) {
+    calendarEvent.attendees.push({
+      emailAddress: { address: data.roomEmail, name: data.roomDisplayName },
+      type: "resource",
+    });
+    calendarEvent.location = {
+      displayName: data.roomDisplayName,
+      locationEmailAddress: data.roomEmail,
+    };
+  }
 
   const [managerToken, employeeToken] = await Promise.allSettled([
     getUserToken(userId),
@@ -820,7 +900,10 @@ export async function getScheduledFeedbackCountForEmployee(): Promise<number> {
 
 export async function rescheduleFeedback(
   id: string,
-  newDate: string
+  newDate: string,
+  newTime?: string,
+  roomEmail?: string,
+  roomDisplayName?: string
 ): Promise<{ success: boolean; error?: string }> {
   const session = await getEffectiveAuth();
   if (!session?.user?.id) {
@@ -869,12 +952,21 @@ export async function rescheduleFeedback(
   if (feedback.outlookEventId) {
     const token = await getUserToken(userId);
     if (token) {
-      const startDateTime = `${newDate}T09:00:00`;
-      const endDateTime = `${newDate}T10:00:00`;
-      await updateCalendarEvent(token, feedback.outlookEventId, {
+      const time = newTime || "09:00";
+      const [rh, rm] = time.split(":").map(Number);
+      const startDateTime = `${newDate}T${time}:00`;
+      const endDateTime = `${newDate}T${String(rh + 1).padStart(2, "0")}:${String(rm).padStart(2, "0")}:00`;
+      const updatePayload: Partial<GraphCalendarEvent> = {
         start: { dateTime: startDateTime, timeZone: "America/Sao_Paulo" },
         end: { dateTime: endDateTime, timeZone: "America/Sao_Paulo" },
-      });
+      };
+      if (roomEmail && roomDisplayName) {
+        updatePayload.location = {
+          displayName: roomDisplayName,
+          locationEmailAddress: roomEmail,
+        };
+      }
+      await updateCalendarEvent(token, feedback.outlookEventId, updatePayload);
     }
   }
 

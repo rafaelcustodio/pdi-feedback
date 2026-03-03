@@ -30,6 +30,7 @@ import {
   cancelFollowUp,
   cancelPDI,
 } from "@/app/(dashboard)/pdis/actions";
+import { RoomPicker } from "@/components/room-picker";
 
 const statusLabels: Record<string, string> = {
   active: "Ativo",
@@ -1085,6 +1086,7 @@ function FollowUpsSection({
   const [showScheduleForm, setShowScheduleForm] = useState(false);
   const [scheduleDate, setScheduleDate] = useState("");
   const [scheduleTime, setScheduleTime] = useState("09:00");
+  const [scheduleRoom, setScheduleRoom] = useState<{ email: string; displayName: string } | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -1097,6 +1099,7 @@ function FollowUpsSection({
   const [showNextScheduleModal, setShowNextScheduleModal] = useState(false);
   const [nextScheduleDate, setNextScheduleDate] = useState("");
   const [nextScheduleTime, setNextScheduleTime] = useState("09:00");
+  const [nextScheduleRoom, setNextScheduleRoom] = useState<{ email: string; displayName: string } | null>(null);
 
   function nextMonthDate(): string {
     const d = new Date();
@@ -1118,12 +1121,13 @@ function FollowUpsSection({
     if (!scheduleDate) return;
     setLoading(true);
     setError(null);
-    const result = await scheduleFollowUp(pdiId, scheduleDate, scheduleTime);
+    const result = await scheduleFollowUp(pdiId, scheduleDate, scheduleTime, scheduleRoom?.email, scheduleRoom?.displayName);
     setLoading(false);
     if (result.success) {
       setShowScheduleForm(false);
       setScheduleDate("");
       setScheduleTime("09:00");
+      setScheduleRoom(null);
     } else {
       setError(result.error ?? "Erro ao agendar acompanhamento");
     }
@@ -1154,10 +1158,11 @@ function FollowUpsSection({
     if (!nextScheduleDate) return;
     setLoading(true);
     setError(null);
-    const result = await scheduleFollowUp(pdiId, nextScheduleDate, nextScheduleTime);
+    const result = await scheduleFollowUp(pdiId, nextScheduleDate, nextScheduleTime, nextScheduleRoom?.email, nextScheduleRoom?.displayName);
     setLoading(false);
     if (result.success) {
       setShowNextScheduleModal(false);
+      setNextScheduleRoom(null);
     } else {
       setError(result.error ?? "Erro ao agendar");
     }
@@ -1233,6 +1238,7 @@ function FollowUpsSection({
                   setShowScheduleForm(false);
                   setScheduleDate("");
                   setScheduleTime("09:00");
+                  setScheduleRoom(null);
                 }}
                 disabled={loading}
                 className="rounded-md border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50"
@@ -1247,6 +1253,15 @@ function FollowUpsSection({
                 {loading ? "Agendando..." : "Agendar"}
               </button>
             </div>
+          </div>
+          <div className="mt-3">
+            <RoomPicker
+              date={scheduleDate}
+              startTime={scheduleTime}
+              endTime={`${String(parseInt(scheduleTime.split(":")[0]) + 1).padStart(2, "0")}:${scheduleTime.split(":")[1]}`}
+              onSelect={setScheduleRoom}
+              selectedRoomEmail={scheduleRoom?.email}
+            />
           </div>
         </div>
       )}
@@ -1310,49 +1325,58 @@ function FollowUpsSection({
       {/* Next Schedule Modal */}
       {showNextScheduleModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-            <h3 className="mb-2 text-base font-semibold text-gray-900">
+          <div className="mx-4 w-full max-w-md rounded-lg bg-white dark:bg-gray-800 p-6 shadow-xl">
+            <h3 className="mb-2 text-base font-semibold text-gray-900 dark:text-white">
               Agendar próximo acompanhamento?
             </h3>
-            <p className="mb-4 text-sm text-gray-600">
+            <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
               Deseja criar o agendamento da próxima reunião para o mês seguinte?
             </p>
-            <div className="mb-4 flex gap-3">
-              <div className="flex-1">
-                <label className="mb-1 block text-xs font-medium text-gray-700">
-                  Data sugerida
-                </label>
-                <input
-                  type="date"
-                  value={nextScheduleDate}
-                  onChange={(e) => setNextScheduleDate(e.target.value)}
-                  className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  disabled={loading}
-                />
+            <div className="mb-4 space-y-4">
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">
+                    Data sugerida
+                  </label>
+                  <input
+                    type="date"
+                    value={nextScheduleDate}
+                    onChange={(e) => setNextScheduleDate(e.target.value)}
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-1.5 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    disabled={loading}
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">
+                    Horário de início
+                  </label>
+                  <input
+                    type="time"
+                    value={nextScheduleTime}
+                    onChange={(e) => setNextScheduleTime(e.target.value)}
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-1.5 text-sm dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    disabled={loading}
+                  />
+                </div>
               </div>
-              <div>
-                <label className="mb-1 block text-xs font-medium text-gray-700">
-                  Horário de início
-                </label>
-                <input
-                  type="time"
-                  value={nextScheduleTime}
-                  onChange={(e) => setNextScheduleTime(e.target.value)}
-                  className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  disabled={loading}
-                />
-              </div>
+              <RoomPicker
+                date={nextScheduleDate}
+                startTime={nextScheduleTime}
+                endTime={`${String(parseInt(nextScheduleTime.split(":")[0]) + 1).padStart(2, "0")}:${nextScheduleTime.split(":")[1]}`}
+                onSelect={setNextScheduleRoom}
+                selectedRoomEmail={nextScheduleRoom?.email}
+              />
             </div>
             {error && (
-              <div className="mb-3 rounded-md border border-red-200 bg-red-50 p-2 text-sm text-red-700">
+              <div className="mb-3 rounded-md border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30 p-2 text-sm text-red-700 dark:text-red-300">
                 {error}
               </div>
             )}
             <div className="flex justify-end gap-2">
               <button
-                onClick={() => setShowNextScheduleModal(false)}
+                onClick={() => { setShowNextScheduleModal(false); setNextScheduleRoom(null); }}
                 disabled={loading}
-                className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                className="rounded-md border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
               >
                 Não, obrigado
               </button>

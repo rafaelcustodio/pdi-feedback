@@ -136,7 +136,7 @@ export function buildFeedbackSubmittedEmployeeHtml(
   employeeName: string,
   managerName: string,
   period: string,
-  feedbackUrl: string
+  baseUrl: string
 ): string {
   return `
 <!DOCTYPE html>
@@ -152,7 +152,7 @@ export function buildFeedbackSubmittedEmployeeHtml(
         Novo Feedback Disponível
       </h1>
       <p style="margin: 8px 0 0; font-size: 14px; opacity: 0.9;">
-        Você recebeu um novo feedback
+        Seu gestor registrou um feedback sobre o seu desempenho
       </p>
     </div>
     <div style="background: #fff; padding: 24px 32px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
@@ -160,14 +160,17 @@ export function buildFeedbackSubmittedEmployeeHtml(
         Olá <strong>${employeeName}</strong>,
       </p>
       <p style="color: #374151; font-size: 15px; line-height: 1.6;">
-        Seu gestor <strong>${managerName}</strong> submeteu um feedback referente ao período <strong>${period}</strong>.
+        Seu gestor <strong>${managerName}</strong> registrou um novo feedback referente ao período <strong>${period}</strong>.
       </p>
       <p style="color: #374151; font-size: 15px; line-height: 1.6;">
-        Clique no botão abaixo para visualizar o feedback completo.
+        O feedback é uma ferramenta essencial para o seu desenvolvimento profissional. Através dele, você recebe uma visão clara sobre seus pontos fortes e as oportunidades de melhoria identificadas pelo seu gestor. Aproveite este momento para refletir sobre os pontos abordados e, se necessário, converse com seu gestor para alinhar expectativas e traçar ações de desenvolvimento.
+      </p>
+      <p style="color: #374151; font-size: 15px; line-height: 1.6;">
+        Acesse o sistema para visualizar o feedback completo na aba <strong>Feedbacks</strong>.
       </p>
       <div style="margin-top: 24px; text-align: center;">
-        <a href="${feedbackUrl}" style="display: inline-block; padding: 12px 32px; background: #1d4ed8; color: #fff; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 15px;">
-          Ver Feedback
+        <a href="${baseUrl}" style="display: inline-block; padding: 12px 32px; background: #1d4ed8; color: #fff; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 15px;">
+          Acessar o Sistema
         </a>
       </div>
     </div>

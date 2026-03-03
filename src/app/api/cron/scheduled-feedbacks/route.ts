@@ -93,7 +93,7 @@ export async function GET(request: Request) {
           feedback.employee.name,
           feedback.manager.name,
           feedback.period,
-          feedbackUrl
+          baseUrl
         );
         await sendEmail({
           to: feedback.employee.email,

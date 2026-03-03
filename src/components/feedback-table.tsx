@@ -19,6 +19,7 @@ import type {
   SubordinateOption,
 } from "@/app/(dashboard)/feedbacks/actions";
 import { createFutureFeedback } from "@/app/(dashboard)/feedbacks/actions";
+import { RoomPicker } from "@/components/room-picker";
 
 interface FeedbackTableProps {
   feedbacks: FeedbackListItem[];
@@ -69,6 +70,7 @@ export function FeedbackTable({
   const [futureEmployeeId, setFutureEmployeeId] = useState("");
   const [futureDate, setFutureDate] = useState("");
   const [futureTime, setFutureTime] = useState("09:00");
+  const [futureRoom, setFutureRoom] = useState<{ email: string; displayName: string } | null>(null);
   const [futureLoading, setFutureLoading] = useState(false);
   const [futureError, setFutureError] = useState<string | null>(null);
   const minFutureDate = useMemo(() => {
@@ -150,6 +152,8 @@ export function FeedbackTable({
       employeeId: futureEmployeeId,
       scheduledAt: futureDate,
       scheduledTime: futureTime,
+      roomEmail: futureRoom?.email,
+      roomDisplayName: futureRoom?.displayName,
     });
 
     setFutureLoading(false);
@@ -158,6 +162,7 @@ export function FeedbackTable({
       setFutureEmployeeId("");
       setFutureDate("");
       setFutureTime("09:00");
+      setFutureRoom(null);
       router.refresh();
     } else {
       setFutureError(result.error ?? "Erro ao agendar feedback futuro");
@@ -468,16 +473,16 @@ export function FeedbackTable({
       {/* Future Feedback Modal */}
       {showFutureModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-            <h3 className="text-lg font-semibold text-gray-900">
+          <div className="mx-4 w-full max-w-md rounded-lg bg-white dark:bg-gray-800 p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               Agendar Feedback Futuro
             </h3>
-            <p className="mt-1 text-sm text-gray-600">
+            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
               Agende uma data futura para preencher um feedback. Um rascunho será criado e você receberá lembretes.
             </p>
 
             {futureError && (
-              <div className="mt-3 rounded-md border border-red-200 bg-red-50 p-2 text-sm text-red-700">
+              <div className="mt-3 rounded-md border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30 p-2 text-sm text-red-700 dark:text-red-300">
                 {futureError}
               </div>
             )}
@@ -486,7 +491,7 @@ export function FeedbackTable({
               <div>
                 <label
                   htmlFor="future-employee"
-                  className="mb-1 block text-sm font-medium text-gray-700"
+                  className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
                 >
                   Colaborador *
                 </label>
@@ -494,7 +499,7 @@ export function FeedbackTable({
                   id="future-employee"
                   value={futureEmployeeId}
                   onChange={(e) => setFutureEmployeeId(e.target.value)}
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                  className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm dark:text-white focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
                   disabled={futureLoading}
                 >
                   <option value="">Selecione um colaborador</option>
@@ -509,7 +514,7 @@ export function FeedbackTable({
                 <div className="flex-1">
                   <label
                     htmlFor="future-date"
-                    className="mb-1 block text-sm font-medium text-gray-700"
+                    className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
                   >
                     Data de programação *
                   </label>
@@ -519,14 +524,14 @@ export function FeedbackTable({
                     value={futureDate}
                     onChange={(e) => setFutureDate(e.target.value)}
                     min={minFutureDate}
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm dark:text-white focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
                     disabled={futureLoading}
                   />
                 </div>
                 <div>
                   <label
                     htmlFor="future-time"
-                    className="mb-1 block text-sm font-medium text-gray-700"
+                    className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
                   >
                     Horário de início
                   </label>
@@ -535,11 +540,18 @@ export function FeedbackTable({
                     type="time"
                     value={futureTime}
                     onChange={(e) => setFutureTime(e.target.value)}
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm dark:text-white focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
                     disabled={futureLoading}
                   />
                 </div>
               </div>
+              <RoomPicker
+                date={futureDate}
+                startTime={futureTime}
+                endTime={`${String(parseInt(futureTime.split(":")[0]) + 1).padStart(2, "0")}:${futureTime.split(":")[1]}`}
+                onSelect={setFutureRoom}
+                selectedRoomEmail={futureRoom?.email}
+              />
             </div>
 
             <div className="mt-6 flex justify-end gap-3">
@@ -550,9 +562,10 @@ export function FeedbackTable({
                   setFutureEmployeeId("");
                   setFutureDate("");
                   setFutureTime("09:00");
+                  setFutureRoom(null);
                   setFutureError(null);
                 }}
-                className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
               >
                 Cancelar
               </button>

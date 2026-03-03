@@ -280,3 +280,105 @@ const FREQ_LABELS: Record<number, string> = {
 export function getFrequencyLabel(months: number): string {
   return FREQ_LABELS[months] ?? `${months} meses`;
 }
+
+// ============================================================
+// Time-slot aware distribution
+// ============================================================
+
+/** Valid 1-hour business slots (start times), avoiding 12:00-13:30 lunch break */
+export const BUSINESS_TIME_SLOTS = [
+  "08:30", "09:30", "10:30", "11:00",
+  "13:30", "14:30", "15:30", "16:30", "17:00",
+] as const;
+
+export const DEFAULT_TIME_SLOT = "09:00";
+
+export interface DistributedEventWithTime extends DistributedEvent {
+  scheduledTime: string; // HH:mm
+}
+
+/**
+ * Map a time slot (HH:mm) to the corresponding indices in an availabilityView
+ * string that starts at 08:00 with 30-min granularity.
+ * A 1-hour event occupies 2 consecutive 30-min slots.
+ */
+function slotToViewIndices(time: string): [number, number] {
+  const [h, m] = time.split(":").map(Number);
+  const minutesSince0800 = (h - 8) * 60 + m;
+  const idx = minutesSince0800 / 30;
+  return [idx, idx + 1]; // 1-hour = 2 half-hour slots
+}
+
+/**
+ * Check if a time slot is free in the availabilityView for a given day.
+ * '0' = free, anything else = busy/tentative/oof.
+ */
+function isSlotFreeInView(view: string | undefined, time: string): boolean {
+  if (!view) return true; // No data = assume free
+  const [idx1, idx2] = slotToViewIndices(time);
+  if (idx1 < 0 || idx2 >= view.length) return true; // Out of range = assume free
+  return view[idx1] === "0" && view[idx2] === "0";
+}
+
+/**
+ * Distribute employees across business days WITH time slots.
+ * If roomSchedule is provided, picks the first available slot per day.
+ * Without roomSchedule, falls back to DEFAULT_TIME_SLOT ("09:00").
+ *
+ * @param roomSchedule - Map<"YYYY-MM-DD", availabilityView> from getRoomScheduleForDateRange
+ */
+export function distributeEventsWithTimeSlots(
+  employees: { id: string; name: string }[],
+  businessDays: Date[],
+  perDay: 1 | 2,
+  direction: "end-to-start" | "last-month-start",
+  roomSchedule?: Map<string, string>
+): DistributedEventWithTime[] {
+  // First, distribute by day using existing logic
+  const baseEvents = distributeEvents(employees, businessDays, perDay, direction);
+
+  if (!roomSchedule || roomSchedule.size === 0) {
+    // No room schedule: use default time
+    return baseEvents.map((e) => ({ ...e, scheduledTime: DEFAULT_TIME_SLOT }));
+  }
+
+  // Track used slots per day (to avoid double-booking when perDay > 1)
+  const usedSlotsPerDay = new Map<string, Set<string>>();
+
+  return baseEvents.map((event) => {
+    const dateKey = event.scheduledDate.toISOString().slice(0, 10);
+    const dayView = roomSchedule.get(dateKey);
+
+    if (!usedSlotsPerDay.has(dateKey)) {
+      usedSlotsPerDay.set(dateKey, new Set());
+    }
+    const usedSlots = usedSlotsPerDay.get(dateKey)!;
+
+    // Find first available slot
+    let selectedTime: string | null = null;
+    for (const slot of BUSINESS_TIME_SLOTS) {
+      if (usedSlots.has(slot)) continue;
+      if (isSlotFreeInView(dayView, slot)) {
+        selectedTime = slot;
+        break;
+      }
+    }
+
+    // If no free slot found in room schedule, pick first unused slot regardless
+    if (!selectedTime) {
+      for (const slot of BUSINESS_TIME_SLOTS) {
+        if (!usedSlots.has(slot)) {
+          selectedTime = slot;
+          break;
+        }
+      }
+    }
+
+    // Ultimate fallback
+    if (!selectedTime) selectedTime = BUSINESS_TIME_SLOTS[0];
+
+    usedSlots.add(selectedTime);
+
+    return { ...event, scheduledTime: selectedTime };
+  });
+}

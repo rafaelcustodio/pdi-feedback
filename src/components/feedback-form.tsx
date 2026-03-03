@@ -13,6 +13,7 @@ import {
   cancelScheduledFeedback,
 } from "@/app/(dashboard)/feedbacks/actions";
 import type { SubordinateOption } from "@/app/(dashboard)/feedbacks/actions";
+import { RoomPicker } from "@/components/room-picker";
 
 interface FeedbackFormProps {
   mode: "create" | "edit";
@@ -92,8 +93,12 @@ export function FeedbackForm({
   const [error, setError] = useState<string | null>(null);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [scheduleDate, setScheduleDate] = useState("");
+  const [scheduleTime, setScheduleTime] = useState("09:00");
+  const [scheduleRoom, setScheduleRoom] = useState<{ email: string; displayName: string } | null>(null);
   const [showRescheduleModal, setShowRescheduleModal] = useState(false);
   const [rescheduleDate, setRescheduleDate] = useState("");
+  const [rescheduleTime, setRescheduleTime] = useState("09:00");
+  const [rescheduleRoom, setRescheduleRoom] = useState<{ email: string; displayName: string } | null>(null);
   const [showCancelEventModal, setShowCancelEventModal] = useState(false);
   const [showSubmitMenu, setShowSubmitMenu] = useState(false);
   const submitMenuRef = useRef<HTMLDivElement>(null);
@@ -193,7 +198,7 @@ export function FeedbackForm({
         return;
       }
       // Now schedule the newly created feedback
-      const result = await scheduleFeedback(createResult.id, scheduleDate);
+      const result = await scheduleFeedback(createResult.id, scheduleDate, scheduleTime, scheduleRoom?.email, scheduleRoom?.displayName);
       setLoading(false);
       if (result.success) {
         router.push("/feedbacks");
@@ -216,7 +221,7 @@ export function FeedbackForm({
         setError(saveResult.error ?? "Erro ao salvar antes de agendar");
         return;
       }
-      const result = await scheduleFeedback(initialData!.id, scheduleDate);
+      const result = await scheduleFeedback(initialData!.id, scheduleDate, scheduleTime, scheduleRoom?.email, scheduleRoom?.displayName);
       setLoading(false);
       if (result.success) {
         router.push("/feedbacks");
@@ -231,7 +236,7 @@ export function FeedbackForm({
     if (!rescheduleDate || !initialData?.id) return;
     setLoading(true);
     setError(null);
-    const result = await rescheduleFeedback(initialData.id, rescheduleDate);
+    const result = await rescheduleFeedback(initialData.id, rescheduleDate, rescheduleTime, rescheduleRoom?.email, rescheduleRoom?.displayName);
     setLoading(false);
     if (result.success) {
       setShowRescheduleModal(false);
@@ -589,31 +594,57 @@ export function FeedbackForm({
       {/* Schedule Modal */}
       {showScheduleModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-            <h3 className="text-lg font-semibold text-gray-900">
+          <div className="mx-4 w-full max-w-md rounded-lg bg-white dark:bg-gray-800 p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               Agendar Submissão de Feedback
             </h3>
-            <p className="mt-1 text-sm text-gray-600">
+            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
               Selecione a data em que o feedback será automaticamente submetido ao colaborador.
             </p>
-            <div className="mt-4">
-              <label
-                htmlFor="schedule-date"
-                className="mb-1 block text-sm font-medium text-gray-700"
-              >
-                Data de submissão *
-              </label>
-              <input
-                id="schedule-date"
-                type="date"
-                value={scheduleDate}
-                onChange={(e) => setScheduleDate(e.target.value)}
-                min={minScheduleDate}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+            <div className="mt-4 space-y-4">
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <label
+                    htmlFor="schedule-date"
+                    className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
+                    Data de submissão *
+                  </label>
+                  <input
+                    id="schedule-date"
+                    type="date"
+                    value={scheduleDate}
+                    onChange={(e) => setScheduleDate(e.target.value)}
+                    min={minScheduleDate}
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm dark:text-white focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                  />
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    A data deve ser futura (a partir de amanhã).
+                  </p>
+                </div>
+                <div>
+                  <label
+                    htmlFor="schedule-time"
+                    className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
+                    Horário
+                  </label>
+                  <input
+                    id="schedule-time"
+                    type="time"
+                    value={scheduleTime}
+                    onChange={(e) => setScheduleTime(e.target.value)}
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm dark:text-white focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                  />
+                </div>
+              </div>
+              <RoomPicker
+                date={scheduleDate}
+                startTime={scheduleTime}
+                endTime={`${String(parseInt(scheduleTime.split(":")[0]) + 1).padStart(2, "0")}:${scheduleTime.split(":")[1]}`}
+                onSelect={setScheduleRoom}
+                selectedRoomEmail={scheduleRoom?.email}
               />
-              <p className="mt-1 text-xs text-gray-500">
-                A data deve ser futura (a partir de amanhã).
-              </p>
             </div>
             <div className="mt-6 flex justify-end gap-3">
               <button
@@ -621,8 +652,10 @@ export function FeedbackForm({
                 onClick={() => {
                   setShowScheduleModal(false);
                   setScheduleDate("");
+                  setScheduleTime("09:00");
+                  setScheduleRoom(null);
                 }}
-                className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
               >
                 Cancelar
               </button>
@@ -643,31 +676,57 @@ export function FeedbackForm({
       {/* Reschedule Event Modal */}
       {showRescheduleModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-            <h3 className="text-lg font-semibold text-gray-900">
+          <div className="mx-4 w-full max-w-md rounded-lg bg-white dark:bg-gray-800 p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               Reagendar Feedback
             </h3>
-            <p className="mt-1 text-sm text-gray-600">
+            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
               Selecione a nova data para este feedback.
             </p>
-            <div className="mt-4">
-              <label
-                htmlFor="reschedule-event-date"
-                className="mb-1 block text-sm font-medium text-gray-700"
-              >
-                Nova data *
-              </label>
-              <input
-                id="reschedule-event-date"
-                type="date"
-                value={rescheduleDate}
-                onChange={(e) => setRescheduleDate(e.target.value)}
-                min={minScheduleDate}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
+            <div className="mt-4 space-y-4">
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <label
+                    htmlFor="reschedule-event-date"
+                    className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
+                    Nova data *
+                  </label>
+                  <input
+                    id="reschedule-event-date"
+                    type="date"
+                    value={rescheduleDate}
+                    onChange={(e) => setRescheduleDate(e.target.value)}
+                    min={minScheduleDate}
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm dark:text-white focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                  />
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    A data deve ser futura (a partir de amanhã).
+                  </p>
+                </div>
+                <div>
+                  <label
+                    htmlFor="reschedule-event-time"
+                    className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
+                    Horário
+                  </label>
+                  <input
+                    id="reschedule-event-time"
+                    type="time"
+                    value={rescheduleTime}
+                    onChange={(e) => setRescheduleTime(e.target.value)}
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm dark:text-white focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                  />
+                </div>
+              </div>
+              <RoomPicker
+                date={rescheduleDate}
+                startTime={rescheduleTime}
+                endTime={`${String(parseInt(rescheduleTime.split(":")[0]) + 1).padStart(2, "0")}:${rescheduleTime.split(":")[1]}`}
+                onSelect={setRescheduleRoom}
+                selectedRoomEmail={rescheduleRoom?.email}
               />
-              <p className="mt-1 text-xs text-gray-500">
-                A data deve ser futura (a partir de amanhã).
-              </p>
             </div>
             <div className="mt-6 flex justify-end gap-3">
               <button
@@ -675,8 +734,10 @@ export function FeedbackForm({
                 onClick={() => {
                   setShowRescheduleModal(false);
                   setRescheduleDate("");
+                  setRescheduleTime("09:00");
+                  setRescheduleRoom(null);
                 }}
-                className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
               >
                 Cancelar
               </button>
@@ -697,11 +758,11 @@ export function FeedbackForm({
       {/* Cancel Event Confirmation Modal */}
       {showCancelEventModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-            <h3 className="text-lg font-semibold text-gray-900">
+          <div className="mx-4 w-full max-w-md rounded-lg bg-white dark:bg-gray-800 p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               Cancelar Feedback agendado
             </h3>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
               Tem certeza que deseja cancelar este Feedback agendado?
               {initialData?.status === "scheduled"
                 ? " O registro será removido."
@@ -711,7 +772,7 @@ export function FeedbackForm({
               <button
                 type="button"
                 onClick={() => setShowCancelEventModal(false)}
-                className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
               >
                 Voltar
               </button>

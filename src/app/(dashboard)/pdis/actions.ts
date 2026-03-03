@@ -981,7 +981,9 @@ export async function getFollowUps(
 export async function scheduleFollowUp(
   pdiId: string,
   scheduledAt: string,
-  scheduledTime: string = "09:00"
+  scheduledTime: string = "09:00",
+  roomEmail?: string,
+  roomDisplayName?: string
 ): Promise<{ success: boolean; error?: string; id?: string }> {
   const session = await getEffectiveAuth();
   if (!session?.user?.id) {
@@ -1036,6 +1038,17 @@ export async function scheduleFollowUp(
         { emailAddress: { address: employee.email, name: employee.name }, type: "required" },
       ],
     };
+
+    if (roomEmail && roomDisplayName) {
+      calendarEvent.attendees.push({
+        emailAddress: { address: roomEmail, name: roomDisplayName },
+        type: "resource",
+      });
+      calendarEvent.location = {
+        displayName: roomDisplayName,
+        locationEmailAddress: roomEmail,
+      };
+    }
 
     const [managerToken, employeeToken] = await Promise.allSettled([
       getUserToken(userId),

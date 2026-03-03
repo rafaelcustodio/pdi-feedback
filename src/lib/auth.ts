@@ -50,7 +50,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         : undefined,
       authorization: {
         params: {
-          scope: "openid profile email Calendars.ReadWrite offline_access",
+          scope: "openid profile email Calendars.ReadWrite Calendars.Read.Shared Place.Read.All offline_access",
         },
       },
     }),

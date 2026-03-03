@@ -11,6 +11,13 @@ import {
   calculatePeriods,
 } from "@/lib/sector-schedule-utils";
 import { formatPeriodLabel } from "@/lib/sector-schedule-pure-utils";
+import {
+  getUserToken,
+  createCalendarEvent,
+  listMeetingRooms,
+  getRoomScheduleForDateRange,
+} from "@/lib/microsoft-graph";
+import type { GraphCalendarEvent, MeetingRoom, RoomScheduleMap } from "@/lib/microsoft-graph";
 
 export interface ComplianceEmployee {
   employeeId: string;
@@ -165,7 +172,13 @@ export interface ProgramEventsResult {
   error?: string;
   created: number;
   skipped: number;
-  events: Array<{ employeeId: string; employeeName: string; scheduledDate: Date }>;
+  events: Array<{ employeeId: string; employeeName: string; scheduledDate: Date; scheduledTime?: string }>;
+}
+
+export interface EventRoomSelection {
+  employeeId: string;
+  roomEmail: string;
+  roomDisplayName: string;
 }
 
 export async function programEvents(params: {
@@ -177,6 +190,8 @@ export async function programEvents(params: {
   perDay: 1 | 2;
   direction: "end-to-start" | "last-month-start";
   dryRun?: boolean;
+  eventRooms?: EventRoomSelection[];
+  eventTimes?: Array<{ employeeId: string; scheduledTime: string }>;
 }): Promise<ProgramEventsResult> {
   const session = await getEffectiveAuth();
   if (!session?.user?.id) {
@@ -294,6 +309,22 @@ export async function programEvents(params: {
     };
   }
 
+  // Build room lookup from eventRooms
+  const roomMap = new Map<string, EventRoomSelection>();
+  if (params.eventRooms) {
+    for (const r of params.eventRooms) {
+      roomMap.set(r.employeeId, r);
+    }
+  }
+
+  // Build time lookup from eventTimes
+  const timeMap = new Map<string, string>();
+  if (params.eventTimes) {
+    for (const t of params.eventTimes) {
+      timeMap.set(t.employeeId, t.scheduledTime);
+    }
+  }
+
   // Create the events
   for (const event of eventsToCreate) {
     const emp = accessibleEmployees.find((e) => e.id === event.employeeId)!;
@@ -322,7 +353,7 @@ export async function programEvents(params: {
         throw error;
       }
     } else {
-      await prisma.feedback.create({
+      const feedback = await prisma.feedback.create({
         data: {
           employeeId: event.employeeId,
           managerId: emp.managerId,
@@ -331,6 +362,71 @@ export async function programEvents(params: {
           scheduledAt: event.scheduledDate,
         },
       });
+
+      // Create Outlook calendar events with room if available
+      const employee = await prisma.user.findUnique({
+        where: { id: event.employeeId },
+        select: { name: true, email: true },
+      });
+
+      if (employee) {
+        const dateStr = new Date(event.scheduledDate).toISOString().slice(0, 10);
+        const eventTime = timeMap.get(event.employeeId) || "09:00";
+        const [startH, startM] = eventTime.split(":").map(Number);
+        const endH = startH + 1;
+        const startDateTime = `${dateStr}T${String(startH).padStart(2, "0")}:${String(startM).padStart(2, "0")}:00`;
+        const endDateTime = `${dateStr}T${String(endH).padStart(2, "0")}:${String(startM).padStart(2, "0")}:00`;
+
+        const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+        const calendarEvent: GraphCalendarEvent = {
+          subject: `Feedback — ${employee.name}`,
+          start: { dateTime: startDateTime, timeZone: "America/Sao_Paulo" },
+          end: { dateTime: endDateTime, timeZone: "America/Sao_Paulo" },
+          body: {
+            contentType: "text",
+            content: `Você tem um feedback agendado com seu gestor.\n\nO feedback é uma ferramenta essencial para o seu desenvolvimento profissional.\n\nAcesse o sistema para mais detalhes: ${baseUrl}`,
+          },
+          attendees: [
+            { emailAddress: { address: employee.email, name: employee.name }, type: "required" },
+          ],
+        };
+
+        const roomSelection = roomMap.get(event.employeeId);
+        if (roomSelection) {
+          calendarEvent.attendees.push({
+            emailAddress: { address: roomSelection.roomEmail, name: roomSelection.roomDisplayName },
+            type: "resource",
+          });
+          calendarEvent.location = {
+            displayName: roomSelection.roomDisplayName,
+            locationEmailAddress: roomSelection.roomEmail,
+          };
+        }
+
+        const [managerToken, employeeToken] = await Promise.allSettled([
+          getUserToken(emp.managerId),
+          getUserToken(event.employeeId),
+        ]);
+
+        const managerAccessToken = managerToken.status === "fulfilled" ? managerToken.value : null;
+        const employeeAccessToken = employeeToken.status === "fulfilled" ? employeeToken.value : null;
+
+        const eventPromises: Promise<string | null>[] = [];
+        if (managerAccessToken) eventPromises.push(createCalendarEvent(managerAccessToken, calendarEvent));
+        if (employeeAccessToken) eventPromises.push(createCalendarEvent(employeeAccessToken, calendarEvent));
+
+        const results = await Promise.allSettled(eventPromises);
+
+        if (managerAccessToken && results.length > 0) {
+          const managerResult = results[0];
+          if (managerResult.status === "fulfilled" && managerResult.value) {
+            await prisma.feedback.update({
+              where: { id: feedback.id },
+              data: { outlookEventId: managerResult.value },
+            });
+          }
+        }
+      }
     }
   }
 
@@ -425,4 +521,70 @@ export async function getUnitPeriods(
     start: p.start.toISOString(),
     end: p.end.toISOString(),
   }));
+}
+
+// ============================================================
+// Room availability for wizard
+// ============================================================
+
+export interface WizardRoom {
+  emailAddress: string;
+  displayName: string;
+  building: string | null;
+  capacity: number | null;
+}
+
+/** Check if the current user has a Microsoft Graph token */
+export async function hasMicrosoftTokenForWizard(): Promise<boolean> {
+  const session = await getEffectiveAuth();
+  if (!session?.user?.id) return false;
+  const token = await getUserToken(session.user.id);
+  return token !== null;
+}
+
+/** Fetch all meeting rooms available in the tenant */
+export async function fetchRoomsForWizard(): Promise<WizardRoom[]> {
+  const session = await getEffectiveAuth();
+  if (!session?.user?.id) return [];
+
+  const token = await getUserToken(session.user.id);
+  if (!token) return [];
+
+  const rooms = await listMeetingRooms(token);
+  return rooms.map((r) => ({
+    emailAddress: r.emailAddress,
+    displayName: r.displayName,
+    building: r.building,
+    capacity: r.capacity,
+  }));
+}
+
+/**
+ * Fetch room schedule for a date range.
+ * Returns a serializable object { [date]: availabilityView } instead of Map.
+ */
+export async function fetchRoomScheduleForPeriod(
+  roomEmail: string,
+  periodStart: string,
+  periodEnd: string
+): Promise<Record<string, string>> {
+  const session = await getEffectiveAuth();
+  if (!session?.user?.id) return {};
+
+  const token = await getUserToken(session.user.id);
+  if (!token) return {};
+
+  const scheduleMap = await getRoomScheduleForDateRange(
+    token,
+    roomEmail,
+    periodStart,
+    periodEnd
+  );
+
+  // Convert Map to plain object for serialization
+  const result: Record<string, string> = {};
+  for (const [key, value] of scheduleMap) {
+    result[key] = value;
+  }
+  return result;
 }
