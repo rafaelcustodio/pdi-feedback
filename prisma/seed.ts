@@ -1,4 +1,15 @@
-import { PrismaClient, UserRole } from "../src/generated/prisma/client";
+import {
+  PrismaClient,
+  UserRole,
+  Ethnicity,
+  Gender,
+  MaritalStatus,
+  EducationLevel,
+  ContractType,
+  HealthPlanOption,
+  ShirtSize,
+  BankAccountOption,
+} from "../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { hash } from "bcryptjs";
 
@@ -13,6 +24,9 @@ async function main() {
   // ============================================================
   // Clean existing data (FK-safe order)
   // ============================================================
+  await prisma.changeRequest.deleteMany();
+  await prisma.dependent.deleteMany();
+  await prisma.emergencyContact.deleteMany();
   await prisma.notification.deleteMany();
   await prisma.nineBoxEvaluator.deleteMany();
   await prisma.nineBoxEvaluation.deleteMany();
@@ -35,12 +49,55 @@ async function main() {
   // ============================================================
 
   // Admin (acesso total, fora da hierarquia)
-  await prisma.user.create({
+  const admin = await prisma.user.create({
     data: {
       name: "Admin Sistema",
       email: "admin@narwal.com.br",
       password: pw,
       role: UserRole.admin,
+      // Personal data
+      cpf: "111.222.333-44",
+      rg: "12.345.678-9",
+      birthDate: new Date("1985-03-15"),
+      gender: Gender.masculino,
+      ethnicity: Ethnicity.branco,
+      maritalStatus: MaritalStatus.casado,
+      educationLevel: EducationLevel.pos_graduado,
+      livesWithDescription: "Esposa e dois filhos",
+      // Contact
+      phone: "(41) 99999-0001",
+      personalEmail: "admin.pessoal@gmail.com",
+      address: "Rua das Flores",
+      addressNumber: "100",
+      addressComplement: "Apto 501",
+      city: "Curitiba",
+      state: "PR",
+      zipCode: "80000-000",
+      // Financial
+      hasBradescoAccount: BankAccountOption.sim,
+      bankAgency: "1234",
+      bankAccount: "56789-0",
+      hasOtherEmployment: false,
+      healthPlanOption: HealthPlanOption.nacional,
+      wantsTransportVoucher: false,
+      contractType: ContractType.efetivo,
+      shirtSize: ShirtSize.g_masc,
+      // Family
+      hasChildren: true,
+      childrenAges: "8 e 5 anos",
+      hasIRDependents: true,
+      // About Me
+      hobbies: ["Leitura", "Viagens", "Cinema", "Esporte"],
+      socialNetworks: { LinkedIn: "linkedin.com/in/adminsistema", Instagram: "@admin.sistema" },
+      favoriteBookMovieGenres: "Ficção científica e documentários",
+      favoriteBooks: "Sapiens, O Gene Egoísta",
+      favoriteMovies: "Interestelar, Matrix",
+      favoriteMusic: "Rock progressivo",
+      admiredValues: "Honestidade, resiliência, empatia",
+      foodAllergies: "Nenhuma",
+      hasPets: "Sim, um cachorro",
+      participateInVideos: true,
+      admissionDate: new Date("2020-01-10"),
     },
   });
 
@@ -51,6 +108,49 @@ async function main() {
       email: "rogerio.borili@narwal.com.br",
       password: pw,
       role: UserRole.manager,
+      // Personal data
+      cpf: "222.333.444-55",
+      rg: "23.456.789-0",
+      birthDate: new Date("1978-07-22"),
+      gender: Gender.masculino,
+      ethnicity: Ethnicity.pardo,
+      maritalStatus: MaritalStatus.casado,
+      educationLevel: EducationLevel.pos_graduado,
+      livesWithDescription: "Esposa e três filhos",
+      // Contact
+      phone: "(41) 99999-0002",
+      personalEmail: "rogerio.pessoal@gmail.com",
+      address: "Av. Sete de Setembro",
+      addressNumber: "2500",
+      addressComplement: "Cobertura",
+      city: "Curitiba",
+      state: "PR",
+      zipCode: "80240-000",
+      // Financial
+      hasBradescoAccount: BankAccountOption.sim,
+      bankAgency: "5678",
+      bankAccount: "12345-6",
+      hasOtherEmployment: false,
+      healthPlanOption: HealthPlanOption.nacional,
+      wantsTransportVoucher: false,
+      contractType: ContractType.efetivo,
+      shirtSize: ShirtSize.m_masc,
+      // Family
+      hasChildren: true,
+      childrenAges: "12, 9 e 4 anos",
+      hasIRDependents: true,
+      // About Me
+      hobbies: ["Esporte", "Música", "Viagens", "Leitura", "Voluntariado"],
+      socialNetworks: { LinkedIn: "linkedin.com/in/rogerioborili", Instagram: "@rogerio.borili" },
+      favoriteBookMovieGenres: "Biografias e ação",
+      favoriteBooks: "A Arte da Guerra, Steve Jobs",
+      favoriteMovies: "O Poderoso Chefão, Gladiador",
+      favoriteMusic: "MPB e Sertanejo",
+      admiredValues: "Liderança, transparência, inovação",
+      foodAllergies: "Intolerância à lactose",
+      hasPets: "Sim, dois cachorros",
+      participateInVideos: true,
+      admissionDate: new Date("2015-06-01"),
     },
   });
 
@@ -61,6 +161,45 @@ async function main() {
       email: "vinicius.pacheco@narwal.com.br",
       password: pw,
       role: UserRole.manager,
+      // Personal data
+      cpf: "333.444.555-66",
+      rg: "34.567.890-1",
+      birthDate: new Date("1982-11-05"),
+      gender: Gender.masculino,
+      ethnicity: Ethnicity.branco,
+      maritalStatus: MaritalStatus.solteiro,
+      educationLevel: EducationLevel.superior_completo,
+      livesWithDescription: "Sozinho",
+      // Contact
+      phone: "(41) 99999-0003",
+      personalEmail: "vinicius.pessoal@gmail.com",
+      address: "Rua XV de Novembro",
+      addressNumber: "350",
+      city: "Curitiba",
+      state: "PR",
+      zipCode: "80020-000",
+      // Financial
+      hasBradescoAccount: BankAccountOption.nao,
+      hasOtherEmployment: false,
+      healthPlanOption: HealthPlanOption.regional,
+      wantsTransportVoucher: false,
+      contractType: ContractType.efetivo,
+      shirtSize: ShirtSize.m_masc,
+      // Family
+      hasChildren: false,
+      hasIRDependents: false,
+      // About Me
+      hobbies: ["Games", "Cinema", "Música", "Instrumentos Musicais"],
+      socialNetworks: { LinkedIn: "linkedin.com/in/viniciuspacheco", Twitter: "@vpacheco" },
+      favoriteBookMovieGenres: "Suspense e ficção científica",
+      favoriteBooks: "1984, Duna",
+      favoriteMovies: "Blade Runner 2049, Inception",
+      favoriteMusic: "Rock alternativo e eletrônica",
+      admiredValues: "Criatividade, lealdade, perseverança",
+      foodAllergies: "Alergia a camarão",
+      hasPets: "Não",
+      participateInVideos: false,
+      admissionDate: new Date("2018-03-15"),
     },
   });
 
@@ -425,18 +564,77 @@ async function main() {
   });
 
   // ============================================================
+  // Dependents (IR)
+  // ============================================================
+
+  // Admin — 2 dependents
+  await prisma.dependent.createMany({
+    data: [
+      { userId: admin.id, name: "Maria Silva", relationship: "Esposa", cpf: "111.111.111-11" },
+      { userId: admin.id, name: "Lucas Silva", relationship: "Filho", cpf: "222.222.222-22" },
+    ],
+  });
+
+  // CEO — 3 dependents
+  await prisma.dependent.createMany({
+    data: [
+      { userId: ceo.id, name: "Ana Borili", relationship: "Esposa", cpf: "333.333.333-33" },
+      { userId: ceo.id, name: "Pedro Borili", relationship: "Filho", cpf: "444.444.444-44" },
+      { userId: ceo.id, name: "Julia Borili", relationship: "Filha", cpf: "555.555.555-55" },
+    ],
+  });
+
+  // Vinicius — 2 dependents
+  await prisma.dependent.createMany({
+    data: [
+      { userId: dirComMktCS.id, name: "Carlos Pacheco", relationship: "Pai", cpf: "666.666.666-66" },
+      { userId: dirComMktCS.id, name: "Helena Pacheco", relationship: "Mãe", cpf: "777.777.777-77" },
+    ],
+  });
+
+  // ============================================================
+  // Emergency Contacts
+  // ============================================================
+
+  // Admin — 1 emergency contact
+  await prisma.emergencyContact.createMany({
+    data: [
+      { userId: admin.id, name: "Maria Silva", phone: "(41) 98888-0001", relationship: "Esposa" },
+    ],
+  });
+
+  // CEO — 2 emergency contacts
+  await prisma.emergencyContact.createMany({
+    data: [
+      { userId: ceo.id, name: "Ana Borili", phone: "(41) 98888-0002", relationship: "Esposa" },
+      { userId: ceo.id, name: "Roberto Borili", phone: "(41) 98888-0003", relationship: "Irmão" },
+    ],
+  });
+
+  // Vinicius — 1 emergency contact
+  await prisma.emergencyContact.createMany({
+    data: [
+      { userId: dirComMktCS.id, name: "Carlos Pacheco", phone: "(41) 98888-0004", relationship: "Pai" },
+    ],
+  });
+
+  // ============================================================
   // Summary
   // ============================================================
   const userCount     = await prisma.user.count();
   const unitCount     = await prisma.organizationalUnit.count();
   const hierCount     = await prisma.employeeHierarchy.count();
   const scheduleCount = await prisma.sectorSchedule.count();
+  const depCount      = await prisma.dependent.count();
+  const ecCount       = await prisma.emergencyContact.count();
 
   console.log("Seed completed successfully!");
   console.log(`  Usuários:              ${userCount}  (1 admin, 1 CEO, 4 diretores, 3 gerentes, 5 coordenadores, 66 funcionários)`);
   console.log(`  Unidades org:          ${unitCount}  (1 raiz, 1 diretoria, 4 intermediárias, 9 setores folha)`);
   console.log(`  Hierarquias:           ${hierCount}`);
   console.log(`  Agendamentos de setor: ${scheduleCount}`);
+  console.log(`  Dependentes IR:        ${depCount}`);
+  console.log(`  Contatos emergência:   ${ecCount}`);
   console.log("");
   console.log("  Senha padrão: senha123");
   console.log("  Logins de exemplo:");

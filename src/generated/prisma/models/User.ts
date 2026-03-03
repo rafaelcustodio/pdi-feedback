@@ -47,6 +47,34 @@ export type UserMinAggregateOutputType = {
   city: string | null
   state: string | null
   zipCode: string | null
+  rg: string | null
+  ethnicity: $Enums.Ethnicity | null
+  gender: $Enums.Gender | null
+  maritalStatus: $Enums.MaritalStatus | null
+  educationLevel: $Enums.EducationLevel | null
+  livesWithDescription: string | null
+  personalEmail: string | null
+  addressNumber: string | null
+  addressComplement: string | null
+  hasBradescoAccount: $Enums.BankAccountOption | null
+  bankAgency: string | null
+  bankAccount: string | null
+  hasOtherEmployment: boolean | null
+  healthPlanOption: $Enums.HealthPlanOption | null
+  wantsTransportVoucher: boolean | null
+  contractType: $Enums.ContractType | null
+  shirtSize: $Enums.ShirtSize | null
+  hasChildren: boolean | null
+  childrenAges: string | null
+  hasIRDependents: boolean | null
+  favoriteBookMovieGenres: string | null
+  favoriteBooks: string | null
+  favoriteMovies: string | null
+  favoriteMusic: string | null
+  admiredValues: string | null
+  foodAllergies: string | null
+  hasPets: string | null
+  participateInVideos: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -74,6 +102,34 @@ export type UserMaxAggregateOutputType = {
   city: string | null
   state: string | null
   zipCode: string | null
+  rg: string | null
+  ethnicity: $Enums.Ethnicity | null
+  gender: $Enums.Gender | null
+  maritalStatus: $Enums.MaritalStatus | null
+  educationLevel: $Enums.EducationLevel | null
+  livesWithDescription: string | null
+  personalEmail: string | null
+  addressNumber: string | null
+  addressComplement: string | null
+  hasBradescoAccount: $Enums.BankAccountOption | null
+  bankAgency: string | null
+  bankAccount: string | null
+  hasOtherEmployment: boolean | null
+  healthPlanOption: $Enums.HealthPlanOption | null
+  wantsTransportVoucher: boolean | null
+  contractType: $Enums.ContractType | null
+  shirtSize: $Enums.ShirtSize | null
+  hasChildren: boolean | null
+  childrenAges: string | null
+  hasIRDependents: boolean | null
+  favoriteBookMovieGenres: string | null
+  favoriteBooks: string | null
+  favoriteMovies: string | null
+  favoriteMusic: string | null
+  admiredValues: string | null
+  foodAllergies: string | null
+  hasPets: string | null
+  participateInVideos: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -101,6 +157,36 @@ export type UserCountAggregateOutputType = {
   city: number
   state: number
   zipCode: number
+  rg: number
+  ethnicity: number
+  gender: number
+  maritalStatus: number
+  educationLevel: number
+  livesWithDescription: number
+  personalEmail: number
+  addressNumber: number
+  addressComplement: number
+  hasBradescoAccount: number
+  bankAgency: number
+  bankAccount: number
+  hasOtherEmployment: number
+  healthPlanOption: number
+  wantsTransportVoucher: number
+  contractType: number
+  shirtSize: number
+  hasChildren: number
+  childrenAges: number
+  hasIRDependents: number
+  hobbies: number
+  socialNetworks: number
+  favoriteBookMovieGenres: number
+  favoriteBooks: number
+  favoriteMovies: number
+  favoriteMusic: number
+  admiredValues: number
+  foodAllergies: number
+  hasPets: number
+  participateInVideos: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -130,6 +216,34 @@ export type UserMinAggregateInputType = {
   city?: true
   state?: true
   zipCode?: true
+  rg?: true
+  ethnicity?: true
+  gender?: true
+  maritalStatus?: true
+  educationLevel?: true
+  livesWithDescription?: true
+  personalEmail?: true
+  addressNumber?: true
+  addressComplement?: true
+  hasBradescoAccount?: true
+  bankAgency?: true
+  bankAccount?: true
+  hasOtherEmployment?: true
+  healthPlanOption?: true
+  wantsTransportVoucher?: true
+  contractType?: true
+  shirtSize?: true
+  hasChildren?: true
+  childrenAges?: true
+  hasIRDependents?: true
+  favoriteBookMovieGenres?: true
+  favoriteBooks?: true
+  favoriteMovies?: true
+  favoriteMusic?: true
+  admiredValues?: true
+  foodAllergies?: true
+  hasPets?: true
+  participateInVideos?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -157,6 +271,34 @@ export type UserMaxAggregateInputType = {
   city?: true
   state?: true
   zipCode?: true
+  rg?: true
+  ethnicity?: true
+  gender?: true
+  maritalStatus?: true
+  educationLevel?: true
+  livesWithDescription?: true
+  personalEmail?: true
+  addressNumber?: true
+  addressComplement?: true
+  hasBradescoAccount?: true
+  bankAgency?: true
+  bankAccount?: true
+  hasOtherEmployment?: true
+  healthPlanOption?: true
+  wantsTransportVoucher?: true
+  contractType?: true
+  shirtSize?: true
+  hasChildren?: true
+  childrenAges?: true
+  hasIRDependents?: true
+  favoriteBookMovieGenres?: true
+  favoriteBooks?: true
+  favoriteMovies?: true
+  favoriteMusic?: true
+  admiredValues?: true
+  foodAllergies?: true
+  hasPets?: true
+  participateInVideos?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -184,6 +326,36 @@ export type UserCountAggregateInputType = {
   city?: true
   state?: true
   zipCode?: true
+  rg?: true
+  ethnicity?: true
+  gender?: true
+  maritalStatus?: true
+  educationLevel?: true
+  livesWithDescription?: true
+  personalEmail?: true
+  addressNumber?: true
+  addressComplement?: true
+  hasBradescoAccount?: true
+  bankAgency?: true
+  bankAccount?: true
+  hasOtherEmployment?: true
+  healthPlanOption?: true
+  wantsTransportVoucher?: true
+  contractType?: true
+  shirtSize?: true
+  hasChildren?: true
+  childrenAges?: true
+  hasIRDependents?: true
+  hobbies?: true
+  socialNetworks?: true
+  favoriteBookMovieGenres?: true
+  favoriteBooks?: true
+  favoriteMovies?: true
+  favoriteMusic?: true
+  admiredValues?: true
+  foodAllergies?: true
+  hasPets?: true
+  participateInVideos?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -284,6 +456,36 @@ export type UserGroupByOutputType = {
   city: string | null
   state: string | null
   zipCode: string | null
+  rg: string | null
+  ethnicity: $Enums.Ethnicity | null
+  gender: $Enums.Gender | null
+  maritalStatus: $Enums.MaritalStatus | null
+  educationLevel: $Enums.EducationLevel | null
+  livesWithDescription: string | null
+  personalEmail: string | null
+  addressNumber: string | null
+  addressComplement: string | null
+  hasBradescoAccount: $Enums.BankAccountOption | null
+  bankAgency: string | null
+  bankAccount: string | null
+  hasOtherEmployment: boolean | null
+  healthPlanOption: $Enums.HealthPlanOption | null
+  wantsTransportVoucher: boolean | null
+  contractType: $Enums.ContractType | null
+  shirtSize: $Enums.ShirtSize | null
+  hasChildren: boolean | null
+  childrenAges: string | null
+  hasIRDependents: boolean | null
+  hobbies: string[]
+  socialNetworks: runtime.JsonValue | null
+  favoriteBookMovieGenres: string | null
+  favoriteBooks: string | null
+  favoriteMovies: string | null
+  favoriteMusic: string | null
+  admiredValues: string | null
+  foodAllergies: string | null
+  hasPets: string | null
+  participateInVideos: boolean | null
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
@@ -332,6 +534,36 @@ export type UserWhereInput = {
   city?: Prisma.StringNullableFilter<"User"> | string | null
   state?: Prisma.StringNullableFilter<"User"> | string | null
   zipCode?: Prisma.StringNullableFilter<"User"> | string | null
+  rg?: Prisma.StringNullableFilter<"User"> | string | null
+  ethnicity?: Prisma.EnumEthnicityNullableFilter<"User"> | $Enums.Ethnicity | null
+  gender?: Prisma.EnumGenderNullableFilter<"User"> | $Enums.Gender | null
+  maritalStatus?: Prisma.EnumMaritalStatusNullableFilter<"User"> | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.EnumEducationLevelNullableFilter<"User"> | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.StringNullableFilter<"User"> | string | null
+  personalEmail?: Prisma.StringNullableFilter<"User"> | string | null
+  addressNumber?: Prisma.StringNullableFilter<"User"> | string | null
+  addressComplement?: Prisma.StringNullableFilter<"User"> | string | null
+  hasBradescoAccount?: Prisma.EnumBankAccountOptionNullableFilter<"User"> | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.StringNullableFilter<"User"> | string | null
+  bankAccount?: Prisma.StringNullableFilter<"User"> | string | null
+  hasOtherEmployment?: Prisma.BoolNullableFilter<"User"> | boolean | null
+  healthPlanOption?: Prisma.EnumHealthPlanOptionNullableFilter<"User"> | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.BoolNullableFilter<"User"> | boolean | null
+  contractType?: Prisma.EnumContractTypeNullableFilter<"User"> | $Enums.ContractType | null
+  shirtSize?: Prisma.EnumShirtSizeNullableFilter<"User"> | $Enums.ShirtSize | null
+  hasChildren?: Prisma.BoolNullableFilter<"User"> | boolean | null
+  childrenAges?: Prisma.StringNullableFilter<"User"> | string | null
+  hasIRDependents?: Prisma.BoolNullableFilter<"User"> | boolean | null
+  hobbies?: Prisma.StringNullableListFilter<"User">
+  socialNetworks?: Prisma.JsonNullableFilter<"User">
+  favoriteBookMovieGenres?: Prisma.StringNullableFilter<"User"> | string | null
+  favoriteBooks?: Prisma.StringNullableFilter<"User"> | string | null
+  favoriteMovies?: Prisma.StringNullableFilter<"User"> | string | null
+  favoriteMusic?: Prisma.StringNullableFilter<"User"> | string | null
+  admiredValues?: Prisma.StringNullableFilter<"User"> | string | null
+  foodAllergies?: Prisma.StringNullableFilter<"User"> | string | null
+  hasPets?: Prisma.StringNullableFilter<"User"> | string | null
+  participateInVideos?: Prisma.BoolNullableFilter<"User"> | boolean | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyListRelationFilter
@@ -346,6 +578,10 @@ export type UserWhereInput = {
   pdiEvidences?: Prisma.PDIEvidenceListRelationFilter
   goalResponsibilities?: Prisma.PDIGoalListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
+  dependents?: Prisma.DependentListRelationFilter
+  emergencyContacts?: Prisma.EmergencyContactListRelationFilter
+  changeRequests?: Prisma.ChangeRequestListRelationFilter
+  reviewedChangeRequests?: Prisma.ChangeRequestListRelationFilter
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationListRelationFilter
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationListRelationFilter
   nineBoxResponses?: Prisma.NineBoxEvaluatorListRelationFilter
@@ -374,6 +610,36 @@ export type UserOrderByWithRelationInput = {
   city?: Prisma.SortOrderInput | Prisma.SortOrder
   state?: Prisma.SortOrderInput | Prisma.SortOrder
   zipCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  rg?: Prisma.SortOrderInput | Prisma.SortOrder
+  ethnicity?: Prisma.SortOrderInput | Prisma.SortOrder
+  gender?: Prisma.SortOrderInput | Prisma.SortOrder
+  maritalStatus?: Prisma.SortOrderInput | Prisma.SortOrder
+  educationLevel?: Prisma.SortOrderInput | Prisma.SortOrder
+  livesWithDescription?: Prisma.SortOrderInput | Prisma.SortOrder
+  personalEmail?: Prisma.SortOrderInput | Prisma.SortOrder
+  addressNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  addressComplement?: Prisma.SortOrderInput | Prisma.SortOrder
+  hasBradescoAccount?: Prisma.SortOrderInput | Prisma.SortOrder
+  bankAgency?: Prisma.SortOrderInput | Prisma.SortOrder
+  bankAccount?: Prisma.SortOrderInput | Prisma.SortOrder
+  hasOtherEmployment?: Prisma.SortOrderInput | Prisma.SortOrder
+  healthPlanOption?: Prisma.SortOrderInput | Prisma.SortOrder
+  wantsTransportVoucher?: Prisma.SortOrderInput | Prisma.SortOrder
+  contractType?: Prisma.SortOrderInput | Prisma.SortOrder
+  shirtSize?: Prisma.SortOrderInput | Prisma.SortOrder
+  hasChildren?: Prisma.SortOrderInput | Prisma.SortOrder
+  childrenAges?: Prisma.SortOrderInput | Prisma.SortOrder
+  hasIRDependents?: Prisma.SortOrderInput | Prisma.SortOrder
+  hobbies?: Prisma.SortOrder
+  socialNetworks?: Prisma.SortOrderInput | Prisma.SortOrder
+  favoriteBookMovieGenres?: Prisma.SortOrderInput | Prisma.SortOrder
+  favoriteBooks?: Prisma.SortOrderInput | Prisma.SortOrder
+  favoriteMovies?: Prisma.SortOrderInput | Prisma.SortOrder
+  favoriteMusic?: Prisma.SortOrderInput | Prisma.SortOrder
+  admiredValues?: Prisma.SortOrderInput | Prisma.SortOrder
+  foodAllergies?: Prisma.SortOrderInput | Prisma.SortOrder
+  hasPets?: Prisma.SortOrderInput | Prisma.SortOrder
+  participateInVideos?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   employeeHierarchies?: Prisma.EmployeeHierarchyOrderByRelationAggregateInput
@@ -388,6 +654,10 @@ export type UserOrderByWithRelationInput = {
   pdiEvidences?: Prisma.PDIEvidenceOrderByRelationAggregateInput
   goalResponsibilities?: Prisma.PDIGoalOrderByRelationAggregateInput
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
+  dependents?: Prisma.DependentOrderByRelationAggregateInput
+  emergencyContacts?: Prisma.EmergencyContactOrderByRelationAggregateInput
+  changeRequests?: Prisma.ChangeRequestOrderByRelationAggregateInput
+  reviewedChangeRequests?: Prisma.ChangeRequestOrderByRelationAggregateInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationOrderByRelationAggregateInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationOrderByRelationAggregateInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorOrderByRelationAggregateInput
@@ -419,6 +689,36 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   city?: Prisma.StringNullableFilter<"User"> | string | null
   state?: Prisma.StringNullableFilter<"User"> | string | null
   zipCode?: Prisma.StringNullableFilter<"User"> | string | null
+  rg?: Prisma.StringNullableFilter<"User"> | string | null
+  ethnicity?: Prisma.EnumEthnicityNullableFilter<"User"> | $Enums.Ethnicity | null
+  gender?: Prisma.EnumGenderNullableFilter<"User"> | $Enums.Gender | null
+  maritalStatus?: Prisma.EnumMaritalStatusNullableFilter<"User"> | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.EnumEducationLevelNullableFilter<"User"> | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.StringNullableFilter<"User"> | string | null
+  personalEmail?: Prisma.StringNullableFilter<"User"> | string | null
+  addressNumber?: Prisma.StringNullableFilter<"User"> | string | null
+  addressComplement?: Prisma.StringNullableFilter<"User"> | string | null
+  hasBradescoAccount?: Prisma.EnumBankAccountOptionNullableFilter<"User"> | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.StringNullableFilter<"User"> | string | null
+  bankAccount?: Prisma.StringNullableFilter<"User"> | string | null
+  hasOtherEmployment?: Prisma.BoolNullableFilter<"User"> | boolean | null
+  healthPlanOption?: Prisma.EnumHealthPlanOptionNullableFilter<"User"> | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.BoolNullableFilter<"User"> | boolean | null
+  contractType?: Prisma.EnumContractTypeNullableFilter<"User"> | $Enums.ContractType | null
+  shirtSize?: Prisma.EnumShirtSizeNullableFilter<"User"> | $Enums.ShirtSize | null
+  hasChildren?: Prisma.BoolNullableFilter<"User"> | boolean | null
+  childrenAges?: Prisma.StringNullableFilter<"User"> | string | null
+  hasIRDependents?: Prisma.BoolNullableFilter<"User"> | boolean | null
+  hobbies?: Prisma.StringNullableListFilter<"User">
+  socialNetworks?: Prisma.JsonNullableFilter<"User">
+  favoriteBookMovieGenres?: Prisma.StringNullableFilter<"User"> | string | null
+  favoriteBooks?: Prisma.StringNullableFilter<"User"> | string | null
+  favoriteMovies?: Prisma.StringNullableFilter<"User"> | string | null
+  favoriteMusic?: Prisma.StringNullableFilter<"User"> | string | null
+  admiredValues?: Prisma.StringNullableFilter<"User"> | string | null
+  foodAllergies?: Prisma.StringNullableFilter<"User"> | string | null
+  hasPets?: Prisma.StringNullableFilter<"User"> | string | null
+  participateInVideos?: Prisma.BoolNullableFilter<"User"> | boolean | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyListRelationFilter
@@ -433,6 +733,10 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   pdiEvidences?: Prisma.PDIEvidenceListRelationFilter
   goalResponsibilities?: Prisma.PDIGoalListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
+  dependents?: Prisma.DependentListRelationFilter
+  emergencyContacts?: Prisma.EmergencyContactListRelationFilter
+  changeRequests?: Prisma.ChangeRequestListRelationFilter
+  reviewedChangeRequests?: Prisma.ChangeRequestListRelationFilter
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationListRelationFilter
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationListRelationFilter
   nineBoxResponses?: Prisma.NineBoxEvaluatorListRelationFilter
@@ -461,6 +765,36 @@ export type UserOrderByWithAggregationInput = {
   city?: Prisma.SortOrderInput | Prisma.SortOrder
   state?: Prisma.SortOrderInput | Prisma.SortOrder
   zipCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  rg?: Prisma.SortOrderInput | Prisma.SortOrder
+  ethnicity?: Prisma.SortOrderInput | Prisma.SortOrder
+  gender?: Prisma.SortOrderInput | Prisma.SortOrder
+  maritalStatus?: Prisma.SortOrderInput | Prisma.SortOrder
+  educationLevel?: Prisma.SortOrderInput | Prisma.SortOrder
+  livesWithDescription?: Prisma.SortOrderInput | Prisma.SortOrder
+  personalEmail?: Prisma.SortOrderInput | Prisma.SortOrder
+  addressNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  addressComplement?: Prisma.SortOrderInput | Prisma.SortOrder
+  hasBradescoAccount?: Prisma.SortOrderInput | Prisma.SortOrder
+  bankAgency?: Prisma.SortOrderInput | Prisma.SortOrder
+  bankAccount?: Prisma.SortOrderInput | Prisma.SortOrder
+  hasOtherEmployment?: Prisma.SortOrderInput | Prisma.SortOrder
+  healthPlanOption?: Prisma.SortOrderInput | Prisma.SortOrder
+  wantsTransportVoucher?: Prisma.SortOrderInput | Prisma.SortOrder
+  contractType?: Prisma.SortOrderInput | Prisma.SortOrder
+  shirtSize?: Prisma.SortOrderInput | Prisma.SortOrder
+  hasChildren?: Prisma.SortOrderInput | Prisma.SortOrder
+  childrenAges?: Prisma.SortOrderInput | Prisma.SortOrder
+  hasIRDependents?: Prisma.SortOrderInput | Prisma.SortOrder
+  hobbies?: Prisma.SortOrder
+  socialNetworks?: Prisma.SortOrderInput | Prisma.SortOrder
+  favoriteBookMovieGenres?: Prisma.SortOrderInput | Prisma.SortOrder
+  favoriteBooks?: Prisma.SortOrderInput | Prisma.SortOrder
+  favoriteMovies?: Prisma.SortOrderInput | Prisma.SortOrder
+  favoriteMusic?: Prisma.SortOrderInput | Prisma.SortOrder
+  admiredValues?: Prisma.SortOrderInput | Prisma.SortOrder
+  foodAllergies?: Prisma.SortOrderInput | Prisma.SortOrder
+  hasPets?: Prisma.SortOrderInput | Prisma.SortOrder
+  participateInVideos?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -494,6 +828,36 @@ export type UserScalarWhereWithAggregatesInput = {
   city?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   state?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   zipCode?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  rg?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  ethnicity?: Prisma.EnumEthnicityNullableWithAggregatesFilter<"User"> | $Enums.Ethnicity | null
+  gender?: Prisma.EnumGenderNullableWithAggregatesFilter<"User"> | $Enums.Gender | null
+  maritalStatus?: Prisma.EnumMaritalStatusNullableWithAggregatesFilter<"User"> | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.EnumEducationLevelNullableWithAggregatesFilter<"User"> | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  personalEmail?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  addressNumber?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  addressComplement?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  hasBradescoAccount?: Prisma.EnumBankAccountOptionNullableWithAggregatesFilter<"User"> | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  bankAccount?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  hasOtherEmployment?: Prisma.BoolNullableWithAggregatesFilter<"User"> | boolean | null
+  healthPlanOption?: Prisma.EnumHealthPlanOptionNullableWithAggregatesFilter<"User"> | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.BoolNullableWithAggregatesFilter<"User"> | boolean | null
+  contractType?: Prisma.EnumContractTypeNullableWithAggregatesFilter<"User"> | $Enums.ContractType | null
+  shirtSize?: Prisma.EnumShirtSizeNullableWithAggregatesFilter<"User"> | $Enums.ShirtSize | null
+  hasChildren?: Prisma.BoolNullableWithAggregatesFilter<"User"> | boolean | null
+  childrenAges?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  hasIRDependents?: Prisma.BoolNullableWithAggregatesFilter<"User"> | boolean | null
+  hobbies?: Prisma.StringNullableListFilter<"User">
+  socialNetworks?: Prisma.JsonNullableWithAggregatesFilter<"User">
+  favoriteBookMovieGenres?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  favoriteBooks?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  favoriteMovies?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  favoriteMusic?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  admiredValues?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  foodAllergies?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  hasPets?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  participateInVideos?: Prisma.BoolNullableWithAggregatesFilter<"User"> | boolean | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -521,6 +885,36 @@ export type UserCreateInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -535,6 +929,10 @@ export type UserCreateInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -563,6 +961,36 @@ export type UserUncheckedCreateInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -577,6 +1005,10 @@ export type UserUncheckedCreateInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -605,6 +1037,36 @@ export type UserUpdateInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -619,6 +1081,10 @@ export type UserUpdateInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -647,6 +1113,36 @@ export type UserUncheckedUpdateInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -661,6 +1157,10 @@ export type UserUncheckedUpdateInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -689,6 +1189,36 @@ export type UserCreateManyInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -716,6 +1246,36 @@ export type UserUpdateManyMutationInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -743,8 +1303,46 @@ export type UserUncheckedUpdateManyInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type StringNullableListFilter<$PrismaModel = never> = {
+  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
+  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
+  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  isEmpty?: boolean
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -770,6 +1368,36 @@ export type UserCountOrderByAggregateInput = {
   city?: Prisma.SortOrder
   state?: Prisma.SortOrder
   zipCode?: Prisma.SortOrder
+  rg?: Prisma.SortOrder
+  ethnicity?: Prisma.SortOrder
+  gender?: Prisma.SortOrder
+  maritalStatus?: Prisma.SortOrder
+  educationLevel?: Prisma.SortOrder
+  livesWithDescription?: Prisma.SortOrder
+  personalEmail?: Prisma.SortOrder
+  addressNumber?: Prisma.SortOrder
+  addressComplement?: Prisma.SortOrder
+  hasBradescoAccount?: Prisma.SortOrder
+  bankAgency?: Prisma.SortOrder
+  bankAccount?: Prisma.SortOrder
+  hasOtherEmployment?: Prisma.SortOrder
+  healthPlanOption?: Prisma.SortOrder
+  wantsTransportVoucher?: Prisma.SortOrder
+  contractType?: Prisma.SortOrder
+  shirtSize?: Prisma.SortOrder
+  hasChildren?: Prisma.SortOrder
+  childrenAges?: Prisma.SortOrder
+  hasIRDependents?: Prisma.SortOrder
+  hobbies?: Prisma.SortOrder
+  socialNetworks?: Prisma.SortOrder
+  favoriteBookMovieGenres?: Prisma.SortOrder
+  favoriteBooks?: Prisma.SortOrder
+  favoriteMovies?: Prisma.SortOrder
+  favoriteMusic?: Prisma.SortOrder
+  admiredValues?: Prisma.SortOrder
+  foodAllergies?: Prisma.SortOrder
+  hasPets?: Prisma.SortOrder
+  participateInVideos?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -797,6 +1425,34 @@ export type UserMaxOrderByAggregateInput = {
   city?: Prisma.SortOrder
   state?: Prisma.SortOrder
   zipCode?: Prisma.SortOrder
+  rg?: Prisma.SortOrder
+  ethnicity?: Prisma.SortOrder
+  gender?: Prisma.SortOrder
+  maritalStatus?: Prisma.SortOrder
+  educationLevel?: Prisma.SortOrder
+  livesWithDescription?: Prisma.SortOrder
+  personalEmail?: Prisma.SortOrder
+  addressNumber?: Prisma.SortOrder
+  addressComplement?: Prisma.SortOrder
+  hasBradescoAccount?: Prisma.SortOrder
+  bankAgency?: Prisma.SortOrder
+  bankAccount?: Prisma.SortOrder
+  hasOtherEmployment?: Prisma.SortOrder
+  healthPlanOption?: Prisma.SortOrder
+  wantsTransportVoucher?: Prisma.SortOrder
+  contractType?: Prisma.SortOrder
+  shirtSize?: Prisma.SortOrder
+  hasChildren?: Prisma.SortOrder
+  childrenAges?: Prisma.SortOrder
+  hasIRDependents?: Prisma.SortOrder
+  favoriteBookMovieGenres?: Prisma.SortOrder
+  favoriteBooks?: Prisma.SortOrder
+  favoriteMovies?: Prisma.SortOrder
+  favoriteMusic?: Prisma.SortOrder
+  admiredValues?: Prisma.SortOrder
+  foodAllergies?: Prisma.SortOrder
+  hasPets?: Prisma.SortOrder
+  participateInVideos?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -824,6 +1480,34 @@ export type UserMinOrderByAggregateInput = {
   city?: Prisma.SortOrder
   state?: Prisma.SortOrder
   zipCode?: Prisma.SortOrder
+  rg?: Prisma.SortOrder
+  ethnicity?: Prisma.SortOrder
+  gender?: Prisma.SortOrder
+  maritalStatus?: Prisma.SortOrder
+  educationLevel?: Prisma.SortOrder
+  livesWithDescription?: Prisma.SortOrder
+  personalEmail?: Prisma.SortOrder
+  addressNumber?: Prisma.SortOrder
+  addressComplement?: Prisma.SortOrder
+  hasBradescoAccount?: Prisma.SortOrder
+  bankAgency?: Prisma.SortOrder
+  bankAccount?: Prisma.SortOrder
+  hasOtherEmployment?: Prisma.SortOrder
+  healthPlanOption?: Prisma.SortOrder
+  wantsTransportVoucher?: Prisma.SortOrder
+  contractType?: Prisma.SortOrder
+  shirtSize?: Prisma.SortOrder
+  hasChildren?: Prisma.SortOrder
+  childrenAges?: Prisma.SortOrder
+  hasIRDependents?: Prisma.SortOrder
+  favoriteBookMovieGenres?: Prisma.SortOrder
+  favoriteBooks?: Prisma.SortOrder
+  favoriteMovies?: Prisma.SortOrder
+  favoriteMusic?: Prisma.SortOrder
+  admiredValues?: Prisma.SortOrder
+  foodAllergies?: Prisma.SortOrder
+  hasPets?: Prisma.SortOrder
+  participateInVideos?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -836,6 +1520,10 @@ export type UserScalarRelationFilter = {
 export type UserNullableScalarRelationFilter = {
   is?: Prisma.UserWhereInput | null
   isNot?: Prisma.UserWhereInput | null
+}
+
+export type UserCreatehobbiesInput = {
+  set: string[]
 }
 
 export type StringFieldUpdateOperationsInput = {
@@ -860,6 +1548,47 @@ export type NullableDateTimeFieldUpdateOperationsInput = {
 
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean
+}
+
+export type NullableEnumEthnicityFieldUpdateOperationsInput = {
+  set?: $Enums.Ethnicity | null
+}
+
+export type NullableEnumGenderFieldUpdateOperationsInput = {
+  set?: $Enums.Gender | null
+}
+
+export type NullableEnumMaritalStatusFieldUpdateOperationsInput = {
+  set?: $Enums.MaritalStatus | null
+}
+
+export type NullableEnumEducationLevelFieldUpdateOperationsInput = {
+  set?: $Enums.EducationLevel | null
+}
+
+export type NullableEnumBankAccountOptionFieldUpdateOperationsInput = {
+  set?: $Enums.BankAccountOption | null
+}
+
+export type NullableBoolFieldUpdateOperationsInput = {
+  set?: boolean | null
+}
+
+export type NullableEnumHealthPlanOptionFieldUpdateOperationsInput = {
+  set?: $Enums.HealthPlanOption | null
+}
+
+export type NullableEnumContractTypeFieldUpdateOperationsInput = {
+  set?: $Enums.ContractType | null
+}
+
+export type NullableEnumShirtSizeFieldUpdateOperationsInput = {
+  set?: $Enums.ShirtSize | null
+}
+
+export type UserUpdatehobbiesInput = {
+  set?: string[]
+  push?: string | string[]
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -1080,6 +1809,64 @@ export type UserUpdateOneRequiredWithoutNineBoxResponsesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNineBoxResponsesInput, Prisma.UserUpdateWithoutNineBoxResponsesInput>, Prisma.UserUncheckedUpdateWithoutNineBoxResponsesInput>
 }
 
+export type UserCreateNestedOneWithoutChangeRequestsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutChangeRequestsInput, Prisma.UserUncheckedCreateWithoutChangeRequestsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutChangeRequestsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutReviewedChangeRequestsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReviewedChangeRequestsInput, Prisma.UserUncheckedCreateWithoutReviewedChangeRequestsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReviewedChangeRequestsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutChangeRequestsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutChangeRequestsInput, Prisma.UserUncheckedCreateWithoutChangeRequestsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutChangeRequestsInput
+  upsert?: Prisma.UserUpsertWithoutChangeRequestsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutChangeRequestsInput, Prisma.UserUpdateWithoutChangeRequestsInput>, Prisma.UserUncheckedUpdateWithoutChangeRequestsInput>
+}
+
+export type UserUpdateOneWithoutReviewedChangeRequestsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReviewedChangeRequestsInput, Prisma.UserUncheckedCreateWithoutReviewedChangeRequestsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReviewedChangeRequestsInput
+  upsert?: Prisma.UserUpsertWithoutReviewedChangeRequestsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReviewedChangeRequestsInput, Prisma.UserUpdateWithoutReviewedChangeRequestsInput>, Prisma.UserUncheckedUpdateWithoutReviewedChangeRequestsInput>
+}
+
+export type UserCreateNestedOneWithoutDependentsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDependentsInput, Prisma.UserUncheckedCreateWithoutDependentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDependentsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutDependentsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDependentsInput, Prisma.UserUncheckedCreateWithoutDependentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDependentsInput
+  upsert?: Prisma.UserUpsertWithoutDependentsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDependentsInput, Prisma.UserUpdateWithoutDependentsInput>, Prisma.UserUncheckedUpdateWithoutDependentsInput>
+}
+
+export type UserCreateNestedOneWithoutEmergencyContactsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutEmergencyContactsInput, Prisma.UserUncheckedCreateWithoutEmergencyContactsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutEmergencyContactsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutEmergencyContactsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutEmergencyContactsInput, Prisma.UserUncheckedCreateWithoutEmergencyContactsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutEmergencyContactsInput
+  upsert?: Prisma.UserUpsertWithoutEmergencyContactsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutEmergencyContactsInput, Prisma.UserUpdateWithoutEmergencyContactsInput>, Prisma.UserUncheckedUpdateWithoutEmergencyContactsInput>
+}
+
 export type UserCreateWithoutEmployeeHierarchiesInput = {
   id?: string
   name: string
@@ -1103,6 +1890,36 @@ export type UserCreateWithoutEmployeeHierarchiesInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
@@ -1116,6 +1933,10 @@ export type UserCreateWithoutEmployeeHierarchiesInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -1144,6 +1965,36 @@ export type UserUncheckedCreateWithoutEmployeeHierarchiesInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
@@ -1157,6 +2008,10 @@ export type UserUncheckedCreateWithoutEmployeeHierarchiesInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -1190,6 +2045,36 @@ export type UserCreateWithoutManagerHierarchiesInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -1203,6 +2088,10 @@ export type UserCreateWithoutManagerHierarchiesInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -1231,6 +2120,36 @@ export type UserUncheckedCreateWithoutManagerHierarchiesInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -1244,6 +2163,10 @@ export type UserUncheckedCreateWithoutManagerHierarchiesInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -1288,6 +2211,36 @@ export type UserUpdateWithoutEmployeeHierarchiesInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
@@ -1301,6 +2254,10 @@ export type UserUpdateWithoutEmployeeHierarchiesInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -1329,6 +2286,36 @@ export type UserUncheckedUpdateWithoutEmployeeHierarchiesInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -1342,6 +2329,10 @@ export type UserUncheckedUpdateWithoutEmployeeHierarchiesInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -1381,6 +2372,36 @@ export type UserUpdateWithoutManagerHierarchiesInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -1394,6 +2415,10 @@ export type UserUpdateWithoutManagerHierarchiesInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -1422,6 +2447,36 @@ export type UserUncheckedUpdateWithoutManagerHierarchiesInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -1435,6 +2490,10 @@ export type UserUncheckedUpdateWithoutManagerHierarchiesInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -1463,6 +2522,36 @@ export type UserCreateWithoutPdisAsEmployeeInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -1476,6 +2565,10 @@ export type UserCreateWithoutPdisAsEmployeeInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -1504,6 +2597,36 @@ export type UserUncheckedCreateWithoutPdisAsEmployeeInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -1517,6 +2640,10 @@ export type UserUncheckedCreateWithoutPdisAsEmployeeInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -1550,6 +2677,36 @@ export type UserCreateWithoutPdisAsManagerInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -1563,6 +2720,10 @@ export type UserCreateWithoutPdisAsManagerInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -1591,6 +2752,36 @@ export type UserUncheckedCreateWithoutPdisAsManagerInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -1604,6 +2795,10 @@ export type UserUncheckedCreateWithoutPdisAsManagerInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -1648,6 +2843,36 @@ export type UserUpdateWithoutPdisAsEmployeeInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -1661,6 +2886,10 @@ export type UserUpdateWithoutPdisAsEmployeeInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -1689,6 +2918,36 @@ export type UserUncheckedUpdateWithoutPdisAsEmployeeInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -1702,6 +2961,10 @@ export type UserUncheckedUpdateWithoutPdisAsEmployeeInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -1741,6 +3004,36 @@ export type UserUpdateWithoutPdisAsManagerInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -1754,6 +3047,10 @@ export type UserUpdateWithoutPdisAsManagerInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -1782,6 +3079,36 @@ export type UserUncheckedUpdateWithoutPdisAsManagerInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -1795,6 +3122,10 @@ export type UserUncheckedUpdateWithoutPdisAsManagerInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -1823,6 +3154,36 @@ export type UserCreateWithoutGoalResponsibilitiesInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -1836,6 +3197,10 @@ export type UserCreateWithoutGoalResponsibilitiesInput = {
   pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -1864,6 +3229,36 @@ export type UserUncheckedCreateWithoutGoalResponsibilitiesInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -1877,6 +3272,10 @@ export type UserUncheckedCreateWithoutGoalResponsibilitiesInput = {
   pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -1921,6 +3320,36 @@ export type UserUpdateWithoutGoalResponsibilitiesInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -1934,6 +3363,10 @@ export type UserUpdateWithoutGoalResponsibilitiesInput = {
   pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -1962,6 +3395,36 @@ export type UserUncheckedUpdateWithoutGoalResponsibilitiesInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -1975,6 +3438,10 @@ export type UserUncheckedUpdateWithoutGoalResponsibilitiesInput = {
   pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -2003,6 +3470,36 @@ export type UserCreateWithoutPdiEvidencesInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -2016,6 +3513,10 @@ export type UserCreateWithoutPdiEvidencesInput = {
   pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -2044,6 +3545,36 @@ export type UserUncheckedCreateWithoutPdiEvidencesInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -2057,6 +3588,10 @@ export type UserUncheckedCreateWithoutPdiEvidencesInput = {
   pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -2101,6 +3636,36 @@ export type UserUpdateWithoutPdiEvidencesInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -2114,6 +3679,10 @@ export type UserUpdateWithoutPdiEvidencesInput = {
   pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -2142,6 +3711,36 @@ export type UserUncheckedUpdateWithoutPdiEvidencesInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -2155,6 +3754,10 @@ export type UserUncheckedUpdateWithoutPdiEvidencesInput = {
   pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -2183,6 +3786,36 @@ export type UserCreateWithoutPdiCommentsInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -2196,6 +3829,10 @@ export type UserCreateWithoutPdiCommentsInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -2224,6 +3861,36 @@ export type UserUncheckedCreateWithoutPdiCommentsInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -2237,6 +3904,10 @@ export type UserUncheckedCreateWithoutPdiCommentsInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -2281,6 +3952,36 @@ export type UserUpdateWithoutPdiCommentsInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -2294,6 +3995,10 @@ export type UserUpdateWithoutPdiCommentsInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -2322,6 +4027,36 @@ export type UserUncheckedUpdateWithoutPdiCommentsInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -2335,6 +4070,10 @@ export type UserUncheckedUpdateWithoutPdiCommentsInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -2363,6 +4102,36 @@ export type UserCreateWithoutFeedbacksReceivedInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -2376,6 +4145,10 @@ export type UserCreateWithoutFeedbacksReceivedInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -2404,6 +4177,36 @@ export type UserUncheckedCreateWithoutFeedbacksReceivedInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -2417,6 +4220,10 @@ export type UserUncheckedCreateWithoutFeedbacksReceivedInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -2450,6 +4257,36 @@ export type UserCreateWithoutFeedbacksGivenInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -2463,6 +4300,10 @@ export type UserCreateWithoutFeedbacksGivenInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -2491,6 +4332,36 @@ export type UserUncheckedCreateWithoutFeedbacksGivenInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -2504,6 +4375,10 @@ export type UserUncheckedCreateWithoutFeedbacksGivenInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -2548,6 +4423,36 @@ export type UserUpdateWithoutFeedbacksReceivedInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -2561,6 +4466,10 @@ export type UserUpdateWithoutFeedbacksReceivedInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -2589,6 +4498,36 @@ export type UserUncheckedUpdateWithoutFeedbacksReceivedInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -2602,6 +4541,10 @@ export type UserUncheckedUpdateWithoutFeedbacksReceivedInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -2641,6 +4584,36 @@ export type UserUpdateWithoutFeedbacksGivenInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -2654,6 +4627,10 @@ export type UserUpdateWithoutFeedbacksGivenInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -2682,6 +4659,36 @@ export type UserUncheckedUpdateWithoutFeedbacksGivenInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -2695,6 +4702,10 @@ export type UserUncheckedUpdateWithoutFeedbacksGivenInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -2723,6 +4734,36 @@ export type UserCreateWithoutFeedbackSchedulesAsEmployeeInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -2736,6 +4777,10 @@ export type UserCreateWithoutFeedbackSchedulesAsEmployeeInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -2764,6 +4809,36 @@ export type UserUncheckedCreateWithoutFeedbackSchedulesAsEmployeeInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -2777,6 +4852,10 @@ export type UserUncheckedCreateWithoutFeedbackSchedulesAsEmployeeInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -2810,6 +4889,36 @@ export type UserCreateWithoutFeedbackSchedulesAsManagerInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -2823,6 +4932,10 @@ export type UserCreateWithoutFeedbackSchedulesAsManagerInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -2851,6 +4964,36 @@ export type UserUncheckedCreateWithoutFeedbackSchedulesAsManagerInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -2864,6 +5007,10 @@ export type UserUncheckedCreateWithoutFeedbackSchedulesAsManagerInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -2908,6 +5055,36 @@ export type UserUpdateWithoutFeedbackSchedulesAsEmployeeInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -2921,6 +5098,10 @@ export type UserUpdateWithoutFeedbackSchedulesAsEmployeeInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -2949,6 +5130,36 @@ export type UserUncheckedUpdateWithoutFeedbackSchedulesAsEmployeeInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -2962,6 +5173,10 @@ export type UserUncheckedUpdateWithoutFeedbackSchedulesAsEmployeeInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -3001,6 +5216,36 @@ export type UserUpdateWithoutFeedbackSchedulesAsManagerInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -3014,6 +5259,10 @@ export type UserUpdateWithoutFeedbackSchedulesAsManagerInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -3042,6 +5291,36 @@ export type UserUncheckedUpdateWithoutFeedbackSchedulesAsManagerInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -3055,6 +5334,10 @@ export type UserUncheckedUpdateWithoutFeedbackSchedulesAsManagerInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -3083,6 +5366,36 @@ export type UserCreateWithoutNotificationsInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -3096,6 +5409,10 @@ export type UserCreateWithoutNotificationsInput = {
   pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -3124,6 +5441,36 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -3137,6 +5484,10 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -3181,6 +5532,36 @@ export type UserUpdateWithoutNotificationsInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -3194,6 +5575,10 @@ export type UserUpdateWithoutNotificationsInput = {
   pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -3222,6 +5607,36 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -3235,6 +5650,10 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -3263,6 +5682,36 @@ export type UserCreateWithoutNineBoxEvaluationsReceivedInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -3277,6 +5726,10 @@ export type UserCreateWithoutNineBoxEvaluationsReceivedInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
 }
@@ -3304,6 +5757,36 @@ export type UserUncheckedCreateWithoutNineBoxEvaluationsReceivedInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -3318,6 +5801,10 @@ export type UserUncheckedCreateWithoutNineBoxEvaluationsReceivedInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
 }
@@ -3350,6 +5837,36 @@ export type UserCreateWithoutNineBoxEvaluationsCreatedInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -3364,6 +5881,10 @@ export type UserCreateWithoutNineBoxEvaluationsCreatedInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
 }
@@ -3391,6 +5912,36 @@ export type UserUncheckedCreateWithoutNineBoxEvaluationsCreatedInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -3405,6 +5956,10 @@ export type UserUncheckedCreateWithoutNineBoxEvaluationsCreatedInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
 }
@@ -3448,6 +6003,36 @@ export type UserUpdateWithoutNineBoxEvaluationsReceivedInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -3462,6 +6047,10 @@ export type UserUpdateWithoutNineBoxEvaluationsReceivedInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
 }
@@ -3489,6 +6078,36 @@ export type UserUncheckedUpdateWithoutNineBoxEvaluationsReceivedInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -3503,6 +6122,10 @@ export type UserUncheckedUpdateWithoutNineBoxEvaluationsReceivedInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
 }
@@ -3541,6 +6164,36 @@ export type UserUpdateWithoutNineBoxEvaluationsCreatedInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -3555,6 +6208,10 @@ export type UserUpdateWithoutNineBoxEvaluationsCreatedInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
 }
@@ -3582,6 +6239,36 @@ export type UserUncheckedUpdateWithoutNineBoxEvaluationsCreatedInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -3596,6 +6283,10 @@ export type UserUncheckedUpdateWithoutNineBoxEvaluationsCreatedInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
 }
@@ -3623,6 +6314,36 @@ export type UserCreateWithoutNineBoxResponsesInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
@@ -3637,6 +6358,10 @@ export type UserCreateWithoutNineBoxResponsesInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
 }
@@ -3664,6 +6389,36 @@ export type UserUncheckedCreateWithoutNineBoxResponsesInput = {
   city?: string | null
   state?: string | null
   zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
@@ -3678,6 +6433,10 @@ export type UserUncheckedCreateWithoutNineBoxResponsesInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
 }
@@ -3721,6 +6480,36 @@ export type UserUpdateWithoutNineBoxResponsesInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
@@ -3735,6 +6524,10 @@ export type UserUpdateWithoutNineBoxResponsesInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
 }
@@ -3762,6 +6555,36 @@ export type UserUncheckedUpdateWithoutNineBoxResponsesInput = {
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -3776,8 +6599,1276 @@ export type UserUncheckedUpdateWithoutNineBoxResponsesInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserCreateWithoutChangeRequestsInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  role?: $Enums.UserRole
+  evaluationMode?: $Enums.EvaluationMode
+  avatarUrl?: string | null
+  ssoProvider?: string | null
+  ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
+  isActive?: boolean
+  admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
+  pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
+  feedbacksReceived?: Prisma.FeedbackCreateNestedManyWithoutEmployeeInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleCreateNestedManyWithoutEmployeeInput
+  managerHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutManagerInput
+  pdisAsManager?: Prisma.PDICreateNestedManyWithoutManagerInput
+  feedbacksGiven?: Prisma.FeedbackCreateNestedManyWithoutManagerInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleCreateNestedManyWithoutManagerInput
+  pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
+  pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
+}
+
+export type UserUncheckedCreateWithoutChangeRequestsInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  role?: $Enums.UserRole
+  evaluationMode?: $Enums.EvaluationMode
+  avatarUrl?: string | null
+  ssoProvider?: string | null
+  ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
+  isActive?: boolean
+  admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
+  pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
+  feedbacksReceived?: Prisma.FeedbackUncheckedCreateNestedManyWithoutEmployeeInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutEmployeeInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutManagerInput
+  pdisAsManager?: Prisma.PDIUncheckedCreateNestedManyWithoutManagerInput
+  feedbacksGiven?: Prisma.FeedbackUncheckedCreateNestedManyWithoutManagerInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutManagerInput
+  pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
+  pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
+}
+
+export type UserCreateOrConnectWithoutChangeRequestsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutChangeRequestsInput, Prisma.UserUncheckedCreateWithoutChangeRequestsInput>
+}
+
+export type UserCreateWithoutReviewedChangeRequestsInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  role?: $Enums.UserRole
+  evaluationMode?: $Enums.EvaluationMode
+  avatarUrl?: string | null
+  ssoProvider?: string | null
+  ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
+  isActive?: boolean
+  admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
+  pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
+  feedbacksReceived?: Prisma.FeedbackCreateNestedManyWithoutEmployeeInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleCreateNestedManyWithoutEmployeeInput
+  managerHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutManagerInput
+  pdisAsManager?: Prisma.PDICreateNestedManyWithoutManagerInput
+  feedbacksGiven?: Prisma.FeedbackCreateNestedManyWithoutManagerInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleCreateNestedManyWithoutManagerInput
+  pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
+  pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
+}
+
+export type UserUncheckedCreateWithoutReviewedChangeRequestsInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  role?: $Enums.UserRole
+  evaluationMode?: $Enums.EvaluationMode
+  avatarUrl?: string | null
+  ssoProvider?: string | null
+  ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
+  isActive?: boolean
+  admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
+  pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
+  feedbacksReceived?: Prisma.FeedbackUncheckedCreateNestedManyWithoutEmployeeInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutEmployeeInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutManagerInput
+  pdisAsManager?: Prisma.PDIUncheckedCreateNestedManyWithoutManagerInput
+  feedbacksGiven?: Prisma.FeedbackUncheckedCreateNestedManyWithoutManagerInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutManagerInput
+  pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
+  pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
+}
+
+export type UserCreateOrConnectWithoutReviewedChangeRequestsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutReviewedChangeRequestsInput, Prisma.UserUncheckedCreateWithoutReviewedChangeRequestsInput>
+}
+
+export type UserUpsertWithoutChangeRequestsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutChangeRequestsInput, Prisma.UserUncheckedUpdateWithoutChangeRequestsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutChangeRequestsInput, Prisma.UserUncheckedCreateWithoutChangeRequestsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutChangeRequestsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutChangeRequestsInput, Prisma.UserUncheckedUpdateWithoutChangeRequestsInput>
+}
+
+export type UserUpdateWithoutChangeRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
+  pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
+  feedbacksReceived?: Prisma.FeedbackUpdateManyWithoutEmployeeNestedInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUpdateManyWithoutEmployeeNestedInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutManagerNestedInput
+  pdisAsManager?: Prisma.PDIUpdateManyWithoutManagerNestedInput
+  feedbacksGiven?: Prisma.FeedbackUpdateManyWithoutManagerNestedInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUpdateManyWithoutManagerNestedInput
+  pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
+  pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
+}
+
+export type UserUncheckedUpdateWithoutChangeRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
+  pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
+  feedbacksReceived?: Prisma.FeedbackUncheckedUpdateManyWithoutEmployeeNestedInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutManagerNestedInput
+  pdisAsManager?: Prisma.PDIUncheckedUpdateManyWithoutManagerNestedInput
+  feedbacksGiven?: Prisma.FeedbackUncheckedUpdateManyWithoutManagerNestedInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutManagerNestedInput
+  pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
+  pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
+}
+
+export type UserUpsertWithoutReviewedChangeRequestsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutReviewedChangeRequestsInput, Prisma.UserUncheckedUpdateWithoutReviewedChangeRequestsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutReviewedChangeRequestsInput, Prisma.UserUncheckedCreateWithoutReviewedChangeRequestsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutReviewedChangeRequestsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutReviewedChangeRequestsInput, Prisma.UserUncheckedUpdateWithoutReviewedChangeRequestsInput>
+}
+
+export type UserUpdateWithoutReviewedChangeRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
+  pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
+  feedbacksReceived?: Prisma.FeedbackUpdateManyWithoutEmployeeNestedInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUpdateManyWithoutEmployeeNestedInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutManagerNestedInput
+  pdisAsManager?: Prisma.PDIUpdateManyWithoutManagerNestedInput
+  feedbacksGiven?: Prisma.FeedbackUpdateManyWithoutManagerNestedInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUpdateManyWithoutManagerNestedInput
+  pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
+  pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
+}
+
+export type UserUncheckedUpdateWithoutReviewedChangeRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
+  pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
+  feedbacksReceived?: Prisma.FeedbackUncheckedUpdateManyWithoutEmployeeNestedInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutManagerNestedInput
+  pdisAsManager?: Prisma.PDIUncheckedUpdateManyWithoutManagerNestedInput
+  feedbacksGiven?: Prisma.FeedbackUncheckedUpdateManyWithoutManagerNestedInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutManagerNestedInput
+  pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
+  pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
+}
+
+export type UserCreateWithoutDependentsInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  role?: $Enums.UserRole
+  evaluationMode?: $Enums.EvaluationMode
+  avatarUrl?: string | null
+  ssoProvider?: string | null
+  ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
+  isActive?: boolean
+  admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
+  pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
+  feedbacksReceived?: Prisma.FeedbackCreateNestedManyWithoutEmployeeInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleCreateNestedManyWithoutEmployeeInput
+  managerHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutManagerInput
+  pdisAsManager?: Prisma.PDICreateNestedManyWithoutManagerInput
+  feedbacksGiven?: Prisma.FeedbackCreateNestedManyWithoutManagerInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleCreateNestedManyWithoutManagerInput
+  pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
+  pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
+}
+
+export type UserUncheckedCreateWithoutDependentsInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  role?: $Enums.UserRole
+  evaluationMode?: $Enums.EvaluationMode
+  avatarUrl?: string | null
+  ssoProvider?: string | null
+  ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
+  isActive?: boolean
+  admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
+  pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
+  feedbacksReceived?: Prisma.FeedbackUncheckedCreateNestedManyWithoutEmployeeInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutEmployeeInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutManagerInput
+  pdisAsManager?: Prisma.PDIUncheckedCreateNestedManyWithoutManagerInput
+  feedbacksGiven?: Prisma.FeedbackUncheckedCreateNestedManyWithoutManagerInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutManagerInput
+  pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
+  pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
+}
+
+export type UserCreateOrConnectWithoutDependentsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutDependentsInput, Prisma.UserUncheckedCreateWithoutDependentsInput>
+}
+
+export type UserUpsertWithoutDependentsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutDependentsInput, Prisma.UserUncheckedUpdateWithoutDependentsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutDependentsInput, Prisma.UserUncheckedCreateWithoutDependentsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutDependentsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutDependentsInput, Prisma.UserUncheckedUpdateWithoutDependentsInput>
+}
+
+export type UserUpdateWithoutDependentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
+  pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
+  feedbacksReceived?: Prisma.FeedbackUpdateManyWithoutEmployeeNestedInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUpdateManyWithoutEmployeeNestedInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutManagerNestedInput
+  pdisAsManager?: Prisma.PDIUpdateManyWithoutManagerNestedInput
+  feedbacksGiven?: Prisma.FeedbackUpdateManyWithoutManagerNestedInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUpdateManyWithoutManagerNestedInput
+  pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
+  pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
+}
+
+export type UserUncheckedUpdateWithoutDependentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
+  pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
+  feedbacksReceived?: Prisma.FeedbackUncheckedUpdateManyWithoutEmployeeNestedInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutManagerNestedInput
+  pdisAsManager?: Prisma.PDIUncheckedUpdateManyWithoutManagerNestedInput
+  feedbacksGiven?: Prisma.FeedbackUncheckedUpdateManyWithoutManagerNestedInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutManagerNestedInput
+  pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
+  pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
+}
+
+export type UserCreateWithoutEmergencyContactsInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  role?: $Enums.UserRole
+  evaluationMode?: $Enums.EvaluationMode
+  avatarUrl?: string | null
+  ssoProvider?: string | null
+  ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
+  isActive?: boolean
+  admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
+  pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
+  feedbacksReceived?: Prisma.FeedbackCreateNestedManyWithoutEmployeeInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleCreateNestedManyWithoutEmployeeInput
+  managerHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutManagerInput
+  pdisAsManager?: Prisma.PDICreateNestedManyWithoutManagerInput
+  feedbacksGiven?: Prisma.FeedbackCreateNestedManyWithoutManagerInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleCreateNestedManyWithoutManagerInput
+  pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
+  pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
+}
+
+export type UserUncheckedCreateWithoutEmergencyContactsInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  role?: $Enums.UserRole
+  evaluationMode?: $Enums.EvaluationMode
+  avatarUrl?: string | null
+  ssoProvider?: string | null
+  ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
+  isActive?: boolean
+  admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
+  pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
+  feedbacksReceived?: Prisma.FeedbackUncheckedCreateNestedManyWithoutEmployeeInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutEmployeeInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutManagerInput
+  pdisAsManager?: Prisma.PDIUncheckedCreateNestedManyWithoutManagerInput
+  feedbacksGiven?: Prisma.FeedbackUncheckedCreateNestedManyWithoutManagerInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutManagerInput
+  pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
+  pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
+}
+
+export type UserCreateOrConnectWithoutEmergencyContactsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutEmergencyContactsInput, Prisma.UserUncheckedCreateWithoutEmergencyContactsInput>
+}
+
+export type UserUpsertWithoutEmergencyContactsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutEmergencyContactsInput, Prisma.UserUncheckedUpdateWithoutEmergencyContactsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutEmergencyContactsInput, Prisma.UserUncheckedCreateWithoutEmergencyContactsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutEmergencyContactsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutEmergencyContactsInput, Prisma.UserUncheckedUpdateWithoutEmergencyContactsInput>
+}
+
+export type UserUpdateWithoutEmergencyContactsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
+  pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
+  feedbacksReceived?: Prisma.FeedbackUpdateManyWithoutEmployeeNestedInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUpdateManyWithoutEmployeeNestedInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutManagerNestedInput
+  pdisAsManager?: Prisma.PDIUpdateManyWithoutManagerNestedInput
+  feedbacksGiven?: Prisma.FeedbackUpdateManyWithoutManagerNestedInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUpdateManyWithoutManagerNestedInput
+  pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
+  pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
+}
+
+export type UserUncheckedUpdateWithoutEmergencyContactsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
+  pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
+  feedbacksReceived?: Prisma.FeedbackUncheckedUpdateManyWithoutEmployeeNestedInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutManagerNestedInput
+  pdisAsManager?: Prisma.PDIUncheckedUpdateManyWithoutManagerNestedInput
+  feedbacksGiven?: Prisma.FeedbackUncheckedUpdateManyWithoutManagerNestedInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutManagerNestedInput
+  pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
+  pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
 }
 
 
@@ -3798,6 +7889,10 @@ export type UserCountOutputType = {
   pdiEvidences: number
   goalResponsibilities: number
   notifications: number
+  dependents: number
+  emergencyContacts: number
+  changeRequests: number
+  reviewedChangeRequests: number
   nineBoxEvaluationsReceived: number
   nineBoxEvaluationsCreated: number
   nineBoxResponses: number
@@ -3816,6 +7911,10 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   pdiEvidences?: boolean | UserCountOutputTypeCountPdiEvidencesArgs
   goalResponsibilities?: boolean | UserCountOutputTypeCountGoalResponsibilitiesArgs
   notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
+  dependents?: boolean | UserCountOutputTypeCountDependentsArgs
+  emergencyContacts?: boolean | UserCountOutputTypeCountEmergencyContactsArgs
+  changeRequests?: boolean | UserCountOutputTypeCountChangeRequestsArgs
+  reviewedChangeRequests?: boolean | UserCountOutputTypeCountReviewedChangeRequestsArgs
   nineBoxEvaluationsReceived?: boolean | UserCountOutputTypeCountNineBoxEvaluationsReceivedArgs
   nineBoxEvaluationsCreated?: boolean | UserCountOutputTypeCountNineBoxEvaluationsCreatedArgs
   nineBoxResponses?: boolean | UserCountOutputTypeCountNineBoxResponsesArgs
@@ -3918,6 +8017,34 @@ export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Ty
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountDependentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DependentWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountEmergencyContactsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmergencyContactWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountChangeRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ChangeRequestWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountReviewedChangeRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ChangeRequestWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountNineBoxEvaluationsReceivedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.NineBoxEvaluationWhereInput
 }
@@ -3960,6 +8087,36 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   city?: boolean
   state?: boolean
   zipCode?: boolean
+  rg?: boolean
+  ethnicity?: boolean
+  gender?: boolean
+  maritalStatus?: boolean
+  educationLevel?: boolean
+  livesWithDescription?: boolean
+  personalEmail?: boolean
+  addressNumber?: boolean
+  addressComplement?: boolean
+  hasBradescoAccount?: boolean
+  bankAgency?: boolean
+  bankAccount?: boolean
+  hasOtherEmployment?: boolean
+  healthPlanOption?: boolean
+  wantsTransportVoucher?: boolean
+  contractType?: boolean
+  shirtSize?: boolean
+  hasChildren?: boolean
+  childrenAges?: boolean
+  hasIRDependents?: boolean
+  hobbies?: boolean
+  socialNetworks?: boolean
+  favoriteBookMovieGenres?: boolean
+  favoriteBooks?: boolean
+  favoriteMovies?: boolean
+  favoriteMusic?: boolean
+  admiredValues?: boolean
+  foodAllergies?: boolean
+  hasPets?: boolean
+  participateInVideos?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   employeeHierarchies?: boolean | Prisma.User$employeeHierarchiesArgs<ExtArgs>
@@ -3974,6 +8131,10 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   pdiEvidences?: boolean | Prisma.User$pdiEvidencesArgs<ExtArgs>
   goalResponsibilities?: boolean | Prisma.User$goalResponsibilitiesArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
+  dependents?: boolean | Prisma.User$dependentsArgs<ExtArgs>
+  emergencyContacts?: boolean | Prisma.User$emergencyContactsArgs<ExtArgs>
+  changeRequests?: boolean | Prisma.User$changeRequestsArgs<ExtArgs>
+  reviewedChangeRequests?: boolean | Prisma.User$reviewedChangeRequestsArgs<ExtArgs>
   nineBoxEvaluationsReceived?: boolean | Prisma.User$nineBoxEvaluationsReceivedArgs<ExtArgs>
   nineBoxEvaluationsCreated?: boolean | Prisma.User$nineBoxEvaluationsCreatedArgs<ExtArgs>
   nineBoxResponses?: boolean | Prisma.User$nineBoxResponsesArgs<ExtArgs>
@@ -4003,6 +8164,36 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   city?: boolean
   state?: boolean
   zipCode?: boolean
+  rg?: boolean
+  ethnicity?: boolean
+  gender?: boolean
+  maritalStatus?: boolean
+  educationLevel?: boolean
+  livesWithDescription?: boolean
+  personalEmail?: boolean
+  addressNumber?: boolean
+  addressComplement?: boolean
+  hasBradescoAccount?: boolean
+  bankAgency?: boolean
+  bankAccount?: boolean
+  hasOtherEmployment?: boolean
+  healthPlanOption?: boolean
+  wantsTransportVoucher?: boolean
+  contractType?: boolean
+  shirtSize?: boolean
+  hasChildren?: boolean
+  childrenAges?: boolean
+  hasIRDependents?: boolean
+  hobbies?: boolean
+  socialNetworks?: boolean
+  favoriteBookMovieGenres?: boolean
+  favoriteBooks?: boolean
+  favoriteMovies?: boolean
+  favoriteMusic?: boolean
+  admiredValues?: boolean
+  foodAllergies?: boolean
+  hasPets?: boolean
+  participateInVideos?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -4030,6 +8221,36 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   city?: boolean
   state?: boolean
   zipCode?: boolean
+  rg?: boolean
+  ethnicity?: boolean
+  gender?: boolean
+  maritalStatus?: boolean
+  educationLevel?: boolean
+  livesWithDescription?: boolean
+  personalEmail?: boolean
+  addressNumber?: boolean
+  addressComplement?: boolean
+  hasBradescoAccount?: boolean
+  bankAgency?: boolean
+  bankAccount?: boolean
+  hasOtherEmployment?: boolean
+  healthPlanOption?: boolean
+  wantsTransportVoucher?: boolean
+  contractType?: boolean
+  shirtSize?: boolean
+  hasChildren?: boolean
+  childrenAges?: boolean
+  hasIRDependents?: boolean
+  hobbies?: boolean
+  socialNetworks?: boolean
+  favoriteBookMovieGenres?: boolean
+  favoriteBooks?: boolean
+  favoriteMovies?: boolean
+  favoriteMusic?: boolean
+  admiredValues?: boolean
+  foodAllergies?: boolean
+  hasPets?: boolean
+  participateInVideos?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -4057,11 +8278,41 @@ export type UserSelectScalar = {
   city?: boolean
   state?: boolean
   zipCode?: boolean
+  rg?: boolean
+  ethnicity?: boolean
+  gender?: boolean
+  maritalStatus?: boolean
+  educationLevel?: boolean
+  livesWithDescription?: boolean
+  personalEmail?: boolean
+  addressNumber?: boolean
+  addressComplement?: boolean
+  hasBradescoAccount?: boolean
+  bankAgency?: boolean
+  bankAccount?: boolean
+  hasOtherEmployment?: boolean
+  healthPlanOption?: boolean
+  wantsTransportVoucher?: boolean
+  contractType?: boolean
+  shirtSize?: boolean
+  hasChildren?: boolean
+  childrenAges?: boolean
+  hasIRDependents?: boolean
+  hobbies?: boolean
+  socialNetworks?: boolean
+  favoriteBookMovieGenres?: boolean
+  favoriteBooks?: boolean
+  favoriteMovies?: boolean
+  favoriteMusic?: boolean
+  admiredValues?: boolean
+  foodAllergies?: boolean
+  hasPets?: boolean
+  participateInVideos?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "role" | "evaluationMode" | "avatarUrl" | "ssoProvider" | "ssoId" | "msAccessToken" | "msRefreshToken" | "msTokenExpiresAt" | "isActive" | "admissionDate" | "phone" | "cpf" | "birthDate" | "jobTitle" | "address" | "city" | "state" | "zipCode" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "role" | "evaluationMode" | "avatarUrl" | "ssoProvider" | "ssoId" | "msAccessToken" | "msRefreshToken" | "msTokenExpiresAt" | "isActive" | "admissionDate" | "phone" | "cpf" | "birthDate" | "jobTitle" | "address" | "city" | "state" | "zipCode" | "rg" | "ethnicity" | "gender" | "maritalStatus" | "educationLevel" | "livesWithDescription" | "personalEmail" | "addressNumber" | "addressComplement" | "hasBradescoAccount" | "bankAgency" | "bankAccount" | "hasOtherEmployment" | "healthPlanOption" | "wantsTransportVoucher" | "contractType" | "shirtSize" | "hasChildren" | "childrenAges" | "hasIRDependents" | "hobbies" | "socialNetworks" | "favoriteBookMovieGenres" | "favoriteBooks" | "favoriteMovies" | "favoriteMusic" | "admiredValues" | "foodAllergies" | "hasPets" | "participateInVideos" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   employeeHierarchies?: boolean | Prisma.User$employeeHierarchiesArgs<ExtArgs>
   pdisAsEmployee?: boolean | Prisma.User$pdisAsEmployeeArgs<ExtArgs>
@@ -4075,6 +8326,10 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   pdiEvidences?: boolean | Prisma.User$pdiEvidencesArgs<ExtArgs>
   goalResponsibilities?: boolean | Prisma.User$goalResponsibilitiesArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
+  dependents?: boolean | Prisma.User$dependentsArgs<ExtArgs>
+  emergencyContacts?: boolean | Prisma.User$emergencyContactsArgs<ExtArgs>
+  changeRequests?: boolean | Prisma.User$changeRequestsArgs<ExtArgs>
+  reviewedChangeRequests?: boolean | Prisma.User$reviewedChangeRequestsArgs<ExtArgs>
   nineBoxEvaluationsReceived?: boolean | Prisma.User$nineBoxEvaluationsReceivedArgs<ExtArgs>
   nineBoxEvaluationsCreated?: boolean | Prisma.User$nineBoxEvaluationsCreatedArgs<ExtArgs>
   nineBoxResponses?: boolean | Prisma.User$nineBoxResponsesArgs<ExtArgs>
@@ -4098,6 +8353,10 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     pdiEvidences: Prisma.$PDIEvidencePayload<ExtArgs>[]
     goalResponsibilities: Prisma.$PDIGoalPayload<ExtArgs>[]
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
+    dependents: Prisma.$DependentPayload<ExtArgs>[]
+    emergencyContacts: Prisma.$EmergencyContactPayload<ExtArgs>[]
+    changeRequests: Prisma.$ChangeRequestPayload<ExtArgs>[]
+    reviewedChangeRequests: Prisma.$ChangeRequestPayload<ExtArgs>[]
     nineBoxEvaluationsReceived: Prisma.$NineBoxEvaluationPayload<ExtArgs>[]
     nineBoxEvaluationsCreated: Prisma.$NineBoxEvaluationPayload<ExtArgs>[]
     nineBoxResponses: Prisma.$NineBoxEvaluatorPayload<ExtArgs>[]
@@ -4125,6 +8384,36 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     city: string | null
     state: string | null
     zipCode: string | null
+    rg: string | null
+    ethnicity: $Enums.Ethnicity | null
+    gender: $Enums.Gender | null
+    maritalStatus: $Enums.MaritalStatus | null
+    educationLevel: $Enums.EducationLevel | null
+    livesWithDescription: string | null
+    personalEmail: string | null
+    addressNumber: string | null
+    addressComplement: string | null
+    hasBradescoAccount: $Enums.BankAccountOption | null
+    bankAgency: string | null
+    bankAccount: string | null
+    hasOtherEmployment: boolean | null
+    healthPlanOption: $Enums.HealthPlanOption | null
+    wantsTransportVoucher: boolean | null
+    contractType: $Enums.ContractType | null
+    shirtSize: $Enums.ShirtSize | null
+    hasChildren: boolean | null
+    childrenAges: string | null
+    hasIRDependents: boolean | null
+    hobbies: string[]
+    socialNetworks: runtime.JsonValue | null
+    favoriteBookMovieGenres: string | null
+    favoriteBooks: string | null
+    favoriteMovies: string | null
+    favoriteMusic: string | null
+    admiredValues: string | null
+    foodAllergies: string | null
+    hasPets: string | null
+    participateInVideos: boolean | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -4533,6 +8822,10 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   pdiEvidences<T extends Prisma.User$pdiEvidencesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pdiEvidencesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PDIEvidencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   goalResponsibilities<T extends Prisma.User$goalResponsibilitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$goalResponsibilitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PDIGoalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notifications<T extends Prisma.User$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  dependents<T extends Prisma.User$dependentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$dependentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DependentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  emergencyContacts<T extends Prisma.User$emergencyContactsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$emergencyContactsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmergencyContactPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  changeRequests<T extends Prisma.User$changeRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$changeRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChangeRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reviewedChangeRequests<T extends Prisma.User$reviewedChangeRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewedChangeRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChangeRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   nineBoxEvaluationsReceived<T extends Prisma.User$nineBoxEvaluationsReceivedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$nineBoxEvaluationsReceivedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NineBoxEvaluationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   nineBoxEvaluationsCreated<T extends Prisma.User$nineBoxEvaluationsCreatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$nineBoxEvaluationsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NineBoxEvaluationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   nineBoxResponses<T extends Prisma.User$nineBoxResponsesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$nineBoxResponsesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NineBoxEvaluatorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -4587,6 +8880,36 @@ export interface UserFieldRefs {
   readonly city: Prisma.FieldRef<"User", 'String'>
   readonly state: Prisma.FieldRef<"User", 'String'>
   readonly zipCode: Prisma.FieldRef<"User", 'String'>
+  readonly rg: Prisma.FieldRef<"User", 'String'>
+  readonly ethnicity: Prisma.FieldRef<"User", 'Ethnicity'>
+  readonly gender: Prisma.FieldRef<"User", 'Gender'>
+  readonly maritalStatus: Prisma.FieldRef<"User", 'MaritalStatus'>
+  readonly educationLevel: Prisma.FieldRef<"User", 'EducationLevel'>
+  readonly livesWithDescription: Prisma.FieldRef<"User", 'String'>
+  readonly personalEmail: Prisma.FieldRef<"User", 'String'>
+  readonly addressNumber: Prisma.FieldRef<"User", 'String'>
+  readonly addressComplement: Prisma.FieldRef<"User", 'String'>
+  readonly hasBradescoAccount: Prisma.FieldRef<"User", 'BankAccountOption'>
+  readonly bankAgency: Prisma.FieldRef<"User", 'String'>
+  readonly bankAccount: Prisma.FieldRef<"User", 'String'>
+  readonly hasOtherEmployment: Prisma.FieldRef<"User", 'Boolean'>
+  readonly healthPlanOption: Prisma.FieldRef<"User", 'HealthPlanOption'>
+  readonly wantsTransportVoucher: Prisma.FieldRef<"User", 'Boolean'>
+  readonly contractType: Prisma.FieldRef<"User", 'ContractType'>
+  readonly shirtSize: Prisma.FieldRef<"User", 'ShirtSize'>
+  readonly hasChildren: Prisma.FieldRef<"User", 'Boolean'>
+  readonly childrenAges: Prisma.FieldRef<"User", 'String'>
+  readonly hasIRDependents: Prisma.FieldRef<"User", 'Boolean'>
+  readonly hobbies: Prisma.FieldRef<"User", 'String[]'>
+  readonly socialNetworks: Prisma.FieldRef<"User", 'Json'>
+  readonly favoriteBookMovieGenres: Prisma.FieldRef<"User", 'String'>
+  readonly favoriteBooks: Prisma.FieldRef<"User", 'String'>
+  readonly favoriteMovies: Prisma.FieldRef<"User", 'String'>
+  readonly favoriteMusic: Prisma.FieldRef<"User", 'String'>
+  readonly admiredValues: Prisma.FieldRef<"User", 'String'>
+  readonly foodAllergies: Prisma.FieldRef<"User", 'String'>
+  readonly hasPets: Prisma.FieldRef<"User", 'String'>
+  readonly participateInVideos: Prisma.FieldRef<"User", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }
@@ -5262,6 +9585,102 @@ export type User$notificationsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
+}
+
+/**
+ * User.dependents
+ */
+export type User$dependentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Dependent
+   */
+  select?: Prisma.DependentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Dependent
+   */
+  omit?: Prisma.DependentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DependentInclude<ExtArgs> | null
+  where?: Prisma.DependentWhereInput
+  orderBy?: Prisma.DependentOrderByWithRelationInput | Prisma.DependentOrderByWithRelationInput[]
+  cursor?: Prisma.DependentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DependentScalarFieldEnum | Prisma.DependentScalarFieldEnum[]
+}
+
+/**
+ * User.emergencyContacts
+ */
+export type User$emergencyContactsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmergencyContact
+   */
+  select?: Prisma.EmergencyContactSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmergencyContact
+   */
+  omit?: Prisma.EmergencyContactOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmergencyContactInclude<ExtArgs> | null
+  where?: Prisma.EmergencyContactWhereInput
+  orderBy?: Prisma.EmergencyContactOrderByWithRelationInput | Prisma.EmergencyContactOrderByWithRelationInput[]
+  cursor?: Prisma.EmergencyContactWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EmergencyContactScalarFieldEnum | Prisma.EmergencyContactScalarFieldEnum[]
+}
+
+/**
+ * User.changeRequests
+ */
+export type User$changeRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ChangeRequest
+   */
+  select?: Prisma.ChangeRequestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ChangeRequest
+   */
+  omit?: Prisma.ChangeRequestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChangeRequestInclude<ExtArgs> | null
+  where?: Prisma.ChangeRequestWhereInput
+  orderBy?: Prisma.ChangeRequestOrderByWithRelationInput | Prisma.ChangeRequestOrderByWithRelationInput[]
+  cursor?: Prisma.ChangeRequestWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ChangeRequestScalarFieldEnum | Prisma.ChangeRequestScalarFieldEnum[]
+}
+
+/**
+ * User.reviewedChangeRequests
+ */
+export type User$reviewedChangeRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ChangeRequest
+   */
+  select?: Prisma.ChangeRequestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ChangeRequest
+   */
+  omit?: Prisma.ChangeRequestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChangeRequestInclude<ExtArgs> | null
+  where?: Prisma.ChangeRequestWhereInput
+  orderBy?: Prisma.ChangeRequestOrderByWithRelationInput | Prisma.ChangeRequestOrderByWithRelationInput[]
+  cursor?: Prisma.ChangeRequestWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ChangeRequestScalarFieldEnum | Prisma.ChangeRequestScalarFieldEnum[]
 }
 
 /**

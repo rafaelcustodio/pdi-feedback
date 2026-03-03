@@ -397,7 +397,10 @@ export const ModelName = {
   FeedbackSchedule: 'FeedbackSchedule',
   Notification: 'Notification',
   NineBoxEvaluation: 'NineBoxEvaluation',
-  NineBoxEvaluator: 'NineBoxEvaluator'
+  NineBoxEvaluator: 'NineBoxEvaluator',
+  ChangeRequest: 'ChangeRequest',
+  Dependent: 'Dependent',
+  EmergencyContact: 'EmergencyContact'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -413,7 +416,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "organizationalUnit" | "sectorSchedule" | "employeeHierarchy" | "pDI" | "pDIFollowUp" | "pDIGoal" | "pDIEvidence" | "pDIComment" | "feedback" | "feedbackSchedule" | "notification" | "nineBoxEvaluation" | "nineBoxEvaluator"
+    modelProps: "user" | "organizationalUnit" | "sectorSchedule" | "employeeHierarchy" | "pDI" | "pDIFollowUp" | "pDIGoal" | "pDIEvidence" | "pDIComment" | "feedback" | "feedbackSchedule" | "notification" | "nineBoxEvaluation" | "nineBoxEvaluator" | "changeRequest" | "dependent" | "emergencyContact"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1453,6 +1456,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ChangeRequest: {
+      payload: Prisma.$ChangeRequestPayload<ExtArgs>
+      fields: Prisma.ChangeRequestFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ChangeRequestFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChangeRequestPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ChangeRequestFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChangeRequestPayload>
+        }
+        findFirst: {
+          args: Prisma.ChangeRequestFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChangeRequestPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ChangeRequestFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChangeRequestPayload>
+        }
+        findMany: {
+          args: Prisma.ChangeRequestFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChangeRequestPayload>[]
+        }
+        create: {
+          args: Prisma.ChangeRequestCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChangeRequestPayload>
+        }
+        createMany: {
+          args: Prisma.ChangeRequestCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ChangeRequestCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChangeRequestPayload>[]
+        }
+        delete: {
+          args: Prisma.ChangeRequestDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChangeRequestPayload>
+        }
+        update: {
+          args: Prisma.ChangeRequestUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChangeRequestPayload>
+        }
+        deleteMany: {
+          args: Prisma.ChangeRequestDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ChangeRequestUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ChangeRequestUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChangeRequestPayload>[]
+        }
+        upsert: {
+          args: Prisma.ChangeRequestUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChangeRequestPayload>
+        }
+        aggregate: {
+          args: Prisma.ChangeRequestAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateChangeRequest>
+        }
+        groupBy: {
+          args: Prisma.ChangeRequestGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChangeRequestGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ChangeRequestCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChangeRequestCountAggregateOutputType> | number
+        }
+      }
+    }
+    Dependent: {
+      payload: Prisma.$DependentPayload<ExtArgs>
+      fields: Prisma.DependentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DependentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DependentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DependentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DependentPayload>
+        }
+        findFirst: {
+          args: Prisma.DependentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DependentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DependentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DependentPayload>
+        }
+        findMany: {
+          args: Prisma.DependentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DependentPayload>[]
+        }
+        create: {
+          args: Prisma.DependentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DependentPayload>
+        }
+        createMany: {
+          args: Prisma.DependentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DependentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DependentPayload>[]
+        }
+        delete: {
+          args: Prisma.DependentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DependentPayload>
+        }
+        update: {
+          args: Prisma.DependentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DependentPayload>
+        }
+        deleteMany: {
+          args: Prisma.DependentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DependentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DependentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DependentPayload>[]
+        }
+        upsert: {
+          args: Prisma.DependentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DependentPayload>
+        }
+        aggregate: {
+          args: Prisma.DependentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDependent>
+        }
+        groupBy: {
+          args: Prisma.DependentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DependentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DependentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DependentCountAggregateOutputType> | number
+        }
+      }
+    }
+    EmergencyContact: {
+      payload: Prisma.$EmergencyContactPayload<ExtArgs>
+      fields: Prisma.EmergencyContactFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EmergencyContactFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmergencyContactPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EmergencyContactFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmergencyContactPayload>
+        }
+        findFirst: {
+          args: Prisma.EmergencyContactFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmergencyContactPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EmergencyContactFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmergencyContactPayload>
+        }
+        findMany: {
+          args: Prisma.EmergencyContactFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmergencyContactPayload>[]
+        }
+        create: {
+          args: Prisma.EmergencyContactCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmergencyContactPayload>
+        }
+        createMany: {
+          args: Prisma.EmergencyContactCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EmergencyContactCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmergencyContactPayload>[]
+        }
+        delete: {
+          args: Prisma.EmergencyContactDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmergencyContactPayload>
+        }
+        update: {
+          args: Prisma.EmergencyContactUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmergencyContactPayload>
+        }
+        deleteMany: {
+          args: Prisma.EmergencyContactDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EmergencyContactUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EmergencyContactUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmergencyContactPayload>[]
+        }
+        upsert: {
+          args: Prisma.EmergencyContactUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmergencyContactPayload>
+        }
+        aggregate: {
+          args: Prisma.EmergencyContactAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEmergencyContact>
+        }
+        groupBy: {
+          args: Prisma.EmergencyContactGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EmergencyContactGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EmergencyContactCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EmergencyContactCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1515,6 +1740,36 @@ export const UserScalarFieldEnum = {
   city: 'city',
   state: 'state',
   zipCode: 'zipCode',
+  rg: 'rg',
+  ethnicity: 'ethnicity',
+  gender: 'gender',
+  maritalStatus: 'maritalStatus',
+  educationLevel: 'educationLevel',
+  livesWithDescription: 'livesWithDescription',
+  personalEmail: 'personalEmail',
+  addressNumber: 'addressNumber',
+  addressComplement: 'addressComplement',
+  hasBradescoAccount: 'hasBradescoAccount',
+  bankAgency: 'bankAgency',
+  bankAccount: 'bankAccount',
+  hasOtherEmployment: 'hasOtherEmployment',
+  healthPlanOption: 'healthPlanOption',
+  wantsTransportVoucher: 'wantsTransportVoucher',
+  contractType: 'contractType',
+  shirtSize: 'shirtSize',
+  hasChildren: 'hasChildren',
+  childrenAges: 'childrenAges',
+  hasIRDependents: 'hasIRDependents',
+  hobbies: 'hobbies',
+  socialNetworks: 'socialNetworks',
+  favoriteBookMovieGenres: 'favoriteBookMovieGenres',
+  favoriteBooks: 'favoriteBooks',
+  favoriteMovies: 'favoriteMovies',
+  favoriteMusic: 'favoriteMusic',
+  admiredValues: 'admiredValues',
+  foodAllergies: 'foodAllergies',
+  hasPets: 'hasPets',
+  participateInVideos: 'participateInVideos',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1714,6 +1969,47 @@ export const NineBoxEvaluatorScalarFieldEnum = {
 export type NineBoxEvaluatorScalarFieldEnum = (typeof NineBoxEvaluatorScalarFieldEnum)[keyof typeof NineBoxEvaluatorScalarFieldEnum]
 
 
+export const ChangeRequestScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  fieldName: 'fieldName',
+  oldValue: 'oldValue',
+  newValue: 'newValue',
+  status: 'status',
+  reviewedById: 'reviewedById',
+  reviewedAt: 'reviewedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type ChangeRequestScalarFieldEnum = (typeof ChangeRequestScalarFieldEnum)[keyof typeof ChangeRequestScalarFieldEnum]
+
+
+export const DependentScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  relationship: 'relationship',
+  cpf: 'cpf',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DependentScalarFieldEnum = (typeof DependentScalarFieldEnum)[keyof typeof DependentScalarFieldEnum]
+
+
+export const EmergencyContactScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  phone: 'phone',
+  relationship: 'relationship',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EmergencyContactScalarFieldEnum = (typeof EmergencyContactScalarFieldEnum)[keyof typeof EmergencyContactScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1722,12 +2018,29 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
 export const NullsOrder = {
@@ -1804,6 +2117,132 @@ export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
  * Reference to a field of type 'Boolean'
  */
 export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
+ * Reference to a field of type 'Ethnicity'
+ */
+export type EnumEthnicityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Ethnicity'>
+    
+
+
+/**
+ * Reference to a field of type 'Ethnicity[]'
+ */
+export type ListEnumEthnicityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Ethnicity[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Gender'
+ */
+export type EnumGenderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Gender'>
+    
+
+
+/**
+ * Reference to a field of type 'Gender[]'
+ */
+export type ListEnumGenderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Gender[]'>
+    
+
+
+/**
+ * Reference to a field of type 'MaritalStatus'
+ */
+export type EnumMaritalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MaritalStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'MaritalStatus[]'
+ */
+export type ListEnumMaritalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MaritalStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'EducationLevel'
+ */
+export type EnumEducationLevelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EducationLevel'>
+    
+
+
+/**
+ * Reference to a field of type 'EducationLevel[]'
+ */
+export type ListEnumEducationLevelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EducationLevel[]'>
+    
+
+
+/**
+ * Reference to a field of type 'BankAccountOption'
+ */
+export type EnumBankAccountOptionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BankAccountOption'>
+    
+
+
+/**
+ * Reference to a field of type 'BankAccountOption[]'
+ */
+export type ListEnumBankAccountOptionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BankAccountOption[]'>
+    
+
+
+/**
+ * Reference to a field of type 'HealthPlanOption'
+ */
+export type EnumHealthPlanOptionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'HealthPlanOption'>
+    
+
+
+/**
+ * Reference to a field of type 'HealthPlanOption[]'
+ */
+export type ListEnumHealthPlanOptionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'HealthPlanOption[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ContractType'
+ */
+export type EnumContractTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ContractType'>
+    
+
+
+/**
+ * Reference to a field of type 'ContractType[]'
+ */
+export type ListEnumContractTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ContractType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ShirtSize'
+ */
+export type EnumShirtSizeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ShirtSize'>
+    
+
+
+/**
+ * Reference to a field of type 'ShirtSize[]'
+ */
+export type ListEnumShirtSizeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ShirtSize[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -1934,6 +2373,20 @@ export type ListEnumNineBoxEvaluatorStatusFieldRefInput<$PrismaModel> = FieldRef
 
 
 /**
+ * Reference to a field of type 'ChangeRequestStatus'
+ */
+export type EnumChangeRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChangeRequestStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'ChangeRequestStatus[]'
+ */
+export type ListEnumChangeRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChangeRequestStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -2055,6 +2508,9 @@ export type GlobalOmitConfig = {
   notification?: Prisma.NotificationOmit
   nineBoxEvaluation?: Prisma.NineBoxEvaluationOmit
   nineBoxEvaluator?: Prisma.NineBoxEvaluatorOmit
+  changeRequest?: Prisma.ChangeRequestOmit
+  dependent?: Prisma.DependentOmit
+  emergencyContact?: Prisma.EmergencyContactOmit
 }
 
 /* Types for Logging */

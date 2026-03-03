@@ -27,6 +27,64 @@ enum ScheduleType {
   feedback
 }
 
+enum Ethnicity {
+  branco
+  preto
+  amarelo
+  indigena
+  pardo
+}
+
+enum Gender {
+  masculino
+  feminino
+  outra
+}
+
+enum MaritalStatus {
+  solteiro
+  casado
+  outra
+}
+
+enum EducationLevel {
+  ensino_medio
+  ensino_tecnico
+  superior_incompleto
+  superior_completo
+  pos_graduado
+}
+
+enum ContractType {
+  efetivo
+  estagio
+}
+
+enum HealthPlanOption {
+  regional
+  nacional
+  nao
+}
+
+enum ShirtSize {
+  p_fem
+  m_fem
+  g_fem
+  gg_fem
+  xg_fem
+  p_masc
+  m_masc
+  g_masc
+  gg_masc
+  xg_masc
+}
+
+enum BankAccountOption {
+  sim
+  nao
+  outra
+}
+
 model User {
   id          String    @id @default(cuid())
   name        String
@@ -50,6 +108,47 @@ model User {
   city        String?
   state       String?
   zipCode     String?
+
+  // Personal data fields
+  rg              String?
+  ethnicity       Ethnicity?
+  gender          Gender?
+  maritalStatus   MaritalStatus?
+  educationLevel  EducationLevel?
+  livesWithDescription String?
+
+  // Contact
+  personalEmail     String?
+  addressNumber     String?
+  addressComplement String?
+
+  // Financial & Benefits
+  hasBradescoAccount  BankAccountOption?
+  bankAgency          String?
+  bankAccount         String?
+  hasOtherEmployment  Boolean?
+  healthPlanOption    HealthPlanOption?
+  wantsTransportVoucher Boolean?
+  contractType        ContractType?
+  shirtSize           ShirtSize?
+
+  // Family
+  hasChildren      Boolean?
+  childrenAges     String?
+  hasIRDependents  Boolean?
+
+  // About Me
+  hobbies                  String[]
+  socialNetworks           Json?
+  favoriteBookMovieGenres  String?
+  favoriteBooks            String?
+  favoriteMovies           String?
+  favoriteMusic            String?
+  admiredValues            String?
+  foodAllergies            String?
+  hasPets                  String?
+  participateInVideos      Boolean?
+
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -70,6 +169,10 @@ model User {
   pdiEvidences        PDIEvidence[]
   goalResponsibilities PDIGoal[]     @relation("GoalResponsible")
   notifications       Notification[]
+  dependents          Dependent[]
+  emergencyContacts   EmergencyContact[]
+  changeRequests          ChangeRequest[] @relation("ChangeRequestUser")
+  reviewedChangeRequests  ChangeRequest[] @relation("ChangeRequestReviewer")
 
   // Nine Box relations
   nineBoxEvaluationsReceived NineBoxEvaluation[] @relation("NineBoxEvaluatee")
@@ -404,4 +507,65 @@ model NineBoxEvaluator {
   @@unique([evaluationId, evaluatorId])
   @@index([evaluationId])
   @@index([evaluatorId])
+}
+
+// ============================================================
+// HR: Change Requests (approval workflow)
+// ============================================================
+
+enum ChangeRequestStatus {
+  pending
+  approved
+  rejected
+}
+
+model ChangeRequest {
+  id           String              @id @default(cuid())
+  userId       String
+  fieldName    String
+  oldValue     String?
+  newValue     String?
+  status       ChangeRequestStatus @default(pending)
+  reviewedById String?
+  reviewedAt   DateTime?
+  createdAt    DateTime            @default(now())
+
+  user       User  @relation("ChangeRequestUser", fields: [userId], references: [id])
+  reviewedBy User? @relation("ChangeRequestReviewer", fields: [reviewedById], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@index([reviewedById])
+}
+
+// ============================================================
+// HR: Dependents & Emergency Contacts
+// ============================================================
+
+model Dependent {
+  id           String   @id @default(cuid())
+  userId       String
+  name         String
+  relationship String
+  cpf          String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model EmergencyContact {
+  id           String   @id @default(cuid())
+  userId       String
+  name         String
+  phone        String
+  relationship String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }

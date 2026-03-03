@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { X, Eye, Check, MapPin } from "lucide-react";
 import {
   programEvents,
@@ -17,6 +17,7 @@ import {
   snapToBusinessDay,
   getBusinessDays,
   distributeEventsWithTimeSlots,
+  isSlotFreeInView,
   BUSINESS_TIME_SLOTS,
 } from "@/lib/sector-schedule-pure-utils";
 import { RoomPicker, RoomPickerCompact } from "@/components/room-picker";
@@ -60,6 +61,9 @@ export function ProgramEventsWizard({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  // Room schedule cache (used for conflict validation on confirm)
+  const roomScheduleRef = useRef<Map<string, string> | null>(null);
 
   // Room state for Step 1
   const [hasToken, setHasToken] = useState<boolean | null>(null);
@@ -124,11 +128,13 @@ export function ProgramEventsWizard({
 
       // Fetch room schedule if a room is selected
       let roomSchedule: Map<string, string> | undefined;
+      roomScheduleRef.current = null;
       if (selectedRoom) {
         const startStr = new Date(periodStart).toISOString().slice(0, 10);
         const endStr = new Date(periodEnd).toISOString().slice(0, 10);
         const scheduleObj = await fetchRoomScheduleForPeriod(selectedRoom.email, startStr, endStr);
         roomSchedule = new Map(Object.entries(scheduleObj));
+        roomScheduleRef.current = roomSchedule;
       }
 
       // Distribute with time slots
@@ -226,8 +232,22 @@ export function ProgramEventsWizard({
   async function handleConfirm() {
     if (!preview || preview.length === 0) return;
 
-    setLoading(true);
     setError(null);
+
+    // Validate room availability before confirming
+    if (roomScheduleRef.current) {
+      const conflicts = preview.filter((event) => {
+        if (!event.roomEmail) return false;
+        const dayView = roomScheduleRef.current!.get(event.scheduledDate);
+        return !isSlotFreeInView(dayView, event.scheduledTime);
+      });
+      if (conflicts.length > 0) {
+        setError(`Conflito de sala: ${conflicts.map((e) => `${e.employeeName} — ${e.scheduledDate} às ${e.scheduledTime}`).join(", ")}. Ajuste os horários antes de confirmar.`);
+        return;
+      }
+    }
+
+    setLoading(true);
 
     // Build event room and time selections
     const roomSelections: EventRoomSelection[] = [];
@@ -435,11 +455,17 @@ export function ProgramEventsWizard({
                   key={event.employeeId}
                   className="border-b border-gray-100 dark:border-gray-800 px-3 py-2.5 last:border-b-0"
                 >
-                  {/* Single row: Name | Date | Time | Room */}
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate min-w-0 flex-1">
+                  {/* Name row */}
+                  <div className="flex items-center gap-1 mb-1.5">
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       {event.employeeName}
                     </span>
+                    {event.wasSnapped && (
+                      <span className="text-xs text-amber-600" title="Auto-corrigido para dia útil">!</span>
+                    )}
+                  </div>
+                  {/* Controls row: Date | Time | Room */}
+                  <div className="flex items-center gap-2 flex-wrap">
                     <input
                       type="date"
                       value={event.scheduledDate}
@@ -463,11 +489,10 @@ export function ProgramEventsWizard({
                         <button
                           type="button"
                           onClick={() => setExpandedRoomPicker(expandedRoomPicker === event.employeeId ? null : event.employeeId)}
-                          className="shrink-0 inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/70 transition-colors"
-                          title="Trocar sala"
+                          className="inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/70 transition-colors"
                         >
-                          <MapPin size={10} />
-                          <span className="max-w-[80px] truncate">{event.roomDisplayName}</span>
+                          <MapPin size={10} className="shrink-0" />
+                          {event.roomDisplayName}
                         </button>
                       ) : (
                         <button
@@ -479,11 +504,6 @@ export function ProgramEventsWizard({
                           Sala
                         </button>
                       )
-                    )}
-                    {event.wasSnapped && (
-                      <span className="shrink-0 text-xs text-amber-600" title="Auto-corrigido para dia útil">
-                        !
-                      </span>
                     )}
                   </div>
 
