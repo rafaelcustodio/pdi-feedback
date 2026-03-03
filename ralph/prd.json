@@ -169,8 +169,8 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 9,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Tab 5 (Sobre Mim): hobbies multi-select checkboxes (18 options), social networks multi-select with per-network handle input fields, favorites section (genres, books, movies, music, values), food allergies (optional text), pets (select with 'outra' description field), participate in videos checkbox. All fields wired to createEmployee and updateEmployee server actions. socialNetworks stored as JSON object {network: handle}. hasPets 'outra' stored as 'outra: description' string."
     },
     {
       "id": "US-010",

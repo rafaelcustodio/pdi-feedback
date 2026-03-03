@@ -22,6 +22,10 @@
 - Dynamic list pattern (dependents/contacts): use array state + map with index for editing, filter on idx !== i for removal, spread + new item for addition
 - Form types for dynamic lists: define separate types (DependentFormItem, EmergencyContactFormItem) with optional `id` for new vs existing items
 - getEmployeeById includes `dependents` and `emergencyContacts` with select/orderBy for the edit page
+- Prisma JSON fields: use `?? undefined` (not `?? null`) for socialNetworks in create/update to avoid type error with NullableJsonNullValueInput
+- Multi-select checkboxes pattern: array state + includes check + filter/spread for toggle
+- Social networks stored as JSON object `{networkName: handle}` — use `Object.keys()` to derive selected networks
+- Composite string values: hasPets with "outra" uses `"outra: description"` format — parse with startsWith on init
 ---
 
 ## 2026-03-03 - US-001
@@ -123,4 +127,22 @@
   - When saving related entities after create: use `result.id` from createEmployee return value
   - `getEmployeeById` now includes dependents and emergencyContacts — no need to make separate calls for the edit form
   - The void suppressions for Tab 4 state variables were removed since they're now used in the JSX
+---
+
+## 2026-03-03 - US-009
+- Implemented: Tab 5 (Sobre Mim) replacing placeholder with full form
+- Hobbies: multi-select checkboxes with 18 options (Games, Leitura, Cinema, Música, etc.)
+- Social Networks: multi-select checkboxes (Instagram, LinkedIn, Twitter, Facebook, TikTok, Outra) — each selected network shows a text input for handle/profile
+- Favorites section: gênero de livros/filmes, livros favoritos, filmes favoritos, música/banda favorita, valores que admira
+- Food allergies: optional text field with informational label
+- Pets: select (não/sim cachorros/sim gatos/outra) with conditional description text field for "outra"
+- Participate in videos: checkbox
+- Wired all About Me fields to `createEmployee` and `updateEmployee` server actions (data type + Prisma create/update calls)
+- Files changed: `src/components/employee-form.tsx`, `src/app/(dashboard)/colaboradores/actions.ts`
+- **Learnings for future iterations:**
+  - Prisma JSON fields (`socialNetworks`): use `?? undefined` instead of `?? null` in create/update to avoid TypeScript error with `NullableJsonNullValueInput`
+  - Multi-select checkboxes: use `string[]` state + `includes()` check + `filter()`/spread for toggling
+  - Social networks as JSON: store as `{networkName: handle}` object — use `Object.keys()` to derive selected networks, spread + delete for toggling
+  - Composite string value pattern for hasPets: when "outra" is selected, store as `"outra: description"` — on form init, parse with `startsWith("outra: ")` and `slice(7)` to extract description
+  - Removed all `void` suppressions from Tab 5 state since all variables are now used in JSX
 ---
