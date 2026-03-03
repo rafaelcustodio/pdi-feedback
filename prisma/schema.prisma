@@ -71,6 +71,11 @@ model User {
   goalResponsibilities PDIGoal[]     @relation("GoalResponsible")
   notifications       Notification[]
 
+  // Nine Box relations
+  nineBoxEvaluationsReceived NineBoxEvaluation[] @relation("NineBoxEvaluatee")
+  nineBoxEvaluationsCreated  NineBoxEvaluation[] @relation("NineBoxCreatedBy")
+  nineBoxResponses           NineBoxEvaluator[]
+
   @@index([email])
   @@index([role])
   @@index([evaluationMode])
@@ -270,6 +275,8 @@ model Feedback {
   employee User @relation("FeedbackEmployee", fields: [employeeId], references: [id])
   manager  User @relation("FeedbackManager", fields: [managerId], references: [id])
 
+  nineBoxEvaluation NineBoxEvaluation?
+
   @@index([employeeId])
   @@index([managerId])
   @@index([status])
@@ -306,6 +313,7 @@ enum NotificationType {
   feedback_reminder
   feedback_scheduled
   feedback_submitted_auto
+  ninebox_invite
   general
 }
 
@@ -324,4 +332,76 @@ model Notification {
   @@index([userId])
   @@index([isRead])
   @@index([type])
+}
+
+// ============================================================
+// Nine Box
+// ============================================================
+
+enum NineBoxStatus {
+  open
+  closed
+}
+
+enum NineBoxEvaluatorStatus {
+  pending
+  completed
+}
+
+model NineBoxEvaluation {
+  id          String       @id @default(cuid())
+  feedbackId  String       @unique
+  evaluateeId String
+  createdById String
+  status      NineBoxStatus @default(open)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  feedback  Feedback @relation(fields: [feedbackId], references: [id])
+  evaluatee User     @relation("NineBoxEvaluatee", fields: [evaluateeId], references: [id])
+  createdBy User     @relation("NineBoxCreatedBy", fields: [createdById], references: [id])
+
+  evaluators NineBoxEvaluator[]
+
+  @@index([feedbackId])
+  @@index([evaluateeId])
+  @@index([createdById])
+  @@index([status])
+}
+
+model NineBoxEvaluator {
+  id           String                 @id @default(cuid())
+  evaluationId String
+  evaluatorId  String
+  status       NineBoxEvaluatorStatus @default(pending)
+
+  // Desempenho (q1-q6)
+  q1 Int?
+  q2 Int?
+  q3 Int?
+  q4 Int?
+  q5 Int?
+  q6 Int?
+
+  // Potencial (q7-q12)
+  q7  Int?
+  q8  Int?
+  q9  Int?
+  q10 Int?
+  q11 Int?
+  q12 Int?
+
+  // Descritiva
+  q13PontosFortes  String?
+  q14Oportunidade  String?
+
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  evaluation NineBoxEvaluation @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+  evaluator  User              @relation(fields: [evaluatorId], references: [id])
+
+  @@unique([evaluationId, evaluatorId])
+  @@index([evaluationId])
+  @@index([evaluatorId])
 }
