@@ -9,6 +9,8 @@ import {
   canAccessEmployee,
 } from "@/lib/access-control";
 import { recalculateFeedbackSchedule } from "@/lib/schedule-utils";
+import { sendEmail } from "@/lib/email";
+import { buildFeedbackSubmittedEmployeeHtml } from "@/lib/email-templates";
 import {
   getUserToken,
   createCalendarEvent,
@@ -346,9 +348,43 @@ export async function createFeedback(data: {
     },
   });
 
-  // Recalculate feedback schedule after submission
+  // Recalculate feedback schedule and notify employee after submission
   if (data.submit) {
     await recalculateFeedbackSchedule(data.employeeId);
+
+    const [employee, manager] = await Promise.all([
+      prisma.user.findUnique({ where: { id: data.employeeId }, select: { name: true, email: true } }),
+      prisma.user.findUnique({ where: { id: userId }, select: { name: true } }),
+    ]);
+
+    if (employee && manager) {
+      const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+      const feedbackUrl = `${baseUrl}/feedbacks/${feedback.id}`;
+
+      // Create notification for the employee
+      await prisma.notification.create({
+        data: {
+          userId: data.employeeId,
+          type: "feedback_submitted_auto",
+          title: `Novo feedback recebido - ${manager.name}`,
+          message: `Você recebeu um novo feedback de ${manager.name} referente ao período ${data.period.trim()}. [feedback_${feedback.id}]`,
+          emailSent: true,
+        },
+      });
+
+      // Send email to the employee
+      const html = buildFeedbackSubmittedEmployeeHtml(
+        employee.name,
+        manager.name,
+        data.period.trim(),
+        feedbackUrl
+      );
+      await sendEmail({
+        to: employee.email,
+        subject: `[Feedback] Novo feedback de ${manager.name}`,
+        html,
+      });
+    }
   }
 
   revalidatePath("/feedbacks");
@@ -432,9 +468,41 @@ export async function updateFeedback(
     },
   });
 
-  // Recalculate feedback schedule after submission
+  // Recalculate feedback schedule and notify employee after submission
   if (data.submit) {
     await recalculateFeedbackSchedule(feedback.employeeId);
+
+    const [employee, manager] = await Promise.all([
+      prisma.user.findUnique({ where: { id: feedback.employeeId }, select: { name: true, email: true } }),
+      prisma.user.findUnique({ where: { id: userId }, select: { name: true } }),
+    ]);
+
+    if (employee && manager) {
+      const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+      const feedbackUrl = `${baseUrl}/feedbacks/${id}`;
+
+      await prisma.notification.create({
+        data: {
+          userId: feedback.employeeId,
+          type: "feedback_submitted_auto",
+          title: `Novo feedback recebido - ${manager.name}`,
+          message: `Você recebeu um novo feedback de ${manager.name} referente ao período ${data.period.trim()}. [feedback_${id}]`,
+          emailSent: true,
+        },
+      });
+
+      const html = buildFeedbackSubmittedEmployeeHtml(
+        employee.name,
+        manager.name,
+        data.period.trim(),
+        feedbackUrl
+      );
+      await sendEmail({
+        to: employee.email,
+        subject: `[Feedback] Novo feedback de ${manager.name}`,
+        html,
+      });
+    }
   }
 
   revalidatePath("/feedbacks");
@@ -551,6 +619,54 @@ export async function scheduleFeedback(
       scheduledAt: scheduledDate,
     },
   });
+
+  // Create Outlook calendar event for the manager
+  const [employee, manager] = await Promise.all([
+    prisma.user.findUnique({ where: { id: feedback.employeeId }, select: { name: true, email: true } }),
+    prisma.user.findUnique({ where: { id: userId }, select: { name: true } }),
+  ]);
+
+  if (employee && manager) {
+    const startDateTime = `${scheduledAt.split("T")[0]}T09:00:00`;
+    const endDateTime = `${scheduledAt.split("T")[0]}T10:00:00`;
+
+    const calendarEvent: GraphCalendarEvent = {
+      subject: `Feedback — ${employee.name}`,
+      start: { dateTime: startDateTime, timeZone: "America/Sao_Paulo" },
+      end: { dateTime: endDateTime, timeZone: "America/Sao_Paulo" },
+      body: {
+        contentType: "text",
+        content: `Feedback agendado pelo sistema. Acesse: ${process.env.NEXTAUTH_URL}/feedbacks/${id}`,
+      },
+      attendees: [
+        { emailAddress: { address: employee.email, name: employee.name }, type: "required" },
+      ],
+    };
+
+    const [managerToken, employeeToken] = await Promise.allSettled([
+      getUserToken(userId),
+      getUserToken(feedback.employeeId),
+    ]);
+
+    const managerAccessToken = managerToken.status === "fulfilled" ? managerToken.value : null;
+    const employeeAccessToken = employeeToken.status === "fulfilled" ? employeeToken.value : null;
+
+    const eventPromises: Promise<string | null>[] = [];
+    if (managerAccessToken) eventPromises.push(createCalendarEvent(managerAccessToken, calendarEvent));
+    if (employeeAccessToken) eventPromises.push(createCalendarEvent(employeeAccessToken, calendarEvent));
+
+    const results = await Promise.allSettled(eventPromises);
+
+    if (managerAccessToken && results.length > 0) {
+      const managerResult = results[0];
+      if (managerResult.status === "fulfilled" && managerResult.value) {
+        await prisma.feedback.update({
+          where: { id },
+          data: { outlookEventId: managerResult.value },
+        });
+      }
+    }
+  }
 
   revalidatePath("/feedbacks");
   revalidatePath(`/feedbacks/${id}`);

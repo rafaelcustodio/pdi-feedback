@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Configuração Azure Entra ID - PDI Feedback</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Configuração Azure Entra ID - PDI Feedback</h1>
+</header>
+<h1 id="configuração-do-aplicativo-no-azure-entra-id">Configuração do
+Aplicativo no Azure Entra ID</h1>
+<h2 id="visão-geral">Visão Geral</h2>
+<p>O aplicativo <strong>PDI Feedback</strong> precisa de um registro de
+aplicativo no Azure Entra ID para duas funcionalidades:</p>
+<ol type="1">
+<li><strong>SSO (Single Sign-On)</strong> — Login dos usuários via conta
+corporativa Microsoft</li>
+<li><strong>Integração com Outlook Calendar</strong> —
+Criar/editar/excluir eventos no calendário dos usuários (agendamento de
+feedbacks e acompanhamentos de PDI)</li>
+<li><strong>Envio de e-mails</strong> — Via SMTP relay do Exchange
+Online (autenticação SMTP)</li>
+</ol>
+<hr />
+<h2 id="passo-1-registrar-o-aplicativo">Passo 1 — Registrar o
+Aplicativo</h2>
+<ol type="1">
+<li>Acesse o <a href="https://portal.azure.com">Portal Azure</a></li>
+<li>Navegue até <strong>Microsoft Entra ID</strong> → <strong>App
+registrations</strong> → <strong>New registration</strong></li>
+<li>Preencha:
+<ul>
+<li><strong>Name:</strong> <code>PDI Feedback</code></li>
+<li><strong>Supported account types:</strong>
+<code>Accounts in this organizational directory only</code> (single
+tenant)</li>
+<li><strong>Redirect URI:</strong>
+<ul>
+<li>Tipo: <code>Web</code></li>
+<li>URI de Produção:
+<code>https://&lt;DOMINIO-PRODUCAO&gt;/api/auth/callback/microsoft-entra-id</code></li>
+<li><em>(o URI de dev pode ser adicionado depois:
+<code>http://localhost:3000/api/auth/callback/microsoft-entra-id</code>)</em></li>
+</ul></li>
+</ul></li>
+<li>Clique em <strong>Register</strong></li>
+</ol>
+<h3 id="informações-geradas-anotar">Informações geradas (anotar):</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Variável de ambiente</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Application (client) ID</strong></td>
+<td><code>AZURE_AD_CLIENT_ID</code></td>
+</tr>
+<tr>
+<td><strong>Directory (tenant) ID</strong></td>
+<td><code>AZURE_AD_TENANT_ID</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="passo-2-criar-client-secret">Passo 2 — Criar Client Secret</h2>
+<ol type="1">
+<li>No app registrado, vá em <strong>Certificates &amp; secrets</strong>
+→ <strong>Client secrets</strong> → <strong>New client
+secret</strong></li>
+<li>Preencha:
+<ul>
+<li><strong>Description:</strong>
+<code>PDI Feedback Production</code></li>
+<li><strong>Expires:</strong> Escolher prazo adequado (recomendado: 12
+ou 24 meses)</li>
+</ul></li>
+<li>Clique em <strong>Add</strong></li>
+<li><strong>COPIE O VALUE imediatamente</strong> (não será exibido
+novamente)</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Variável de ambiente</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Value</strong> (o secret gerado)</td>
+<td><code>AZURE_AD_CLIENT_SECRET</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>⚠️ <strong>Importante:</strong> Criar um lembrete para renovar o
+secret antes do vencimento, caso contrário o SSO e a integração com
+calendário param de funcionar.</p>
+</blockquote>
+<hr />
+<h2 id="passo-3-configurar-permissões-da-api-api-permissions">Passo 3 —
+Configurar Permissões da API (API Permissions)</h2>
+<ol type="1">
+<li>No app registrado, vá em <strong>API permissions</strong> →
+<strong>Add a permission</strong></li>
+<li>Selecione <strong>Microsoft Graph</strong> → <strong>Delegated
+permissions</strong></li>
+<li>Adicione as seguintes permissões:</li>
+</ol>
+<table>
+<colgroup>
+<col style="width: 37%" />
+<col style="width: 20%" />
+<col style="width: 41%" />
+</colgroup>
+<thead>
+<tr>
+<th>Permissão</th>
+<th>Tipo</th>
+<th>Finalidade</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>openid</code></td>
+<td>Delegated</td>
+<td>Autenticação OpenID Connect (login SSO)</td>
+</tr>
+<tr>
+<td><code>profile</code></td>
+<td>Delegated</td>
+<td>Acesso ao nome e foto do perfil do usuário</td>
+</tr>
+<tr>
+<td><code>email</code></td>
+<td>Delegated</td>
+<td>Acesso ao e-mail do usuário</td>
+</tr>
+<tr>
+<td><code>offline_access</code></td>
+<td>Delegated</td>
+<td>Obter refresh token (manter sessão ativa sem re-login)</td>
+</tr>
+<tr>
+<td><code>Calendars.ReadWrite</code></td>
+<td>Delegated</td>
+<td>Criar, editar e excluir eventos no calendário Outlook do
+usuário</td>
+</tr>
+</tbody>
+</table>
+<ol start="4" type="1">
+<li>Após adicionar todas, clique em <strong>Grant admin consent for [Sua
+Organização]</strong>
+<ul>
+<li>Isso autoriza todas as permissões de uma vez para todos os usuários
+da organização</li>
+<li>Sem o admin consent, cada usuário teria que aprovar individualmente
+no primeiro login</li>
+</ul></li>
+</ol>
+<h3 id="resultado-esperado">Resultado esperado:</h3>
+<p>Todas as 5 permissões devem aparecer com status ✅ <strong>Granted
+for [Sua Organização]</strong>.</p>
+<blockquote>
+<p>ℹ️ <strong>Nota:</strong> Todas as permissões são do tipo
+<strong>Delegated</strong> (delegadas), ou seja, o aplicativo age em
+nome do usuário logado, nunca com permissões próprias. Ele só acessa o
+calendário do próprio usuário.</p>
+</blockquote>
+<hr />
+<h2 id="passo-4-configurar-authentication-redirect-uris">Passo 4 —
+Configurar Authentication (Redirect URIs)</h2>
+<ol type="1">
+<li>No app registrado, vá em <strong>Authentication</strong></li>
+<li>Em <strong>Web</strong> → <strong>Redirect URIs</strong>,
+confirme/adicione:
+<ul>
+<li>Produção:
+<code>https://&lt;DOMINIO-PRODUCAO&gt;/api/auth/callback/microsoft-entra-id</code></li>
+<li>Desenvolvimento (opcional):
+<code>http://localhost:3000/api/auth/callback/microsoft-entra-id</code></li>
+</ul></li>
+<li>Em <strong>Implicit grant and hybrid flows</strong>: <strong>deixar
+tudo desmarcado</strong> (não usamos implicit flow)</li>
+<li>Em <strong>Supported account types</strong>: confirme que está como
+<strong>Single tenant</strong></li>
+<li>Clique em <strong>Save</strong></li>
+</ol>
+<hr />
+<h2 id="passo-5-configurar-smtp-para-envio-de-e-mails">Passo 5 —
+Configurar SMTP para Envio de E-mails</h2>
+<p>O aplicativo envia e-mails (notificações, lembretes, convites Nine
+Box) via <strong>SMTP</strong>. Existem duas opções:</p>
+<h3 id="opção-a-exchange-online-smtp-recomendado">Opção A — Exchange
+Online SMTP (Recomendado)</h3>
+<p>Para usar o SMTP autenticado do Exchange Online / Microsoft 365:</p>
+<ol type="1">
+<li><strong>Criar ou designar uma conta de serviço</strong> (ex:
+<code>noreply@suaempresa.com</code>) com licença Exchange Online</li>
+<li><strong>Habilitar SMTP AUTH</strong> para essa conta:
+<ul>
+<li>Exchange Admin Center → Mailboxes → selecione a conta → Mail flow →
+<strong>Manage email apps</strong></li>
+<li>Marque ✅ <strong>Authenticated SMTP</strong></li>
+</ul></li>
+<li><strong>Se MFA estiver habilitado</strong> na conta, será necessário
+criar uma <strong>App Password</strong>:
+<ul>
+<li>Portal MyAccount (https://mysignins.microsoft.com) → Security info →
+Add method → App password</li>
+</ul></li>
+</ol>
+<p>As variáveis de ambiente serão:</p>
+<pre><code>SMTP_HOST=smtp.office365.com
+SMTP_PORT=587
+SMTP_USER=noreply@suaempresa.com
+SMTP_PASS=&lt;senha ou app password&gt;
+SMTP_FROM=PDI Feedback &lt;noreply@suaempresa.com&gt;</code></pre>
+<h3 id="opção-b-outro-servidor-smtp">Opção B — Outro servidor SMTP</h3>
+<p>Se preferirem usar outro serviço (SendGrid, Amazon SES, servidor SMTP
+próprio), basta configurar as variáveis equivalentes.</p>
+<hr />
+<h2 id="passo-6-resumo-das-variáveis-de-ambiente">Passo 6 — Resumo das
+Variáveis de Ambiente</h2>
+<p>Após a configuração, fornecer os seguintes valores para a equipe de
+desenvolvimento:</p>
+<pre class="env"><code># === Azure Entra ID (SSO + Calendar) ===
+AZURE_AD_CLIENT_ID=&lt;Application (client) ID&gt;
+AZURE_AD_CLIENT_SECRET=&lt;Client secret value&gt;
+AZURE_AD_TENANT_ID=&lt;Directory (tenant) ID&gt;
+
+# === SMTP (Envio de e-mails) ===
+SMTP_HOST=smtp.office365.com
+SMTP_PORT=587
+SMTP_USER=&lt;email da conta de serviço&gt;
+SMTP_PASS=&lt;senha ou app password&gt;
+SMTP_FROM=PDI Feedback &lt;email da conta de serviço&gt;</code></pre>
+<hr />
+<h2 id="checklist-final">Checklist Final</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" />App registrado no Azure Entra
+ID</label></li>
+<li><label><input type="checkbox" />Client ID e Tenant ID
+anotados</label></li>
+<li><label><input type="checkbox" />Client Secret criado e valor
+copiado</label></li>
+<li><label><input type="checkbox" />Redirect URI de produção
+configurado</label></li>
+<li><label><input type="checkbox" />5 permissões delegadas adicionadas
+(openid, profile, email, offline_access,
+Calendars.ReadWrite)</label></li>
+<li><label><input type="checkbox" />Admin consent concedido para a
+organização</label></li>
+<li><label><input type="checkbox" />Conta de serviço SMTP configurada
+com SMTP AUTH habilitado</label></li>
+<li><label><input type="checkbox" />Todas as variáveis de ambiente
+entregues à equipe de desenvolvimento</label></li>
+</ul>
+<hr />
+<h2 id="referência-rápida-o-que-cada-permissão-faz">Referência Rápida —
+O Que Cada Permissão Faz</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Permissão</th>
+<th>Para quê?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>openid</code></td>
+<td>Permite o login SSO (identifica o usuário)</td>
+</tr>
+<tr>
+<td><code>profile</code></td>
+<td>Traz nome e foto do perfil para exibir no app</td>
+</tr>
+<tr>
+<td><code>email</code></td>
+<td>Traz o e-mail corporativo para vincular à conta no sistema</td>
+</tr>
+<tr>
+<td><code>offline_access</code></td>
+<td>Permite renovar o token de acesso sem pedir login novamente (refresh
+token)</td>
+</tr>
+<tr>
+<td><code>Calendars.ReadWrite</code></td>
+<td>Permite criar eventos no Outlook quando um feedback ou
+acompanhamento PDI é agendado</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="diagrama-de-fluxo">Diagrama de Fluxo</h2>
+<pre><code>Usuário clica &quot;Entrar com Microsoft&quot;
+        ↓
+Login no Azure Entra ID
+        ↓
+Azure redireciona para /api/auth/callback/microsoft-entra-id
+        ↓
+App recebe tokens (access + refresh)
+        ↓
+Tokens armazenados no banco (criptografados por sessão)
+        ↓
+Quando o gestor agenda um feedback/PDI:
+  → App usa o access token do gestor
+  → Chama Microsoft Graph API
+  → Cria evento no calendário Outlook do gestor
+  → Se token expirou, usa refresh token para renovar automaticamente</code></pre>
+</body>
+</html>
