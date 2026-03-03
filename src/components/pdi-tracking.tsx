@@ -1084,6 +1084,7 @@ function FollowUpsSection({
 }) {
   const [showScheduleForm, setShowScheduleForm] = useState(false);
   const [scheduleDate, setScheduleDate] = useState("");
+  const [scheduleTime, setScheduleTime] = useState("09:00");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -1095,6 +1096,7 @@ function FollowUpsSection({
   // Next schedule prompt state
   const [showNextScheduleModal, setShowNextScheduleModal] = useState(false);
   const [nextScheduleDate, setNextScheduleDate] = useState("");
+  const [nextScheduleTime, setNextScheduleTime] = useState("09:00");
 
   function nextMonthDate(): string {
     const d = new Date();
@@ -1112,11 +1114,12 @@ function FollowUpsSection({
     if (!scheduleDate) return;
     setLoading(true);
     setError(null);
-    const result = await scheduleFollowUp(pdiId, scheduleDate);
+    const result = await scheduleFollowUp(pdiId, scheduleDate, scheduleTime);
     setLoading(false);
     if (result.success) {
       setShowScheduleForm(false);
       setScheduleDate("");
+      setScheduleTime("09:00");
     } else {
       setError(result.error ?? "Erro ao agendar acompanhamento");
     }
@@ -1147,7 +1150,7 @@ function FollowUpsSection({
     if (!nextScheduleDate) return;
     setLoading(true);
     setError(null);
-    const result = await scheduleFollowUp(pdiId, nextScheduleDate);
+    const result = await scheduleFollowUp(pdiId, nextScheduleDate, nextScheduleTime);
     setLoading(false);
     if (result.success) {
       setShowNextScheduleModal(false);
@@ -1208,11 +1211,24 @@ function FollowUpsSection({
                 disabled={loading}
               />
             </div>
+            <div>
+              <label className="mb-1 block text-xs font-medium text-gray-700">
+                Horário de início
+              </label>
+              <input
+                type="time"
+                value={scheduleTime}
+                onChange={(e) => setScheduleTime(e.target.value)}
+                className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                disabled={loading}
+              />
+            </div>
             <div className="flex gap-2">
               <button
                 onClick={() => {
                   setShowScheduleForm(false);
                   setScheduleDate("");
+                  setScheduleTime("09:00");
                 }}
                 disabled={loading}
                 className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
@@ -1297,17 +1313,31 @@ function FollowUpsSection({
             <p className="mb-4 text-sm text-gray-600">
               Deseja criar o agendamento da próxima reunião para o mês seguinte?
             </p>
-            <div className="mb-4">
-              <label className="mb-1 block text-xs font-medium text-gray-700">
-                Data sugerida
-              </label>
-              <input
-                type="date"
-                value={nextScheduleDate}
-                onChange={(e) => setNextScheduleDate(e.target.value)}
-                className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                disabled={loading}
-              />
+            <div className="mb-4 flex gap-3">
+              <div className="flex-1">
+                <label className="mb-1 block text-xs font-medium text-gray-700">
+                  Data sugerida
+                </label>
+                <input
+                  type="date"
+                  value={nextScheduleDate}
+                  onChange={(e) => setNextScheduleDate(e.target.value)}
+                  className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  disabled={loading}
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-medium text-gray-700">
+                  Horário de início
+                </label>
+                <input
+                  type="time"
+                  value={nextScheduleTime}
+                  onChange={(e) => setNextScheduleTime(e.target.value)}
+                  className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  disabled={loading}
+                />
+              </div>
             </div>
             {error && (
               <div className="mb-3 rounded-md border border-red-200 bg-red-50 p-2 text-sm text-red-700">

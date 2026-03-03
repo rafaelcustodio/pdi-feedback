@@ -974,7 +974,8 @@ export async function getFollowUps(
 
 export async function scheduleFollowUp(
   pdiId: string,
-  scheduledAt: string
+  scheduledAt: string,
+  scheduledTime: string = "09:00"
 ): Promise<{ success: boolean; error?: string; id?: string }> {
   const session = await auth();
   if (!session?.user?.id) {
