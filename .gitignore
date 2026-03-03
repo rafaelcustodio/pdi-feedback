@@ -44,6 +44,4 @@ Thumbs.db
 # TypeScript build cache
 tsconfig.tsbuildinfo
 
-# Internal PRDs / agent tasks
-tasks/
 scripts/ralph/
