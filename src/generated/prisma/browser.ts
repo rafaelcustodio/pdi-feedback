@@ -77,3 +77,13 @@ export type FeedbackSchedule = Prisma.FeedbackScheduleModel
  * 
  */
 export type Notification = Prisma.NotificationModel
+/**
+ * Model NineBoxEvaluation
+ * 
+ */
+export type NineBoxEvaluation = Prisma.NineBoxEvaluationModel
+/**
+ * Model NineBoxEvaluator
+ * 
+ */
+export type NineBoxEvaluator = Prisma.NineBoxEvaluatorModel

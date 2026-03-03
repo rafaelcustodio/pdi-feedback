@@ -1,142 +1,43 @@
 {
   "project": "pdi-feedback",
-  "branchName": "ralph/ninebox",
-  "description": "Nine Box — Ferramenta de avaliação de desempenho e potencial vinculada a Feedbacks, com formulário de 14 perguntas, dashboard para gestor e resultado resumido para o colaborador",
+  "branchName": "ralph/ninebox-inbox",
+  "description": "Nine Box Inbox — Seção no dashboard que lista formulários Nine Box pendentes de resposta e histórico de respondidos, sem depender do e-mail",
   "userStories": [
     {
       "id": "US-001",
-      "title": "Adicionar modelos NineBoxEvaluation e NineBoxEvaluator ao schema",
-      "description": "Como desenvolvedor, preciso persistir as avaliações Nine Box e as respostas de cada avaliador no banco de dados.",
+      "title": "Query de avaliações Nine Box do usuário logado",
+      "description": "Como desenvolvedor, preciso de uma server action que retorne os registros NineBoxEvaluator do usuário logado, separados em pendentes e respondidos.",
       "acceptanceCriteria": [
-        "Adicionar modelo NineBoxEvaluation com campos: id (cuid), feedbackId (FK → Feedback, unique), evaluateeId (FK → User), createdById (FK → User), status (enum NineBoxStatus: open | closed), createdAt, updatedAt",
-        "Adicionar modelo NineBoxEvaluator com campos: id (cuid), evaluationId (FK → NineBoxEvaluation, onDelete: Cascade), evaluatorId (FK → User), status (enum NineBoxEvaluatorStatus: pending | completed), q1–q6 (Int nullable, Desempenho), q7–q12 (Int nullable, Potencial), q13PontosFortes (String nullable), q14Oportunidade (String nullable), completedAt (DateTime?), createdAt; constraint @@unique([evaluationId, evaluatorId])",
-        "Adicionar enum NineBoxStatus (open, closed) ao schema",
-        "Adicionar enum NineBoxEvaluatorStatus (pending, completed) ao schema",
-        "Adicionar valor ninebox_invite ao enum NotificationType",
-        "Adicionar relação nineBoxEvaluation NineBoxEvaluation? ao modelo Feedback",
-        "Adicionar relações nineBoxEvaluationsReceived, nineBoxEvaluationsCreated e nineBoxResponses ao modelo User",
-        "Gerar migration e aplicar com prisma:migrate sem erros",
-        "prisma:generate executa sem erros",
+        "Adicionar função getMyNineBoxEvaluations() em src/app/(dashboard)/dashboard/actions.ts",
+        "Retornar objeto com dois arrays: pending e completed",
+        "Cada item em pending contém: evaluatorId, evaluateeName (nome do avaliado via NineBoxEvaluation.evaluatee), feedbackPeriod (campo period do Feedback vinculado), createdAt",
+        "Cada item em completed contém os mesmos campos de pending mais completedAt",
+        "Array pending filtra apenas NineBoxEvaluator com status=pending E NineBoxEvaluation.status=open (avaliações encerradas não aparecem como pendentes mesmo que o avaliador não tenha respondido)",
+        "Array completed filtra apenas NineBoxEvaluator com status=completed do usuário logado",
+        "pending ordenado por createdAt ASC; completed ordenado por completedAt DESC",
+        "Filtro aplicado por NineBoxEvaluator.evaluatorId = userId (usuário da sessão)",
         "Typecheck passes"
       ],
       "priority": 1,
       "passes": true,
-      "notes": ""
+      "notes": "NineBoxEvaluator → NineBoxEvaluation → Feedback (para period) e NineBoxEvaluation.evaluatee → User (para name). NineBox models acessíveis via prisma.nineBoxEvaluator (any-typed getter em src/lib/prisma.ts e src/generated/prisma/internal/class.ts)."
     },
     {
       "id": "US-002",
-      "title": "Gestor dispara o Nine Box dentro de um Feedback",
-      "description": "Como gestor, quero poder ativar a avaliação Nine Box dentro de um Feedback específico e selecionar os colegas avaliadores.",
+      "title": "Seção Avaliações Nine Box no Dashboard",
+      "description": "Como avaliador, quero ver meus formulários Nine Box pendentes diretamente no dashboard para não depender do e-mail.",
       "acceptanceCriteria": [
-        "Na página /feedbacks/[id], exibir botão 'Iniciar Nine Box' apenas se: o usuário logado é o gestor do feedback, o feedback não possui NineBoxEvaluation vinculada, e o feedback não está cancelado",
-        "Ao clicar em 'Iniciar Nine Box', abrir modal com título 'Iniciar Avaliação Nine Box', campo de seleção múltipla de usuários (excluindo avaliado e gestor), e botões 'Cancelar' e 'Disparar Avaliação' (habilitado apenas com ≥1 avaliador selecionado)",
-        "Server Action startNineBoxEvaluation(feedbackId, evaluatorIds[]): verifica acesso (gestor do feedback ou admin), cria NineBoxEvaluation com status: open, cria NineBoxEvaluator (status pending) para cada evaluatorId",
-        "Após disparar, botão 'Iniciar Nine Box' é substituído por status da avaliação: 'Nine Box em andamento — X/Y respondidos'",
+        "Adicionar seção 'Avaliações Nine Box' na página /dashboard (src/app/(dashboard)/dashboard/page.tsx), renderizada apenas se houver ao menos 1 item em pending ou completed",
+        "Subseção 'Pendentes': título com badge de contagem quando houver itens (ex: 'Pendentes (2)'), lista cada avaliação com nome do avaliado, período do feedback, data do convite e link 'Responder' apontando para /ninebox/[evaluatorId]",
+        "Subseção 'Respondidas': lista avaliações com nome do avaliado, período e data de resposta; sem botão de ação; colapsada por padrão (expandir ao clicar no cabeçalho)",
+        "Seção completamente omitida quando ambos os arrays estão vazios",
+        "Seguir padrão visual do dashboard: card com borda, título com ícone Lucide (sugestão: ClipboardCheck)",
         "Typecheck passes",
         "Verify in browser using dev-browser skill"
       ],
       "priority": 2,
       "passes": true,
-      "notes": ""
-    },
-    {
-      "id": "US-003",
-      "title": "Enviar notificação interna e e-mail aos avaliadores",
-      "description": "Como sistema, preciso notificar cada avaliador convidado para que ele saiba que deve responder o formulário.",
-      "acceptanceCriteria": [
-        "Após criar os registros NineBoxEvaluator em startNineBoxEvaluation, enviar para cada avaliador uma Notification com type: ninebox_invite, title: 'Avaliação Nine Box — [Nome do Avaliado]', message: 'Você foi convidado para avaliar [Nome do Avaliado]. Acesse o formulário para responder.'",
-        "Enviar e-mail via src/lib/email.ts com assunto 'Convite: Avaliação Nine Box de [Nome do Avaliado]' e corpo contendo link para /ninebox/[evaluatorRecordId]",
-        "Se SMTP não estiver configurado, o e-mail é logado no console (comportamento padrão existente)",
-        "Typecheck passes"
-      ],
-      "priority": 3,
-      "passes": true,
-      "notes": ""
-    },
-    {
-      "id": "US-004",
-      "title": "Avaliador responde o formulário Nine Box",
-      "description": "Como avaliador convidado, quero preencher o formulário de 14 perguntas sobre meu colega.",
-      "acceptanceCriteria": [
-        "Criar rota /ninebox/[evaluatorId] fora do layout (dashboard), mas protegida por autenticação; usuário não logado é redirecionado para /login?callbackUrl=/ninebox/[evaluatorId]",
-        "Se evaluatorId não pertencer ao usuário logado, exibir erro 'Acesso não autorizado'",
-        "Se NineBoxEvaluator.status for completed, exibir 'Você já respondeu esta avaliação. Obrigado!'",
-        "Se NineBoxEvaluation pai tiver status: closed, exibir 'Esta avaliação foi encerrada.'",
-        "Exibir formulário com: header 'Avaliação Nine Box — [Nome do Avaliado]' e período do Feedback; seção Desempenho com questões 1–6 (botões 1–5, labels 1=Ruim a 5=Ótimo); seção Potencial com questões 7–12 (mesma escala); seção Descritiva com questões 13 e 14 como textarea obrigatórios; botão 'Enviar Avaliação' desabilitado até todas as questões estarem preenchidas",
-        "Server Action submitNineBoxResponse(evaluatorId, respostas): valida q1–q12 entre 1 e 5, valida q13/q14 não vazios, salva respostas, atualiza status: completed e completedAt: now()",
-        "Após envio, exibir tela de confirmação: 'Obrigado! Sua avaliação foi registrada.'",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 4,
-      "passes": true,
-      "notes": ""
-    },
-    {
-      "id": "US-005",
-      "title": "Gestor acompanha status dos avaliadores",
-      "description": "Como gestor, quero ver quantos avaliadores já responderam e quem ainda está pendente.",
-      "acceptanceCriteria": [
-        "Na página /feedbacks/[id], quando há NineBoxEvaluation vinculada, exibir seção 'Nine Box' com: badge de status ('Em andamento' laranja ou 'Encerrado' cinza), contador 'X de Y avaliadores responderam', lista dos avaliadores com nome e status individual ('Respondido' verde ou 'Pendente' amarelo)",
-        "Exibir botão 'Encerrar Avaliação' apenas se status for open e ao menos 1 avaliador tiver respondido",
-        "Server Action closeNineBoxEvaluation(evaluationId): verifica acesso (gestor ou admin), atualiza NineBoxEvaluation.status para closed",
-        "Após encerrar, botão desaparece e badge muda para 'Encerrado'",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 5,
-      "passes": true,
-      "notes": ""
-    },
-    {
-      "id": "US-006",
-      "title": "Dashboard Nine Box para o gestor",
-      "description": "Como gestor, quero visualizar o resultado completo da avaliação Nine Box do colaborador, incluindo KPIs e posicionamento histórico na matriz.",
-      "acceptanceCriteria": [
-        "Criar rota /colaboradores/[id]/ninebox dentro do (dashboard) layout, acessível por gestor e admin",
-        "Exibir 4 KPI cards: Média Geral (média das 12 questões, 2 casas decimais + delta vs avaliação anterior), Potencialidade (média q7–q12 + delta), Desempenho (média q1–q6 + delta), Quadrante (nome do quadrante atual + indicação de Progressão/Regressão/Manutenção)",
-        "Delta exibe: valor anterior entre parênteses, seta ▼ vermelha para queda, seta ▲ verde para melhora, e percentual de variação",
-        "Exibir seção 'Movimentação no Nine Box' com subtítulo das faixas, grade 3×3 da avaliação anterior (se existir) com quadrante destacado, seta → e grade 3×3 da avaliação atual com quadrante atual destacado; se sem avaliação anterior, exibir só grade atual",
-        "Grades 3×3 usam cores por linha: superior (Alto Potencial) em tons de verde/azul, meio (Médio Potencial) em tons de roxo/amarelo, inferior (Baixo Potencial) em tons de salmão/rosa; quadrante ativo em cor mais saturada",
-        "Cálculos consideram apenas NineBoxEvaluator com status: completed",
-        "Se avaliação está open e tem ≥1 resposta, exibir resultado parcial com aviso 'Avaliação em andamento — resultado parcial'",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 6,
-      "passes": true,
-      "notes": "Reutilizar componente NineBoxGrid como componente React puro que recebe desempenho e potencial como props. Faixas: Baixo=1,00–2,33 | Médio=2,34–3,66 | Alto=3,67–5,00. Quadrantes: Alto+Alto=Top Performer, Alto+Médio=Alto Potencial, Alto+Baixo=Forte Potencial, Médio+Alto=Alto Desempenho, Médio+Médio=Profissional Chave, Médio+Baixo=Enigma, Baixo+Alto=Comprometido, Baixo+Médio=Eficaz, Baixo+Baixo=Insuficiente."
-    },
-    {
-      "id": "US-007",
-      "title": "Colaborador visualiza seu resultado Nine Box",
-      "description": "Como colaborador, quero ver meu resultado Nine Box (médias e quadrante) sem ter acesso aos comentários individuais dos colegas.",
-      "acceptanceCriteria": [
-        "Adicionar aba 'Nine Box' na página /perfil do colaborador (apenas avaliações com status: closed são exibidas)",
-        "Exibir apenas: Média de Desempenho (2 casas decimais), Média de Potencial (2 casas decimais), Média Geral (2 casas decimais), nome do quadrante atual e grade 3×3 com quadrante destacado (sem valores numéricos nos outros quadrantes)",
-        "Não exibir: nomes dos avaliadores, notas individuais, q13 (pontos fortes) ou q14 (oportunidades) de nenhum avaliador",
-        "Se não houver avaliação encerrada, exibir 'Nenhuma avaliação Nine Box disponível.'",
-        "Acesso controlado pelo access control existente (employee vê apenas o próprio)",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 7,
-      "passes": true,
-      "notes": "PRD recomenda aba no /perfil em vez de rota /meu-ninebox separada."
-    },
-    {
-      "id": "US-008",
-      "title": "Adicionar links de navegação para o Nine Box do colaborador",
-      "description": "Como gestor, quero acessar facilmente o dashboard Nine Box de um colaborador a partir da página do feedback e da página do colaborador.",
-      "acceptanceCriteria": [
-        "Na página /feedbacks/[id], quando NineBoxEvaluation está closed, exibir botão/link 'Ver Resultado Nine Box' que navega para /colaboradores/[employeeId]/ninebox",
-        "Na página /colaboradores/[id], exibir aba ou link 'Nine Box' que leva para /colaboradores/[id]/ninebox",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 8,
-      "passes": true,
-      "notes": ""
+      "notes": "Passar dados de Nine Box como prop separada ao componente da seção — não alterar o tipo DashboardData. Subseção Respondidas pode usar <details>/<summary> nativo ou useState. Limite de 5 itens em Respondidas na v1."
     }
   ]
 }

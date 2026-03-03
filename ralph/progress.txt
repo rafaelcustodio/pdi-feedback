@@ -16,117 +16,32 @@
 - Perfil page uses tab pattern: `PerfilTabs` client component with `useState` for tab switching, server component passes pre-fetched data as ReactNode
 - Routes outside the (dashboard) group (e.g., `/ninebox/[evaluatorId]`) are still auth-protected by middleware matcher; they just don't have the dashboard sidebar/layout
 - For standalone form pages outside the dashboard, create route at `src/app/[feature]/[param]/page.tsx` as a server component that calls `auth()` and renders a client form component
+- Dashboard page at `src/app/(dashboard)/dashboard/page.tsx` uses `getDashboardData()` from `./actions.ts`; `DashboardData` type exported from actions; add new queries alongside existing ones
+- `getMyNineBoxEvaluations()` returns `MyNineBoxEvaluations` type with `pending` and `completed` arrays — types exported from dashboard actions.ts
 ---
 
 ## 2026-03-02 - US-001
-- What was implemented: Added NineBoxEvaluation and NineBoxEvaluator Prisma models, NineBoxStatus and NineBoxEvaluatorStatus enums, ninebox_invite NotificationType value, relations on User and Feedback models
-- Files changed:
-  - `prisma/schema.prisma` — Added enums, models, and relations
-  - `prisma/migrations/20260302210000_add_ninebox_models/migration.sql` — Manual migration SQL
-  - `src/generated/prisma/enums.ts` — Added NineBoxStatus, NineBoxEvaluatorStatus, ninebox_invite
-  - `src/generated/prisma/models.ts` — Added barrel exports for new models
-  - `src/generated/prisma/models/NineBoxEvaluation.ts` — Minimal model types
-  - `src/generated/prisma/models/NineBoxEvaluator.ts` — Minimal model types
+- Implemented `getMyNineBoxEvaluations()` server action in `src/app/(dashboard)/dashboard/actions.ts`
+- Added types: `NineBoxEvaluationItem`, `NineBoxEvaluationCompletedItem`, `MyNineBoxEvaluations`
+- Queries NineBoxEvaluator by `evaluatorId = userId`, joins through NineBoxEvaluation to get evaluatee name and Feedback period
+- Pending: filters `status=pending` AND `evaluation.status=open`, ordered by `createdAt ASC`
+- Completed: filters `status=completed`, ordered by `completedAt DESC`
+- Files changed: `src/app/(dashboard)/dashboard/actions.ts`
 - **Learnings for future iterations:**
-  - Prisma engine binaries can't be downloaded in this sandbox — must manually write migration SQL and update generated client files
-  - The generated client files under `src/generated/prisma/` are gitignored, so only schema and migration SQL get committed
-  - Typecheck passes as long as no code references types that don't exist in the generated client
-  - For future stories that use NineBox models in queries, the `internal/class.ts` and `internal/prismaNamespace.ts` files would also need updates, but this might require running `prisma generate` in a full environment
+  - The any-typed Prisma NineBox getters work fine with `include` and nested relations — no special workarounds needed
+  - Use `typeof records[number]` type annotation in `.map()` callbacks to satisfy TypeScript with any-typed Prisma delegates
 ---
 
 ## 2026-03-02 - US-002
-- What was implemented: Manager can start Nine Box evaluation from feedback detail page, with modal for selecting evaluators and status display
-- Files changed:
-  - `src/app/(dashboard)/feedbacks/ninebox-actions.ts` — New server actions: getNineBoxStatus, getEvaluatorCandidates, startNineBoxEvaluation
-  - `src/components/ninebox-section.tsx` — Client component with "Iniciar Nine Box" button, evaluator selection modal, and status display
-  - `src/app/(dashboard)/feedbacks/[id]/page.tsx` — Integrated NineBoxSection into both edit and read-only views
-  - `src/lib/prisma.ts` — Added nineBoxEvaluation and nineBoxEvaluator to PrismaClientExtended type
-  - `src/generated/prisma/internal/class.ts` — Added delegate getters for NineBox models
+- Implemented NineBox evaluations section on the dashboard page
+- Created `src/components/ninebox-evaluations-section.tsx` — client component with pending/completed subsections
+- Modified `src/app/(dashboard)/dashboard/page.tsx` — imports component, fetches NineBox data via `getMyNineBoxEvaluations()` in parallel with `getDashboardData()`
+- Pending subsection: shows badge count, evaluatee name, feedback period, invite date, and "Responder" link to `/ninebox/[evaluatorId]`
+- Completed subsection: collapsed by default with chevron toggle (useState), limited to 5 items in v1
+- Section completely omitted when both arrays are empty (null check on parent + component returns null)
+- Files changed: `src/components/ninebox-evaluations-section.tsx` (new), `src/app/(dashboard)/dashboard/page.tsx` (modified)
 - **Learnings for future iterations:**
-  - To add new Prisma model accessors without running `prisma generate`, add `any`-typed getters to `class.ts` and update `PrismaClientExtended` in `prisma.ts`
-  - The feedback detail page renders FeedbackForm for editable feedbacks and FeedbackReadOnly for submitted ones — NineBox section appears below both
-  - NineBox button visibility: only shown to manager of the feedback (or admin), hidden when feedback is cancelled or already has an evaluation
-  - Server Actions in separate ninebox-actions.ts to keep the main actions.ts clean
----
-
-## 2026-03-02 - US-003
-- What was implemented: After creating NineBoxEvaluator records in startNineBoxEvaluation, the system now sends in-app notifications (type: ninebox_invite) and emails to each evaluator
-- Files changed:
-  - `src/app/(dashboard)/feedbacks/ninebox-actions.ts` — Added imports for sendEmail and buildNineBoxInviteHtml; updated startNineBoxEvaluation to include evaluatee/evaluator data in create response, then loop through evaluators to create notifications and send emails
-  - `src/lib/email-templates.ts` — Added buildNineBoxInviteHtml template function with purple-themed email for Nine Box invite
-- **Learnings for future iterations:**
-  - Notification creation pattern: `prisma.notification.create({ data: { userId, type, title, message } })` — type must match NotificationType enum
-  - Email templates follow a consistent pattern: HTML function taking name/url params, styled inline, with header/body/footer sections
-  - The `sendEmail` function from `src/lib/email.ts` handles SMTP fallback to console logging automatically
-  - The evaluator record ID is used in the URL `/ninebox/[evaluatorRecordId]` — this is the NineBoxEvaluator.id, not the User.id
----
-
-## 2026-03-02 - US-004
-- What was implemented: Evaluator form page at `/ninebox/[evaluatorId]` with 14-question form (6 Desempenho, 6 Potencial, 2 Descritiva), access control, status handling, and submitNineBoxResponse server action
-- Files changed:
-  - `src/app/ninebox/[evaluatorId]/page.tsx` — Server component outside (dashboard) layout; checks auth, validates evaluator ownership, handles completed/closed states, renders form
-  - `src/components/ninebox-form.tsx` — Client component with 14-question form (1-5 scale buttons for q1-q12, textareas for q13/q14), submit button disabled until all answered, confirmation screen after submit
-  - `src/app/(dashboard)/feedbacks/ninebox-actions.ts` — Added getNineBoxEvaluatorData (fetches evaluator record with access check) and submitNineBoxResponse (validates all inputs, updates record with responses, sets status to completed)
-  - `ralph/prd.json` — Marked US-004 as passes: true
-- **Learnings for future iterations:**
-  - Middleware matcher already covers `/ninebox/*` routes (only excludes login, api/auth, api/cron, _next, favicon) — no need to add anything for auth
-  - Server components outside (dashboard) layout can still import server actions from `src/app/(dashboard)/feedbacks/ninebox-actions.ts` — the "use server" directive makes them importable anywhere
-  - Next.js 16 App Router `params` is a Promise — must `await params` in server components
-  - For form pages with multiple states (pending/completed/closed/unauthorized), handle all states in the server component and only render the form for the valid "pending" state
----
-
-## 2026-03-02 - US-005
-- What was implemented: Manager can now track evaluator status and close Nine Box evaluations from the feedback detail page
-- Files changed:
-  - `src/app/(dashboard)/feedbacks/ninebox-actions.ts` — Added `closeNineBoxEvaluation` server action with access control (manager/admin), status validation, and minimum 1 completed evaluator check
-  - `src/components/ninebox-section.tsx` — Replaced simple status badge with full evaluator tracking panel: status badge (orange "Em andamento" / grey "Encerrado"), counter, evaluator list with individual status badges (green "Respondido" / yellow "Pendente"), and "Encerrar Avaliação" button
-- **Learnings for future iterations:**
-  - The NineBoxStatusData type already included evaluator details (name, status) from US-002, so no server-side data changes were needed
-  - Extracted the status panel into a separate `NineBoxStatusPanel` component to keep hooks (useTransition, useRouter, useState) at the component level — the parent `NineBoxSection` conditionally returns different views and can't use hooks after early returns
-  - The "Encerrar Avaliação" button only appears when status is open AND at least 1 evaluator has responded — both conditions checked client-side and server-side
-  - `revalidatePath` in `closeNineBoxEvaluation` is safe because it's called from a user action (button click), unlike the warning about `generateScheduleNotifications`
----
-
-## 2026-03-02 - US-006
-- What was implemented: Nine Box dashboard page at /colaboradores/[id]/ninebox with 4 KPI cards (Média Geral, Potencialidade, Desempenho, Quadrante), delta comparisons vs previous evaluation, and 3x3 grid visualization with movement tracking
-- Files changed:
-  - `src/app/(dashboard)/colaboradores/ninebox-actions.ts` — New server actions file with getNineBoxDashboard (fetches all evaluations for an employee, computes averages and quadrant positioning, returns current + previous results)
-  - `src/components/ninebox-grid.tsx` — Reusable NineBoxGrid component (pure, takes desempenhoFaixa and potencialFaixa props, renders 3x3 color-coded grid with active quadrant highlighted)
-  - `src/components/ninebox-dashboard.tsx` — NineBoxDashboard component with KPI cards showing deltas (arrows, percentages, previous values), movement grids (previous → current), and evaluator feedback details
-  - `src/app/(dashboard)/colaboradores/[id]/ninebox/page.tsx` — Server component page with auth check (manager/admin only), partial result warning for open evaluations
-  - `ralph/prd.json` — Marked US-006 as passes: true
-- **Learnings for future iterations:**
-  - Quadrant calculation: Faixas are Baixo=1.00–2.33, Médio=2.34–3.66, Alto=3.67–5.00; quadrant name is determined by potencial faixa + desempenho faixa
-  - Delta display pattern: show previous value in parentheses, green ▲ for improvement, red ▼ for decline, with percentage
-  - The NineBoxGrid component is reusable for both the gestor dashboard (US-006) and the colaborador profile view (US-007)
-  - computeEvalResult aggregates all completed evaluators' q1-q12 scores: desempenho = avg of q1-q6, potencial = avg of q7-q12, mediaGeral = avg of all q1-q12
-  - Access control for the dashboard uses canAccessEmployee to verify manager has hierarchy access to the employee
----
-
-## 2026-03-02 - US-007
-- What was implemented: Employee can view their own Nine Box result via a "Nine Box" tab on the /perfil page. Shows averages (Desempenho, Potencial, Média Geral), quadrant name, and 3x3 grid. Does NOT expose evaluator names, individual scores, or q13/q14 responses. Only closed evaluations are displayed.
-- Files changed:
-  - `src/app/(dashboard)/perfil/actions.ts` — New server action `getMyNineBoxResult` that fetches the most recent closed NineBoxEvaluation for the logged-in user, computes averages and quadrant, returns only aggregated data (no evaluator details)
-  - `src/components/perfil-ninebox.tsx` — Display component showing 3 metric cards (Desempenho, Potencial, Média Geral), quadrant name card, and NineBoxGrid; shows "Nenhuma avaliação Nine Box disponível." when no data
-  - `src/components/perfil-tabs.tsx` — Client component implementing tab navigation (Perfil / Nine Box) using useState
-  - `src/app/(dashboard)/perfil/page.tsx` — Updated to async server component, fetches NineBox data and passes to PerfilTabs
-  - `ralph/prd.json` — Marked US-007 as passes: true
-- **Learnings for future iterations:**
-  - The /perfil page was previously a minimal placeholder — adding tabs required converting it to an async server component
-  - For employee self-view, access control is implicit: `getMyNineBoxResult` uses `session.user.id` directly, no need for `canAccessEmployee`
-  - The NineBoxGrid component from US-006 was directly reusable for the employee view
-  - To avoid exposing sensitive data, the server action selects only score fields (q1-q12) and status from evaluators — never names or descriptive fields (q13/q14)
----
-
-## 2026-03-02 - US-008
-- What was implemented: Added navigation links for Nine Box dashboard — "Ver Resultado Nine Box" link on feedback detail page (when evaluation is closed) and "Nine Box" link on colaboradores detail page
-- Files changed:
-  - `src/components/ninebox-section.tsx` — Added `employeeId` prop to NineBoxSection and NineBoxStatusPanel; added "Ver Resultado Nine Box" Link (from next/link) when evaluation status is closed, navigating to /colaboradores/[employeeId]/ninebox
-  - `src/app/(dashboard)/feedbacks/[id]/page.tsx` — Passes `employeeId={feedback.employeeId}` to both NineBoxSection instances (edit and read-only views)
-  - `src/app/(dashboard)/colaboradores/[id]/page.tsx` — Added import for next/link; added "Nine Box" link section at the bottom navigating to /colaboradores/[id]/ninebox
-  - `ralph/prd.json` — Marked US-008 as passes: true
-- **Learnings for future iterations:**
-  - The NineBoxSection component is used in two places in the feedback detail page (edit view and read-only view) — any new prop must be added to both usages
-  - The `replace_all` edit flag matches exact strings including indentation — if two usages have different indentation levels, they need separate edits
-  - The colaboradores/[id] page is admin-only; the /colaboradores/[id]/ninebox dashboard page already has its own access control (manager/admin via canAccessEmployee)
+  - Dashboard page passes NineBox data as separate prop — does not alter DashboardData type, keeping concerns separated
+  - Use `Promise.all` to parallelize independent server action calls in server components for better perf
+  - The NineBoxEvaluationsSection component imports types directly from dashboard actions.ts — this pattern works for client components importing server action types
 ---

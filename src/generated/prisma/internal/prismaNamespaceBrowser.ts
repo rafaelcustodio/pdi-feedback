@@ -62,7 +62,9 @@ export const ModelName = {
   PDIComment: 'PDIComment',
   Feedback: 'Feedback',
   FeedbackSchedule: 'FeedbackSchedule',
-  Notification: 'Notification'
+  Notification: 'Notification',
+  NineBoxEvaluation: 'NineBoxEvaluation',
+  NineBoxEvaluator: 'NineBoxEvaluator'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -262,6 +264,45 @@ export const NotificationScalarFieldEnum = {
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const NineBoxEvaluationScalarFieldEnum = {
+  id: 'id',
+  feedbackId: 'feedbackId',
+  evaluateeId: 'evaluateeId',
+  createdById: 'createdById',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NineBoxEvaluationScalarFieldEnum = (typeof NineBoxEvaluationScalarFieldEnum)[keyof typeof NineBoxEvaluationScalarFieldEnum]
+
+
+export const NineBoxEvaluatorScalarFieldEnum = {
+  id: 'id',
+  evaluationId: 'evaluationId',
+  evaluatorId: 'evaluatorId',
+  status: 'status',
+  q1: 'q1',
+  q2: 'q2',
+  q3: 'q3',
+  q4: 'q4',
+  q5: 'q5',
+  q6: 'q6',
+  q7: 'q7',
+  q8: 'q8',
+  q9: 'q9',
+  q10: 'q10',
+  q11: 'q11',
+  q12: 'q12',
+  q13PontosFortes: 'q13PontosFortes',
+  q14Oportunidade: 'q14Oportunidade',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type NineBoxEvaluatorScalarFieldEnum = (typeof NineBoxEvaluatorScalarFieldEnum)[keyof typeof NineBoxEvaluatorScalarFieldEnum]
 
 
 export const SortOrder = {

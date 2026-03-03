@@ -395,7 +395,9 @@ export const ModelName = {
   PDIComment: 'PDIComment',
   Feedback: 'Feedback',
   FeedbackSchedule: 'FeedbackSchedule',
-  Notification: 'Notification'
+  Notification: 'Notification',
+  NineBoxEvaluation: 'NineBoxEvaluation',
+  NineBoxEvaluator: 'NineBoxEvaluator'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -411,7 +413,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "organizationalUnit" | "sectorSchedule" | "employeeHierarchy" | "pDI" | "pDIFollowUp" | "pDIGoal" | "pDIEvidence" | "pDIComment" | "feedback" | "feedbackSchedule" | "notification"
+    modelProps: "user" | "organizationalUnit" | "sectorSchedule" | "employeeHierarchy" | "pDI" | "pDIFollowUp" | "pDIGoal" | "pDIEvidence" | "pDIComment" | "feedback" | "feedbackSchedule" | "notification" | "nineBoxEvaluation" | "nineBoxEvaluator"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1303,6 +1305,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    NineBoxEvaluation: {
+      payload: Prisma.$NineBoxEvaluationPayload<ExtArgs>
+      fields: Prisma.NineBoxEvaluationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.NineBoxEvaluationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NineBoxEvaluationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.NineBoxEvaluationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NineBoxEvaluationPayload>
+        }
+        findFirst: {
+          args: Prisma.NineBoxEvaluationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NineBoxEvaluationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.NineBoxEvaluationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NineBoxEvaluationPayload>
+        }
+        findMany: {
+          args: Prisma.NineBoxEvaluationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NineBoxEvaluationPayload>[]
+        }
+        create: {
+          args: Prisma.NineBoxEvaluationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NineBoxEvaluationPayload>
+        }
+        createMany: {
+          args: Prisma.NineBoxEvaluationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.NineBoxEvaluationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NineBoxEvaluationPayload>[]
+        }
+        delete: {
+          args: Prisma.NineBoxEvaluationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NineBoxEvaluationPayload>
+        }
+        update: {
+          args: Prisma.NineBoxEvaluationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NineBoxEvaluationPayload>
+        }
+        deleteMany: {
+          args: Prisma.NineBoxEvaluationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.NineBoxEvaluationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.NineBoxEvaluationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NineBoxEvaluationPayload>[]
+        }
+        upsert: {
+          args: Prisma.NineBoxEvaluationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NineBoxEvaluationPayload>
+        }
+        aggregate: {
+          args: Prisma.NineBoxEvaluationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateNineBoxEvaluation>
+        }
+        groupBy: {
+          args: Prisma.NineBoxEvaluationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NineBoxEvaluationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.NineBoxEvaluationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NineBoxEvaluationCountAggregateOutputType> | number
+        }
+      }
+    }
+    NineBoxEvaluator: {
+      payload: Prisma.$NineBoxEvaluatorPayload<ExtArgs>
+      fields: Prisma.NineBoxEvaluatorFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.NineBoxEvaluatorFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NineBoxEvaluatorPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.NineBoxEvaluatorFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NineBoxEvaluatorPayload>
+        }
+        findFirst: {
+          args: Prisma.NineBoxEvaluatorFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NineBoxEvaluatorPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.NineBoxEvaluatorFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NineBoxEvaluatorPayload>
+        }
+        findMany: {
+          args: Prisma.NineBoxEvaluatorFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NineBoxEvaluatorPayload>[]
+        }
+        create: {
+          args: Prisma.NineBoxEvaluatorCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NineBoxEvaluatorPayload>
+        }
+        createMany: {
+          args: Prisma.NineBoxEvaluatorCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.NineBoxEvaluatorCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NineBoxEvaluatorPayload>[]
+        }
+        delete: {
+          args: Prisma.NineBoxEvaluatorDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NineBoxEvaluatorPayload>
+        }
+        update: {
+          args: Prisma.NineBoxEvaluatorUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NineBoxEvaluatorPayload>
+        }
+        deleteMany: {
+          args: Prisma.NineBoxEvaluatorDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.NineBoxEvaluatorUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.NineBoxEvaluatorUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NineBoxEvaluatorPayload>[]
+        }
+        upsert: {
+          args: Prisma.NineBoxEvaluatorUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NineBoxEvaluatorPayload>
+        }
+        aggregate: {
+          args: Prisma.NineBoxEvaluatorAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateNineBoxEvaluator>
+        }
+        groupBy: {
+          args: Prisma.NineBoxEvaluatorGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NineBoxEvaluatorGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.NineBoxEvaluatorCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NineBoxEvaluatorCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1525,6 +1675,45 @@ export const NotificationScalarFieldEnum = {
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
 
 
+export const NineBoxEvaluationScalarFieldEnum = {
+  id: 'id',
+  feedbackId: 'feedbackId',
+  evaluateeId: 'evaluateeId',
+  createdById: 'createdById',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NineBoxEvaluationScalarFieldEnum = (typeof NineBoxEvaluationScalarFieldEnum)[keyof typeof NineBoxEvaluationScalarFieldEnum]
+
+
+export const NineBoxEvaluatorScalarFieldEnum = {
+  id: 'id',
+  evaluationId: 'evaluationId',
+  evaluatorId: 'evaluatorId',
+  status: 'status',
+  q1: 'q1',
+  q2: 'q2',
+  q3: 'q3',
+  q4: 'q4',
+  q5: 'q5',
+  q6: 'q6',
+  q7: 'q7',
+  q8: 'q8',
+  q9: 'q9',
+  q10: 'q10',
+  q11: 'q11',
+  q12: 'q12',
+  q13PontosFortes: 'q13PontosFortes',
+  q14Oportunidade: 'q14Oportunidade',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type NineBoxEvaluatorScalarFieldEnum = (typeof NineBoxEvaluatorScalarFieldEnum)[keyof typeof NineBoxEvaluatorScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1717,6 +1906,34 @@ export type ListEnumNotificationTypeFieldRefInput<$PrismaModel> = FieldRefInputT
 
 
 /**
+ * Reference to a field of type 'NineBoxStatus'
+ */
+export type EnumNineBoxStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NineBoxStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'NineBoxStatus[]'
+ */
+export type ListEnumNineBoxStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NineBoxStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'NineBoxEvaluatorStatus'
+ */
+export type EnumNineBoxEvaluatorStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NineBoxEvaluatorStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'NineBoxEvaluatorStatus[]'
+ */
+export type ListEnumNineBoxEvaluatorStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NineBoxEvaluatorStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -1836,6 +2053,8 @@ export type GlobalOmitConfig = {
   feedback?: Prisma.FeedbackOmit
   feedbackSchedule?: Prisma.FeedbackScheduleOmit
   notification?: Prisma.NotificationOmit
+  nineBoxEvaluation?: Prisma.NineBoxEvaluationOmit
+  nineBoxEvaluator?: Prisma.NineBoxEvaluatorOmit
 }
 
 /* Types for Logging */

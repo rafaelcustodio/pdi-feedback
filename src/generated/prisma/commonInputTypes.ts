@@ -338,6 +338,40 @@ export type EnumNotificationTypeWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumNotificationTypeFilter<$PrismaModel>
 }
 
+export type EnumNineBoxStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.NineBoxStatus | Prisma.EnumNineBoxStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.NineBoxStatus[] | Prisma.ListEnumNineBoxStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.NineBoxStatus[] | Prisma.ListEnumNineBoxStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumNineBoxStatusFilter<$PrismaModel> | $Enums.NineBoxStatus
+}
+
+export type EnumNineBoxStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.NineBoxStatus | Prisma.EnumNineBoxStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.NineBoxStatus[] | Prisma.ListEnumNineBoxStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.NineBoxStatus[] | Prisma.ListEnumNineBoxStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumNineBoxStatusWithAggregatesFilter<$PrismaModel> | $Enums.NineBoxStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumNineBoxStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumNineBoxStatusFilter<$PrismaModel>
+}
+
+export type EnumNineBoxEvaluatorStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.NineBoxEvaluatorStatus | Prisma.EnumNineBoxEvaluatorStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.NineBoxEvaluatorStatus[] | Prisma.ListEnumNineBoxEvaluatorStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.NineBoxEvaluatorStatus[] | Prisma.ListEnumNineBoxEvaluatorStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumNineBoxEvaluatorStatusFilter<$PrismaModel> | $Enums.NineBoxEvaluatorStatus
+}
+
+export type EnumNineBoxEvaluatorStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.NineBoxEvaluatorStatus | Prisma.EnumNineBoxEvaluatorStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.NineBoxEvaluatorStatus[] | Prisma.ListEnumNineBoxEvaluatorStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.NineBoxEvaluatorStatus[] | Prisma.ListEnumNineBoxEvaluatorStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumNineBoxEvaluatorStatusWithAggregatesFilter<$PrismaModel> | $Enums.NineBoxEvaluatorStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumNineBoxEvaluatorStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumNineBoxEvaluatorStatusFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -673,6 +707,40 @@ export type NestedEnumNotificationTypeWithAggregatesFilter<$PrismaModel = never>
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumNotificationTypeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumNotificationTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumNineBoxStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.NineBoxStatus | Prisma.EnumNineBoxStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.NineBoxStatus[] | Prisma.ListEnumNineBoxStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.NineBoxStatus[] | Prisma.ListEnumNineBoxStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumNineBoxStatusFilter<$PrismaModel> | $Enums.NineBoxStatus
+}
+
+export type NestedEnumNineBoxStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.NineBoxStatus | Prisma.EnumNineBoxStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.NineBoxStatus[] | Prisma.ListEnumNineBoxStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.NineBoxStatus[] | Prisma.ListEnumNineBoxStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumNineBoxStatusWithAggregatesFilter<$PrismaModel> | $Enums.NineBoxStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumNineBoxStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumNineBoxStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumNineBoxEvaluatorStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.NineBoxEvaluatorStatus | Prisma.EnumNineBoxEvaluatorStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.NineBoxEvaluatorStatus[] | Prisma.ListEnumNineBoxEvaluatorStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.NineBoxEvaluatorStatus[] | Prisma.ListEnumNineBoxEvaluatorStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumNineBoxEvaluatorStatusFilter<$PrismaModel> | $Enums.NineBoxEvaluatorStatus
+}
+
+export type NestedEnumNineBoxEvaluatorStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.NineBoxEvaluatorStatus | Prisma.EnumNineBoxEvaluatorStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.NineBoxEvaluatorStatus[] | Prisma.ListEnumNineBoxEvaluatorStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.NineBoxEvaluatorStatus[] | Prisma.ListEnumNineBoxEvaluatorStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumNineBoxEvaluatorStatusWithAggregatesFilter<$PrismaModel> | $Enums.NineBoxEvaluatorStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumNineBoxEvaluatorStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumNineBoxEvaluatorStatusFilter<$PrismaModel>
 }
 
 

@@ -346,6 +346,9 @@ export type UserWhereInput = {
   pdiEvidences?: Prisma.PDIEvidenceListRelationFilter
   goalResponsibilities?: Prisma.PDIGoalListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationListRelationFilter
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationListRelationFilter
+  nineBoxResponses?: Prisma.NineBoxEvaluatorListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -385,6 +388,9 @@ export type UserOrderByWithRelationInput = {
   pdiEvidences?: Prisma.PDIEvidenceOrderByRelationAggregateInput
   goalResponsibilities?: Prisma.PDIGoalOrderByRelationAggregateInput
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationOrderByRelationAggregateInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationOrderByRelationAggregateInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -427,6 +433,9 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   pdiEvidences?: Prisma.PDIEvidenceListRelationFilter
   goalResponsibilities?: Prisma.PDIGoalListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationListRelationFilter
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationListRelationFilter
+  nineBoxResponses?: Prisma.NineBoxEvaluatorListRelationFilter
 }, "id" | "email" | "cpf">
 
 export type UserOrderByWithAggregationInput = {
@@ -526,6 +535,9 @@ export type UserCreateInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -565,6 +577,9 @@ export type UserUncheckedCreateInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserUpdateInput = {
@@ -604,6 +619,9 @@ export type UserUpdateInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -643,6 +661,9 @@ export type UserUncheckedUpdateInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -1017,6 +1038,48 @@ export type UserUpdateOneRequiredWithoutNotificationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNotificationsInput, Prisma.UserUpdateWithoutNotificationsInput>, Prisma.UserUncheckedUpdateWithoutNotificationsInput>
 }
 
+export type UserCreateNestedOneWithoutNineBoxEvaluationsReceivedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutNineBoxEvaluationsReceivedInput, Prisma.UserUncheckedCreateWithoutNineBoxEvaluationsReceivedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutNineBoxEvaluationsReceivedInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutNineBoxEvaluationsCreatedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutNineBoxEvaluationsCreatedInput, Prisma.UserUncheckedCreateWithoutNineBoxEvaluationsCreatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutNineBoxEvaluationsCreatedInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutNineBoxEvaluationsReceivedNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutNineBoxEvaluationsReceivedInput, Prisma.UserUncheckedCreateWithoutNineBoxEvaluationsReceivedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutNineBoxEvaluationsReceivedInput
+  upsert?: Prisma.UserUpsertWithoutNineBoxEvaluationsReceivedInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNineBoxEvaluationsReceivedInput, Prisma.UserUpdateWithoutNineBoxEvaluationsReceivedInput>, Prisma.UserUncheckedUpdateWithoutNineBoxEvaluationsReceivedInput>
+}
+
+export type UserUpdateOneRequiredWithoutNineBoxEvaluationsCreatedNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutNineBoxEvaluationsCreatedInput, Prisma.UserUncheckedCreateWithoutNineBoxEvaluationsCreatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutNineBoxEvaluationsCreatedInput
+  upsert?: Prisma.UserUpsertWithoutNineBoxEvaluationsCreatedInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNineBoxEvaluationsCreatedInput, Prisma.UserUpdateWithoutNineBoxEvaluationsCreatedInput>, Prisma.UserUncheckedUpdateWithoutNineBoxEvaluationsCreatedInput>
+}
+
+export type UserCreateNestedOneWithoutNineBoxResponsesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutNineBoxResponsesInput, Prisma.UserUncheckedCreateWithoutNineBoxResponsesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutNineBoxResponsesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutNineBoxResponsesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutNineBoxResponsesInput, Prisma.UserUncheckedCreateWithoutNineBoxResponsesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutNineBoxResponsesInput
+  upsert?: Prisma.UserUpsertWithoutNineBoxResponsesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNineBoxResponsesInput, Prisma.UserUpdateWithoutNineBoxResponsesInput>, Prisma.UserUncheckedUpdateWithoutNineBoxResponsesInput>
+}
+
 export type UserCreateWithoutEmployeeHierarchiesInput = {
   id?: string
   name: string
@@ -1053,6 +1116,9 @@ export type UserCreateWithoutEmployeeHierarchiesInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserUncheckedCreateWithoutEmployeeHierarchiesInput = {
@@ -1091,6 +1157,9 @@ export type UserUncheckedCreateWithoutEmployeeHierarchiesInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserCreateOrConnectWithoutEmployeeHierarchiesInput = {
@@ -1134,6 +1203,9 @@ export type UserCreateWithoutManagerHierarchiesInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserUncheckedCreateWithoutManagerHierarchiesInput = {
@@ -1172,6 +1244,9 @@ export type UserUncheckedCreateWithoutManagerHierarchiesInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserCreateOrConnectWithoutManagerHierarchiesInput = {
@@ -1226,6 +1301,9 @@ export type UserUpdateWithoutEmployeeHierarchiesInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutEmployeeHierarchiesInput = {
@@ -1264,6 +1342,9 @@ export type UserUncheckedUpdateWithoutEmployeeHierarchiesInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
 }
 
 export type UserUpsertWithoutManagerHierarchiesInput = {
@@ -1313,6 +1394,9 @@ export type UserUpdateWithoutManagerHierarchiesInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutManagerHierarchiesInput = {
@@ -1351,6 +1435,9 @@ export type UserUncheckedUpdateWithoutManagerHierarchiesInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
 }
 
 export type UserCreateWithoutPdisAsEmployeeInput = {
@@ -1389,6 +1476,9 @@ export type UserCreateWithoutPdisAsEmployeeInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserUncheckedCreateWithoutPdisAsEmployeeInput = {
@@ -1427,6 +1517,9 @@ export type UserUncheckedCreateWithoutPdisAsEmployeeInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserCreateOrConnectWithoutPdisAsEmployeeInput = {
@@ -1470,6 +1563,9 @@ export type UserCreateWithoutPdisAsManagerInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserUncheckedCreateWithoutPdisAsManagerInput = {
@@ -1508,6 +1604,9 @@ export type UserUncheckedCreateWithoutPdisAsManagerInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserCreateOrConnectWithoutPdisAsManagerInput = {
@@ -1562,6 +1661,9 @@ export type UserUpdateWithoutPdisAsEmployeeInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPdisAsEmployeeInput = {
@@ -1600,6 +1702,9 @@ export type UserUncheckedUpdateWithoutPdisAsEmployeeInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
 }
 
 export type UserUpsertWithoutPdisAsManagerInput = {
@@ -1649,6 +1754,9 @@ export type UserUpdateWithoutPdisAsManagerInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPdisAsManagerInput = {
@@ -1687,6 +1795,9 @@ export type UserUncheckedUpdateWithoutPdisAsManagerInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
 }
 
 export type UserCreateWithoutGoalResponsibilitiesInput = {
@@ -1725,6 +1836,9 @@ export type UserCreateWithoutGoalResponsibilitiesInput = {
   pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserUncheckedCreateWithoutGoalResponsibilitiesInput = {
@@ -1763,6 +1877,9 @@ export type UserUncheckedCreateWithoutGoalResponsibilitiesInput = {
   pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserCreateOrConnectWithoutGoalResponsibilitiesInput = {
@@ -1817,6 +1934,9 @@ export type UserUpdateWithoutGoalResponsibilitiesInput = {
   pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutGoalResponsibilitiesInput = {
@@ -1855,6 +1975,9 @@ export type UserUncheckedUpdateWithoutGoalResponsibilitiesInput = {
   pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
 }
 
 export type UserCreateWithoutPdiEvidencesInput = {
@@ -1893,6 +2016,9 @@ export type UserCreateWithoutPdiEvidencesInput = {
   pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserUncheckedCreateWithoutPdiEvidencesInput = {
@@ -1931,6 +2057,9 @@ export type UserUncheckedCreateWithoutPdiEvidencesInput = {
   pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserCreateOrConnectWithoutPdiEvidencesInput = {
@@ -1985,6 +2114,9 @@ export type UserUpdateWithoutPdiEvidencesInput = {
   pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPdiEvidencesInput = {
@@ -2023,6 +2155,9 @@ export type UserUncheckedUpdateWithoutPdiEvidencesInput = {
   pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
 }
 
 export type UserCreateWithoutPdiCommentsInput = {
@@ -2061,6 +2196,9 @@ export type UserCreateWithoutPdiCommentsInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserUncheckedCreateWithoutPdiCommentsInput = {
@@ -2099,6 +2237,9 @@ export type UserUncheckedCreateWithoutPdiCommentsInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserCreateOrConnectWithoutPdiCommentsInput = {
@@ -2153,6 +2294,9 @@ export type UserUpdateWithoutPdiCommentsInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPdiCommentsInput = {
@@ -2191,6 +2335,9 @@ export type UserUncheckedUpdateWithoutPdiCommentsInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
 }
 
 export type UserCreateWithoutFeedbacksReceivedInput = {
@@ -2229,6 +2376,9 @@ export type UserCreateWithoutFeedbacksReceivedInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserUncheckedCreateWithoutFeedbacksReceivedInput = {
@@ -2267,6 +2417,9 @@ export type UserUncheckedCreateWithoutFeedbacksReceivedInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserCreateOrConnectWithoutFeedbacksReceivedInput = {
@@ -2310,6 +2463,9 @@ export type UserCreateWithoutFeedbacksGivenInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserUncheckedCreateWithoutFeedbacksGivenInput = {
@@ -2348,6 +2504,9 @@ export type UserUncheckedCreateWithoutFeedbacksGivenInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserCreateOrConnectWithoutFeedbacksGivenInput = {
@@ -2402,6 +2561,9 @@ export type UserUpdateWithoutFeedbacksReceivedInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFeedbacksReceivedInput = {
@@ -2440,6 +2602,9 @@ export type UserUncheckedUpdateWithoutFeedbacksReceivedInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
 }
 
 export type UserUpsertWithoutFeedbacksGivenInput = {
@@ -2489,6 +2654,9 @@ export type UserUpdateWithoutFeedbacksGivenInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFeedbacksGivenInput = {
@@ -2527,6 +2695,9 @@ export type UserUncheckedUpdateWithoutFeedbacksGivenInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
 }
 
 export type UserCreateWithoutFeedbackSchedulesAsEmployeeInput = {
@@ -2565,6 +2736,9 @@ export type UserCreateWithoutFeedbackSchedulesAsEmployeeInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserUncheckedCreateWithoutFeedbackSchedulesAsEmployeeInput = {
@@ -2603,6 +2777,9 @@ export type UserUncheckedCreateWithoutFeedbackSchedulesAsEmployeeInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserCreateOrConnectWithoutFeedbackSchedulesAsEmployeeInput = {
@@ -2646,6 +2823,9 @@ export type UserCreateWithoutFeedbackSchedulesAsManagerInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserUncheckedCreateWithoutFeedbackSchedulesAsManagerInput = {
@@ -2684,6 +2864,9 @@ export type UserUncheckedCreateWithoutFeedbackSchedulesAsManagerInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserCreateOrConnectWithoutFeedbackSchedulesAsManagerInput = {
@@ -2738,6 +2921,9 @@ export type UserUpdateWithoutFeedbackSchedulesAsEmployeeInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFeedbackSchedulesAsEmployeeInput = {
@@ -2776,6 +2962,9 @@ export type UserUncheckedUpdateWithoutFeedbackSchedulesAsEmployeeInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
 }
 
 export type UserUpsertWithoutFeedbackSchedulesAsManagerInput = {
@@ -2825,6 +3014,9 @@ export type UserUpdateWithoutFeedbackSchedulesAsManagerInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFeedbackSchedulesAsManagerInput = {
@@ -2863,6 +3055,9 @@ export type UserUncheckedUpdateWithoutFeedbackSchedulesAsManagerInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -2901,6 +3096,9 @@ export type UserCreateWithoutNotificationsInput = {
   pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -2939,6 +3137,9 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -2993,6 +3194,9 @@ export type UserUpdateWithoutNotificationsInput = {
   pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -3031,6 +3235,549 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
+}
+
+export type UserCreateWithoutNineBoxEvaluationsReceivedInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  role?: $Enums.UserRole
+  evaluationMode?: $Enums.EvaluationMode
+  avatarUrl?: string | null
+  ssoProvider?: string | null
+  ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
+  isActive?: boolean
+  admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
+  pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
+  feedbacksReceived?: Prisma.FeedbackCreateNestedManyWithoutEmployeeInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleCreateNestedManyWithoutEmployeeInput
+  managerHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutManagerInput
+  pdisAsManager?: Prisma.PDICreateNestedManyWithoutManagerInput
+  feedbacksGiven?: Prisma.FeedbackCreateNestedManyWithoutManagerInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleCreateNestedManyWithoutManagerInput
+  pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
+  pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
+}
+
+export type UserUncheckedCreateWithoutNineBoxEvaluationsReceivedInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  role?: $Enums.UserRole
+  evaluationMode?: $Enums.EvaluationMode
+  avatarUrl?: string | null
+  ssoProvider?: string | null
+  ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
+  isActive?: boolean
+  admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
+  pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
+  feedbacksReceived?: Prisma.FeedbackUncheckedCreateNestedManyWithoutEmployeeInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutEmployeeInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutManagerInput
+  pdisAsManager?: Prisma.PDIUncheckedCreateNestedManyWithoutManagerInput
+  feedbacksGiven?: Prisma.FeedbackUncheckedCreateNestedManyWithoutManagerInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutManagerInput
+  pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
+  pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
+}
+
+export type UserCreateOrConnectWithoutNineBoxEvaluationsReceivedInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutNineBoxEvaluationsReceivedInput, Prisma.UserUncheckedCreateWithoutNineBoxEvaluationsReceivedInput>
+}
+
+export type UserCreateWithoutNineBoxEvaluationsCreatedInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  role?: $Enums.UserRole
+  evaluationMode?: $Enums.EvaluationMode
+  avatarUrl?: string | null
+  ssoProvider?: string | null
+  ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
+  isActive?: boolean
+  admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
+  pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
+  feedbacksReceived?: Prisma.FeedbackCreateNestedManyWithoutEmployeeInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleCreateNestedManyWithoutEmployeeInput
+  managerHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutManagerInput
+  pdisAsManager?: Prisma.PDICreateNestedManyWithoutManagerInput
+  feedbacksGiven?: Prisma.FeedbackCreateNestedManyWithoutManagerInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleCreateNestedManyWithoutManagerInput
+  pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
+  pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
+}
+
+export type UserUncheckedCreateWithoutNineBoxEvaluationsCreatedInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  role?: $Enums.UserRole
+  evaluationMode?: $Enums.EvaluationMode
+  avatarUrl?: string | null
+  ssoProvider?: string | null
+  ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
+  isActive?: boolean
+  admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
+  pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
+  feedbacksReceived?: Prisma.FeedbackUncheckedCreateNestedManyWithoutEmployeeInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutEmployeeInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutManagerInput
+  pdisAsManager?: Prisma.PDIUncheckedCreateNestedManyWithoutManagerInput
+  feedbacksGiven?: Prisma.FeedbackUncheckedCreateNestedManyWithoutManagerInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutManagerInput
+  pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
+  pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
+}
+
+export type UserCreateOrConnectWithoutNineBoxEvaluationsCreatedInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutNineBoxEvaluationsCreatedInput, Prisma.UserUncheckedCreateWithoutNineBoxEvaluationsCreatedInput>
+}
+
+export type UserUpsertWithoutNineBoxEvaluationsReceivedInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutNineBoxEvaluationsReceivedInput, Prisma.UserUncheckedUpdateWithoutNineBoxEvaluationsReceivedInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutNineBoxEvaluationsReceivedInput, Prisma.UserUncheckedCreateWithoutNineBoxEvaluationsReceivedInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutNineBoxEvaluationsReceivedInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutNineBoxEvaluationsReceivedInput, Prisma.UserUncheckedUpdateWithoutNineBoxEvaluationsReceivedInput>
+}
+
+export type UserUpdateWithoutNineBoxEvaluationsReceivedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
+  pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
+  feedbacksReceived?: Prisma.FeedbackUpdateManyWithoutEmployeeNestedInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUpdateManyWithoutEmployeeNestedInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutManagerNestedInput
+  pdisAsManager?: Prisma.PDIUpdateManyWithoutManagerNestedInput
+  feedbacksGiven?: Prisma.FeedbackUpdateManyWithoutManagerNestedInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUpdateManyWithoutManagerNestedInput
+  pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
+  pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
+}
+
+export type UserUncheckedUpdateWithoutNineBoxEvaluationsReceivedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
+  pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
+  feedbacksReceived?: Prisma.FeedbackUncheckedUpdateManyWithoutEmployeeNestedInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutManagerNestedInput
+  pdisAsManager?: Prisma.PDIUncheckedUpdateManyWithoutManagerNestedInput
+  feedbacksGiven?: Prisma.FeedbackUncheckedUpdateManyWithoutManagerNestedInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutManagerNestedInput
+  pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
+  pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
+}
+
+export type UserUpsertWithoutNineBoxEvaluationsCreatedInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutNineBoxEvaluationsCreatedInput, Prisma.UserUncheckedUpdateWithoutNineBoxEvaluationsCreatedInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutNineBoxEvaluationsCreatedInput, Prisma.UserUncheckedCreateWithoutNineBoxEvaluationsCreatedInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutNineBoxEvaluationsCreatedInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutNineBoxEvaluationsCreatedInput, Prisma.UserUncheckedUpdateWithoutNineBoxEvaluationsCreatedInput>
+}
+
+export type UserUpdateWithoutNineBoxEvaluationsCreatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
+  pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
+  feedbacksReceived?: Prisma.FeedbackUpdateManyWithoutEmployeeNestedInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUpdateManyWithoutEmployeeNestedInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutManagerNestedInput
+  pdisAsManager?: Prisma.PDIUpdateManyWithoutManagerNestedInput
+  feedbacksGiven?: Prisma.FeedbackUpdateManyWithoutManagerNestedInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUpdateManyWithoutManagerNestedInput
+  pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
+  pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
+}
+
+export type UserUncheckedUpdateWithoutNineBoxEvaluationsCreatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
+  pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
+  feedbacksReceived?: Prisma.FeedbackUncheckedUpdateManyWithoutEmployeeNestedInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutManagerNestedInput
+  pdisAsManager?: Prisma.PDIUncheckedUpdateManyWithoutManagerNestedInput
+  feedbacksGiven?: Prisma.FeedbackUncheckedUpdateManyWithoutManagerNestedInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutManagerNestedInput
+  pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
+  pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
+}
+
+export type UserCreateWithoutNineBoxResponsesInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  role?: $Enums.UserRole
+  evaluationMode?: $Enums.EvaluationMode
+  avatarUrl?: string | null
+  ssoProvider?: string | null
+  ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
+  isActive?: boolean
+  admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
+  pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
+  feedbacksReceived?: Prisma.FeedbackCreateNestedManyWithoutEmployeeInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleCreateNestedManyWithoutEmployeeInput
+  managerHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutManagerInput
+  pdisAsManager?: Prisma.PDICreateNestedManyWithoutManagerInput
+  feedbacksGiven?: Prisma.FeedbackCreateNestedManyWithoutManagerInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleCreateNestedManyWithoutManagerInput
+  pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
+  pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserUncheckedCreateWithoutNineBoxResponsesInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  role?: $Enums.UserRole
+  evaluationMode?: $Enums.EvaluationMode
+  avatarUrl?: string | null
+  ssoProvider?: string | null
+  ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
+  isActive?: boolean
+  admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
+  pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
+  feedbacksReceived?: Prisma.FeedbackUncheckedCreateNestedManyWithoutEmployeeInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutEmployeeInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutManagerInput
+  pdisAsManager?: Prisma.PDIUncheckedCreateNestedManyWithoutManagerInput
+  feedbacksGiven?: Prisma.FeedbackUncheckedCreateNestedManyWithoutManagerInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutManagerInput
+  pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
+  pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserCreateOrConnectWithoutNineBoxResponsesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutNineBoxResponsesInput, Prisma.UserUncheckedCreateWithoutNineBoxResponsesInput>
+}
+
+export type UserUpsertWithoutNineBoxResponsesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutNineBoxResponsesInput, Prisma.UserUncheckedUpdateWithoutNineBoxResponsesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutNineBoxResponsesInput, Prisma.UserUncheckedCreateWithoutNineBoxResponsesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutNineBoxResponsesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutNineBoxResponsesInput, Prisma.UserUncheckedUpdateWithoutNineBoxResponsesInput>
+}
+
+export type UserUpdateWithoutNineBoxResponsesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
+  pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
+  feedbacksReceived?: Prisma.FeedbackUpdateManyWithoutEmployeeNestedInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUpdateManyWithoutEmployeeNestedInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutManagerNestedInput
+  pdisAsManager?: Prisma.PDIUpdateManyWithoutManagerNestedInput
+  feedbacksGiven?: Prisma.FeedbackUpdateManyWithoutManagerNestedInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUpdateManyWithoutManagerNestedInput
+  pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
+  pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutNineBoxResponsesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
+  pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
+  feedbacksReceived?: Prisma.FeedbackUncheckedUpdateManyWithoutEmployeeNestedInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutManagerNestedInput
+  pdisAsManager?: Prisma.PDIUncheckedUpdateManyWithoutManagerNestedInput
+  feedbacksGiven?: Prisma.FeedbackUncheckedUpdateManyWithoutManagerNestedInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutManagerNestedInput
+  pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
+  pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 
@@ -3051,6 +3798,9 @@ export type UserCountOutputType = {
   pdiEvidences: number
   goalResponsibilities: number
   notifications: number
+  nineBoxEvaluationsReceived: number
+  nineBoxEvaluationsCreated: number
+  nineBoxResponses: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3066,6 +3816,9 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   pdiEvidences?: boolean | UserCountOutputTypeCountPdiEvidencesArgs
   goalResponsibilities?: boolean | UserCountOutputTypeCountGoalResponsibilitiesArgs
   notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
+  nineBoxEvaluationsReceived?: boolean | UserCountOutputTypeCountNineBoxEvaluationsReceivedArgs
+  nineBoxEvaluationsCreated?: boolean | UserCountOutputTypeCountNineBoxEvaluationsCreatedArgs
+  nineBoxResponses?: boolean | UserCountOutputTypeCountNineBoxResponsesArgs
 }
 
 /**
@@ -3162,6 +3915,27 @@ export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Ty
   where?: Prisma.NotificationWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountNineBoxEvaluationsReceivedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NineBoxEvaluationWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountNineBoxEvaluationsCreatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NineBoxEvaluationWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountNineBoxResponsesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NineBoxEvaluatorWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3200,6 +3974,9 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   pdiEvidences?: boolean | Prisma.User$pdiEvidencesArgs<ExtArgs>
   goalResponsibilities?: boolean | Prisma.User$goalResponsibilitiesArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
+  nineBoxEvaluationsReceived?: boolean | Prisma.User$nineBoxEvaluationsReceivedArgs<ExtArgs>
+  nineBoxEvaluationsCreated?: boolean | Prisma.User$nineBoxEvaluationsCreatedArgs<ExtArgs>
+  nineBoxResponses?: boolean | Prisma.User$nineBoxResponsesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -3298,6 +4075,9 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   pdiEvidences?: boolean | Prisma.User$pdiEvidencesArgs<ExtArgs>
   goalResponsibilities?: boolean | Prisma.User$goalResponsibilitiesArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
+  nineBoxEvaluationsReceived?: boolean | Prisma.User$nineBoxEvaluationsReceivedArgs<ExtArgs>
+  nineBoxEvaluationsCreated?: boolean | Prisma.User$nineBoxEvaluationsCreatedArgs<ExtArgs>
+  nineBoxResponses?: boolean | Prisma.User$nineBoxResponsesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -3318,6 +4098,9 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     pdiEvidences: Prisma.$PDIEvidencePayload<ExtArgs>[]
     goalResponsibilities: Prisma.$PDIGoalPayload<ExtArgs>[]
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
+    nineBoxEvaluationsReceived: Prisma.$NineBoxEvaluationPayload<ExtArgs>[]
+    nineBoxEvaluationsCreated: Prisma.$NineBoxEvaluationPayload<ExtArgs>[]
+    nineBoxResponses: Prisma.$NineBoxEvaluatorPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3750,6 +4533,9 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   pdiEvidences<T extends Prisma.User$pdiEvidencesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pdiEvidencesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PDIEvidencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   goalResponsibilities<T extends Prisma.User$goalResponsibilitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$goalResponsibilitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PDIGoalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notifications<T extends Prisma.User$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  nineBoxEvaluationsReceived<T extends Prisma.User$nineBoxEvaluationsReceivedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$nineBoxEvaluationsReceivedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NineBoxEvaluationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  nineBoxEvaluationsCreated<T extends Prisma.User$nineBoxEvaluationsCreatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$nineBoxEvaluationsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NineBoxEvaluationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  nineBoxResponses<T extends Prisma.User$nineBoxResponsesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$nineBoxResponsesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NineBoxEvaluatorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4476,6 +5262,78 @@ export type User$notificationsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
+}
+
+/**
+ * User.nineBoxEvaluationsReceived
+ */
+export type User$nineBoxEvaluationsReceivedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NineBoxEvaluation
+   */
+  select?: Prisma.NineBoxEvaluationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NineBoxEvaluation
+   */
+  omit?: Prisma.NineBoxEvaluationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NineBoxEvaluationInclude<ExtArgs> | null
+  where?: Prisma.NineBoxEvaluationWhereInput
+  orderBy?: Prisma.NineBoxEvaluationOrderByWithRelationInput | Prisma.NineBoxEvaluationOrderByWithRelationInput[]
+  cursor?: Prisma.NineBoxEvaluationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NineBoxEvaluationScalarFieldEnum | Prisma.NineBoxEvaluationScalarFieldEnum[]
+}
+
+/**
+ * User.nineBoxEvaluationsCreated
+ */
+export type User$nineBoxEvaluationsCreatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NineBoxEvaluation
+   */
+  select?: Prisma.NineBoxEvaluationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NineBoxEvaluation
+   */
+  omit?: Prisma.NineBoxEvaluationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NineBoxEvaluationInclude<ExtArgs> | null
+  where?: Prisma.NineBoxEvaluationWhereInput
+  orderBy?: Prisma.NineBoxEvaluationOrderByWithRelationInput | Prisma.NineBoxEvaluationOrderByWithRelationInput[]
+  cursor?: Prisma.NineBoxEvaluationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NineBoxEvaluationScalarFieldEnum | Prisma.NineBoxEvaluationScalarFieldEnum[]
+}
+
+/**
+ * User.nineBoxResponses
+ */
+export type User$nineBoxResponsesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NineBoxEvaluator
+   */
+  select?: Prisma.NineBoxEvaluatorSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NineBoxEvaluator
+   */
+  omit?: Prisma.NineBoxEvaluatorOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NineBoxEvaluatorInclude<ExtArgs> | null
+  where?: Prisma.NineBoxEvaluatorWhereInput
+  orderBy?: Prisma.NineBoxEvaluatorOrderByWithRelationInput | Prisma.NineBoxEvaluatorOrderByWithRelationInput[]
+  cursor?: Prisma.NineBoxEvaluatorWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NineBoxEvaluatorScalarFieldEnum | Prisma.NineBoxEvaluatorScalarFieldEnum[]
 }
 
 /**
