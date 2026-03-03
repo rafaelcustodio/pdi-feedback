@@ -61,8 +61,8 @@
         "Typecheck passes"
       ],
       "priority": 3,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Migration 20260303120000_add_change_request created manually. ChangeRequestStatus enum (pending/approved/rejected) and ChangeRequest model with dual User relations (user + reviewedBy) added."
     },
     {
       "id": "US-004",
@@ -78,8 +78,8 @@
         "Typecheck passes"
       ],
       "priority": 4,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Seed updated with complete HR data for Admin, CEO, and Vinicius (3 users). 7 dependents and 4 emergency contacts created. All new enums imported."
     },
     {
       "id": "US-005",

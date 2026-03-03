@@ -33,3 +33,24 @@
   - Both have `@@index([userId])` for efficient queries by user
   - Relations added to User as `dependents Dependent[]` and `emergencyContacts EmergencyContact[]`
 ---
+
+## 2026-03-03 - US-003
+- Implemented: Added ChangeRequestStatus enum (pending/approved/rejected) and ChangeRequest model with dual relations to User (requester via "ChangeRequestUser" and reviewer via "ChangeRequestReviewer")
+- Files changed: `prisma/schema.prisma`, `prisma/migrations/20260303120000_add_change_request/migration.sql`
+- **Learnings for future iterations:**
+  - ChangeRequest model: id (cuid), userId, fieldName, oldValue?, newValue?, status (default pending), reviewedById?, reviewedAt?, createdAt
+  - Two relations on User: `changeRequests` (as requester) and `reviewedChangeRequests` (as reviewer) — use named relations "ChangeRequestUser" and "ChangeRequestReviewer"
+  - Indexes on userId, status, and reviewedById for efficient queries
+  - Foreign key on reviewedById uses ON DELETE SET NULL (reviewer is optional)
+---
+
+## 2026-03-03 - US-004
+- Implemented: Updated prisma/seed.ts with complete HR data for 3 users (Admin, CEO, Vinicius Pacheco), 7 dependents across 3 users, and 4 emergency contacts across 3 users
+- Files changed: `prisma/seed.ts`
+- **Learnings for future iterations:**
+  - Seed cleanup order must include `changeRequest.deleteMany()`, `dependent.deleteMany()`, and `emergencyContact.deleteMany()` before `user.deleteMany()` (FK constraints)
+  - All new enums must be imported from `../src/generated/prisma/client` in seed.ts
+  - `hobbies` field is `String[]` — pass as JS array in Prisma create
+  - `socialNetworks` field is `Json?` — pass as plain JS object
+  - `createMany` works well for bulk-creating dependents and emergency contacts per user
+---
