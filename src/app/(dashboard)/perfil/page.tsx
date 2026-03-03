@@ -1,11 +1,12 @@
-import { getMyNineBoxResult, getMyFullProfile } from "./actions";
+import { getMyNineBoxResult, getMyFullProfile, getMyPendingChangeRequests } from "./actions";
 import { PerfilNineBox } from "@/components/perfil-ninebox";
 import { PerfilTabs } from "@/components/perfil-tabs";
 
 export default async function PerfilPage() {
-  const [nineBoxResult, profileResult] = await Promise.all([
+  const [nineBoxResult, profileResult, pendingCRsResult] = await Promise.all([
     getMyNineBoxResult(),
     getMyFullProfile(),
+    getMyPendingChangeRequests(),
   ]);
 
   return (
@@ -14,6 +15,7 @@ export default async function PerfilPage() {
 
       <PerfilTabs
         profile={profileResult.data ?? null}
+        pendingChangeRequests={pendingCRsResult.data ?? []}
         nineBoxContent={
           <PerfilNineBox result={nineBoxResult.data ?? null} />
         }

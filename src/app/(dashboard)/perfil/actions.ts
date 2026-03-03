@@ -98,6 +98,37 @@ export type MyFullProfile = {
   emergencyContacts: MyProfileEmergencyContact[];
 };
 
+export type MyPendingChangeRequest = {
+  id: string;
+  fieldName: string;
+  newValue: string | null;
+  createdAt: Date;
+};
+
+export async function getMyPendingChangeRequests(): Promise<{
+  data?: MyPendingChangeRequest[];
+  error?: string;
+}> {
+  const session = await getEffectiveAuth();
+  if (!session?.user?.id) return { error: "Não autenticado" };
+
+  const requests = await prisma.changeRequest.findMany({
+    where: {
+      userId: session.user.id,
+      status: "pending",
+    },
+    select: {
+      id: true,
+      fieldName: true,
+      newValue: true,
+      createdAt: true,
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return { data: requests };
+}
+
 export async function getMyFullProfile(): Promise<{
   data?: MyFullProfile;
   error?: string;

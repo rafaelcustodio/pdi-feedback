@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import type { MyFullProfile } from "@/app/(dashboard)/perfil/actions";
+import type { MyFullProfile, MyPendingChangeRequest } from "@/app/(dashboard)/perfil/actions";
 import { PerfilData } from "@/components/perfil-data";
 
 interface PerfilTabsProps {
   nineBoxContent: ReactNode;
   profile: MyFullProfile | null;
+  pendingChangeRequests: MyPendingChangeRequest[];
 }
 
 const TABS = [
@@ -16,7 +17,7 @@ const TABS = [
 
 type TabKey = (typeof TABS)[number]["key"];
 
-export function PerfilTabs({ nineBoxContent, profile }: PerfilTabsProps) {
+export function PerfilTabs({ nineBoxContent, profile, pendingChangeRequests }: PerfilTabsProps) {
   const [activeTab, setActiveTab] = useState<TabKey>("perfil");
 
   return (
@@ -44,7 +45,7 @@ export function PerfilTabs({ nineBoxContent, profile }: PerfilTabsProps) {
       <div className="mt-6">
         {activeTab === "perfil" && (
           profile ? (
-            <PerfilData profile={profile} />
+            <PerfilData profile={profile} pendingChangeRequests={pendingChangeRequests} />
           ) : (
             <p className="text-gray-600 dark:text-gray-400">Não foi possível carregar os dados do perfil.</p>
           )
