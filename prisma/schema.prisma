@@ -417,6 +417,7 @@ enum NotificationType {
   feedback_scheduled
   feedback_submitted_auto
   ninebox_invite
+  change_request
   general
 }
 

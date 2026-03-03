@@ -1682,6 +1682,60 @@ export async function createChangeRequest(
     },
   });
 
+  // Notify all active admins (email + internal notification)
+  try {
+    const [employee, admins] = await Promise.all([
+      prisma.user.findUnique({ where: { id: userId }, select: { name: true } }),
+      prisma.user.findMany({
+        where: { role: "admin", isActive: true },
+        select: { id: true, name: true, email: true },
+      }),
+    ]);
+
+    const employeeName = employee?.name || "Colaborador";
+    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+    const panelUrl = `${baseUrl}/colaboradores`;
+
+    // Create internal notifications for all admins
+    if (admins.length > 0) {
+      await prisma.notification.createMany({
+        data: admins.map((admin) => ({
+          userId: admin.id,
+          type: "change_request" as const,
+          title: `Solicitação de alteração - ${employeeName}`,
+          message: `${employeeName} solicitou alteração do campo "${fieldName}". [change_request_${changeRequest.id}]`,
+        })),
+      });
+    }
+
+    // Send emails to all admins (non-blocking)
+    const { sendEmail } = await import("@/lib/email");
+    const {
+      buildChangeRequestNotificationHtml,
+      buildChangeRequestNotificationSubject,
+    } = await import("@/lib/email-templates");
+
+    for (const admin of admins) {
+      sendEmail({
+        to: admin.email,
+        subject: buildChangeRequestNotificationSubject(employeeName, fieldName),
+        html: buildChangeRequestNotificationHtml(
+          admin.name || "Administrador",
+          employeeName,
+          fieldName,
+          oldValue,
+          newValue,
+          panelUrl
+        ),
+      }).catch((err) => {
+        console.error(`[ChangeRequest] Failed to email admin ${admin.email}:`, err);
+      });
+    }
+  } catch (err) {
+    // Don't fail the change request if notification/email fails
+    console.error("[ChangeRequest] Failed to send notifications:", err);
+  }
+
   revalidatePath("/colaboradores");
   revalidatePath("/perfil");
   return { success: true, id: changeRequest.id };

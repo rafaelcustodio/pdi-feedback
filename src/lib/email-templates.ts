@@ -286,3 +286,77 @@ export function buildFeedbackSubmittedManagerHtml(
 </body>
 </html>`;
 }
+
+/**
+ * Build the HTML email sent to HR admins when an employee submits a change request.
+ */
+export function buildChangeRequestNotificationHtml(
+  adminName: string,
+  employeeName: string,
+  fieldName: string,
+  oldValue: string | null,
+  newValue: string | null,
+  panelUrl: string
+): string {
+  return `
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; background: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <div style="max-width: 640px; margin: 0 auto; padding: 32px 16px;">
+    <div style="background: #d97706; color: #fff; padding: 24px 32px; border-radius: 8px 8px 0 0;">
+      <h1 style="margin: 0; font-size: 22px; font-weight: 600;">
+        Solicitação de Alteração Cadastral
+      </h1>
+      <p style="margin: 8px 0 0; font-size: 14px; opacity: 0.9;">
+        Um colaborador solicitou alteração de dados
+      </p>
+    </div>
+    <div style="background: #fff; padding: 24px 32px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
+      <p style="color: #374151; font-size: 15px; line-height: 1.6; margin-top: 0;">
+        Olá <strong>${adminName}</strong>,
+      </p>
+      <p style="color: #374151; font-size: 15px; line-height: 1.6;">
+        O colaborador <strong>${employeeName}</strong> solicitou a alteração do campo <strong>${fieldName}</strong>.
+      </p>
+      <table style="width: 100%; border-collapse: collapse; margin: 16px 0; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+        <tr style="background: #f9fafb;">
+          <td style="padding: 10px 16px; font-size: 13px; color: #6b7280; font-weight: 600; border-bottom: 1px solid #e5e7eb;">Valor anterior</td>
+          <td style="padding: 10px 16px; font-size: 14px; color: #374151; border-bottom: 1px solid #e5e7eb;">${oldValue || "<em>vazio</em>"}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 16px; font-size: 13px; color: #6b7280; font-weight: 600;">Novo valor</td>
+          <td style="padding: 10px 16px; font-size: 14px; color: #374151;">${newValue || "<em>vazio</em>"}</td>
+        </tr>
+      </table>
+      <p style="color: #374151; font-size: 15px; line-height: 1.6;">
+        Acesse o painel de solicitações para aprovar ou rejeitar esta alteração.
+      </p>
+      <div style="margin-top: 24px; text-align: center;">
+        <a href="${panelUrl}" style="display: inline-block; padding: 12px 32px; background: #d97706; color: #fff; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 15px;">
+          Ver Solicitações
+        </a>
+      </div>
+    </div>
+    <div style="text-align: center; padding: 16px; font-size: 12px; color: #9ca3af;">
+      Este é um e-mail automático do sistema PDI &amp; Feedback HR.
+      <br>
+      Não responda a este e-mail.
+    </div>
+  </div>
+</body>
+</html>`;
+}
+
+/**
+ * Build the subject line for the change request notification email.
+ */
+export function buildChangeRequestNotificationSubject(
+  employeeName: string,
+  fieldName: string
+): string {
+  return `[RH] Solicitação de alteração cadastral - ${employeeName} (${fieldName})`;
+}
