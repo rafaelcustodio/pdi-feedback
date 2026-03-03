@@ -97,8 +97,8 @@
         "Typecheck passes"
       ],
       "priority": 5,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Added getEmployeeFullProfile (role-based field filtering: admin=all, manager=restricted, employee=own), updateEmployeeProfile (admin=all fields, employee=about me only), updateEmployeeDependents, updateEmployeeEmergencyContacts. Uses canAccessEmployee from access-control.ts."
     },
     {
       "id": "US-006",
@@ -115,8 +115,8 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 6,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Refactored employee-form.tsx with 5-tab navigation. System Data section fixed at top (email, role, evaluation mode, org unit, manager, admission date, job title, password). Tab 1 (Dados Pessoais) with: nome, nascimento, idade calculada, gênero, etnia, estado civil, CPF, RG, escolaridade, com quem mora. Tab 2 has existing address/contact fields. Tabs 3-5 are placeholders. Extended EmployeeDetail type and getEmployeeById to include all new HR fields. Dark mode applied to all sections."
     },
     {
       "id": "US-007",

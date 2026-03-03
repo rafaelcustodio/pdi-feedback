@@ -10,7 +10,13 @@
 - Timezone: use UTC methods for dates from server (getUTCDate, etc.)
 - Prisma generate workaround: `PRISMA_SCHEMA_ENGINE_BINARY=/tmp/schema-engine npx prisma generate` (create mock schema-engine first: `echo '#!/bin/sh' > /tmp/schema-engine && chmod +x /tmp/schema-engine`)
 - Migration files must be created manually (no network access to binaries.prisma.sh for schema-engine)
+- Access control for profile read: use `canAccessEmployee()` from `@/lib/access-control` — admin=all, manager=subordinates, employee=self
+- Role-based field filtering: `isRestricted = role === "manager" && !isOwnProfile` — restricted users see null for sensitive fields
+- updateEmployeeDependents/EmergencyContacts pattern: diff incoming vs existing IDs → delete removed, update existing, create new
 - Pre-existing lint errors (7 errors, 8 warnings) and 8 test failures in sector-schedule-utils.test.ts — not caused by our changes
+- Employee form tabs: uses simple `activeTab` state (0-4), all form state at top level so switching tabs preserves data
+- Dark mode in forms: use shared CSS class strings (`inputClass`, `labelClass`, `sectionClass`) for consistency
+- Enum select options: defined as const arrays at module scope (e.g., `GENDER_OPTIONS`, `ETHNICITY_OPTIONS`)
 ---
 
 ## 2026-03-03 - US-001
@@ -53,4 +59,33 @@
   - `hobbies` field is `String[]` — pass as JS array in Prisma create
   - `socialNetworks` field is `Json?` — pass as plain JS object
   - `createMany` works well for bulk-creating dependents and emergency contacts per user
+---
+
+## 2026-03-03 - US-005
+- Implemented: Server Actions for reading/editing expanded employee data with role-based field filtering
+- Files changed: `src/app/(dashboard)/colaboradores/actions.ts`
+- New actions: `getEmployeeFullProfile`, `updateEmployeeProfile`, `updateEmployeeDependents`, `updateEmployeeEmergencyContacts`
+- New exported types: `EmployeeFullProfile`, `DependentData`, `EmergencyContactData`
+- **Learnings for future iterations:**
+  - Import `canAccessEmployee` from `@/lib/access-control` for per-employee access checks (returns boolean)
+  - For role-based field filtering: admin sees all, manager sees only basic fields (name, email, phone, jobTitle, emergencyContacts), employee sees all own fields
+  - Pattern for managing related lists (dependents/contacts): compare incoming IDs vs existing → deleteMany removed, update existing, create new
+  - `updateEmployeeProfile` allows employee to self-edit only "About Me" fields (hobbies, socialNetworks, favorites, etc.) — sensitive fields require admin
+  - Enum fields from Prisma are strings at runtime — no need for special casting in the response
+---
+
+## 2026-03-03 - US-006
+- Implemented: Refactored employee-form.tsx with 5-tab navigation system
+- Files changed: `src/components/employee-form.tsx`, `src/app/(dashboard)/colaboradores/actions.ts` (EmployeeDetail type + getEmployeeById), `src/app/(dashboard)/colaboradores/[id]/page.tsx` (pass new initialData fields)
+- **Learnings for future iterations:**
+  - Tab navigation uses simple `activeTab` state index — preserves all form state when switching tabs since all state is declared at the top level
+  - System Data section is outside the tab panel — stays visible regardless of active tab
+  - Dark mode: use shared CSS class variables (`inputClass`, `labelClass`, `sectionClass`) to ensure consistent dark mode across all sections
+  - Age is calculated client-side from birthDate using `calculateAge()` — displayed as read-only input
+  - Enum select options are defined as const arrays (GENDER_OPTIONS, ETHNICITY_OPTIONS, etc.) at module scope
+  - Tabs 3-5 have placeholder content — will be implemented in US-007, US-008, US-009
+  - Tab 2 already has the address/contact fields wired up (moved from old flat layout)
+  - `void` expressions used to suppress unused variable warnings for state declared for future tabs
+  - The `name` field is in Tab 1 (Dados Pessoais), while `email` is in System Data section
+  - EmployeeDetail type was extended with ALL new HR fields (not just Tab 1 fields) to avoid repeat changes in future stories
 ---

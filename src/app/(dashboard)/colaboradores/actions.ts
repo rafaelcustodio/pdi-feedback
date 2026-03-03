@@ -52,9 +52,39 @@ export type EmployeeDetail = {
   birthDate: Date | null;
   jobTitle: string | null;
   address: string | null;
+  addressNumber: string | null;
+  addressComplement: string | null;
   city: string | null;
   state: string | null;
   zipCode: string | null;
+  personalEmail: string | null;
+  rg: string | null;
+  ethnicity: string | null;
+  gender: string | null;
+  maritalStatus: string | null;
+  educationLevel: string | null;
+  livesWithDescription: string | null;
+  hasBradescoAccount: string | null;
+  bankAgency: string | null;
+  bankAccount: string | null;
+  hasOtherEmployment: boolean | null;
+  healthPlanOption: string | null;
+  wantsTransportVoucher: boolean | null;
+  contractType: string | null;
+  shirtSize: string | null;
+  hasChildren: boolean | null;
+  childrenAges: string | null;
+  hasIRDependents: boolean | null;
+  hobbies: string[];
+  socialNetworks: unknown;
+  favoriteBookMovieGenres: string | null;
+  favoriteBooks: string | null;
+  favoriteMovies: string | null;
+  favoriteMusic: string | null;
+  admiredValues: string | null;
+  foodAllergies: string | null;
+  hasPets: string | null;
+  participateInVideos: boolean | null;
   createdAt: Date;
   hierarchy: {
     id: string;
@@ -182,9 +212,39 @@ export async function getEmployeeById(
     birthDate: user.birthDate ?? null,
     jobTitle: user.jobTitle ?? null,
     address: user.address ?? null,
+    addressNumber: user.addressNumber ?? null,
+    addressComplement: user.addressComplement ?? null,
     city: user.city ?? null,
     state: user.state ?? null,
     zipCode: user.zipCode ?? null,
+    personalEmail: user.personalEmail ?? null,
+    rg: user.rg ?? null,
+    ethnicity: user.ethnicity ?? null,
+    gender: user.gender ?? null,
+    maritalStatus: user.maritalStatus ?? null,
+    educationLevel: user.educationLevel ?? null,
+    livesWithDescription: user.livesWithDescription ?? null,
+    hasBradescoAccount: user.hasBradescoAccount ?? null,
+    bankAgency: user.bankAgency ?? null,
+    bankAccount: user.bankAccount ?? null,
+    hasOtherEmployment: user.hasOtherEmployment ?? null,
+    healthPlanOption: user.healthPlanOption ?? null,
+    wantsTransportVoucher: user.wantsTransportVoucher ?? null,
+    contractType: user.contractType ?? null,
+    shirtSize: user.shirtSize ?? null,
+    hasChildren: user.hasChildren ?? null,
+    childrenAges: user.childrenAges ?? null,
+    hasIRDependents: user.hasIRDependents ?? null,
+    hobbies: user.hobbies ?? [],
+    socialNetworks: user.socialNetworks ?? null,
+    favoriteBookMovieGenres: user.favoriteBookMovieGenres ?? null,
+    favoriteBooks: user.favoriteBooks ?? null,
+    favoriteMovies: user.favoriteMovies ?? null,
+    favoriteMusic: user.favoriteMusic ?? null,
+    admiredValues: user.admiredValues ?? null,
+    foodAllergies: user.foodAllergies ?? null,
+    hasPets: user.hasPets ?? null,
+    participateInVideos: user.participateInVideos ?? null,
     createdAt: user.createdAt,
     hierarchy: activeHierarchy
       ? {
