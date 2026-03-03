@@ -35,6 +35,7 @@
 - Pending CR indicators: use `Set<string>` of field names from pendingChangeRequests, show amber PendingBadge component, disable inputs for pending fields
 - Profile edit flow: `getMyPendingChangeRequests` server action fetches pending CRs, passed from page → tabs → perfil-data via props, router.refresh() after save
 - Colaboradores page tabs: `colaboradores-tabs.tsx` — uses URL search params per tab (search/page, psearch/ppage, crsearch/crpage/crstatus) to preserve state across navigation
+- Forms import: `src/lib/forms-import-mapping.ts` — client-side Excel parser + question-to-field mapping + enum converters for Microsoft Forms "Talento I Narwal" export
 - Change requests table: `change-requests-table.tsx` — standalone table component with FIELD_LABELS/ENUM_LABELS maps for Portuguese localization of field names and enum values
 ---
 
@@ -243,4 +244,25 @@
   - Confirmation modal pattern: `confirmAction` state holds {type, id?, bulk?}, modal renders conditionally, executeAction dispatches based on state
   - `useTransition` from React used for server action calls — `isPending` disables buttons during processing
   - After server action success, `router.refresh()` re-fetches server component data without navigation
+---
+
+## 2026-03-03 - US-015
+- Implemented: Forms-to-system mapping table and Excel parser utility for Microsoft Forms imports
+- Installed `xlsx` (SheetJS) via `npm install xlsx --legacy-peer-deps`
+- New file: `src/lib/forms-import-mapping.ts` with:
+  - `FORMS_FIELD_MAPPING`: maps 38 Forms question titles → system field keys (ignores Q1 consent, Q5 age, Q10/Q13 irrelevant)
+  - `parseFormsExcel(file: File)`: reads .xlsx client-side via SheetJS, returns `FormsRow[]` (Record<string, string>)
+  - `mapFormsRowToEmployee(row: FormsRow)`: converts raw row to `Partial<EmployeeFormData>` with enum conversions, multi-select (`;` separator), date parsing, address/city-state/bank info parsing
+  - Exported types: `FormsRow`, `EmployeeFormData`
+- Enum conversion maps: ETHNICITY_MAP (handles masc/fem variants), GENDER_MAP, MARITAL_STATUS_MAP (maps divorciado/viúvo to "outra"), EDUCATION_LEVEL_MAP, CONTRACT_TYPE_MAP, HEALTH_PLAN_MAP, SHIRT_SIZE_MAP (both long and short forms), BANK_ACCOUNT_MAP
+- Helper parsers: `parseDate` (handles Excel serial dates, DD/MM/YYYY, ISO), `parseAddress` (extracts street/number/complement/CEP), `parseCityState` (splits "City - UF"), `parseBankInfo` (extracts agency/account from various formats)
+- Files changed: `package.json`, `package-lock.json`, `src/lib/forms-import-mapping.ts` (new)
+- **Learnings for future iterations:**
+  - `xlsx` install requires `--legacy-peer-deps` flag due to peer dependency conflicts
+  - Forms Excel exports use question titles as column headers — mapping must match exact Portuguese text including accents
+  - `parseFormsExcel` runs client-side (uses `File.arrayBuffer()` + `XLSX.read`) — no server action needed for parsing
+  - Multi-select answers from Forms are separated by `;` (semicolons) — use `split(";")` to convert to arrays
+  - Excel serial dates (numbers > 30000) need conversion: `(serial - 25569) * 86400 * 1000` to get JS timestamp
+  - Brazilian date format DD/MM/YYYY is common in Forms exports — parse before ISO conversion
+  - Composite fields (address, city/state, bank info) require custom parsers since Forms puts them in single text answers
 ---

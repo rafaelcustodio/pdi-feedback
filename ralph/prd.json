@@ -285,8 +285,8 @@
         "Typecheck passes"
       ],
       "priority": 15,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Installed xlsx (SheetJS) dependency. Created src/lib/forms-import-mapping.ts with: FORMS_FIELD_MAPPING (38 question-to-field mappings), parseFormsExcel (reads .xlsx client-side, returns FormsRow[]), mapFormsRowToEmployee (converts FormsRow to EmployeeFormData with enum conversions, multi-select parsing, date parsing, address/city-state/bank parsing). Exported types: FormsRow, EmployeeFormData. All enum maps cover Portuguese variants (e.g., branco/branca, solteiro/solteira)."
     },
     {
       "id": "US-016",
