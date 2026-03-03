@@ -553,6 +553,7 @@ export async function scheduleFeedback(
 export async function createFutureFeedback(data: {
   employeeId: string;
   scheduledAt: string;
+  scheduledTime?: string;
 }): Promise<{ success: boolean; error?: string; id?: string }> {
   const session = await auth();
   if (!session?.user?.id) {

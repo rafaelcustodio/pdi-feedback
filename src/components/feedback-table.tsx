@@ -68,6 +68,7 @@ export function FeedbackTable({
   const [showFutureModal, setShowFutureModal] = useState(false);
   const [futureEmployeeId, setFutureEmployeeId] = useState("");
   const [futureDate, setFutureDate] = useState("");
+  const [futureTime, setFutureTime] = useState("09:00");
   const [futureLoading, setFutureLoading] = useState(false);
   const [futureError, setFutureError] = useState<string | null>(null);
   const minFutureDate = useMemo(() => {
@@ -148,6 +149,7 @@ export function FeedbackTable({
     const result = await createFutureFeedback({
       employeeId: futureEmployeeId,
       scheduledAt: futureDate,
+      scheduledTime: futureTime,
     });
 
     setFutureLoading(false);
@@ -155,6 +157,7 @@ export function FeedbackTable({
       setShowFutureModal(false);
       setFutureEmployeeId("");
       setFutureDate("");
+      setFutureTime("09:00");
       router.refresh();
     } else {
       setFutureError(result.error ?? "Erro ao agendar feedback futuro");
@@ -502,22 +505,40 @@ export function FeedbackTable({
                   ))}
                 </select>
               </div>
-              <div>
-                <label
-                  htmlFor="future-date"
-                  className="mb-1 block text-sm font-medium text-gray-700"
-                >
-                  Data de programação *
-                </label>
-                <input
-                  id="future-date"
-                  type="date"
-                  value={futureDate}
-                  onChange={(e) => setFutureDate(e.target.value)}
-                  min={minFutureDate}
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
-                  disabled={futureLoading}
-                />
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <label
+                    htmlFor="future-date"
+                    className="mb-1 block text-sm font-medium text-gray-700"
+                  >
+                    Data de programação *
+                  </label>
+                  <input
+                    id="future-date"
+                    type="date"
+                    value={futureDate}
+                    onChange={(e) => setFutureDate(e.target.value)}
+                    min={minFutureDate}
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                    disabled={futureLoading}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="future-time"
+                    className="mb-1 block text-sm font-medium text-gray-700"
+                  >
+                    Horário de início
+                  </label>
+                  <input
+                    id="future-time"
+                    type="time"
+                    value={futureTime}
+                    onChange={(e) => setFutureTime(e.target.value)}
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                    disabled={futureLoading}
+                  />
+                </div>
               </div>
             </div>
 
@@ -528,6 +549,7 @@ export function FeedbackTable({
                   setShowFutureModal(false);
                   setFutureEmployeeId("");
                   setFutureDate("");
+                  setFutureTime("09:00");
                   setFutureError(null);
                 }}
                 className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
