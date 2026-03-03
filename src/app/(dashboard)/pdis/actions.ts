@@ -1141,6 +1141,14 @@ export async function cancelFollowUp(
     data: { status: "cancelled" },
   });
 
+  // Delete Outlook calendar event if one exists
+  if (followUp.outlookEventId) {
+    const token = await getUserToken(userId);
+    if (token) {
+      await deleteCalendarEvent(token, followUp.outlookEventId);
+    }
+  }
+
   revalidatePath(`/pdis/${followUp.pdiId}`);
   return { success: true };
 }
