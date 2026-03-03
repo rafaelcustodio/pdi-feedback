@@ -69,76 +69,76 @@ export type EmployeeFormData = {
  * - Q13 (Grupo Becomex)
  */
 export const FORMS_FIELD_MAPPING: Record<string, string> = {
-  // Q2 — Nome completo
-  "Nome completo (sem abreviações)": "name",
-  // Q3 — Data de nascimento
-  "Data de nascimento": "birthDate",
-  // Q4 — Etnia/Cor
-  "Etnia/Cor": "ethnicity",
-  // Q6 — Gênero
+  // Nome completo
+  "Nome Completo": "name",
+  // Data de nascimento
+  "Data de Nascimento": "birthDate",
+  // Etnia
+  "Auto Declaração de Etnia": "ethnicity",
+  // Gênero
   "Gênero": "gender",
-  // Q7 — CPF
+  // CPF
   "CPF": "cpf",
-  // Q8 — RG
+  // RG
   "RG": "rg",
-  // Q9 — Estado civil
-  "Estado civil": "maritalStatus",
-  // Q11 — Possui filhos
-  "Possui filhos?": "hasChildren",
-  // Q12 — Idades dos filhos
-  "Idades dos filhos": "childrenAges",
-  // Q14 — Conta Bradesco
-  "Possui conta no Bradesco?": "hasBradescoAccount",
-  // Q15 — Agência/Conta
-  "Agência e conta bancária": "bankAgencyAccount",
-  // Q16 — Outro emprego
-  "Possui outro emprego registrado em carteira?": "hasOtherEmployment",
-  // Q17 — Dependentes IR
-  "Possui dependentes para IR?": "hasIRDependents",
-  // Q18 — Info dependentes
-  "Informações dos dependentes (nome, parentesco, CPF)": "dependentInfo",
-  // Q19 — Tamanho camiseta
-  "Tamanho de camiseta": "shirtSize",
-  // Q20 — Endereço
-  "Endereço completo (rua, número, complemento, CEP)": "addressFull",
-  // Q21 — Cidade/Estado
-  "Cidade e Estado": "cityState",
-  // Q22 — Email pessoal
+  // Estado civil
+  "Estado Civil:": "maritalStatus",
+  // Possui filhos
+  "Possui filhos? Qual a idade deles?": "hasChildren",
+  // Idades dos filhos
+  "Se sim, por favor indique a idade dos seus filhos": "childrenAges",
+  // Conta Bradesco
+  "Você possui conta corrente no banco Bradesco?": "hasBradescoAccount",
+  // Agência/Conta
+  "Se sim, nos informa agencia e conta.": "bankAgencyAccount",
+  // Outro emprego
+  "Você Possui outro emprego registrado?": "hasOtherEmployment",
+  // Dependentes IR
+  "Você possui dependentes para declaração de imposto de renda?": "hasIRDependents",
+  // Info dependentes
+  "Se sim, informe o nome e grau de parentesco:": "dependentInfo",
+  // Tamanho camiseta
+  "Qual o seu número de camiseta?": "shirtSize",
+  // Endereço
+  "Endereço (Estado, Rua, Número e CEP)": "addressFull",
+  // Cidade/Estado
+  "Cidade/Estado": "cityState",
+  // Email pessoal
   "E-mail pessoal": "personalEmail",
-  // Q23 — Telefone
-  "Telefone (com DDD)": "phone",
-  // Q24 — Contato de emergência
-  "Contato de emergência (nome, telefone, parentesco)": "emergencyContactInfo",
-  // Q25 — Alergias
-  "Alergias ou intolerâncias alimentares": "foodAllergies",
-  // Q26 — Nível escolaridade
-  "Nível de escolaridade": "educationLevel",
-  // Q27 — Com quem mora
-  "Com quem mora?": "livesWithDescription",
-  // Q28 — Pets
-  "Possui animais de estimação?": "hasPets",
-  // Q29 — Formato contratação
-  "Formato de contratação": "contractType",
-  // Q30 — Plano de saúde
-  "Plano de saúde Unimed": "healthPlanOption",
-  // Q31 — Vale transporte
-  "Deseja vale transporte?": "wantsTransportVoucher",
-  // Q32 — Hobbies
-  "Hobbies": "hobbies",
-  // Q33 — Redes sociais
-  "Redes sociais (marque as que utiliza)": "socialNetworks",
-  // Q34 — Gênero livros/filmes
-  "Gênero de livros/filmes que curte": "favoriteBookMovieGenres",
-  // Q35 — Livros favoritos
-  "Livro(s) favorito(s)": "favoriteBooks",
-  // Q36 — Filmes favoritos
-  "Filme(s) favorito(s)": "favoriteMovies",
-  // Q37 — Música favorita
-  "Música/banda favorita": "favoriteMusic",
-  // Q38 — Valores que admira
+  // Telefone
+  "Informe seu (DDD +telefone) para contato": "phone",
+  // Contato de emergência
+  "Informe nome e contato para casos de emergência": "emergencyContactInfo",
+  // Alergias
+  "Você possui alguma alergia ou intolerância alimentar? Se sim, qual?": "foodAllergies",
+  // Nível escolaridade
+  "Nível de Escolaridade": "educationLevel",
+  // Com quem mora
+  "Com quem mora": "livesWithDescription",
+  // Pets
+  "Tem animais de estimação": "hasPets",
+  // Formato contratação
+  "Qual seu formato de contratação?": "contractType",
+  // Plano de saúde
+  "Possui interesse em nosso plano de saúde Unimed?": "healthPlanOption",
+  // Vale transporte
+  "Possui interesse em nosso vale transporte?": "wantsTransportVoucher",
+  // Hobbies
+  "Nos conte quais seus hobbies preferidos": "hobbies",
+  // Redes sociais
+  "Redes Sociais que utiliza": "socialNetworks",
+  // Gênero livros/filmes
+  "Gênero de livros e filmes que curte": "favoriteBookMovieGenres",
+  // Livros favoritos
+  "Livro(s) Favorito(s)": "favoriteBooks",
+  // Filmes favoritos
+  "Filme(s) Favorito(s)": "favoriteMovies",
+  // Música favorita
+  "Música ou Banda(s) Favorito(s)": "favoriteMusic",
+  // Valores que admira
   "Valores que admira": "admiredValues",
-  // Q39 — Participação em vídeos
-  "Aceita participar de vídeos institucionais?": "participateInVideos",
+  // Participação em vídeos
+  "Nas ações internas que ocorrerem na Narwal, você gostaria de participar das gravações de vídeos institucionais?": "participateInVideos",
 };
 
 // ---------------------------------------------------------------------------
@@ -330,11 +330,18 @@ function parseDate(value: string): string | undefined {
     return date.toISOString().split("T")[0];
   }
 
-  // Try DD/MM/YYYY (common Brazilian format)
+  // Try D/M/YYYY or DD/MM/YYYY — detect format by checking if "day" > 12 (then it's M/D/YYYY from Forms US locale)
   const brMatch = value.match(/^(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})$/);
   if (brMatch) {
-    const [, day, month, year] = brMatch;
-    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    const [, first, second, year] = brMatch;
+    const firstNum = parseInt(first);
+    const secondNum = parseInt(second);
+    // If second part > 12, it must be DD (day), so format is M/DD/YYYY (US Forms export)
+    if (secondNum > 12) {
+      return `${year}-${first.padStart(2, "0")}-${second.padStart(2, "0")}`;
+    }
+    // Otherwise assume DD/MM/YYYY (Brazilian)
+    return `${year}-${second.padStart(2, "0")}-${first.padStart(2, "0")}`;
   }
 
   // Try YYYY-MM-DD (ISO)
@@ -483,7 +490,9 @@ export function mapFormsRowToEmployee(
   for (const [questionTitle, answer] of Object.entries(row)) {
     if (!answer?.trim()) continue;
 
-    const fieldKey = FORMS_FIELD_MAPPING[questionTitle];
+    // Normalize the column name: trim whitespace and remove \r\n before lookup
+    const normalizedTitle = questionTitle.replace(/[\r\n]+/g, "").trim();
+    const fieldKey = FORMS_FIELD_MAPPING[normalizedTitle];
     if (!fieldKey) continue;
 
     const value = answer.trim();
