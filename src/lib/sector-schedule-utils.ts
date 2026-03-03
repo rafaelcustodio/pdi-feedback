@@ -85,26 +85,35 @@ export async function createOnboardingFeedbacks(
   });
 
   if (existing.length === 0) {
-    await prisma.feedback.createMany({
-      data: [
-        {
-          employeeId,
-          managerId,
-          status: "scheduled",
-          period: "Onboarding 45d",
-          scheduledAt: d45,
-          isOnboarding: true,
-        },
-        {
-          employeeId,
-          managerId,
-          status: "scheduled",
-          period: "Onboarding 90d",
-          scheduledAt: d90,
-          isOnboarding: true,
-        },
-      ],
-    });
+    const now = new Date();
+    const feedbacksToCreate = [];
+
+    // Only create feedbacks whose scheduled date is still in the future
+    if (d45 > now) {
+      feedbacksToCreate.push({
+        employeeId,
+        managerId,
+        status: "scheduled" as const,
+        period: "Onboarding 45d",
+        scheduledAt: d45,
+        isOnboarding: true,
+      });
+    }
+
+    if (d90 > now) {
+      feedbacksToCreate.push({
+        employeeId,
+        managerId,
+        status: "scheduled" as const,
+        period: "Onboarding 90d",
+        scheduledAt: d90,
+        isOnboarding: true,
+      });
+    }
+
+    if (feedbacksToCreate.length > 0) {
+      await prisma.feedback.createMany({ data: feedbacksToCreate });
+    }
   }
 }
 

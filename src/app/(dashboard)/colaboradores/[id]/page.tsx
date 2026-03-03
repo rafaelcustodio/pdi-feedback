@@ -33,6 +33,7 @@ export default async function EditarColaboradorPage({
       <EmployeeForm
         mode="edit"
         orgUnits={orgUnits}
+        isPending={!employee.hierarchy && !!employee.isActive}
         initialData={{
           id: employee.id,
           name: employee.name,

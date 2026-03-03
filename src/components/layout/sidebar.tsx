@@ -34,6 +34,7 @@ interface SidebarProps {
   avatarUrl?: string | null;
   notificationCount?: number;
   isAdmin?: boolean;
+  pendingEmployeesCount?: number;
 }
 
 const navItems = [
@@ -85,6 +86,7 @@ export function Sidebar({
   avatarUrl,
   notificationCount = 0,
   isAdmin = false,
+  pendingEmployeesCount = 0,
 }: SidebarProps) {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
@@ -207,6 +209,13 @@ export function Sidebar({
               >
                 <Icon size={18} className="shrink-0" />
                 {!collapsed && <span>{item.label}</span>}
+                {!collapsed && item.href === "/colaboradores" && pendingEmployeesCount > 0 && (
+                  <span className={`ml-auto flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[11px] font-bold ${
+                    active ? "bg-white/20 text-white" : "bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300"
+                  }`}>
+                    {pendingEmployeesCount > 99 ? "99+" : pendingEmployeesCount}
+                  </span>
+                )}
               </Link>
             );
             return (

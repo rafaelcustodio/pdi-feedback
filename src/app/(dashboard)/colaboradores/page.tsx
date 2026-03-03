@@ -1,12 +1,12 @@
 import { getEffectiveAuth } from "@/lib/impersonation";
 import { redirect } from "next/navigation";
-import { getEmployees } from "./actions";
-import { EmployeeTable } from "@/components/employee-table";
+import { getEmployees, getPendingEmployees, getPendingEmployeesCount } from "./actions";
+import { ColaboradoresTabs } from "@/components/colaboradores-tabs";
 
 export default async function ColaboradoresPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; page?: string }>;
+  searchParams: Promise<{ search?: string; page?: string; tab?: string; psearch?: string; ppage?: string }>;
 }) {
   const session = await getEffectiveAuth();
   if (!session?.user || session.user.role !== "admin") {
@@ -14,26 +14,40 @@ export default async function ColaboradoresPage({
   }
 
   const params = await searchParams;
+  const tab = params.tab ?? "all";
   const search = params.search ?? "";
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
+  const psearch = params.psearch ?? "";
+  const ppage = Math.max(1, parseInt(params.ppage ?? "1", 10) || 1);
 
-  const data = await getEmployees(search, page, 10);
+  const [data, pendingData, pendingCount] = await Promise.all([
+    getEmployees(search, page, 10),
+    getPendingEmployees(psearch, ppage, 10),
+    getPendingEmployeesCount(),
+  ]);
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-gray-900">Colaboradores</h1>
-        <p className="mt-1 text-sm text-gray-600">
+        <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Colaboradores</h1>
+        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
           Gerencie os colaboradores da empresa e seus vínculos hierárquicos.
         </p>
       </div>
 
-      <EmployeeTable
+      <ColaboradoresTabs
+        activeTab={tab}
         employees={data.employees}
-        total={data.total}
-        page={data.page}
-        pageSize={data.pageSize}
-        search={search}
+        employeesTotal={data.total}
+        employeesPage={data.page}
+        employeesPageSize={data.pageSize}
+        employeesSearch={search}
+        pending={pendingData.employees}
+        pendingTotal={pendingData.total}
+        pendingPage={pendingData.page}
+        pendingPageSize={pendingData.pageSize}
+        pendingSearch={psearch}
+        pendingCount={pendingCount}
       />
     </div>
   );

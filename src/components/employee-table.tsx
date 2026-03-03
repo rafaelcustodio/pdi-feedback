@@ -12,6 +12,7 @@ import {
   UserCheck,
   Pencil,
   GitBranch,
+  UserCog,
 } from "lucide-react";
 import type { EmployeeListItem } from "@/app/(dashboard)/colaboradores/actions";
 import {
@@ -25,6 +26,7 @@ interface EmployeeTableProps {
   page: number;
   pageSize: number;
   search: string;
+  variant?: "default" | "pending";
 }
 
 const roleLabels: Record<string, string> = {
@@ -39,26 +41,46 @@ export function EmployeeTable({
   page,
   pageSize,
   search: initialSearch,
+  variant = "default",
 }: EmployeeTableProps) {
   const router = useRouter();
   const [searchValue, setSearchValue] = useState(initialSearch);
   const [loading, setLoading] = useState<string | null>(null);
+  const isPending = variant === "pending";
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
+  // Pending tab uses psearch/ppage params, default uses search/page
+  const searchParam = isPending ? "psearch" : "search";
+  const pageParam = isPending ? "ppage" : "page";
+  const tabParam = isPending ? "pending" : "all";
+
+  function buildUrl(params: Record<string, string>) {
+    const urlParams = new URLSearchParams();
+    urlParams.set("tab", tabParam);
+    for (const [key, value] of Object.entries(params)) {
+      if (value) urlParams.set(key, value);
+    }
+    return `/colaboradores?${urlParams.toString()}`;
+  }
+
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    const params = new URLSearchParams();
-    if (searchValue.trim()) params.set("search", searchValue.trim());
-    params.set("page", "1");
-    router.replace(`/colaboradores?${params.toString()}`);
+    router.replace(
+      buildUrl({
+        [searchParam]: searchValue.trim(),
+        [pageParam]: "1",
+      })
+    );
   }
 
   function goToPage(p: number) {
-    const params = new URLSearchParams();
-    if (searchValue.trim()) params.set("search", searchValue.trim());
-    params.set("page", String(p));
-    router.replace(`/colaboradores?${params.toString()}`);
+    router.replace(
+      buildUrl({
+        [searchParam]: searchValue.trim(),
+        [pageParam]: String(p),
+      })
+    );
   }
 
   async function handleDeactivate(id: string) {
@@ -99,13 +121,15 @@ export function EmployeeTable({
             Buscar
           </button>
         </form>
-        <Link
-          href="/colaboradores/novo"
-          className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-        >
-          <UserPlus size={16} />
-          Novo Colaborador
-        </Link>
+        {!isPending && (
+          <Link
+            href="/colaboradores/novo"
+            className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          >
+            <UserPlus size={16} />
+            Novo Colaborador
+          </Link>
+        )}
       </div>
 
       {/* Table */}
@@ -131,15 +155,24 @@ export function EmployeeTable({
               <th className="hidden px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 md:table-cell">
                 Modo
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                Unidade
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                Gestor
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                Status
-              </th>
+              {!isPending && (
+                <>
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                    Unidade
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                    Gestor
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                    Status
+                  </th>
+                </>
+              )}
+              {isPending && (
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  Criado em
+                </th>
+              )}
               <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                 Ações
               </th>
@@ -149,10 +182,12 @@ export function EmployeeTable({
             {employees.length === 0 ? (
               <tr>
                 <td
-                  colSpan={10}
+                  colSpan={isPending ? 7 : 10}
                   className="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400"
                 >
-                  Nenhum colaborador encontrado.
+                  {isPending
+                    ? "Nenhum cadastro pendente encontrado."
+                    : "Nenhum colaborador encontrado."}
                 </td>
               </tr>
             ) : (
@@ -197,57 +232,79 @@ export function EmployeeTable({
                       {emp.evaluationMode === "pdi" ? "PDI" : "Feedback"}
                     </span>
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
-                    {emp.orgUnit ?? "—"}
-                  </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
-                    {emp.managerName ?? "—"}
-                  </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-sm">
-                    {emp.isActive ? (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700 dark:bg-green-900/50 dark:text-green-300">
-                        Ativo
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700 dark:bg-red-900/50 dark:text-red-300">
-                        Inativo
-                      </span>
-                    )}
-                  </td>
+                  {!isPending && (
+                    <>
+                      <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                        {emp.orgUnit ?? "—"}
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                        {emp.managerName ?? "—"}
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-3 text-sm">
+                        {emp.isActive ? (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700 dark:bg-green-900/50 dark:text-green-300">
+                            Ativo
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700 dark:bg-red-900/50 dark:text-red-300">
+                            Inativo
+                          </span>
+                        )}
+                      </td>
+                    </>
+                  )}
+                  {isPending && (
+                    <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                      {new Date(emp.createdAt).toLocaleDateString("pt-BR", { timeZone: "UTC" })}
+                    </td>
+                  )}
                   <td className="whitespace-nowrap px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-1">
-                      <Link
-                        href={`/colaboradores/${emp.id}`}
-                        className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-blue-600 dark:text-gray-500 dark:hover:bg-gray-700"
-                        title="Editar"
-                      >
-                        <Pencil size={14} />
-                      </Link>
-                      <Link
-                        href={`/colaboradores/${emp.id}/hierarquia`}
-                        className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-green-600 dark:text-gray-500 dark:hover:bg-gray-700"
-                        title="Ver hierarquia"
-                      >
-                        <GitBranch size={14} />
-                      </Link>
-                      {emp.isActive ? (
-                        <button
-                          onClick={() => handleDeactivate(emp.id)}
-                          disabled={loading === emp.id}
-                          className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-red-600 disabled:opacity-50 dark:text-gray-500 dark:hover:bg-gray-700"
-                          title="Desativar"
+                      {isPending ? (
+                        <Link
+                          href={`/colaboradores/${emp.id}`}
+                          className="inline-flex items-center gap-1.5 rounded-md bg-orange-50 px-2.5 py-1.5 text-xs font-medium text-orange-700 hover:bg-orange-100 dark:bg-orange-900/30 dark:text-orange-300 dark:hover:bg-orange-900/50"
+                          title="Atribuir unidade e gestor"
                         >
-                          <UserX size={14} />
-                        </button>
+                          <UserCog size={14} />
+                          Atribuir
+                        </Link>
                       ) : (
-                        <button
-                          onClick={() => handleReactivate(emp.id)}
-                          disabled={loading === emp.id}
-                          className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-green-600 disabled:opacity-50 dark:text-gray-500 dark:hover:bg-gray-700"
-                          title="Reativar"
-                        >
-                          <UserCheck size={14} />
-                        </button>
+                        <>
+                          <Link
+                            href={`/colaboradores/${emp.id}`}
+                            className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-blue-600 dark:text-gray-500 dark:hover:bg-gray-700"
+                            title="Editar"
+                          >
+                            <Pencil size={14} />
+                          </Link>
+                          <Link
+                            href={`/colaboradores/${emp.id}/hierarquia`}
+                            className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-green-600 dark:text-gray-500 dark:hover:bg-gray-700"
+                            title="Ver hierarquia"
+                          >
+                            <GitBranch size={14} />
+                          </Link>
+                          {emp.isActive ? (
+                            <button
+                              onClick={() => handleDeactivate(emp.id)}
+                              disabled={loading === emp.id}
+                              className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-red-600 disabled:opacity-50 dark:text-gray-500 dark:hover:bg-gray-700"
+                              title="Desativar"
+                            >
+                              <UserX size={14} />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleReactivate(emp.id)}
+                              disabled={loading === emp.id}
+                              className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-green-600 disabled:opacity-50 dark:text-gray-500 dark:hover:bg-gray-700"
+                              title="Reativar"
+                            >
+                              <UserCheck size={14} />
+                            </button>
+                          )}
+                        </>
                       )}
                     </div>
                   </td>
@@ -263,7 +320,8 @@ export function EmployeeTable({
         <div className="flex items-center justify-between">
           <p className="text-sm text-gray-600 dark:text-gray-400">
             Mostrando {(page - 1) * pageSize + 1}–
-            {Math.min(page * pageSize, total)} de {total} colaboradores
+            {Math.min(page * pageSize, total)} de {total}{" "}
+            {isPending ? "pendentes" : "colaboradores"}
           </p>
           <div className="flex items-center gap-1">
             <button

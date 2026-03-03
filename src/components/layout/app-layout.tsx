@@ -15,6 +15,7 @@ interface AppLayoutProps {
   notificationCount?: number;
   isAdmin?: boolean;
   impersonationInfo?: { name: string; role: string } | null;
+  pendingEmployeesCount?: number;
 }
 
 export function AppLayout({
@@ -26,6 +27,7 @@ export function AppLayout({
   notificationCount = 0,
   isAdmin = false,
   impersonationInfo = null,
+  pendingEmployeesCount = 0,
 }: AppLayoutProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -55,6 +57,7 @@ export function AppLayout({
           avatarUrl={avatarUrl}
           notificationCount={notificationCount}
           isAdmin={isAdmin}
+          pendingEmployeesCount={pendingEmployeesCount}
         />
       </div>
 
@@ -69,6 +72,7 @@ export function AppLayout({
           avatarUrl={avatarUrl}
           notificationCount={notificationCount}
           isAdmin={isAdmin}
+          pendingEmployeesCount={pendingEmployeesCount}
         />
       </MobileSidebarOverlay>
 

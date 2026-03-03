@@ -39,6 +39,7 @@ function maskZip(v: string): string {
 interface EmployeeFormProps {
   mode: "create" | "edit";
   orgUnits: { id: string; name: string }[];
+  isPending?: boolean;
   initialData?: {
     id: string;
     name: string;
@@ -59,7 +60,7 @@ interface EmployeeFormProps {
   };
 }
 
-export function EmployeeForm({ mode, orgUnits, initialData }: EmployeeFormProps) {
+export function EmployeeForm({ mode, orgUnits, isPending = false, initialData }: EmployeeFormProps) {
   const router = useRouter();
   const [name, setName] = useState(initialData?.name ?? "");
   const [email, setEmail] = useState(initialData?.email ?? "");
@@ -83,6 +84,7 @@ export function EmployeeForm({ mode, orgUnits, initialData }: EmployeeFormProps)
   const [loading, setLoading] = useState(false);
   const [loadingManagers, setLoadingManagers] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showOnboardingModal, setShowOnboardingModal] = useState(false);
   const initialOrgUnitId = useRef(initialData?.orgUnitId ?? "");
 
   // Fetch managers when org unit changes
@@ -107,8 +109,7 @@ export function EmployeeForm({ mode, orgUnits, initialData }: EmployeeFormProps)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orgUnitId]);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function doSave(generateOnboarding: boolean = false) {
     setLoading(true);
     setError(null);
 
@@ -149,6 +150,7 @@ export function EmployeeForm({ mode, orgUnits, initialData }: EmployeeFormProps)
         city: city || undefined,
         state: state || undefined,
         zipCode: zipCode || undefined,
+        generateOnboarding,
       });
     }
 
@@ -159,6 +161,33 @@ export function EmployeeForm({ mode, orgUnits, initialData }: EmployeeFormProps)
     } else {
       setError(result.error ?? "Erro ao salvar");
     }
+  }
+
+  // Calculate which onboarding feedbacks would be generated
+  function getOnboardingInfo(): { show45: boolean; show90: boolean } | null {
+    if (!isPending || !orgUnitId || !managerId || !admissionDate) return null;
+    const admission = new Date(admissionDate);
+    const now = new Date();
+    const d45 = new Date(admission);
+    d45.setDate(d45.getDate() + 45);
+    const d90 = new Date(admission);
+    d90.setDate(d90.getDate() + 90);
+    const show45 = d45 > now;
+    const show90 = d90 > now;
+    if (!show45 && !show90) return null;
+    return { show45, show90 };
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    const onboardingInfo = getOnboardingInfo();
+    if (onboardingInfo) {
+      setShowOnboardingModal(true);
+      return;
+    }
+
+    await doSave();
   }
 
   return (
@@ -514,6 +543,52 @@ export function EmployeeForm({ mode, orgUnits, initialData }: EmployeeFormProps)
           {loading ? "Salvando..." : "Salvar"}
         </button>
       </div>
+
+      {/* Onboarding feedback confirmation modal */}
+      {showOnboardingModal && (() => {
+        const info = getOnboardingInfo();
+        const feedbackList = info
+          ? [info.show45 && "45 dias", info.show90 && "90 dias"].filter(Boolean).join(" e ")
+          : "";
+        return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="mx-4 w-full max-w-md rounded-lg border border-gray-200 bg-white p-6 shadow-xl dark:border-gray-700 dark:bg-gray-800">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+              Gerar Feedbacks de Onboarding?
+            </h3>
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              Este colaborador está sendo vinculado a uma unidade e gestor pela primeira vez.
+              Deseja gerar automaticamente o(s) feedback(s) de onboarding de{" "}
+              <strong>{feedbackList}</strong> com base na data de admissão?
+            </p>
+            <div className="mt-5 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={async () => {
+                  setShowOnboardingModal(false);
+                  await doSave(false);
+                }}
+                disabled={loading}
+                className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+              >
+                Não, apenas salvar
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  setShowOnboardingModal(false);
+                  await doSave(true);
+                }}
+                disabled={loading}
+                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              >
+                {loading ? "Salvando..." : "Sim, gerar feedbacks"}
+              </button>
+            </div>
+          </div>
+        </div>
+        );
+      })()}
     </form>
   );
 }

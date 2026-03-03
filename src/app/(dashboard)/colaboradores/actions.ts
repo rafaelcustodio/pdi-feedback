@@ -393,6 +393,7 @@ export async function updateEmployee(
     city?: string;
     state?: string;
     zipCode?: string;
+    generateOnboarding?: boolean;
   }
 ): Promise<{ success: boolean; error?: string }> {
   const session = await requireAdmin();
@@ -518,6 +519,11 @@ export async function updateEmployee(
   // Handle onboarding feedbacks when admission date changes
   if (admissionChanged && newAdmissionDate && data.managerId) {
     await updateOnboardingFeedbacks(id, newAdmissionDate, data.managerId);
+  }
+
+  // Generate onboarding feedbacks for newly assigned pending employees
+  if (data.generateOnboarding && newAdmissionDate && data.managerId) {
+    await createOnboardingFeedbacks(id, newAdmissionDate, data.managerId);
   }
 
   revalidatePath("/colaboradores");
@@ -827,6 +833,88 @@ export async function getEmployeeSectorSchedule(
     pdi: pdi ? { frequencyMonths: pdi.frequencyMonths, startDate: pdi.startDate } : null,
     feedback: feedback ? { frequencyMonths: feedback.frequencyMonths, startDate: feedback.startDate } : null,
   };
+}
+
+// ============================================================
+// Pending employees (SSO users without active hierarchy)
+// ============================================================
+
+export async function getPendingEmployees(
+  search: string = "",
+  page: number = 1,
+  pageSize: number = 10
+): Promise<{
+  employees: EmployeeListItem[];
+  total: number;
+  page: number;
+  pageSize: number;
+}> {
+  const session = await requireAdmin();
+  if (!session) {
+    return { employees: [], total: 0, page: 1, pageSize: 10 };
+  }
+
+  const searchFilter = search.trim()
+    ? {
+        OR: [
+          { name: { contains: search.trim(), mode: "insensitive" as const } },
+          { email: { contains: search.trim(), mode: "insensitive" as const } },
+        ],
+      }
+    : {};
+
+  const where = {
+    ...searchFilter,
+    ssoProvider: { not: null },
+    isActive: true,
+    employeeHierarchies: {
+      none: { endDate: null },
+    },
+  };
+
+  const [employees, total] = await Promise.all([
+    prisma.user.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    }),
+    prisma.user.count({ where }),
+  ]);
+
+  return {
+    employees: employees.map((u) => ({
+      id: u.id,
+      name: u.name,
+      email: u.email,
+      role: u.role,
+      isActive: u.isActive,
+      createdAt: u.createdAt,
+      orgUnit: null,
+      managerName: null,
+      jobTitle: u.jobTitle ?? null,
+      phone: u.phone ?? null,
+      evaluationMode: u.evaluationMode ?? "feedback",
+    })),
+    total,
+    page,
+    pageSize,
+  };
+}
+
+export async function getPendingEmployeesCount(): Promise<number> {
+  const session = await requireAdmin();
+  if (!session) return 0;
+
+  return prisma.user.count({
+    where: {
+      ssoProvider: { not: null },
+      isActive: true,
+      employeeHierarchies: {
+        none: { endDate: null },
+      },
+    },
+  });
 }
 
 export async function toggleIndividualSchedule(
