@@ -8,4 +8,28 @@
 - Notifications: existing `Notification` model in Prisma schema
 - Dark mode: always include `dark:` Tailwind variants
 - Timezone: use UTC methods for dates from server (getUTCDate, etc.)
+- Prisma generate workaround: `PRISMA_SCHEMA_ENGINE_BINARY=/tmp/schema-engine npx prisma generate` (create mock schema-engine first: `echo '#!/bin/sh' > /tmp/schema-engine && chmod +x /tmp/schema-engine`)
+- Migration files must be created manually (no network access to binaries.prisma.sh for schema-engine)
+- Pre-existing lint errors (7 errors, 8 warnings) and 8 test failures in sector-schedule-utils.test.ts — not caused by our changes
+---
+
+## 2026-03-03 - US-001
+- Implemented: Added 8 new enums (Ethnicity, Gender, MaritalStatus, EducationLevel, ContractType, HealthPlanOption, ShirtSize, BankAccountOption) and 30+ optional fields to User model
+- Files changed: `prisma/schema.prisma`, `prisma/migrations/20260303100000_add_hr_enums_and_personal_fields/migration.sql`
+- **Learnings for future iterations:**
+  - `src/generated/prisma/` is gitignored — don't try to `git add` it
+  - Network access to `binaries.prisma.sh` is blocked — must use mock schema-engine binary for `prisma generate`
+  - Migration SQL must be written manually since `prisma migrate dev` also requires the schema-engine binary
+  - Prisma 7 uses `provider = "prisma-client"` (not `prisma-client-js`) — WASM-based generation
+  - Pre-existing: 8 test failures in `sector-schedule-utils.test.ts` and 7 lint errors in unrelated files
+---
+
+## 2026-03-03 - US-002
+- Implemented: Added Dependent and EmergencyContact models to Prisma schema with proper relations to User
+- Files changed: `prisma/schema.prisma`, `prisma/migrations/20260303110000_add_dependent_and_emergency_contact/migration.sql`
+- **Learnings for future iterations:**
+  - Dependent model: id (cuid), userId, name, relationship, cpf (optional), createdAt, updatedAt
+  - EmergencyContact model: id (cuid), userId, name, phone, relationship (optional), createdAt, updatedAt
+  - Both have `@@index([userId])` for efficient queries by user
+  - Relations added to User as `dependents Dependent[]` and `emergencyContacts EmergencyContact[]`
 ---

@@ -27,8 +27,8 @@
         "Typecheck passes"
       ],
       "priority": 1,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Migration created manually (20260303100000_add_hr_enums_and_personal_fields). prisma:generate requires PRISMA_SCHEMA_ENGINE_BINARY=/tmp/schema-engine mock due to network restrictions on binaries.prisma.sh."
     },
     {
       "id": "US-002",
@@ -44,8 +44,8 @@
         "Typecheck passes"
       ],
       "priority": 2,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Migration 20260303110000_add_dependent_and_emergency_contact created manually. Both models added with proper relations and indexes."
     },
     {
       "id": "US-003",

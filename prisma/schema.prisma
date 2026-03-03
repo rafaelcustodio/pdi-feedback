@@ -169,6 +169,8 @@ model User {
   pdiEvidences        PDIEvidence[]
   goalResponsibilities PDIGoal[]     @relation("GoalResponsible")
   notifications       Notification[]
+  dependents          Dependent[]
+  emergencyContacts   EmergencyContact[]
 
   // Nine Box relations
   nineBoxEvaluationsReceived NineBoxEvaluation[] @relation("NineBoxEvaluatee")
@@ -503,4 +505,36 @@ model NineBoxEvaluator {
   @@unique([evaluationId, evaluatorId])
   @@index([evaluationId])
   @@index([evaluatorId])
+}
+
+// ============================================================
+// HR: Dependents & Emergency Contacts
+// ============================================================
+
+model Dependent {
+  id           String   @id @default(cuid())
+  userId       String
+  name         String
+  relationship String
+  cpf          String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model EmergencyContact {
+  id           String   @id @default(cuid())
+  userId       String
+  name         String
+  phone        String
+  relationship String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
