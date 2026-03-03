@@ -351,6 +351,16 @@ export async function createEmployee(data: {
   hasChildren?: boolean;
   childrenAges?: string;
   hasIRDependents?: boolean;
+  hobbies?: string[];
+  socialNetworks?: unknown;
+  favoriteBookMovieGenres?: string;
+  favoriteBooks?: string;
+  favoriteMovies?: string;
+  favoriteMusic?: string;
+  admiredValues?: string;
+  foodAllergies?: string;
+  hasPets?: string;
+  participateInVideos?: boolean;
 }): Promise<{ success: boolean; error?: string; id?: string }> {
   const session = await requireAdmin();
   if (!session) {
@@ -441,6 +451,16 @@ export async function createEmployee(data: {
       hasChildren: data.hasChildren ?? null,
       childrenAges: data.childrenAges?.trim() || null,
       hasIRDependents: data.hasIRDependents ?? null,
+      hobbies: data.hobbies ?? [],
+      socialNetworks: data.socialNetworks ?? undefined,
+      favoriteBookMovieGenres: data.favoriteBookMovieGenres?.trim() || null,
+      favoriteBooks: data.favoriteBooks?.trim() || null,
+      favoriteMovies: data.favoriteMovies?.trim() || null,
+      favoriteMusic: data.favoriteMusic?.trim() || null,
+      admiredValues: data.admiredValues?.trim() || null,
+      foodAllergies: data.foodAllergies?.trim() || null,
+      hasPets: data.hasPets?.trim() || null,
+      participateInVideos: data.participateInVideos ?? null,
     },
   });
 
@@ -506,6 +526,16 @@ export async function updateEmployee(
     hasChildren?: boolean;
     childrenAges?: string;
     hasIRDependents?: boolean;
+    hobbies?: string[];
+    socialNetworks?: unknown;
+    favoriteBookMovieGenres?: string;
+    favoriteBooks?: string;
+    favoriteMovies?: string;
+    favoriteMusic?: string;
+    admiredValues?: string;
+    foodAllergies?: string;
+    hasPets?: string;
+    participateInVideos?: boolean;
     generateOnboarding?: boolean;
   }
 ): Promise<{ success: boolean; error?: string }> {
@@ -600,6 +630,16 @@ export async function updateEmployee(
       hasChildren: data.hasChildren ?? null,
       childrenAges: data.childrenAges?.trim() || null,
       hasIRDependents: data.hasIRDependents ?? null,
+      hobbies: data.hobbies ?? [],
+      socialNetworks: data.socialNetworks ?? undefined,
+      favoriteBookMovieGenres: data.favoriteBookMovieGenres?.trim() || null,
+      favoriteBooks: data.favoriteBooks?.trim() || null,
+      favoriteMovies: data.favoriteMovies?.trim() || null,
+      favoriteMusic: data.favoriteMusic?.trim() || null,
+      admiredValues: data.admiredValues?.trim() || null,
+      foodAllergies: data.foodAllergies?.trim() || null,
+      hasPets: data.hasPets?.trim() || null,
+      participateInVideos: data.participateInVideos ?? null,
     },
   });
 

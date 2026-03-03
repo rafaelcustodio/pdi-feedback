@@ -116,6 +116,24 @@ const SHIRT_SIZE_OPTIONS = [
   { value: "xg_masc", label: "XG Masculino" },
 ];
 
+const HOBBY_OPTIONS = [
+  "Games", "Leitura", "Cinema", "Música", "Pintura/Desenho", "Escrita",
+  "Esporte", "Canto", "Instrumentos Musicais", "Viagens", "Voluntariado",
+  "Dança", "Jardinagem", "Teatro", "Pescaria", "Artesanato", "Skate", "Outra",
+];
+
+const SOCIAL_NETWORK_OPTIONS = [
+  "Instagram", "LinkedIn", "Twitter", "Facebook", "TikTok", "Outra",
+];
+
+const PETS_OPTIONS = [
+  { value: "", label: "Selecione" },
+  { value: "nao", label: "Não" },
+  { value: "sim_cachorros", label: "Sim, cachorros" },
+  { value: "sim_gatos", label: "Sim, gatos" },
+  { value: "outra", label: "Outra" },
+];
+
 const TAB_LABELS = [
   "Dados Pessoais",
   "Endereço e Contato",
@@ -260,17 +278,26 @@ export function EmployeeForm({ mode, orgUnits, isPending = false, initialData }:
     })) ?? []
   );
 
-  // Tab 5: About Me (will be implemented in US-009)
-  const [hobbies] = useState<string[]>(initialData?.hobbies ?? []);
-  const [socialNetworks] = useState<unknown>(initialData?.socialNetworks ?? null);
-  const [favoriteBookMovieGenres] = useState(initialData?.favoriteBookMovieGenres ?? "");
-  const [favoriteBooks] = useState(initialData?.favoriteBooks ?? "");
-  const [favoriteMovies] = useState(initialData?.favoriteMovies ?? "");
-  const [favoriteMusic] = useState(initialData?.favoriteMusic ?? "");
-  const [admiredValues] = useState(initialData?.admiredValues ?? "");
-  const [foodAllergies] = useState(initialData?.foodAllergies ?? "");
-  const [hasPets] = useState(initialData?.hasPets ?? "");
-  const [participateInVideos] = useState(initialData?.participateInVideos ?? false);
+  // Tab 5: About Me
+  const [hobbies, setHobbies] = useState<string[]>(initialData?.hobbies ?? []);
+  const [socialNetworks, setSocialNetworks] = useState<Record<string, string>>(
+    (initialData?.socialNetworks as Record<string, string>) ?? {}
+  );
+  const [favoriteBookMovieGenres, setFavoriteBookMovieGenres] = useState(initialData?.favoriteBookMovieGenres ?? "");
+  const [favoriteBooks, setFavoriteBooks] = useState(initialData?.favoriteBooks ?? "");
+  const [favoriteMovies, setFavoriteMovies] = useState(initialData?.favoriteMovies ?? "");
+  const [favoriteMusic, setFavoriteMusic] = useState(initialData?.favoriteMusic ?? "");
+  const [admiredValues, setAdmiredValues] = useState(initialData?.admiredValues ?? "");
+  const [foodAllergies, setFoodAllergies] = useState(initialData?.foodAllergies ?? "");
+  const [hasPets, setHasPets] = useState(() => {
+    const val = initialData?.hasPets ?? "";
+    return val.startsWith("outra: ") ? "outra" : val;
+  });
+  const [petsDescription, setPetsDescription] = useState(() => {
+    const val = initialData?.hasPets ?? "";
+    return val.startsWith("outra: ") ? val.slice(7) : "";
+  });
+  const [participateInVideos, setParticipateInVideos] = useState(initialData?.participateInVideos ?? false);
 
   const [managers, setManagers] = useState<
     { id: string; name: string; email: string }[]
@@ -346,6 +373,16 @@ export function EmployeeForm({ mode, orgUnits, isPending = false, initialData }:
         hasChildren,
         childrenAges: childrenAges || undefined,
         hasIRDependents,
+        hobbies,
+        socialNetworks: Object.keys(socialNetworks).length > 0 ? socialNetworks : undefined,
+        favoriteBookMovieGenres: favoriteBookMovieGenres || undefined,
+        favoriteBooks: favoriteBooks || undefined,
+        favoriteMovies: favoriteMovies || undefined,
+        favoriteMusic: favoriteMusic || undefined,
+        admiredValues: admiredValues || undefined,
+        foodAllergies: foodAllergies || undefined,
+        hasPets: hasPets === "outra" && petsDescription ? `outra: ${petsDescription}` : hasPets || undefined,
+        participateInVideos,
       });
 
       // Save dependents and emergency contacts for newly created employee
@@ -404,6 +441,16 @@ export function EmployeeForm({ mode, orgUnits, isPending = false, initialData }:
         hasChildren,
         childrenAges: childrenAges || undefined,
         hasIRDependents,
+        hobbies,
+        socialNetworks: Object.keys(socialNetworks).length > 0 ? socialNetworks : undefined,
+        favoriteBookMovieGenres: favoriteBookMovieGenres || undefined,
+        favoriteBooks: favoriteBooks || undefined,
+        favoriteMovies: favoriteMovies || undefined,
+        favoriteMusic: favoriteMusic || undefined,
+        admiredValues: admiredValues || undefined,
+        foodAllergies: foodAllergies || undefined,
+        hasPets: hasPets === "outra" && petsDescription ? `outra: ${petsDescription}` : hasPets || undefined,
+        participateInVideos,
         generateOnboarding,
       });
 
@@ -469,11 +516,7 @@ export function EmployeeForm({ mode, orgUnits, isPending = false, initialData }:
 
   const age = calculateAge(birthDate);
 
-  // Suppress unused variable warnings for state that will be used in future US stories
-  void hobbies; void socialNetworks;
-  void favoriteBookMovieGenres; void favoriteBooks; void favoriteMovies;
-  void favoriteMusic; void admiredValues; void foodAllergies;
-  void hasPets; void participateInVideos;
+  const selectedSocialNetworks = Object.keys(socialNetworks);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -1339,10 +1382,203 @@ export function EmployeeForm({ mode, orgUnits, isPending = false, initialData }:
             </div>
           )}
 
-          {/* Tab 5: Sobre Mim (placeholder for US-009) */}
+          {/* Tab 5: Sobre Mim */}
           {activeTab === 4 && (
-            <div className="py-8 text-center text-sm text-gray-500 dark:text-gray-400">
-              Seção Sobre Mim será implementada em breve.
+            <div className="space-y-6">
+              {/* Hobbies */}
+              <div className={sectionClass}>
+                <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Hobbies</h3>
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
+                  {HOBBY_OPTIONS.map((hobby) => (
+                    <label key={hobby} className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                      <input
+                        type="checkbox"
+                        checked={hobbies.includes(hobby)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setHobbies([...hobbies, hobby]);
+                          } else {
+                            setHobbies(hobbies.filter((h) => h !== hobby));
+                          }
+                        }}
+                        disabled={loading}
+                        className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
+                      />
+                      {hobby}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Social Networks */}
+              <div className={sectionClass}>
+                <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Redes Sociais</h3>
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                    {SOCIAL_NETWORK_OPTIONS.map((network) => (
+                      <label key={network} className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                        <input
+                          type="checkbox"
+                          checked={selectedSocialNetworks.includes(network)}
+                          onChange={(e) => {
+                            const updated = { ...socialNetworks };
+                            if (e.target.checked) {
+                              updated[network] = socialNetworks[network] ?? "";
+                            } else {
+                              delete updated[network];
+                            }
+                            setSocialNetworks(updated);
+                          }}
+                          disabled={loading}
+                          className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
+                        />
+                        {network}
+                      </label>
+                    ))}
+                  </div>
+                  {selectedSocialNetworks.length > 0 && (
+                    <div className="mt-3 space-y-2">
+                      {selectedSocialNetworks.map((network) => (
+                        <div key={network}>
+                          <label className={labelClass}>{network} — Perfil / Handle</label>
+                          <input
+                            type="text"
+                            value={socialNetworks[network] ?? ""}
+                            onChange={(e) => setSocialNetworks({ ...socialNetworks, [network]: e.target.value })}
+                            placeholder={`Seu perfil no ${network}`}
+                            className={inputClass}
+                            disabled={loading}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Favorites */}
+              <div className={sectionClass}>
+                <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Favoritos</h3>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className={labelClass}>Gênero de livros/filmes que curte</label>
+                    <input
+                      type="text"
+                      value={favoriteBookMovieGenres}
+                      onChange={(e) => setFavoriteBookMovieGenres(e.target.value)}
+                      className={inputClass}
+                      disabled={loading}
+                    />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Livro(s) favorito(s)</label>
+                    <input
+                      type="text"
+                      value={favoriteBooks}
+                      onChange={(e) => setFavoriteBooks(e.target.value)}
+                      className={inputClass}
+                      disabled={loading}
+                    />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Filme(s) favorito(s)</label>
+                    <input
+                      type="text"
+                      value={favoriteMovies}
+                      onChange={(e) => setFavoriteMovies(e.target.value)}
+                      className={inputClass}
+                      disabled={loading}
+                    />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Música/banda favorita</label>
+                    <input
+                      type="text"
+                      value={favoriteMusic}
+                      onChange={(e) => setFavoriteMusic(e.target.value)}
+                      className={inputClass}
+                      disabled={loading}
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className={labelClass}>Valores que admira</label>
+                    <input
+                      type="text"
+                      value={admiredValues}
+                      onChange={(e) => setAdmiredValues(e.target.value)}
+                      className={inputClass}
+                      disabled={loading}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Food allergies */}
+              <div className={sectionClass}>
+                <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Alergias / Intolerâncias Alimentares</h3>
+                <p className="mb-2 text-xs text-gray-500 dark:text-gray-400">Campo opcional — preencha se desejar informar.</p>
+                <input
+                  type="text"
+                  value={foodAllergies}
+                  onChange={(e) => setFoodAllergies(e.target.value)}
+                  className={inputClass}
+                  disabled={loading}
+                  placeholder="Ex: Intolerância a lactose, alergia a amendoim..."
+                />
+              </div>
+
+              {/* Pets */}
+              <div className={sectionClass}>
+                <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Animais de Estimação</h3>
+                <div className="space-y-3">
+                  <div>
+                    <label className={labelClass}>Possui animais de estimação?</label>
+                    <select
+                      value={hasPets}
+                      onChange={(e) => {
+                        setHasPets(e.target.value);
+                        if (e.target.value !== "outra") setPetsDescription("");
+                      }}
+                      className={inputClass}
+                      disabled={loading}
+                    >
+                      {PETS_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {hasPets === "outra" && (
+                    <div>
+                      <label className={labelClass}>Descreva</label>
+                      <input
+                        type="text"
+                        value={petsDescription}
+                        onChange={(e) => setPetsDescription(e.target.value)}
+                        className={inputClass}
+                        disabled={loading}
+                        placeholder="Ex: Coelho, hamster..."
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Participation in videos */}
+              <div className={sectionClass}>
+                <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Participação Institucional</h3>
+                <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                  <input
+                    type="checkbox"
+                    checked={participateInVideos}
+                    onChange={(e) => setParticipateInVideos(e.target.checked)}
+                    disabled={loading}
+                    className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
+                  />
+                  Aceito participar de vídeos institucionais
+                </label>
+              </div>
             </div>
           )}
         </div>
