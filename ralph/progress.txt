@@ -37,6 +37,9 @@
 - Colaboradores page tabs: `colaboradores-tabs.tsx` — uses URL search params per tab (search/page, psearch/ppage, crsearch/crpage/crstatus) to preserve state across navigation
 - Forms import: `src/lib/forms-import-mapping.ts` — client-side Excel parser + question-to-field mapping + enum converters for Microsoft Forms "Talento I Narwal" export
 - Change requests table: `change-requests-table.tsx` — standalone table component with FIELD_LABELS/ENUM_LABELS maps for Portuguese localization of field names and enum values
+- Forms import pre-fill: use `sessionStorage.setItem("formsImportData", JSON.stringify(data))` to pass mapped data from modal to employee-form, then `sessionStorage.getItem/removeItem` on mount in create mode
+- FormsImportModal: `src/components/forms-import-modal.tsx` — client-side Excel parse + server-side duplicate check + preview table + sessionStorage handoff
+- `checkExistingEmployees` server action: batch-checks emails and CPFs against existing users, returns per-entry existsByEmail/existsByCpf flags
 ---
 
 ## 2026-03-03 - US-001
@@ -265,4 +268,26 @@
   - Excel serial dates (numbers > 30000) need conversion: `(serial - 25569) * 86400 * 1000` to get JS timestamp
   - Brazilian date format DD/MM/YYYY is common in Forms exports — parse before ISO conversion
   - Composite fields (address, city/state, bank info) require custom parsers since Forms puts them in single text answers
+---
+
+## 2026-03-03 - US-016
+- Implemented: Forms import UI with upload, preview, and pre-fill functionality
+- New component: `src/components/forms-import-modal.tsx` — modal with:
+  - Drag-and-drop upload area accepting only .xlsx files
+  - Client-side parsing via `parseFormsExcel()` from US-015 with loading spinner
+  - Preview table with columns: Nome, Email, CPF, Status (Novo/duplicate warning), Ação (Selecionar button)
+  - CPF validation: invalid CPFs shown in red with "(inválido)" label
+  - Duplicate detection: calls `checkExistingEmployees` server action to check email/CPF against existing users
+  - Amber warning badges for existing email/CPF matches
+  - On "Selecionar": stores mapped EmployeeFormData in sessionStorage, navigates to /colaboradores/novo
+- New server action: `checkExistingEmployees` in colaboradores/actions.ts — batch-checks emails and CPFs against existing users
+- Updated `src/components/employee-table.tsx` — added "Importar do Forms" button (green outline, FileSpreadsheet icon) next to "Novo Colaborador", visible only on non-pending variant, opens FormsImportModal
+- Updated `src/components/employee-form.tsx` — added useEffect that reads `formsImportData` from sessionStorage on mount in create mode, populates all form fields (personal data, address, financial, family, about me), then removes the key
+- Files changed: `src/components/forms-import-modal.tsx` (new), `src/components/employee-table.tsx`, `src/components/employee-form.tsx`, `src/app/(dashboard)/colaboradores/actions.ts`
+- **Learnings for future iterations:**
+  - sessionStorage is the simplest way to pass large data between pages in Next.js client components — set before navigation, read + remove on mount
+  - hasPets mapping from Forms uses "sim cachorros"/"sim gatos" format, but the form select uses "sim_cachorros"/"sim_gatos" — need a mapping step in the pre-fill logic
+  - `checkExistingEmployees` uses batch `findMany` with `in` clause for efficiency — single query per field type (email/CPF)
+  - FormsImportModal uses `useCallback` for processFile/handleSelect to keep references stable for event handlers
+  - The import button is in employee-table (not colaboradores-tabs) because it sits naturally next to "Novo Colaborador" in the search/action header bar
 ---

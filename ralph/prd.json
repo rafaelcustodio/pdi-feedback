@@ -307,8 +307,8 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 16,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Created FormsImportModal component (upload drag-and-drop, client-side parse via parseFormsExcel, preview table with Nome/Email/CPF/Status columns, CPF validation with red highlight, duplicate detection via checkExistingEmployees server action, 'Selecionar' button per row). Added 'Importar do Forms' button next to 'Novo Colaborador' in employee-table.tsx (visible on non-pending variant). On select: stores mapped EmployeeFormData in sessionStorage, navigates to /colaboradores/novo. Employee-form reads sessionStorage on create mode mount and pre-fills all fields (personal, address, financial, family, about me). System fields (role, org unit, gestor, admissão) left empty for HR to complete."
     }
   ]
 }
