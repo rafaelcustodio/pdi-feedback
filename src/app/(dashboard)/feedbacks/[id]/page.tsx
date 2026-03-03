@@ -69,6 +69,7 @@ export default async function FeedbackDetailPage({
         <div className="mt-6">
           <NineBoxSection
             feedbackId={id}
+            employeeId={feedback.employeeId}
             isManager={isManager}
             isCancelled={feedback.status === "cancelled"}
             nineBoxStatus={nineBoxStatus}
@@ -86,6 +87,7 @@ export default async function FeedbackDetailPage({
       <div className="mt-6">
         <NineBoxSection
           feedbackId={id}
+          employeeId={feedback.employeeId}
           isManager={isManager}
           isCancelled={feedback.status === "cancelled"}
           nineBoxStatus={nineBoxStatus}

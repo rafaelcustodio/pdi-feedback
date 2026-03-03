@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   startNineBoxEvaluation,
   closeNineBoxEvaluation,
@@ -13,6 +14,7 @@ import type {
 
 interface NineBoxSectionProps {
   feedbackId: string;
+  employeeId: string;
   isManager: boolean;
   isCancelled: boolean;
   nineBoxStatus: NineBoxStatusData | null;
@@ -21,6 +23,7 @@ interface NineBoxSectionProps {
 
 export function NineBoxSection({
   feedbackId,
+  employeeId,
   isManager,
   isCancelled,
   nineBoxStatus,
@@ -96,6 +99,7 @@ export function NineBoxSection({
   return (
     <NineBoxStatusPanel
       nineBoxStatus={nineBoxStatus}
+      employeeId={employeeId}
       isOpen={isOpen}
       canClose={canClose}
     />
@@ -228,10 +232,12 @@ function StartNineBoxModal({
 
 function NineBoxStatusPanel({
   nineBoxStatus,
+  employeeId,
   isOpen,
   canClose,
 }: {
   nineBoxStatus: NineBoxStatusData;
+  employeeId: string;
   isOpen: boolean;
   canClose: boolean;
 }) {
@@ -310,6 +316,17 @@ function NineBoxStatusPanel({
           >
             {isPending ? "Encerrando..." : "Encerrar Avaliação"}
           </button>
+        </div>
+      )}
+
+      {!isOpen && (
+        <div className="mt-4">
+          <Link
+            href={`/colaboradores/${employeeId}/ninebox`}
+            className="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+          >
+            Ver Resultado Nine Box
+          </Link>
         </div>
       )}
     </div>

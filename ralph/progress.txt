@@ -12,6 +12,8 @@
 - NineBox dashboard server actions live in `src/app/(dashboard)/colaboradores/ninebox-actions.ts` for dashboard/reporting data
 - NineBoxGrid is a reusable pure component at `src/components/ninebox-grid.tsx` — takes desempenhoFaixa and potencialFaixa props
 - NineBoxDashboard is a server component at `src/components/ninebox-dashboard.tsx` — takes current and previous NineBoxEvalResult
+- Employee-facing NineBox view uses `src/app/(dashboard)/perfil/actions.ts` for `getMyNineBoxResult` — only returns closed evaluations, strips evaluator details
+- Perfil page uses tab pattern: `PerfilTabs` client component with `useState` for tab switching, server component passes pre-fetched data as ReactNode
 - Routes outside the (dashboard) group (e.g., `/ninebox/[evaluatorId]`) are still auth-protected by middleware matcher; they just don't have the dashboard sidebar/layout
 - For standalone form pages outside the dashboard, create route at `src/app/[feature]/[param]/page.tsx` as a server component that calls `auth()` and renders a client form component
 ---
@@ -99,4 +101,32 @@
   - The NineBoxGrid component is reusable for both the gestor dashboard (US-006) and the colaborador profile view (US-007)
   - computeEvalResult aggregates all completed evaluators' q1-q12 scores: desempenho = avg of q1-q6, potencial = avg of q7-q12, mediaGeral = avg of all q1-q12
   - Access control for the dashboard uses canAccessEmployee to verify manager has hierarchy access to the employee
+---
+
+## 2026-03-02 - US-007
+- What was implemented: Employee can view their own Nine Box result via a "Nine Box" tab on the /perfil page. Shows averages (Desempenho, Potencial, Média Geral), quadrant name, and 3x3 grid. Does NOT expose evaluator names, individual scores, or q13/q14 responses. Only closed evaluations are displayed.
+- Files changed:
+  - `src/app/(dashboard)/perfil/actions.ts` — New server action `getMyNineBoxResult` that fetches the most recent closed NineBoxEvaluation for the logged-in user, computes averages and quadrant, returns only aggregated data (no evaluator details)
+  - `src/components/perfil-ninebox.tsx` — Display component showing 3 metric cards (Desempenho, Potencial, Média Geral), quadrant name card, and NineBoxGrid; shows "Nenhuma avaliação Nine Box disponível." when no data
+  - `src/components/perfil-tabs.tsx` — Client component implementing tab navigation (Perfil / Nine Box) using useState
+  - `src/app/(dashboard)/perfil/page.tsx` — Updated to async server component, fetches NineBox data and passes to PerfilTabs
+  - `ralph/prd.json` — Marked US-007 as passes: true
+- **Learnings for future iterations:**
+  - The /perfil page was previously a minimal placeholder — adding tabs required converting it to an async server component
+  - For employee self-view, access control is implicit: `getMyNineBoxResult` uses `session.user.id` directly, no need for `canAccessEmployee`
+  - The NineBoxGrid component from US-006 was directly reusable for the employee view
+  - To avoid exposing sensitive data, the server action selects only score fields (q1-q12) and status from evaluators — never names or descriptive fields (q13/q14)
+---
+
+## 2026-03-02 - US-008
+- What was implemented: Added navigation links for Nine Box dashboard — "Ver Resultado Nine Box" link on feedback detail page (when evaluation is closed) and "Nine Box" link on colaboradores detail page
+- Files changed:
+  - `src/components/ninebox-section.tsx` — Added `employeeId` prop to NineBoxSection and NineBoxStatusPanel; added "Ver Resultado Nine Box" Link (from next/link) when evaluation status is closed, navigating to /colaboradores/[employeeId]/ninebox
+  - `src/app/(dashboard)/feedbacks/[id]/page.tsx` — Passes `employeeId={feedback.employeeId}` to both NineBoxSection instances (edit and read-only views)
+  - `src/app/(dashboard)/colaboradores/[id]/page.tsx` — Added import for next/link; added "Nine Box" link section at the bottom navigating to /colaboradores/[id]/ninebox
+  - `ralph/prd.json` — Marked US-008 as passes: true
+- **Learnings for future iterations:**
+  - The NineBoxSection component is used in two places in the feedback detail page (edit view and read-only view) — any new prop must be added to both usages
+  - The `replace_all` edit flag matches exact strings including indentation — if two usages have different indentation levels, they need separate edits
+  - The colaboradores/[id] page is admin-only; the /colaboradores/[id]/ninebox dashboard page already has its own access control (manager/admin via canAccessEmployee)
 ---

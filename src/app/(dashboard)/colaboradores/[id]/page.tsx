@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
+import Link from "next/link";
 import { getEmployeeById, getOrgUnitsFlat, getEmployeeActivePDI } from "../actions";
 import { EmployeeForm } from "@/components/employee-form";
 import { EmployeePDISection } from "@/components/employee-pdi-section";
@@ -57,6 +58,17 @@ export default async function EditarColaboradorPage({
           activePdiId={activePdi?.id ?? null}
         />
       )}
+      <div className="rounded-lg border border-gray-200 bg-white p-6">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-medium text-gray-700">Nine Box</h3>
+          <Link
+            href={`/colaboradores/${id}/ninebox`}
+            className="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+          >
+            Nine Box
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }
