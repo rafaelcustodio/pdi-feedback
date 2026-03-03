@@ -8,7 +8,10 @@
 - Access control: always use `getAccessibleEmployeeIds()` or filter helpers before querying
 - To use NineBox models in Prisma queries, add `nineBoxEvaluation: any; nineBoxEvaluator: any` to `PrismaClientExtended` in `src/lib/prisma.ts` and add delegate getters to `src/generated/prisma/internal/class.ts`
 - Modals follow pattern: `useState` boolean + `fixed inset-0 z-50 bg-black/50` overlay + centered white card
-- NineBox server actions live in `src/app/(dashboard)/feedbacks/ninebox-actions.ts` (separate from main actions.ts)
+- NineBox server actions live in `src/app/(dashboard)/feedbacks/ninebox-actions.ts` (separate from main actions.ts) for feedback-related operations
+- NineBox dashboard server actions live in `src/app/(dashboard)/colaboradores/ninebox-actions.ts` for dashboard/reporting data
+- NineBoxGrid is a reusable pure component at `src/components/ninebox-grid.tsx` — takes desempenhoFaixa and potencialFaixa props
+- NineBoxDashboard is a server component at `src/components/ninebox-dashboard.tsx` — takes current and previous NineBoxEvalResult
 - Routes outside the (dashboard) group (e.g., `/ninebox/[evaluatorId]`) are still auth-protected by middleware matcher; they just don't have the dashboard sidebar/layout
 - For standalone form pages outside the dashboard, create route at `src/app/[feature]/[param]/page.tsx` as a server component that calls `auth()` and renders a client form component
 ---
@@ -80,4 +83,20 @@
   - Extracted the status panel into a separate `NineBoxStatusPanel` component to keep hooks (useTransition, useRouter, useState) at the component level — the parent `NineBoxSection` conditionally returns different views and can't use hooks after early returns
   - The "Encerrar Avaliação" button only appears when status is open AND at least 1 evaluator has responded — both conditions checked client-side and server-side
   - `revalidatePath` in `closeNineBoxEvaluation` is safe because it's called from a user action (button click), unlike the warning about `generateScheduleNotifications`
+---
+
+## 2026-03-02 - US-006
+- What was implemented: Nine Box dashboard page at /colaboradores/[id]/ninebox with 4 KPI cards (Média Geral, Potencialidade, Desempenho, Quadrante), delta comparisons vs previous evaluation, and 3x3 grid visualization with movement tracking
+- Files changed:
+  - `src/app/(dashboard)/colaboradores/ninebox-actions.ts` — New server actions file with getNineBoxDashboard (fetches all evaluations for an employee, computes averages and quadrant positioning, returns current + previous results)
+  - `src/components/ninebox-grid.tsx` — Reusable NineBoxGrid component (pure, takes desempenhoFaixa and potencialFaixa props, renders 3x3 color-coded grid with active quadrant highlighted)
+  - `src/components/ninebox-dashboard.tsx` — NineBoxDashboard component with KPI cards showing deltas (arrows, percentages, previous values), movement grids (previous → current), and evaluator feedback details
+  - `src/app/(dashboard)/colaboradores/[id]/ninebox/page.tsx` — Server component page with auth check (manager/admin only), partial result warning for open evaluations
+  - `ralph/prd.json` — Marked US-006 as passes: true
+- **Learnings for future iterations:**
+  - Quadrant calculation: Faixas are Baixo=1.00–2.33, Médio=2.34–3.66, Alto=3.67–5.00; quadrant name is determined by potencial faixa + desempenho faixa
+  - Delta display pattern: show previous value in parentheses, green ▲ for improvement, red ▼ for decline, with percentage
+  - The NineBoxGrid component is reusable for both the gestor dashboard (US-006) and the colaborador profile view (US-007)
+  - computeEvalResult aggregates all completed evaluators' q1-q12 scores: desempenho = avg of q1-q6, potencial = avg of q7-q12, mediaGeral = avg of all q1-q12
+  - Access control for the dashboard uses canAccessEmployee to verify manager has hierarchy access to the employee
 ---
