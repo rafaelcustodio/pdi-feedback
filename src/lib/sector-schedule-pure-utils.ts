@@ -29,8 +29,9 @@ export function calculatePeriods(
 
   // Start generating periods from the startDate, stepping by frequencyMonths
   // Find the first period that starts at or before rangeStart
-  const sdYear = startDate.getFullYear();
-  const sdMonth = startDate.getMonth();
+  // Use UTC methods because startDate comes from Prisma (stored as UTC midnight)
+  const sdYear = startDate.getUTCFullYear();
+  const sdMonth = startDate.getUTCMonth();
 
   // Calculate how many periods to skip to reach the first period at or before rangeStart
   const monthsDiff = (rangeStart.getFullYear() - sdYear) * 12 + (rangeStart.getMonth() - sdMonth);
@@ -57,7 +58,7 @@ export function calculatePeriods(
       periods.push({
         start: periodStart,
         end: periodEnd,
-        label: formatPeriodLabel(periodStart, periodEnd, frequencyMonths),
+        label: formatPeriodLabel(periodStart, periodEnd, frequencyMonths, sdMonth),
       });
     }
 
@@ -68,22 +69,89 @@ export function calculatePeriods(
   return periods;
 }
 
-function formatPeriodLabel(start: Date, end: Date, frequencyMonths: number): string {
-  if (frequencyMonths === 1) {
-    // Monthly: "Mar/2026"
-    return `${MONTH_ABBR_PT[start.getMonth()]}/${start.getFullYear()}`;
-  }
-
+/**
+ * Format a period label based on frequency.
+ * @param cycleStartMonth - The month (0-11) the cycle begins. Used to compute
+ *   the cycle-relative quarter/semester number. Defaults to 0 (January).
+ */
+export function formatPeriodLabel(
+  start: Date,
+  end: Date,
+  frequencyMonths: number,
+  cycleStartMonth: number = 0,
+): string {
+  const startMonth = start.getMonth();
   const startYear = start.getFullYear();
+  const endMonth = end.getMonth();
   const endYear = end.getFullYear();
+  // Use the end year as the "label year" so cross-year periods (e.g. Dec-Feb) show the later year
+  const labelYear = endYear;
 
-  if (startYear === endYear) {
-    // Same year: "Jan-Mar/2026"
-    return `${MONTH_ABBR_PT[start.getMonth()]}-${MONTH_ABBR_PT[end.getMonth()]}/${startYear}`;
+  if (frequencyMonths === 1) {
+    return `${MONTH_ABBR_PT[startMonth]}/${startYear}`;
   }
 
-  // Cross-year: "Jul/2025-Jun/2026"
-  return `${MONTH_ABBR_PT[start.getMonth()]}/${startYear}-${MONTH_ABBR_PT[end.getMonth()]}/${endYear}`;
+  if (frequencyMonths === 2) {
+    if (startYear === endYear) {
+      return `${MONTH_ABBR_PT[startMonth]}-${MONTH_ABBR_PT[endMonth]}/${startYear}`;
+    }
+    return `${MONTH_ABBR_PT[startMonth]}/${startYear}-${MONTH_ABBR_PT[endMonth]}/${endYear}`;
+  }
+
+  if (frequencyMonths === 3) {
+    const offset = ((startMonth - cycleStartMonth) % 12 + 12) % 12;
+    const q = offset / 3 + 1;
+    return `Q${q}/${labelYear}`;
+  }
+
+  if (frequencyMonths === 6) {
+    const offset = ((startMonth - cycleStartMonth) % 12 + 12) % 12;
+    const s = offset / 6 + 1;
+    return `S${s}/${labelYear}`;
+  }
+
+  if (frequencyMonths === 12) {
+    return `${labelYear}`;
+  }
+
+  // Fallback for non-standard frequencies
+  if (startYear === endYear) {
+    return `${MONTH_ABBR_PT[startMonth]}-${MONTH_ABBR_PT[endMonth]}/${startYear}`;
+  }
+  return `${MONTH_ABBR_PT[startMonth]}/${startYear}-${MONTH_ABBR_PT[endMonth]}/${endYear}`;
+}
+
+/**
+ * Format a period label from a single date and frequency.
+ * @param cycleStartMonth - The month (0-11) the cycle begins. Defaults to 0 (January).
+ */
+export function formatPeriodFromDate(
+  date: Date,
+  frequencyMonths: number,
+  cycleStartMonth: number = 0,
+): string {
+  const month = date.getMonth();
+  const year = date.getFullYear();
+
+  // Calculate how many months into the cycle this date falls
+  const offset = ((month - cycleStartMonth) % 12 + 12) % 12;
+  const periodIndex = Math.floor(offset / frequencyMonths);
+  const periodStartMonthRaw = cycleStartMonth + periodIndex * frequencyMonths;
+  // Normalize: the start month might wrap past December
+  const periodStartMonth = ((periodStartMonthRaw % 12) + 12) % 12;
+  // Adjust year if the period start month is after the date's month in the calendar
+  let periodStartYear = year;
+  if (periodStartMonth > month) {
+    periodStartYear--;
+  }
+  const periodStart = new Date(periodStartYear, periodStartMonth, 1);
+
+  const endMonthRaw = periodStartMonth + frequencyMonths;
+  const periodEndYear = periodStartYear + Math.floor(endMonthRaw / 12);
+  const periodEndMonth = endMonthRaw % 12;
+  const periodEnd = new Date(periodEndYear, periodEndMonth, 0, 23, 59, 59, 999);
+
+  return formatPeriodLabel(periodStart, periodEnd, frequencyMonths, cycleStartMonth);
 }
 
 /**

@@ -10,6 +10,7 @@ import {
   distributeEvents,
   calculatePeriods,
 } from "@/lib/sector-schedule-utils";
+import { formatPeriodLabel } from "@/lib/sector-schedule-pure-utils";
 
 export interface ComplianceEmployee {
   employeeId: string;
@@ -158,14 +159,6 @@ export async function getSectorComplianceStatus(
   return { success: true, data: result };
 }
 
-const MONTH_ABBR_PT = [
-  "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
-  "Jul", "Ago", "Set", "Out", "Nov", "Dez",
-];
-
-function formatPeriod(date: Date): string {
-  return `${MONTH_ABBR_PT[date.getMonth()]}/${date.getFullYear()}`;
-}
 
 export interface ProgramEventsResult {
   success: boolean;
@@ -197,6 +190,19 @@ export async function programEvents(params: {
   if (role === "employee") {
     return { success: false, error: "Apenas gestores e admins podem programar eventos", created: 0, skipped: 0, events: [] };
   }
+
+  // Look up sector schedule frequency for period formatting
+  const sectorSchedule = await prisma.sectorSchedule.findUnique({
+    where: {
+      organizationalUnitId_type: {
+        organizationalUnitId: params.unitId,
+        type: params.type,
+      },
+    },
+    select: { frequencyMonths: true, startDate: true },
+  });
+  const frequencyMonths = sectorSchedule?.frequencyMonths ?? 1;
+  const cycleStartMonth = sectorSchedule?.startDate?.getUTCMonth() ?? 0;
 
   // Verify access to each employee
   const accessibleEmployees: { id: string; name: string; managerId: string }[] = [];
@@ -291,7 +297,7 @@ export async function programEvents(params: {
   // Create the events
   for (const event of eventsToCreate) {
     const emp = accessibleEmployees.find((e) => e.id === event.employeeId)!;
-    const period = formatPeriod(event.scheduledDate);
+    const period = formatPeriodLabel(params.periodStart, params.periodEnd, frequencyMonths, cycleStartMonth);
 
     if (params.type === "pdi") {
       try {

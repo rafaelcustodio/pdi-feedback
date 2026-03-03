@@ -17,7 +17,6 @@ const FREQUENCY_OPTIONS = [
 ];
 
 function sortByProgress(a: SectorScheduleSummary, b: SectorScheduleSummary): number {
-  // Units with lower completion go first
   const aProgress = getCompletionRate(a);
   const bProgress = getCompletionRate(b);
   return aProgress - bProgress;
@@ -26,15 +25,11 @@ function sortByProgress(a: SectorScheduleSummary, b: SectorScheduleSummary): num
 function getCompletionRate(unit: SectorScheduleSummary): number {
   let total = 0;
   let done = 0;
-  if (unit.pdiProgress) {
-    total += unit.pdiProgress.total;
-    done += unit.pdiProgress.done;
-  }
   if (unit.feedbackProgress) {
     total += unit.feedbackProgress.total;
     done += unit.feedbackProgress.done;
   }
-  if (total === 0) return 1; // No config = full (put at end)
+  if (total === 0) return 1;
   return done / total;
 }
 
@@ -44,8 +39,6 @@ interface SectorScheduleConfigProps {
 
 export function SectorScheduleConfig({ schedules }: SectorScheduleConfigProps) {
   const [editingUnit, setEditingUnit] = useState<string | null>(null);
-  const [pdiFreq, setPdiFreq] = useState("");
-  const [pdiStart, setPdiStart] = useState("");
   const [feedbackFreq, setFeedbackFreq] = useState("");
   const [feedbackStart, setFeedbackStart] = useState("");
   const [loading, setLoading] = useState(false);
@@ -54,8 +47,6 @@ export function SectorScheduleConfig({ schedules }: SectorScheduleConfigProps) {
 
   function openConfig(unit: SectorScheduleSummary) {
     setEditingUnit(unit.unitId);
-    setPdiFreq(unit.pdi ? String(unit.pdi.frequencyMonths) : "");
-    setPdiStart(unit.pdi ? unit.pdi.startDate.toISOString().slice(0, 10) : "");
     setFeedbackFreq(unit.feedback ? String(unit.feedback.frequencyMonths) : "");
     setFeedbackStart(
       unit.feedback ? unit.feedback.startDate.toISOString().slice(0, 10) : ""
@@ -77,31 +68,6 @@ export function SectorScheduleConfig({ schedules }: SectorScheduleConfigProps) {
     setSuccess(null);
 
     try {
-      // Save PDI schedule
-      if (pdiFreq) {
-        if (!pdiStart) {
-          setError("Data de início do PDI é obrigatória.");
-          setLoading(false);
-          return;
-        }
-        const result = await saveSectorSchedule({
-          unitId: editingUnit,
-          type: "pdi",
-          frequencyMonths: parseInt(pdiFreq),
-          startDate: new Date(pdiStart),
-          isActive: true,
-        });
-        if (!result.success) {
-          setError(result.error ?? "Erro ao salvar PDI");
-          setLoading(false);
-          return;
-        }
-      } else {
-        // Deactivate PDI if cleared
-        await deleteSectorSchedule(editingUnit, "pdi");
-      }
-
-      // Save Feedback schedule
       if (feedbackFreq) {
         if (!feedbackStart) {
           setError("Data de início do Feedback é obrigatória.");
@@ -136,23 +102,23 @@ export function SectorScheduleConfig({ schedules }: SectorScheduleConfigProps) {
   const editingUnitData = schedules.find((s) => s.unitId === editingUnit);
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4 sm:p-6">
+    <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 sm:p-6">
       <div className="mb-4 flex items-center gap-2">
-        <Calendar size={20} className="text-gray-500" />
-        <h2 className="text-lg font-medium text-gray-900">
+        <Calendar size={20} className="text-gray-500 dark:text-gray-400" />
+        <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
           Recorrência por Setor
         </h2>
       </div>
-      <p className="mb-4 text-sm text-gray-600">
-        Configure a frequência de PDI e Feedback para cada unidade organizacional.
+      <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+        Configure a frequência de Feedback para cada unidade organizacional.
       </p>
 
       {schedules.length === 0 ? (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           Nenhuma unidade organizacional cadastrada.
         </p>
       ) : (
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-gray-100 dark:divide-gray-700">
           {[...schedules].sort(sortByProgress).map((unit) => (
             <div key={unit.unitId} className="py-3">
               <div className="flex items-center justify-between gap-4">
@@ -160,16 +126,10 @@ export function SectorScheduleConfig({ schedules }: SectorScheduleConfigProps) {
                   href={`/programacao?unit=${unit.unitId}`}
                   className="min-w-0 flex-1 hover:opacity-80"
                 >
-                  <p className="text-sm font-medium text-gray-800">
+                  <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
                     {unit.unitName}
                   </p>
-                  <div className="mt-0.5 flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-gray-500">
-                    <span>
-                      PDI:{" "}
-                      {unit.pdi
-                        ? getFrequencyLabel(unit.pdi.frequencyMonths)
-                        : "Não configurado"}
-                    </span>
+                  <div className="mt-0.5 flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-gray-500 dark:text-gray-400">
                     <span>
                       Feedback:{" "}
                       {unit.feedback
@@ -180,26 +140,20 @@ export function SectorScheduleConfig({ schedules }: SectorScheduleConfigProps) {
                 </Link>
                 <button
                   onClick={() => openConfig(unit)}
-                  className="inline-flex shrink-0 items-center gap-1 rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                  className="inline-flex shrink-0 items-center gap-1 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
                   <Settings size={14} />
                   Configurar
                 </button>
               </div>
 
-              {/* Progress indicators */}
-              {(unit.pdiProgress || unit.feedbackProgress) && (
-                <div className="mt-2 grid gap-2 sm:grid-cols-2">
-                  {unit.pdiProgress && (
-                    <ProgressIndicator label="PDI" progress={unit.pdiProgress} />
-                  )}
-                  {unit.feedbackProgress && (
-                    <ProgressIndicator label="Feedback" progress={unit.feedbackProgress} />
-                  )}
+              {unit.feedbackProgress && (
+                <div className="mt-2">
+                  <ProgressIndicator label="Feedback" progress={unit.feedbackProgress} />
                 </div>
               )}
 
-              {!unit.pdi && !unit.feedback && (
+              {!unit.feedback && (
                 <p className="mt-1 text-xs text-gray-400">Não configurado</p>
               )}
             </div>
@@ -210,77 +164,42 @@ export function SectorScheduleConfig({ schedules }: SectorScheduleConfigProps) {
       {/* Configuration Modal */}
       {editingUnit && editingUnitData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+          <div className="mx-4 w-full max-w-md rounded-lg bg-white dark:bg-gray-800 p-6 shadow-xl">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 Configurar Recorrência
               </h3>
               <button
                 onClick={closeConfig}
-                className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+                className="rounded p-1 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-600 dark:hover:text-gray-300"
               >
                 <X size={20} />
               </button>
             </div>
-            <p className="mb-4 text-sm text-gray-600">
+            <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
               {editingUnitData.unitName}
             </p>
 
             {error && (
-              <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+              <div className="mb-4 rounded-md border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30 p-3 text-sm text-red-700 dark:text-red-400">
                 {error}
               </div>
             )}
             {success && (
-              <div className="mb-4 rounded-md border border-green-200 bg-green-50 p-3 text-sm text-green-700">
+              <div className="mb-4 rounded-md border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/30 p-3 text-sm text-green-700 dark:text-green-400">
                 {success}
               </div>
             )}
 
             <div className="space-y-4">
-              {/* PDI Config */}
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
-                  Frequência PDI
-                </label>
-                <select
-                  value={pdiFreq}
-                  onChange={(e) => setPdiFreq(e.target.value)}
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  disabled={loading}
-                >
-                  {FREQUENCY_OPTIONS.map((opt) => (
-                    <option key={`pdi-${opt.value}`} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {pdiFreq && (
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
-                    Data de Início PDI
-                  </label>
-                  <input
-                    type="date"
-                    value={pdiStart}
-                    onChange={(e) => setPdiStart(e.target.value)}
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    disabled={loading}
-                  />
-                </div>
-              )}
-
-              {/* Feedback Config */}
-              <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Frequência Feedback
                 </label>
                 <select
                   value={feedbackFreq}
                   onChange={(e) => setFeedbackFreq(e.target.value)}
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   disabled={loading}
                 >
                   {FREQUENCY_OPTIONS.map((opt) => (
@@ -293,14 +212,14 @@ export function SectorScheduleConfig({ schedules }: SectorScheduleConfigProps) {
 
               {feedbackFreq && (
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Data de Início Feedback
                   </label>
                   <input
                     type="date"
                     value={feedbackStart}
                     onChange={(e) => setFeedbackStart(e.target.value)}
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     disabled={loading}
                   />
                 </div>
@@ -311,7 +230,7 @@ export function SectorScheduleConfig({ schedules }: SectorScheduleConfigProps) {
               <button
                 onClick={closeConfig}
                 disabled={loading}
-                className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
               >
                 Cancelar
               </button>
@@ -336,16 +255,16 @@ function ProgressIndicator({ label, progress }: { label: string; progress: Secto
   return (
     <div>
       <div className="mb-1 flex items-center justify-between">
-        <span className="text-xs font-medium text-gray-600">
+        <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
           {label}: {progress.done}/{progress.total} realizados
         </span>
         {progress.notScheduled > 0 && (
-          <span className="inline-flex rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-medium text-orange-700">
+          <span className="inline-flex rounded-full bg-orange-100 dark:bg-orange-900/30 px-2 py-0.5 text-[10px] font-medium text-orange-700 dark:text-orange-400">
             {progress.notScheduled} não programados
           </span>
         )}
       </div>
-      <div className="flex h-1.5 overflow-hidden rounded-full bg-gray-100">
+      <div className="flex h-1.5 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
         {progress.done > 0 && (
           <div
             className="bg-green-500"

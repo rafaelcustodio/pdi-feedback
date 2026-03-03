@@ -22,7 +22,7 @@ export default async function ConfiguracoesPage() {
       <div>
         <h1 className="text-2xl font-semibold text-gray-900">Configurações</h1>
         <p className="mt-1 text-sm text-gray-600">
-          Gerencie a estrutura organizacional da empresa.
+          Gerencie a estrutura organizacional e recorrência de feedbacks.
         </p>
       </div>
 

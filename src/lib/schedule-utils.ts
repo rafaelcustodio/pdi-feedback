@@ -1,18 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-
-const MONTH_ABBR_PT = [
-  "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
-  "Jul", "Ago", "Set", "Out", "Nov", "Dez",
-];
-
-/**
- * Format a date into a period string like "Mar/2026".
- */
-function formatPeriod(date: Date): string {
-  return `${MONTH_ABBR_PT[date.getMonth()]}/${date.getFullYear()}`;
-}
+import { formatPeriodFromDate } from "@/lib/sector-schedule-pure-utils";
 
 /**
  * Generate scheduled Feedback records for the next 12 months.
@@ -55,7 +44,7 @@ export async function generateScheduledFeedbackEvents(
       employeeId,
       managerId,
       status: "scheduled" as const,
-      period: formatPeriod(date),
+      period: formatPeriodFromDate(date, frequencyMonths),
       scheduledAt: date,
     })),
   });
