@@ -1,0 +1,43 @@
+{
+  "project": "pdi-feedback",
+  "branchName": "ralph/ninebox-inbox",
+  "description": "Nine Box Inbox — Seção no dashboard que lista formulários Nine Box pendentes de resposta e histórico de respondidos, sem depender do e-mail",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Query de avaliações Nine Box do usuário logado",
+      "description": "Como desenvolvedor, preciso de uma server action que retorne os registros NineBoxEvaluator do usuário logado, separados em pendentes e respondidos.",
+      "acceptanceCriteria": [
+        "Adicionar função getMyNineBoxEvaluations() em src/app/(dashboard)/dashboard/actions.ts",
+        "Retornar objeto com dois arrays: pending e completed",
+        "Cada item em pending contém: evaluatorId, evaluateeName (nome do avaliado via NineBoxEvaluation.evaluatee), feedbackPeriod (campo period do Feedback vinculado), createdAt",
+        "Cada item em completed contém os mesmos campos de pending mais completedAt",
+        "Array pending filtra apenas NineBoxEvaluator com status=pending E NineBoxEvaluation.status=open (avaliações encerradas não aparecem como pendentes mesmo que o avaliador não tenha respondido)",
+        "Array completed filtra apenas NineBoxEvaluator com status=completed do usuário logado",
+        "pending ordenado por createdAt ASC; completed ordenado por completedAt DESC",
+        "Filtro aplicado por NineBoxEvaluator.evaluatorId = userId (usuário da sessão)",
+        "Typecheck passes"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": "NineBoxEvaluator → NineBoxEvaluation → Feedback (para period) e NineBoxEvaluation.evaluatee → User (para name). NineBox models acessíveis via prisma.nineBoxEvaluator (any-typed getter em src/lib/prisma.ts e src/generated/prisma/internal/class.ts)."
+    },
+    {
+      "id": "US-002",
+      "title": "Seção Avaliações Nine Box no Dashboard",
+      "description": "Como avaliador, quero ver meus formulários Nine Box pendentes diretamente no dashboard para não depender do e-mail.",
+      "acceptanceCriteria": [
+        "Adicionar seção 'Avaliações Nine Box' na página /dashboard (src/app/(dashboard)/dashboard/page.tsx), renderizada apenas se houver ao menos 1 item em pending ou completed",
+        "Subseção 'Pendentes': título com badge de contagem quando houver itens (ex: 'Pendentes (2)'), lista cada avaliação com nome do avaliado, período do feedback, data do convite e link 'Responder' apontando para /ninebox/[evaluatorId]",
+        "Subseção 'Respondidas': lista avaliações com nome do avaliado, período e data de resposta; sem botão de ação; colapsada por padrão (expandir ao clicar no cabeçalho)",
+        "Seção completamente omitida quando ambos os arrays estão vazios",
+        "Seguir padrão visual do dashboard: card com borda, título com ícone Lucide (sugestão: ClipboardCheck)",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "Passar dados de Nine Box como prop separada ao componente da seção — não alterar o tipo DashboardData. Subseção Respondidas pode usar <details>/<summary> nativo ou useState. Limite de 5 itens em Respondidas na v1."
+    }
+  ]
+}

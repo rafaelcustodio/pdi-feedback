@@ -1,0 +1,47 @@
+## Codebase Patterns
+- Prisma schema at `prisma/schema.prisma`, generated client at `src/generated/prisma/` (gitignored)
+- In this sandboxed dev environment, `prisma generate` and `prisma migrate` cannot download engine binaries (network restricted). Manually create migration SQL and update generated client files (enums.ts, models.ts, model type files) instead.
+- Migration SQL files go in `prisma/migrations/YYYYMMDDHHMMSS_name/migration.sql`
+- Generated enums live in `src/generated/prisma/enums.ts`, model types in `src/generated/prisma/models/`
+- Existing lint errors in theme-provider.tsx and programacao/actions.ts are pre-existing; lint will always show 1 error + 4 warnings
+- Server Actions pattern: `src/app/(dashboard)/[feature]/actions.ts` for mutations/queries
+- Access control: always use `getAccessibleEmployeeIds()` or filter helpers before querying
+- To use NineBox models in Prisma queries, add `nineBoxEvaluation: any; nineBoxEvaluator: any` to `PrismaClientExtended` in `src/lib/prisma.ts` and add delegate getters to `src/generated/prisma/internal/class.ts`
+- Modals follow pattern: `useState` boolean + `fixed inset-0 z-50 bg-black/50` overlay + centered white card
+- NineBox server actions live in `src/app/(dashboard)/feedbacks/ninebox-actions.ts` (separate from main actions.ts) for feedback-related operations
+- NineBox dashboard server actions live in `src/app/(dashboard)/colaboradores/ninebox-actions.ts` for dashboard/reporting data
+- NineBoxGrid is a reusable pure component at `src/components/ninebox-grid.tsx` — takes desempenhoFaixa and potencialFaixa props
+- NineBoxDashboard is a server component at `src/components/ninebox-dashboard.tsx` — takes current and previous NineBoxEvalResult
+- Employee-facing NineBox view uses `src/app/(dashboard)/perfil/actions.ts` for `getMyNineBoxResult` — only returns closed evaluations, strips evaluator details
+- Perfil page uses tab pattern: `PerfilTabs` client component with `useState` for tab switching, server component passes pre-fetched data as ReactNode
+- Routes outside the (dashboard) group (e.g., `/ninebox/[evaluatorId]`) are still auth-protected by middleware matcher; they just don't have the dashboard sidebar/layout
+- For standalone form pages outside the dashboard, create route at `src/app/[feature]/[param]/page.tsx` as a server component that calls `auth()` and renders a client form component
+- Dashboard page at `src/app/(dashboard)/dashboard/page.tsx` uses `getDashboardData()` from `./actions.ts`; `DashboardData` type exported from actions; add new queries alongside existing ones
+- `getMyNineBoxEvaluations()` returns `MyNineBoxEvaluations` type with `pending` and `completed` arrays — types exported from dashboard actions.ts
+---
+
+## 2026-03-02 - US-001
+- Implemented `getMyNineBoxEvaluations()` server action in `src/app/(dashboard)/dashboard/actions.ts`
+- Added types: `NineBoxEvaluationItem`, `NineBoxEvaluationCompletedItem`, `MyNineBoxEvaluations`
+- Queries NineBoxEvaluator by `evaluatorId = userId`, joins through NineBoxEvaluation to get evaluatee name and Feedback period
+- Pending: filters `status=pending` AND `evaluation.status=open`, ordered by `createdAt ASC`
+- Completed: filters `status=completed`, ordered by `completedAt DESC`
+- Files changed: `src/app/(dashboard)/dashboard/actions.ts`
+- **Learnings for future iterations:**
+  - The any-typed Prisma NineBox getters work fine with `include` and nested relations — no special workarounds needed
+  - Use `typeof records[number]` type annotation in `.map()` callbacks to satisfy TypeScript with any-typed Prisma delegates
+---
+
+## 2026-03-02 - US-002
+- Implemented NineBox evaluations section on the dashboard page
+- Created `src/components/ninebox-evaluations-section.tsx` — client component with pending/completed subsections
+- Modified `src/app/(dashboard)/dashboard/page.tsx` — imports component, fetches NineBox data via `getMyNineBoxEvaluations()` in parallel with `getDashboardData()`
+- Pending subsection: shows badge count, evaluatee name, feedback period, invite date, and "Responder" link to `/ninebox/[evaluatorId]`
+- Completed subsection: collapsed by default with chevron toggle (useState), limited to 5 items in v1
+- Section completely omitted when both arrays are empty (null check on parent + component returns null)
+- Files changed: `src/components/ninebox-evaluations-section.tsx` (new), `src/app/(dashboard)/dashboard/page.tsx` (modified)
+- **Learnings for future iterations:**
+  - Dashboard page passes NineBox data as separate prop — does not alter DashboardData type, keeping concerns separated
+  - Use `Promise.all` to parallelize independent server action calls in server components for better perf
+  - The NineBoxEvaluationsSection component imports types directly from dashboard actions.ts — this pattern works for client components importing server action types
+---
