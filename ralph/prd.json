@@ -265,8 +265,8 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 14,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Created change-requests-table.tsx with: table (colaborador, campo, valor antigo/novo, data, status, ações), per-row Aprovar/Rejeitar buttons with confirmation modal, checkbox multi-select + bulk approve/reject, status filter (Todos/Pendente/Aprovado/Rejeitado), search by name, pagination, pending count badge on tab. Added 'Solicitações de Alteração' third tab to colaboradores-tabs.tsx. Updated page.tsx to fetch change requests data + pending count via Promise.all. Field labels and enum values humanized in Portuguese. Dark mode throughout."
     },
     {
       "id": "US-015",

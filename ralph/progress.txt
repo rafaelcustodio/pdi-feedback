@@ -34,6 +34,8 @@
 - ChangeRequest field comparison: serialize profile values to strings for old/new values — booleans as "true"/"false", dates as ISO date string, enums as raw value
 - Pending CR indicators: use `Set<string>` of field names from pendingChangeRequests, show amber PendingBadge component, disable inputs for pending fields
 - Profile edit flow: `getMyPendingChangeRequests` server action fetches pending CRs, passed from page → tabs → perfil-data via props, router.refresh() after save
+- Colaboradores page tabs: `colaboradores-tabs.tsx` — uses URL search params per tab (search/page, psearch/ppage, crsearch/crpage/crstatus) to preserve state across navigation
+- Change requests table: `change-requests-table.tsx` — standalone table component with FIELD_LABELS/ENUM_LABELS maps for Portuguese localization of field names and enum values
 ---
 
 ## 2026-03-03 - US-001
@@ -216,4 +218,29 @@
   - After successful save, `router.refresh()` re-fetches server-side data (profile + pending CRs) and `setEditing(false)` exits edit mode
   - Dependents and emergency contacts remain read-only on the profile page — they're separate models not covered by the scalar ChangeRequest system
   - Shared UI components (`TabHeader`, `MessageBanner`, `PendingBadge`, `ReadField`) keep the 5 tab implementations DRY
+---
+
+## 2026-03-03 - US-014
+- Implemented: HR approval panel for employee change requests as a new tab on the Colaboradores page
+- New component: `src/components/change-requests-table.tsx` — full-featured table with:
+  - Columns: colaborador (name), campo alterado (humanized label), valor antigo, valor novo, data, status (badge), ações
+  - Per-row Aprovar/Rejeitar buttons (pending only) with confirmation modal
+  - Checkbox multi-select for pending rows + bulk approve/reject bar
+  - Status filter buttons (Todos/Pendente/Aprovado/Rejeitado)
+  - Search by employee name
+  - Pagination
+  - Success/error message banners
+  - FIELD_LABELS and ENUM_LABELS maps for Portuguese localization
+- Updated `src/components/colaboradores-tabs.tsx` — added third tab "Solicitações de Alteração" with pending count badge, renders ChangeRequestsTable
+- Updated `src/app/(dashboard)/colaboradores/page.tsx` — extended searchParams for crsearch/crpage/crstatus, fetches getChangeRequests + getPendingChangeRequestsCount via Promise.all, passes all data to ColaboradoresTabs
+- Files changed: `src/components/change-requests-table.tsx` (new), `src/components/colaboradores-tabs.tsx`, `src/app/(dashboard)/colaboradores/page.tsx`
+- **Learnings for future iterations:**
+  - Colaboradores page uses URL search params namespaced per tab: `search`/`page` for employees, `psearch`/`ppage` for pending, `crsearch`/`crpage`/`crstatus` for change requests
+  - Tab switching uses `router.replace` with `tab=<id>` param — each tab's filters are preserved independently
+  - Field label humanization: use FIELD_LABELS record (fieldName → Portuguese label) and ENUM_LABELS nested record (fieldName → {value → label}) for displaying ChangeRequest data
+  - Boolean values from ChangeRequest are stored as "true"/"false" strings — display as "Sim"/"Não"
+  - Date values displayed using `toLocaleDateString("pt-BR", { timeZone: "UTC" })`
+  - Confirmation modal pattern: `confirmAction` state holds {type, id?, bulk?}, modal renders conditionally, executeAction dispatches based on state
+  - `useTransition` from React used for server action calls — `isPending` disables buttons during processing
+  - After server action success, `router.refresh()` re-fetches server component data without navigation
 ---
