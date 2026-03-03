@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getEffectiveAuth } from "@/lib/impersonation";
 import { prisma } from "@/lib/prisma";
 import { getAccessibleEmployeeIds } from "@/lib/access-control";
 
@@ -28,7 +28,7 @@ export async function getCalendarEvents(
   year: number,
   filters?: CalendarFilters
 ): Promise<CalendarEvent[]> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return [];
   }
@@ -158,7 +158,7 @@ export async function getCalendarEvents(
 export async function getCalendarOrgUnits(): Promise<
   { id: string; name: string }[]
 > {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) return [];
 
   const role = (session.user as { role?: string }).role || "employee";

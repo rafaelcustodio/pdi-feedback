@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
+import { getEffectiveAuth } from "@/lib/impersonation";
 import { revalidatePath } from "next/cache";
 
 export type NotificationListItem = {
@@ -21,7 +21,7 @@ export async function getNotifications(
   pageSize: number = 20,
   filter: "all" | "unread" | "read" = "all"
 ): Promise<{ notifications: NotificationListItem[]; total: number }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) return { notifications: [], total: 0 };
 
   const userId = session.user.id;
@@ -57,7 +57,7 @@ export async function getNotifications(
 export async function getRecentNotifications(
   limit: number = 10
 ): Promise<NotificationListItem[]> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) return [];
 
   return prisma.notification.findMany({
@@ -79,7 +79,7 @@ export async function getRecentNotifications(
  * Get the count of unread notifications for the current user.
  */
 export async function getUnreadNotificationCount(): Promise<number> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) return 0;
 
   return prisma.notification.count({
@@ -93,7 +93,7 @@ export async function getUnreadNotificationCount(): Promise<number> {
 export async function markNotificationAsRead(
   notificationId: string
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) return { success: false, error: "Não autenticado" };
 
   const notification = await prisma.notification.findUnique({
@@ -120,7 +120,7 @@ export async function markAllNotificationsAsRead(): Promise<{
   success: boolean;
   error?: string;
 }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) return { success: false, error: "Não autenticado" };
 
   await prisma.notification.updateMany({
@@ -144,7 +144,7 @@ export async function markAllNotificationsAsRead(): Promise<{
 export async function generateScheduleNotifications(): Promise<{
   created: number;
 }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) return { created: 0 };
 
   const now = new Date();

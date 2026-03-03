@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getEffectiveAuth } from "@/lib/impersonation";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { calculatePeriods, getCurrentPeriod } from "@/lib/sector-schedule-utils";
@@ -46,7 +46,7 @@ export async function getOrganizationalUnits(): Promise<{
   tree: OrgUnitNode[];
   flat: { id: string; name: string; parentId: string | null }[];
 }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user || session.user.role !== "admin") {
     throw new Error("Acesso não autorizado");
   }
@@ -68,7 +68,7 @@ export async function createOrganizationalUnit(
   name: string,
   parentId: string | null
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user || session.user.role !== "admin") {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -102,7 +102,7 @@ export async function updateOrganizationalUnit(
   id: string,
   name: string
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user || session.user.role !== "admin") {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -131,7 +131,7 @@ export async function updateOrganizationalUnit(
 export async function deleteOrganizationalUnit(
   id: string
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user || session.user.role !== "admin") {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -191,7 +191,7 @@ const VALID_FREQUENCIES = [1, 2, 3, 6, 12];
 export async function getSectorSchedules(
   unitId: string
 ): Promise<{ pdi: SectorScheduleData | null; feedback: SectorScheduleData | null }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user || session.user.role !== "admin") {
     throw new Error("Acesso não autorizado");
   }
@@ -220,7 +220,7 @@ export async function saveSectorSchedule(params: {
   startDate: Date;
   isActive: boolean;
 }): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user || session.user.role !== "admin") {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -275,7 +275,7 @@ export type SectorScheduleSummary = {
 
 
 export async function getAllSectorSchedules(): Promise<SectorScheduleSummary[]> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user || session.user.role !== "admin") {
     throw new Error("Acesso não autorizado");
   }
@@ -372,7 +372,7 @@ export async function deleteSectorSchedule(
   unitId: string,
   type: "pdi" | "feedback"
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user || session.user.role !== "admin") {
     return { success: false, error: "Acesso não autorizado" };
   }

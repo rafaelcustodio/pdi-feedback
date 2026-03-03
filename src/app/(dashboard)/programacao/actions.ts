@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getEffectiveAuth } from "@/lib/impersonation";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { getAccessibleEmployeeIds, canAccessEmployee } from "@/lib/access-control";
@@ -29,7 +29,7 @@ export async function getSectorComplianceStatus(
   periodEnd: Date,
   type: "pdi" | "feedback"
 ): Promise<{ success: boolean; error?: string; data?: ComplianceEmployee[] }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -185,7 +185,7 @@ export async function programEvents(params: {
   direction: "end-to-start" | "last-month-start";
   dryRun?: boolean;
 }): Promise<ProgramEventsResult> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado", created: 0, skipped: 0, events: [] };
   }
@@ -353,7 +353,7 @@ export interface AccessibleUnit {
 }
 
 export async function getAccessibleUnits(): Promise<AccessibleUnit[]> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) return [];
 
   const role = (session.user as { role?: string }).role || "employee";
@@ -398,7 +398,7 @@ export async function getUnitPeriods(
   unitId: string,
   type: "pdi" | "feedback"
 ): Promise<PeriodOption[]> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) return [];
 
   const sectorSchedule = await prisma.sectorSchedule.findUnique({

@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getEffectiveAuth } from "@/lib/impersonation";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import {
@@ -106,7 +106,7 @@ export async function getPDIs(
   page: number;
   pageSize: number;
 }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { pdis: [], total: 0, page: 1, pageSize: 10 };
   }
@@ -193,7 +193,7 @@ export async function getPDIs(
 }
 
 export async function getPDIById(id: string): Promise<PDIDetail | null> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) return null;
 
   const userId = session.user.id;
@@ -287,7 +287,7 @@ export async function getPDIById(id: string): Promise<PDIDetail | null> {
 }
 
 export async function getSubordinatesForPDI(): Promise<SubordinateOption[]> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) return [];
 
   const userId = session.user.id;
@@ -323,7 +323,7 @@ export async function getSubordinatesForPDI(): Promise<SubordinateOption[]> {
 export async function getOrCreatePDI(
   employeeId: string
 ): Promise<{ success: boolean; error?: string; pdi?: PDIDetail }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -462,7 +462,7 @@ export async function addGoal(
   pdiId: string,
   data: GoalInput
 ): Promise<{ success: boolean; error?: string; goalId?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -526,7 +526,7 @@ export async function updatePDI(
     goals: GoalInput[];
   }
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -640,7 +640,7 @@ export async function addEvidence(
   goalId: string,
   description: string
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -687,7 +687,7 @@ export async function addComment(
   pdiId: string,
   content: string
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -737,7 +737,7 @@ export async function updateGoalStatus(
   goalId: string,
   newStatus: "pending" | "in_progress" | "completed"
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -794,7 +794,7 @@ export async function updateGoal(
     achievedResults?: string;
   }
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -856,7 +856,7 @@ export async function updateComment(
   commentId: string,
   content: string
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -892,7 +892,7 @@ export async function updateEvidence(
   evidenceId: string,
   description: string
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -942,7 +942,7 @@ export type FollowUpDetail = {
 export async function getFollowUps(
   pdiId: string
 ): Promise<{ success: boolean; error?: string; followUps?: FollowUpDetail[] }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -983,7 +983,7 @@ export async function scheduleFollowUp(
   scheduledAt: string,
   scheduledTime: string = "09:00"
 ): Promise<{ success: boolean; error?: string; id?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -1072,7 +1072,7 @@ export async function completeFollowUp(
   notes: string,
   conductedAt: string
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -1113,7 +1113,7 @@ export async function completeFollowUp(
 export async function cancelFollowUp(
   followUpId: string
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -1156,7 +1156,7 @@ export async function cancelFollowUp(
 export async function cancelPDI(
   pdiId: string
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
   }

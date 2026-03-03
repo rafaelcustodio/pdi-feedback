@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
+import { getEffectiveAuth } from "@/lib/impersonation";
 import { computeSubordinates } from "@/lib/hierarchy-utils";
 
 
@@ -98,7 +98,7 @@ export async function getFeedbackAccessFilter(
  * Returns null if not authenticated.
  */
 export async function getSessionAccessControl() {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) return null;
 
   const userId = session.user.id;

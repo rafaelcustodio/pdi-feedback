@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getEffectiveAuth } from "@/lib/impersonation";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import {
@@ -68,7 +68,7 @@ export async function getFeedbacks(
   page: number;
   pageSize: number;
 }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { feedbacks: [], total: 0, page: 1, pageSize: 10 };
   }
@@ -196,7 +196,7 @@ export async function getFeedbacks(
 export async function getFeedbackById(
   id: string
 ): Promise<FeedbackDetail | null> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) return null;
 
   const userId = session.user.id;
@@ -244,7 +244,7 @@ export async function getFeedbackById(
 }
 
 export async function getSubordinatesForFeedback(): Promise<SubordinateOption[]> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) return [];
 
   const userId = session.user.id;
@@ -284,7 +284,7 @@ export async function createFeedback(data: {
   scheduledAt: string;
   submit?: boolean;
 }): Promise<{ success: boolean; error?: string; id?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -367,7 +367,7 @@ export async function updateFeedback(
     submit?: boolean;
   }
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -443,7 +443,7 @@ export async function updateFeedback(
 }
 
 export async function getAvailableYears(): Promise<number[]> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) return [];
 
   const userId = session.user.id;
@@ -489,7 +489,7 @@ export async function scheduleFeedback(
   id: string,
   scheduledAt: string
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -562,7 +562,7 @@ export async function createFutureFeedback(data: {
   scheduledAt: string;
   scheduledTime?: string;
 }): Promise<{ success: boolean; error?: string; id?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -675,7 +675,7 @@ export async function createFutureFeedback(data: {
 }
 
 export async function getScheduledFeedbackCountForEmployee(): Promise<number> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) return 0;
 
   const userId = session.user.id;
@@ -702,7 +702,7 @@ export async function rescheduleFeedback(
   id: string,
   newDate: string
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -778,7 +778,7 @@ export async function rescheduleFeedback(
 export async function cancelScheduledFeedback(
   id: string
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -845,7 +845,7 @@ export async function cancelScheduledFeedback(
 export async function cancelScheduleFeedback(
   id: string
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
   }

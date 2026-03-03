@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getEffectiveAuth } from "@/lib/impersonation";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { removeScheduledFeedbackEvents } from "@/lib/schedule-utils";
@@ -73,7 +73,7 @@ export type HierarchyNode = {
 };
 
 async function requireAdmin() {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user || session.user.role !== "admin") {
     return null;
   }
@@ -583,7 +583,7 @@ export async function reactivateEmployee(
 export async function getEmployeeActivePDI(
   employeeId: string
 ): Promise<{ id: string } | null> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user) return null;
   return prisma.pDI.findFirst({
     where: { employeeId, status: "active" },

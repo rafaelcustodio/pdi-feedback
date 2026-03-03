@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
+import { getEffectiveAuth } from "@/lib/impersonation";
 
 type Faixa = "baixo" | "medio" | "alto";
 
@@ -36,7 +36,7 @@ export async function getMyNineBoxResult(): Promise<{
   data?: MyNineBoxResult;
   error?: string;
 }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) return { error: "Não autenticado" };
 
   const userId = session.user.id;

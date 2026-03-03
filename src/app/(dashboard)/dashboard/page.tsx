@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { getEffectiveAuth } from "@/lib/impersonation";
 import { getDashboardData, getMyNineBoxEvaluations } from "./actions";
 import {
   Users,
@@ -15,7 +15,7 @@ import Link from "next/link";
 import NineBoxEvaluationsSection from "@/components/ninebox-evaluations-section";
 
 export default async function DashboardPage() {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user) redirect("/login");
 
   const [data, nineBoxEvals] = await Promise.all([

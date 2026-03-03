@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
+import { getEffectiveAuth } from "@/lib/impersonation";
 import {
   getAccessibleEmployeeIds,
   getPDIAccessFilter,
@@ -54,7 +54,7 @@ export type MyNineBoxEvaluations = {
 };
 
 export async function getMyNineBoxEvaluations(): Promise<MyNineBoxEvaluations | null> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) return null;
 
   const userId = session.user.id;
@@ -115,7 +115,7 @@ export async function getMyNineBoxEvaluations(): Promise<MyNineBoxEvaluations | 
 }
 
 export async function getDashboardData(): Promise<DashboardData | null> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) return null;
 
   const userId = session.user.id;

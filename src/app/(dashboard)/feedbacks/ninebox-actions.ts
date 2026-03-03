@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getEffectiveAuth } from "@/lib/impersonation";
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
 import { buildNineBoxInviteHtml } from "@/lib/email-templates";
@@ -27,7 +27,7 @@ export type EvaluatorCandidate = {
 export async function getNineBoxStatus(
   feedbackId: string
 ): Promise<NineBoxStatusData | null> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) return null;
 
   const evaluation = await prisma.nineBoxEvaluation.findUnique({
@@ -63,7 +63,7 @@ export async function getNineBoxStatus(
 export async function getEvaluatorCandidates(
   feedbackId: string
 ): Promise<EvaluatorCandidate[]> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) return [];
 
   const role = (session.user as { role?: string }).role || "employee";
@@ -93,7 +93,7 @@ export async function startNineBoxEvaluation(
   feedbackId: string,
   evaluatorIds: string[]
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -199,7 +199,7 @@ export async function startNineBoxEvaluation(
 export async function closeNineBoxEvaluation(
   evaluationId: string
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
   }
@@ -260,7 +260,7 @@ export type NineBoxEvaluatorFormData = {
 export async function getNineBoxEvaluatorData(
   evaluatorId: string
 ): Promise<{ data?: NineBoxEvaluatorFormData; error?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { error: "not_authenticated" };
   }
@@ -318,7 +318,7 @@ export async function submitNineBoxResponse(
   evaluatorId: string,
   responses: NineBoxResponseInput
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user?.id) {
     return { success: false, error: "Acesso não autorizado" };
   }

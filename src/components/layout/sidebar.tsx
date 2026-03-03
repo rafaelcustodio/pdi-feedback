@@ -23,6 +23,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { useTheme } from "@/components/providers/theme-provider";
+import { ImpersonationSelector } from "@/components/impersonation-selector";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -32,6 +33,7 @@ interface SidebarProps {
   userName?: string;
   avatarUrl?: string | null;
   notificationCount?: number;
+  isAdmin?: boolean;
 }
 
 const navItems = [
@@ -82,6 +84,7 @@ export function Sidebar({
   userName = "Usuário",
   avatarUrl,
   notificationCount = 0,
+  isAdmin = false,
 }: SidebarProps) {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
@@ -375,6 +378,9 @@ export function Sidebar({
                   <Settings size={15} />
                   Configurações
                 </Link>
+              )}
+              {isAdmin && (
+                <ImpersonationSelector onClose={() => setUserMenuOpen(false)} />
               )}
               <div className="my-1 border-t border-gray-100 dark:border-[#1e2535]" />
               <button
