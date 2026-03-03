@@ -745,6 +745,19 @@ export async function rescheduleFeedback(
     data: { scheduledAt: scheduledDate },
   });
 
+  // Update Outlook calendar event if one exists
+  if (feedback.outlookEventId) {
+    const token = await getUserToken(userId);
+    if (token) {
+      const startDateTime = `${newDate}T09:00:00`;
+      const endDateTime = `${newDate}T10:00:00`;
+      await updateCalendarEvent(token, feedback.outlookEventId, {
+        start: { dateTime: startDateTime, timeZone: "America/Sao_Paulo" },
+        end: { dateTime: endDateTime, timeZone: "America/Sao_Paulo" },
+      });
+    }
+  }
+
   // Notify employee
   const dateStr = scheduledDate.toLocaleDateString("pt-BR");
   await prisma.notification.create({
@@ -800,6 +813,14 @@ export async function cancelScheduledFeedback(
       where: { id },
       data: { scheduledAt: null, status: "draft" },
     });
+  }
+
+  // Delete Outlook calendar event if one exists
+  if (feedback.outlookEventId) {
+    const token = await getUserToken(userId);
+    if (token) {
+      await deleteCalendarEvent(token, feedback.outlookEventId);
+    }
   }
 
   // Notify employee
