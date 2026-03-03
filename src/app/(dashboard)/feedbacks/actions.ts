@@ -9,6 +9,13 @@ import {
   canAccessEmployee,
 } from "@/lib/access-control";
 import { recalculateFeedbackSchedule } from "@/lib/schedule-utils";
+import {
+  getUserToken,
+  createCalendarEvent,
+  deleteCalendarEvent,
+  updateCalendarEvent,
+} from "@/lib/microsoft-graph";
+import type { GraphCalendarEvent } from "@/lib/microsoft-graph";
 
 export type FeedbackListItem = {
   id: string;
@@ -586,9 +593,9 @@ export async function createFutureFeedback(data: {
     return { success: false, error: "A data de agendamento deve ser uma data futura" };
   }
 
-  // Get employee and manager names for notifications
+  // Get employee and manager names for notifications and calendar events
   const [employee, manager] = await Promise.all([
-    prisma.user.findUnique({ where: { id: data.employeeId }, select: { name: true } }),
+    prisma.user.findUnique({ where: { id: data.employeeId }, select: { name: true, email: true } }),
     prisma.user.findUnique({ where: { id: userId }, select: { name: true } }),
   ]);
 
@@ -617,6 +624,51 @@ export async function createFutureFeedback(data: {
       message: `Seu gestor ${manager.name} agendou um feedback para ${scheduledDateStr}. [feedback_future_${feedback.id}]`,
     },
   });
+
+  // Create Outlook calendar events for manager and employee
+  const scheduledTime = data.scheduledTime || "09:00";
+  const startDateTime = `${data.scheduledAt}T${scheduledTime}:00`;
+  const [hours, minutes] = scheduledTime.split(":").map(Number);
+  const endHours = hours + 1;
+  const endDateTime = `${data.scheduledAt}T${String(endHours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00`;
+
+  const calendarEvent: GraphCalendarEvent = {
+    subject: `Feedback — ${employee.name}`,
+    start: { dateTime: startDateTime, timeZone: "America/Sao_Paulo" },
+    end: { dateTime: endDateTime, timeZone: "America/Sao_Paulo" },
+    body: {
+      contentType: "text",
+      content: `Feedback agendado pelo sistema. Acesse: ${process.env.NEXTAUTH_URL}/feedbacks/${feedback.id}`,
+    },
+    attendees: [
+      { emailAddress: { address: employee.email, name: employee.name }, type: "required" },
+    ],
+  };
+
+  const [managerToken, employeeToken] = await Promise.allSettled([
+    getUserToken(userId),
+    getUserToken(data.employeeId),
+  ]);
+
+  const managerAccessToken = managerToken.status === "fulfilled" ? managerToken.value : null;
+  const employeeAccessToken = employeeToken.status === "fulfilled" ? employeeToken.value : null;
+
+  const eventPromises: Promise<string | null>[] = [];
+  if (managerAccessToken) eventPromises.push(createCalendarEvent(managerAccessToken, calendarEvent));
+  if (employeeAccessToken) eventPromises.push(createCalendarEvent(employeeAccessToken, calendarEvent));
+
+  const results = await Promise.allSettled(eventPromises);
+
+  // Save manager's outlookEventId if available
+  if (managerAccessToken && results.length > 0) {
+    const managerResult = results[0];
+    if (managerResult.status === "fulfilled" && managerResult.value) {
+      await prisma.feedback.update({
+        where: { id: feedback.id },
+        data: { outlookEventId: managerResult.value },
+      });
+    }
+  }
 
   revalidatePath("/feedbacks");
   return { success: true, id: feedback.id };
