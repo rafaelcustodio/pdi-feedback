@@ -1617,3 +1617,365 @@ export async function updateEmployeeEmergencyContacts(
   revalidatePath("/perfil");
   return { success: true };
 }
+
+// ============================================================
+// US-010: ChangeRequest CRUD + approval workflow
+// ============================================================
+
+export type ChangeRequestItem = {
+  id: string;
+  userId: string;
+  userName: string;
+  fieldName: string;
+  oldValue: string | null;
+  newValue: string | null;
+  status: string;
+  reviewedById: string | null;
+  reviewedByName: string | null;
+  reviewedAt: Date | null;
+  createdAt: Date;
+};
+
+/**
+ * Creates a change request for a field modification.
+ * Employee can only create for themselves.
+ */
+export async function createChangeRequest(
+  userId: string,
+  fieldName: string,
+  oldValue: string | null,
+  newValue: string | null
+): Promise<{ success: boolean; error?: string; id?: string }> {
+  const session = await getEffectiveAuth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Não autenticado" };
+  }
+
+  const role = (session.user as { role?: string }).role || "employee";
+  const currentUserId = session.user.id;
+
+  // Employee can only create change requests for themselves
+  if (role !== "admin" && currentUserId !== userId) {
+    return { success: false, error: "Você só pode solicitar alterações para seus próprios dados" };
+  }
+
+  // Check if there's already a pending request for this field
+  const existing = await prisma.changeRequest.findFirst({
+    where: {
+      userId,
+      fieldName,
+      status: "pending",
+    },
+  });
+
+  if (existing) {
+    return { success: false, error: "Já existe uma solicitação pendente para este campo" };
+  }
+
+  const changeRequest = await prisma.changeRequest.create({
+    data: {
+      userId,
+      fieldName,
+      oldValue,
+      newValue,
+      status: "pending",
+    },
+  });
+
+  revalidatePath("/colaboradores");
+  revalidatePath("/perfil");
+  return { success: true, id: changeRequest.id };
+}
+
+/**
+ * Lists change requests with optional filters.
+ * Admin sees all; employee sees only their own.
+ */
+export async function getChangeRequests(
+  filters?: {
+    status?: string;
+    search?: string;
+    page?: number;
+    pageSize?: number;
+  }
+): Promise<{
+  requests: ChangeRequestItem[];
+  total: number;
+  page: number;
+  pageSize: number;
+}> {
+  const session = await getEffectiveAuth();
+  if (!session?.user?.id) {
+    return { requests: [], total: 0, page: 1, pageSize: 10 };
+  }
+
+  const role = (session.user as { role?: string }).role || "employee";
+  const currentUserId = session.user.id;
+  const page = filters?.page ?? 1;
+  const pageSize = filters?.pageSize ?? 10;
+
+  const where: Record<string, unknown> = {};
+
+  // Non-admin users can only see their own requests
+  if (role !== "admin") {
+    where.userId = currentUserId;
+  }
+
+  if (filters?.status) {
+    where.status = filters.status;
+  }
+
+  if (filters?.search?.trim()) {
+    where.user = {
+      name: { contains: filters.search.trim(), mode: "insensitive" },
+    };
+  }
+
+  const [requests, total] = await Promise.all([
+    prisma.changeRequest.findMany({
+      where,
+      include: {
+        user: { select: { name: true } },
+        reviewedBy: { select: { name: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    }),
+    prisma.changeRequest.count({ where }),
+  ]);
+
+  return {
+    requests: requests.map((r) => ({
+      id: r.id,
+      userId: r.userId,
+      userName: r.user.name,
+      fieldName: r.fieldName,
+      oldValue: r.oldValue,
+      newValue: r.newValue,
+      status: r.status,
+      reviewedById: r.reviewedById,
+      reviewedByName: r.reviewedBy?.name ?? null,
+      reviewedAt: r.reviewedAt,
+      createdAt: r.createdAt,
+    })),
+    total,
+    page,
+    pageSize,
+  };
+}
+
+/**
+ * Approves a change request — admin only.
+ * Updates the User field and marks the request as approved.
+ */
+export async function approveChangeRequest(
+  changeRequestId: string
+): Promise<{ success: boolean; error?: string }> {
+  const session = await requireAdmin();
+  if (!session) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const changeRequest = await prisma.changeRequest.findUnique({
+    where: { id: changeRequestId },
+  });
+
+  if (!changeRequest) {
+    return { success: false, error: "Solicitação não encontrada" };
+  }
+
+  if (changeRequest.status !== "pending") {
+    return { success: false, error: "Solicitação já foi processada" };
+  }
+
+  // Apply the change to the User record
+  const fieldName = changeRequest.fieldName;
+  const newValue = changeRequest.newValue;
+
+  const updateData: Record<string, unknown> = {};
+  updateData[fieldName] = parseChangeRequestValue(fieldName, newValue);
+
+  await prisma.$transaction([
+    prisma.user.update({
+      where: { id: changeRequest.userId },
+      data: updateData,
+    }),
+    prisma.changeRequest.update({
+      where: { id: changeRequestId },
+      data: {
+        status: "approved",
+        reviewedById: session.user.id,
+        reviewedAt: new Date(),
+      },
+    }),
+  ]);
+
+  revalidatePath("/colaboradores");
+  revalidatePath(`/colaboradores/${changeRequest.userId}`);
+  revalidatePath("/perfil");
+  return { success: true };
+}
+
+/**
+ * Rejects a change request — admin only.
+ */
+export async function rejectChangeRequest(
+  changeRequestId: string
+): Promise<{ success: boolean; error?: string }> {
+  const session = await requireAdmin();
+  if (!session) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const changeRequest = await prisma.changeRequest.findUnique({
+    where: { id: changeRequestId },
+  });
+
+  if (!changeRequest) {
+    return { success: false, error: "Solicitação não encontrada" };
+  }
+
+  if (changeRequest.status !== "pending") {
+    return { success: false, error: "Solicitação já foi processada" };
+  }
+
+  await prisma.changeRequest.update({
+    where: { id: changeRequestId },
+    data: {
+      status: "rejected",
+      reviewedById: session.user.id,
+      reviewedAt: new Date(),
+    },
+  });
+
+  revalidatePath("/colaboradores");
+  revalidatePath("/perfil");
+  return { success: true };
+}
+
+/**
+ * Bulk approve multiple change requests — admin only.
+ */
+export async function bulkApproveChangeRequests(
+  ids: string[]
+): Promise<{ success: boolean; error?: string; approved: number }> {
+  const session = await requireAdmin();
+  if (!session) {
+    return { success: false, error: "Acesso não autorizado", approved: 0 };
+  }
+
+  if (ids.length === 0) {
+    return { success: true, approved: 0 };
+  }
+
+  const requests = await prisma.changeRequest.findMany({
+    where: { id: { in: ids }, status: "pending" },
+  });
+
+  if (requests.length === 0) {
+    return { success: true, approved: 0 };
+  }
+
+  // Apply each change in a transaction
+  const operations = requests.flatMap((r) => {
+    const updateData: Record<string, unknown> = {};
+    updateData[r.fieldName] = parseChangeRequestValue(r.fieldName, r.newValue);
+
+    return [
+      prisma.user.update({
+        where: { id: r.userId },
+        data: updateData,
+      }),
+      prisma.changeRequest.update({
+        where: { id: r.id },
+        data: {
+          status: "approved",
+          reviewedById: session.user.id,
+          reviewedAt: new Date(),
+        },
+      }),
+    ];
+  });
+
+  await prisma.$transaction(operations);
+
+  revalidatePath("/colaboradores");
+  revalidatePath("/perfil");
+  return { success: true, approved: requests.length };
+}
+
+/**
+ * Bulk reject multiple change requests — admin only.
+ */
+export async function bulkRejectChangeRequests(
+  ids: string[]
+): Promise<{ success: boolean; error?: string; rejected: number }> {
+  const session = await requireAdmin();
+  if (!session) {
+    return { success: false, error: "Acesso não autorizado", rejected: 0 };
+  }
+
+  if (ids.length === 0) {
+    return { success: true, rejected: 0 };
+  }
+
+  const result = await prisma.changeRequest.updateMany({
+    where: { id: { in: ids }, status: "pending" },
+    data: {
+      status: "rejected",
+      reviewedById: session.user.id,
+      reviewedAt: new Date(),
+    },
+  });
+
+  revalidatePath("/colaboradores");
+  revalidatePath("/perfil");
+  return { success: true, rejected: result.count };
+}
+
+/**
+ * Returns the count of pending change requests.
+ * Admin sees total count; employee sees own count.
+ */
+export async function getPendingChangeRequestsCount(): Promise<number> {
+  const session = await getEffectiveAuth();
+  if (!session?.user?.id) return 0;
+
+  const role = (session.user as { role?: string }).role || "employee";
+  const where: Record<string, unknown> = { status: "pending" };
+
+  if (role !== "admin") {
+    where.userId = session.user.id;
+  }
+
+  return prisma.changeRequest.count({ where });
+}
+
+// ---- Helpers for ChangeRequest ----
+
+/** Boolean field names in the User model */
+const BOOLEAN_FIELDS = new Set([
+  "hasOtherEmployment", "wantsTransportVoucher", "hasChildren",
+  "hasIRDependents", "participateInVideos",
+]);
+
+/** Date field names in the User model */
+const DATE_FIELDS = new Set(["birthDate", "admissionDate"]);
+
+/**
+ * Parses a string value from a ChangeRequest into the correct type for the User model field.
+ */
+function parseChangeRequestValue(fieldName: string, value: string | null): unknown {
+  if (value === null || value === "") return null;
+
+  if (BOOLEAN_FIELDS.has(fieldName)) {
+    return value === "true";
+  }
+
+  if (DATE_FIELDS.has(fieldName)) {
+    return new Date(value);
+  }
+
+  return value;
+}
