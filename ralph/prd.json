@@ -244,8 +244,8 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 13,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Added edit mode to all 5 profile tabs. Tabs 1-4 (Dados Pessoais, Endereço, Financeiro, Família) create ChangeRequests for each changed field via createChangeRequest server action. Tab 5 (Sobre Mim) saves directly via updateEmployeeProfile. Pending CRs shown as amber 'Pendente' badges on fields in both read and edit mode. Fields with pending CRs are disabled in edit mode. Success message 'Alteração enviada para aprovação do RH' shown after submitting. New getMyPendingChangeRequests server action fetches pending CRs for current user. router.refresh() reloads data after save."
     },
     {
       "id": "US-014",
