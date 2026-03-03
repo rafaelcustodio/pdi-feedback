@@ -14,9 +14,14 @@
 - Role-based field filtering: `isRestricted = role === "manager" && !isOwnProfile` — restricted users see null for sensitive fields
 - updateEmployeeDependents/EmergencyContacts pattern: diff incoming vs existing IDs → delete removed, update existing, create new
 - Pre-existing lint errors (7 errors, 8 warnings) and 8 test failures in sector-schedule-utils.test.ts — not caused by our changes
+- Enum fields in Prisma create/update: use `(value as never) || null` to satisfy type-checker for enum columns
+- Boolean fields in Prisma: use `data.field ?? null` (not `|| null`) since `false` is a valid value
 - Employee form tabs: uses simple `activeTab` state (0-4), all form state at top level so switching tabs preserves data
 - Dark mode in forms: use shared CSS class strings (`inputClass`, `labelClass`, `sectionClass`) for consistency
 - Enum select options: defined as const arrays at module scope (e.g., `GENDER_OPTIONS`, `ETHNICITY_OPTIONS`)
+- Dynamic list pattern (dependents/contacts): use array state + map with index for editing, filter on idx !== i for removal, spread + new item for addition
+- Form types for dynamic lists: define separate types (DependentFormItem, EmergencyContactFormItem) with optional `id` for new vs existing items
+- getEmployeeById includes `dependents` and `emergencyContacts` with select/orderBy for the edit page
 ---
 
 ## 2026-03-03 - US-001
@@ -83,9 +88,39 @@
   - Dark mode: use shared CSS class variables (`inputClass`, `labelClass`, `sectionClass`) to ensure consistent dark mode across all sections
   - Age is calculated client-side from birthDate using `calculateAge()` — displayed as read-only input
   - Enum select options are defined as const arrays (GENDER_OPTIONS, ETHNICITY_OPTIONS, etc.) at module scope
-  - Tabs 3-5 have placeholder content — will be implemented in US-007, US-008, US-009
+  - Tabs 4-5 have placeholder content — will be implemented in US-008, US-009
   - Tab 2 already has the address/contact fields wired up (moved from old flat layout)
+  - Tab 3 fully implemented with conditional bank fields and all Financial/Benefits fields
   - `void` expressions used to suppress unused variable warnings for state declared for future tabs
   - The `name` field is in Tab 1 (Dados Pessoais), while `email` is in System Data section
   - EmployeeDetail type was extended with ALL new HR fields (not just Tab 1 fields) to avoid repeat changes in future stories
+---
+
+## 2026-03-03 - US-007
+- Implemented: Tab 2 (Endereço e Contato) — already had UI from US-006, verified all fields present. Tab 3 (Financeiro e Benefícios) — replaced placeholder with full form: Conta Bradesco (select), agência/conta (conditional on "sim"), outro emprego (checkbox), plano saúde Unimed (select), vale transporte (checkbox), formato contratação (select), tamanho camiseta (select).
+- Updated createEmployee and updateEmployee server actions to accept and persist all new fields (Tab 1 personal data + Tab 2 address/contact + Tab 3 financial/benefits).
+- Files changed: `src/components/employee-form.tsx`, `src/app/(dashboard)/colaboradores/actions.ts`
+- **Learnings for future iterations:**
+  - Enum fields use `as never` cast to satisfy Prisma's enum type expectations (e.g., `(data.gender as never) || null`)
+  - Tab 2 was already fully implemented in US-006 — only needed to wire up save calls
+  - Conditional fields pattern: use `{hasBradescoAccount === "sim" && (<>...</>)}` for showing/hiding bank fields
+  - Boolean fields (hasOtherEmployment, wantsTransportVoucher) use `?? null` instead of `|| null` since `false` is a valid value
+  - New enum option arrays (BANK_ACCOUNT_OPTIONS, HEALTH_PLAN_OPTIONS, CONTRACT_TYPE_OPTIONS, SHIRT_SIZE_OPTIONS) follow same pattern as existing ones
+---
+
+## 2026-03-03 - US-008
+- Implemented: Tab 4 (Família e Dependentes) with full dynamic list management for IR dependents and emergency contacts
+- Tab sections: hasChildren checkbox + conditional childrenAges field, hasIRDependents checkbox + dynamic dependents list (name/relationship/CPF with mask), emergency contacts list (name/phone with mask/relationship)
+- Updated `getEmployeeById` to include `dependents` and `emergencyContacts` relations in the Prisma query
+- Updated `EmployeeDetail` type with `dependents: DependentData[]` and `emergencyContacts: EmergencyContactData[]`
+- Added `hasChildren`, `childrenAges`, `hasIRDependents` to both `createEmployee` and `updateEmployee` server action signatures and Prisma calls
+- Updated edit page (`[id]/page.tsx`) to pass dependents and emergencyContacts to the form
+- Save logic: after main user save, calls `updateEmployeeDependents` and `updateEmployeeEmergencyContacts` — for create mode uses the returned ID, for edit uses initialData ID
+- Files changed: `src/components/employee-form.tsx`, `src/app/(dashboard)/colaboradores/actions.ts`, `src/app/(dashboard)/colaboradores/[id]/page.tsx`
+- **Learnings for future iterations:**
+  - Dynamic list UI pattern: array state + map with index, Trash2 icon per item, Plus button at bottom — wrap each item in a bordered card for visual grouping
+  - Form types for dynamic lists: separate types (DependentFormItem, EmergencyContactFormItem) with optional `id` to distinguish new vs existing records
+  - When saving related entities after create: use `result.id` from createEmployee return value
+  - `getEmployeeById` now includes dependents and emergencyContacts — no need to make separate calls for the edit form
+  - The void suppressions for Tab 4 state variables were removed since they're now used in the JSX
 ---

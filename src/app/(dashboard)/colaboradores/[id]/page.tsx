@@ -81,6 +81,8 @@ export default async function EditarColaboradorPage({
           foodAllergies: employee.foodAllergies ?? undefined,
           hasPets: employee.hasPets ?? undefined,
           participateInVideos: employee.participateInVideos ?? undefined,
+          dependents: employee.dependents,
+          emergencyContacts: employee.emergencyContacts,
         }}
       />
       {employee.evaluationMode === "pdi" && (

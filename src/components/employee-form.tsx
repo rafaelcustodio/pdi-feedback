@@ -2,12 +2,14 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Save, ArrowLeft } from "lucide-react";
+import { Save, ArrowLeft, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 import {
   createEmployee,
   updateEmployee,
   getManagerCandidates,
+  updateEmployeeDependents,
+  updateEmployeeEmergencyContacts,
 } from "@/app/(dashboard)/colaboradores/actions";
 
 const UF_OPTIONS = [
@@ -173,8 +175,24 @@ interface EmployeeFormProps {
     foodAllergies?: string;
     hasPets?: string;
     participateInVideos?: boolean;
+    dependents?: { id: string; name: string; relationship: string; cpf: string | null }[];
+    emergencyContacts?: { id: string; name: string; phone: string; relationship: string | null }[];
   };
 }
+
+type DependentFormItem = {
+  id?: string;
+  name: string;
+  relationship: string;
+  cpf: string;
+};
+
+type EmergencyContactFormItem = {
+  id?: string;
+  name: string;
+  phone: string;
+  relationship: string;
+};
 
 export function EmployeeForm({ mode, orgUnits, isPending = false, initialData }: EmployeeFormProps) {
   const router = useRouter();
@@ -221,10 +239,26 @@ export function EmployeeForm({ mode, orgUnits, isPending = false, initialData }:
   const [contractType, setContractType] = useState(initialData?.contractType ?? "");
   const [shirtSize, setShirtSize] = useState(initialData?.shirtSize ?? "");
 
-  // Tab 4: Family & Dependents (will be implemented in US-008)
+  // Tab 4: Family & Dependents
   const [hasChildren, setHasChildren] = useState(initialData?.hasChildren ?? false);
   const [childrenAges, setChildrenAges] = useState(initialData?.childrenAges ?? "");
   const [hasIRDependents, setHasIRDependents] = useState(initialData?.hasIRDependents ?? false);
+  const [dependents, setDependents] = useState<DependentFormItem[]>(
+    initialData?.dependents?.map((d) => ({
+      id: d.id,
+      name: d.name,
+      relationship: d.relationship,
+      cpf: d.cpf ? maskCPF(d.cpf) : "",
+    })) ?? []
+  );
+  const [emergencyContacts, setEmergencyContacts] = useState<EmergencyContactFormItem[]>(
+    initialData?.emergencyContacts?.map((c) => ({
+      id: c.id,
+      name: c.name,
+      phone: maskPhone(c.phone),
+      relationship: c.relationship ?? "",
+    })) ?? []
+  );
 
   // Tab 5: About Me (will be implemented in US-009)
   const [hobbies] = useState<string[]>(initialData?.hobbies ?? []);
@@ -309,7 +343,30 @@ export function EmployeeForm({ mode, orgUnits, isPending = false, initialData }:
         wantsTransportVoucher,
         contractType: contractType || undefined,
         shirtSize: shirtSize || undefined,
+        hasChildren,
+        childrenAges: childrenAges || undefined,
+        hasIRDependents,
       });
+
+      // Save dependents and emergency contacts for newly created employee
+      if (result.success && result.id) {
+        const depData = dependents.filter((d) => d.name.trim());
+        if (depData.length > 0) {
+          await updateEmployeeDependents(result.id, depData.map((d) => ({
+            name: d.name,
+            relationship: d.relationship,
+            cpf: d.cpf || null,
+          })));
+        }
+        const contactData = emergencyContacts.filter((c) => c.name.trim());
+        if (contactData.length > 0) {
+          await updateEmployeeEmergencyContacts(result.id, contactData.map((c) => ({
+            name: c.name,
+            phone: c.phone,
+            relationship: c.relationship || null,
+          })));
+        }
+      }
     } else {
       result = await updateEmployee(initialData!.id, {
         name,
@@ -344,8 +401,29 @@ export function EmployeeForm({ mode, orgUnits, isPending = false, initialData }:
         wantsTransportVoucher,
         contractType: contractType || undefined,
         shirtSize: shirtSize || undefined,
+        hasChildren,
+        childrenAges: childrenAges || undefined,
+        hasIRDependents,
         generateOnboarding,
       });
+
+      // Save dependents and emergency contacts
+      if (result.success) {
+        const depData = dependents.filter((d) => d.name.trim());
+        await updateEmployeeDependents(initialData!.id, depData.map((d) => ({
+          id: d.id,
+          name: d.name,
+          relationship: d.relationship,
+          cpf: d.cpf || null,
+        })));
+        const contactData = emergencyContacts.filter((c) => c.name.trim());
+        await updateEmployeeEmergencyContacts(initialData!.id, contactData.map((c) => ({
+          id: c.id,
+          name: c.name,
+          phone: c.phone,
+          relationship: c.relationship || null,
+        })));
+      }
     }
 
     setLoading(false);
@@ -392,9 +470,6 @@ export function EmployeeForm({ mode, orgUnits, isPending = false, initialData }:
   const age = calculateAge(birthDate);
 
   // Suppress unused variable warnings for state that will be used in future US stories
-  void hasChildren; void setHasChildren;
-  void childrenAges; void setChildrenAges;
-  void hasIRDependents; void setHasIRDependents;
   void hobbies; void socialNetworks;
   void favoriteBookMovieGenres; void favoriteBooks; void favoriteMovies;
   void favoriteMusic; void admiredValues; void foodAllergies;
@@ -1058,10 +1133,209 @@ export function EmployeeForm({ mode, orgUnits, isPending = false, initialData }:
             </div>
           )}
 
-          {/* Tab 4: Família e Dependentes (placeholder for US-008) */}
+          {/* Tab 4: Família e Dependentes */}
           {activeTab === 3 && (
-            <div className="py-8 text-center text-sm text-gray-500 dark:text-gray-400">
-              Seção de Família e Dependentes será implementada em breve.
+            <div className="space-y-8">
+              {/* Filhos */}
+              <div className="space-y-4">
+                <h3 className="text-base font-medium text-gray-900 dark:text-white">Filhos</h3>
+                <div className="flex items-center gap-3">
+                  <input
+                    id="emp-haschildren"
+                    type="checkbox"
+                    checked={hasChildren}
+                    onChange={(e) => setHasChildren(e.target.checked)}
+                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                    disabled={loading}
+                  />
+                  <label htmlFor="emp-haschildren" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Possui filhos
+                  </label>
+                </div>
+                {hasChildren && (
+                  <div>
+                    <label htmlFor="emp-childrenages" className={labelClass}>
+                      Idades dos filhos
+                    </label>
+                    <input
+                      id="emp-childrenages"
+                      type="text"
+                      value={childrenAges}
+                      onChange={(e) => setChildrenAges(e.target.value)}
+                      placeholder="Ex: 3 e 7 anos"
+                      className={inputClass}
+                      disabled={loading}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Dependentes IR */}
+              <div className="space-y-4">
+                <h3 className="text-base font-medium text-gray-900 dark:text-white">Dependentes IR</h3>
+                <div className="flex items-center gap-3">
+                  <input
+                    id="emp-hasirdependents"
+                    type="checkbox"
+                    checked={hasIRDependents}
+                    onChange={(e) => setHasIRDependents(e.target.checked)}
+                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                    disabled={loading}
+                  />
+                  <label htmlFor="emp-hasirdependents" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Possui dependentes para IR
+                  </label>
+                </div>
+                {hasIRDependents && (
+                  <div className="space-y-3">
+                    {dependents.map((dep, idx) => (
+                      <div key={idx} className="flex items-start gap-3 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-3">
+                        <div className="grid flex-1 gap-3 sm:grid-cols-3">
+                          <div>
+                            <label className={labelClass}>Nome</label>
+                            <input
+                              type="text"
+                              value={dep.name}
+                              onChange={(e) => {
+                                const updated = [...dependents];
+                                updated[idx] = { ...dep, name: e.target.value };
+                                setDependents(updated);
+                              }}
+                              placeholder="Nome do dependente"
+                              className={inputClass}
+                              disabled={loading}
+                            />
+                          </div>
+                          <div>
+                            <label className={labelClass}>Parentesco</label>
+                            <input
+                              type="text"
+                              value={dep.relationship}
+                              onChange={(e) => {
+                                const updated = [...dependents];
+                                updated[idx] = { ...dep, relationship: e.target.value };
+                                setDependents(updated);
+                              }}
+                              placeholder="Ex: Filho(a), Cônjuge"
+                              className={inputClass}
+                              disabled={loading}
+                            />
+                          </div>
+                          <div>
+                            <label className={labelClass}>CPF</label>
+                            <input
+                              type="text"
+                              value={dep.cpf}
+                              onChange={(e) => {
+                                const updated = [...dependents];
+                                updated[idx] = { ...dep, cpf: maskCPF(e.target.value) };
+                                setDependents(updated);
+                              }}
+                              placeholder="000.000.000-00"
+                              className={inputClass}
+                              disabled={loading}
+                            />
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setDependents(dependents.filter((_, i) => i !== idx))}
+                          className="mt-6 rounded-md p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30"
+                          disabled={loading}
+                          title="Remover dependente"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => setDependents([...dependents, { name: "", relationship: "", cpf: "" }])}
+                      className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      disabled={loading}
+                    >
+                      <Plus size={14} />
+                      Adicionar dependente
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Contatos de Emergência */}
+              <div className="space-y-4">
+                <h3 className="text-base font-medium text-gray-900 dark:text-white">Contatos de Emergência</h3>
+                <div className="space-y-3">
+                  {emergencyContacts.map((contact, idx) => (
+                    <div key={idx} className="flex items-start gap-3 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-3">
+                      <div className="grid flex-1 gap-3 sm:grid-cols-3">
+                        <div>
+                          <label className={labelClass}>Nome</label>
+                          <input
+                            type="text"
+                            value={contact.name}
+                            onChange={(e) => {
+                              const updated = [...emergencyContacts];
+                              updated[idx] = { ...contact, name: e.target.value };
+                              setEmergencyContacts(updated);
+                            }}
+                            placeholder="Nome do contato"
+                            className={inputClass}
+                            disabled={loading}
+                          />
+                        </div>
+                        <div>
+                          <label className={labelClass}>Telefone</label>
+                          <input
+                            type="text"
+                            value={contact.phone}
+                            onChange={(e) => {
+                              const updated = [...emergencyContacts];
+                              updated[idx] = { ...contact, phone: maskPhone(e.target.value) };
+                              setEmergencyContacts(updated);
+                            }}
+                            placeholder="(00) 00000-0000"
+                            className={inputClass}
+                            disabled={loading}
+                          />
+                        </div>
+                        <div>
+                          <label className={labelClass}>Parentesco (opcional)</label>
+                          <input
+                            type="text"
+                            value={contact.relationship}
+                            onChange={(e) => {
+                              const updated = [...emergencyContacts];
+                              updated[idx] = { ...contact, relationship: e.target.value };
+                              setEmergencyContacts(updated);
+                            }}
+                            placeholder="Ex: Mãe, Pai, Amigo"
+                            className={inputClass}
+                            disabled={loading}
+                          />
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setEmergencyContacts(emergencyContacts.filter((_, i) => i !== idx))}
+                        className="mt-6 rounded-md p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30"
+                        disabled={loading}
+                        title="Remover contato"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setEmergencyContacts([...emergencyContacts, { name: "", phone: "", relationship: "" }])}
+                    className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                    disabled={loading}
+                  >
+                    <Plus size={14} />
+                    Adicionar contato
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 

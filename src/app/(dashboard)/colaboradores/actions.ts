@@ -86,6 +86,8 @@ export type EmployeeDetail = {
   hasPets: string | null;
   participateInVideos: boolean | null;
   createdAt: Date;
+  dependents: DependentData[];
+  emergencyContacts: EmergencyContactData[];
   hierarchy: {
     id: string;
     managerId: string;
@@ -191,6 +193,14 @@ export async function getEmployeeById(
         where: { endDate: null },
         take: 1,
       },
+      dependents: {
+        select: { id: true, name: true, relationship: true, cpf: true },
+        orderBy: { createdAt: "asc" },
+      },
+      emergencyContacts: {
+        select: { id: true, name: true, phone: true, relationship: true },
+        orderBy: { createdAt: "asc" },
+      },
     },
   });
 
@@ -246,6 +256,8 @@ export async function getEmployeeById(
     hasPets: user.hasPets ?? null,
     participateInVideos: user.participateInVideos ?? null,
     createdAt: user.createdAt,
+    dependents: user.dependents,
+    emergencyContacts: user.emergencyContacts,
     hierarchy: activeHierarchy
       ? {
           id: activeHierarchy.id,
@@ -336,6 +348,9 @@ export async function createEmployee(data: {
   wantsTransportVoucher?: boolean;
   contractType?: string;
   shirtSize?: string;
+  hasChildren?: boolean;
+  childrenAges?: string;
+  hasIRDependents?: boolean;
 }): Promise<{ success: boolean; error?: string; id?: string }> {
   const session = await requireAdmin();
   if (!session) {
@@ -423,6 +438,9 @@ export async function createEmployee(data: {
       wantsTransportVoucher: data.wantsTransportVoucher ?? null,
       contractType: (data.contractType as never) || null,
       shirtSize: (data.shirtSize as never) || null,
+      hasChildren: data.hasChildren ?? null,
+      childrenAges: data.childrenAges?.trim() || null,
+      hasIRDependents: data.hasIRDependents ?? null,
     },
   });
 
@@ -485,6 +503,9 @@ export async function updateEmployee(
     wantsTransportVoucher?: boolean;
     contractType?: string;
     shirtSize?: string;
+    hasChildren?: boolean;
+    childrenAges?: string;
+    hasIRDependents?: boolean;
     generateOnboarding?: boolean;
   }
 ): Promise<{ success: boolean; error?: string }> {
@@ -576,6 +597,9 @@ export async function updateEmployee(
       wantsTransportVoucher: data.wantsTransportVoucher ?? null,
       contractType: (data.contractType as never) || null,
       shirtSize: (data.shirtSize as never) || null,
+      hasChildren: data.hasChildren ?? null,
+      childrenAges: data.childrenAges?.trim() || null,
+      hasIRDependents: data.hasIRDependents ?? null,
     },
   });
 

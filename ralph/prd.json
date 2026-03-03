@@ -131,8 +131,8 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 7,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Tab 2 (Endereço e Contato): address, addressNumber, addressComplement, CEP, city, state, personalEmail, phone — all wired with masks and dark mode. Tab 3 (Financeiro e Benefícios): hasBradescoAccount (select), bankAgency/bankAccount (conditional on sim), hasOtherEmployment (checkbox), healthPlanOption (select), wantsTransportVoucher (checkbox), contractType (select), shirtSize (select). Updated createEmployee and updateEmployee server actions to accept and persist all new fields. Enum option arrays defined at module scope."
     },
     {
       "id": "US-008",
@@ -150,8 +150,8 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 8,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Tab 4 (Família e Dependentes): hasChildren checkbox + conditional childrenAges, hasIRDependents checkbox + dynamic dependents list (name/relationship/CPF with mask), emergency contacts dynamic list (name/phone with mask/relationship). Trash2 icon to remove items, Plus button to add. Save wires to updateEmployeeDependents and updateEmployeeEmergencyContacts server actions. Updated getEmployeeById to include dependents and emergencyContacts. Added hasChildren/childrenAges/hasIRDependents to createEmployee and updateEmployee."
     },
     {
       "id": "US-009",
