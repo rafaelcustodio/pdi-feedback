@@ -171,6 +171,8 @@ model User {
   notifications       Notification[]
   dependents          Dependent[]
   emergencyContacts   EmergencyContact[]
+  changeRequests          ChangeRequest[] @relation("ChangeRequestUser")
+  reviewedChangeRequests  ChangeRequest[] @relation("ChangeRequestReviewer")
 
   // Nine Box relations
   nineBoxEvaluationsReceived NineBoxEvaluation[] @relation("NineBoxEvaluatee")
@@ -505,6 +507,35 @@ model NineBoxEvaluator {
   @@unique([evaluationId, evaluatorId])
   @@index([evaluationId])
   @@index([evaluatorId])
+}
+
+// ============================================================
+// HR: Change Requests (approval workflow)
+// ============================================================
+
+enum ChangeRequestStatus {
+  pending
+  approved
+  rejected
+}
+
+model ChangeRequest {
+  id           String              @id @default(cuid())
+  userId       String
+  fieldName    String
+  oldValue     String?
+  newValue     String?
+  status       ChangeRequestStatus @default(pending)
+  reviewedById String?
+  reviewedAt   DateTime?
+  createdAt    DateTime            @default(now())
+
+  user       User  @relation("ChangeRequestUser", fields: [userId], references: [id])
+  reviewedBy User? @relation("ChangeRequestReviewer", fields: [reviewedById], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@index([reviewedById])
 }
 
 // ============================================================
