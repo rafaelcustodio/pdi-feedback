@@ -9,6 +9,8 @@
 - To use NineBox models in Prisma queries, add `nineBoxEvaluation: any; nineBoxEvaluator: any` to `PrismaClientExtended` in `src/lib/prisma.ts` and add delegate getters to `src/generated/prisma/internal/class.ts`
 - Modals follow pattern: `useState` boolean + `fixed inset-0 z-50 bg-black/50` overlay + centered white card
 - NineBox server actions live in `src/app/(dashboard)/feedbacks/ninebox-actions.ts` (separate from main actions.ts)
+- Routes outside the (dashboard) group (e.g., `/ninebox/[evaluatorId]`) are still auth-protected by middleware matcher; they just don't have the dashboard sidebar/layout
+- For standalone form pages outside the dashboard, create route at `src/app/[feature]/[param]/page.tsx` as a server component that calls `auth()` and renders a client form component
 ---
 
 ## 2026-03-02 - US-001
@@ -40,4 +42,30 @@
   - The feedback detail page renders FeedbackForm for editable feedbacks and FeedbackReadOnly for submitted ones — NineBox section appears below both
   - NineBox button visibility: only shown to manager of the feedback (or admin), hidden when feedback is cancelled or already has an evaluation
   - Server Actions in separate ninebox-actions.ts to keep the main actions.ts clean
+---
+
+## 2026-03-02 - US-003
+- What was implemented: After creating NineBoxEvaluator records in startNineBoxEvaluation, the system now sends in-app notifications (type: ninebox_invite) and emails to each evaluator
+- Files changed:
+  - `src/app/(dashboard)/feedbacks/ninebox-actions.ts` — Added imports for sendEmail and buildNineBoxInviteHtml; updated startNineBoxEvaluation to include evaluatee/evaluator data in create response, then loop through evaluators to create notifications and send emails
+  - `src/lib/email-templates.ts` — Added buildNineBoxInviteHtml template function with purple-themed email for Nine Box invite
+- **Learnings for future iterations:**
+  - Notification creation pattern: `prisma.notification.create({ data: { userId, type, title, message } })` — type must match NotificationType enum
+  - Email templates follow a consistent pattern: HTML function taking name/url params, styled inline, with header/body/footer sections
+  - The `sendEmail` function from `src/lib/email.ts` handles SMTP fallback to console logging automatically
+  - The evaluator record ID is used in the URL `/ninebox/[evaluatorRecordId]` — this is the NineBoxEvaluator.id, not the User.id
+---
+
+## 2026-03-02 - US-004
+- What was implemented: Evaluator form page at `/ninebox/[evaluatorId]` with 14-question form (6 Desempenho, 6 Potencial, 2 Descritiva), access control, status handling, and submitNineBoxResponse server action
+- Files changed:
+  - `src/app/ninebox/[evaluatorId]/page.tsx` — Server component outside (dashboard) layout; checks auth, validates evaluator ownership, handles completed/closed states, renders form
+  - `src/components/ninebox-form.tsx` — Client component with 14-question form (1-5 scale buttons for q1-q12, textareas for q13/q14), submit button disabled until all answered, confirmation screen after submit
+  - `src/app/(dashboard)/feedbacks/ninebox-actions.ts` — Added getNineBoxEvaluatorData (fetches evaluator record with access check) and submitNineBoxResponse (validates all inputs, updates record with responses, sets status to completed)
+  - `ralph/prd.json` — Marked US-004 as passes: true
+- **Learnings for future iterations:**
+  - Middleware matcher already covers `/ninebox/*` routes (only excludes login, api/auth, api/cron, _next, favicon) — no need to add anything for auth
+  - Server components outside (dashboard) layout can still import server actions from `src/app/(dashboard)/feedbacks/ninebox-actions.ts` — the "use server" directive makes them importable anywhere
+  - Next.js 16 App Router `params` is a Promise — must `await params` in server components
+  - For form pages with multiple states (pending/completed/closed/unauthorized), handle all states in the server component and only render the form for the valid "pending" state
 ---

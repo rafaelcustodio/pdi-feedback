@@ -195,3 +195,135 @@ export async function startNineBoxEvaluation(
   revalidatePath(`/feedbacks/${feedbackId}`);
   return { success: true };
 }
+
+export type NineBoxEvaluatorFormData = {
+  evaluatorId: string;
+  evaluateeName: string;
+  feedbackPeriod: string;
+  evaluatorStatus: "pending" | "completed";
+  evaluationStatus: "open" | "closed";
+};
+
+export async function getNineBoxEvaluatorData(
+  evaluatorId: string
+): Promise<{ data?: NineBoxEvaluatorFormData; error?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { error: "not_authenticated" };
+  }
+
+  const evaluatorRecord = await prisma.nineBoxEvaluator.findUnique({
+    where: { id: evaluatorId },
+    include: {
+      evaluation: {
+        include: {
+          evaluatee: { select: { name: true } },
+          feedback: { select: { period: true } },
+        },
+      },
+    },
+  });
+
+  if (!evaluatorRecord) {
+    return { error: "not_found" };
+  }
+
+  // Check that the logged-in user is the evaluator
+  if (evaluatorRecord.evaluatorId !== session.user.id) {
+    return { error: "unauthorized" };
+  }
+
+  return {
+    data: {
+      evaluatorId: evaluatorRecord.id,
+      evaluateeName: evaluatorRecord.evaluation.evaluatee.name,
+      feedbackPeriod: evaluatorRecord.evaluation.feedback.period,
+      evaluatorStatus: evaluatorRecord.status as "pending" | "completed",
+      evaluationStatus: evaluatorRecord.evaluation.status as "open" | "closed",
+    },
+  };
+}
+
+export type NineBoxResponseInput = {
+  q1: number;
+  q2: number;
+  q3: number;
+  q4: number;
+  q5: number;
+  q6: number;
+  q7: number;
+  q8: number;
+  q9: number;
+  q10: number;
+  q11: number;
+  q12: number;
+  q13PontosFortes: string;
+  q14Oportunidade: string;
+};
+
+export async function submitNineBoxResponse(
+  evaluatorId: string,
+  responses: NineBoxResponseInput
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const evaluatorRecord = await prisma.nineBoxEvaluator.findUnique({
+    where: { id: evaluatorId },
+    include: {
+      evaluation: { select: { status: true } },
+    },
+  });
+
+  if (!evaluatorRecord) {
+    return { success: false, error: "Avaliação não encontrada" };
+  }
+
+  // Check that the logged-in user is the evaluator
+  if (evaluatorRecord.evaluatorId !== session.user.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  // Check evaluation is still open
+  if (evaluatorRecord.evaluation.status === "closed") {
+    return { success: false, error: "Esta avaliação foi encerrada" };
+  }
+
+  // Check evaluator hasn't already responded
+  if (evaluatorRecord.status === "completed") {
+    return { success: false, error: "Você já respondeu esta avaliação" };
+  }
+
+  // Validate q1-q12 are between 1 and 5
+  const numericKeys = [
+    "q1", "q2", "q3", "q4", "q5", "q6",
+    "q7", "q8", "q9", "q10", "q11", "q12",
+  ] as const;
+  for (const key of numericKeys) {
+    const val = responses[key];
+    if (typeof val !== "number" || val < 1 || val > 5 || !Number.isInteger(val)) {
+      return { success: false, error: `Resposta inválida para ${key}` };
+    }
+  }
+
+  // Validate q13/q14 are non-empty strings
+  if (!responses.q13PontosFortes || responses.q13PontosFortes.trim() === "") {
+    return { success: false, error: "Pontos fortes é obrigatório" };
+  }
+  if (!responses.q14Oportunidade || responses.q14Oportunidade.trim() === "") {
+    return { success: false, error: "Oportunidade de melhoria é obrigatório" };
+  }
+
+  await prisma.nineBoxEvaluator.update({
+    where: { id: evaluatorId },
+    data: {
+      ...responses,
+      status: "completed",
+      completedAt: new Date(),
+    },
+  });
+
+  return { success: true };
+}
