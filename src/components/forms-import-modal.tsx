@@ -276,7 +276,7 @@ export function FormsImportModal({ open, onClose }: FormsImportModalProps) {
                       <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                         Status
                       </th>
-                      <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                      <th className="sticky right-0 bg-gray-50 px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:bg-gray-800 dark:text-gray-400">
                         Ação
                       </th>
                     </tr>
@@ -289,7 +289,7 @@ export function FormsImportModal({ open, onClose }: FormsImportModalProps) {
                           <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-900 dark:text-white">
                             {row.name || <span className="italic text-gray-400">—</span>}
                           </td>
-                          <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                          <td className="max-w-[180px] truncate px-4 py-3 text-sm text-gray-600 dark:text-gray-400" title={row.email}>
                             {row.email || <span className="italic text-gray-400">—</span>}
                           </td>
                           <td className="whitespace-nowrap px-4 py-3 text-sm">
@@ -321,7 +321,7 @@ export function FormsImportModal({ open, onClose }: FormsImportModalProps) {
                               </span>
                             )}
                           </td>
-                          <td className="whitespace-nowrap px-4 py-3 text-right">
+                          <td className="sticky right-0 whitespace-nowrap bg-white px-4 py-3 text-right dark:bg-gray-900">
                             <button
                               type="button"
                               onClick={() => handleSelect(row)}
