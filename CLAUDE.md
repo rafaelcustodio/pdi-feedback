@@ -24,7 +24,7 @@ npm run prisma:seed       # Seed demo data
 
 All authenticated pages live under `src/app/(dashboard)/` with a shared layout that pre-loads notifications and enforces auth. Public routes: `/login`, `/api/auth/*`, `/api/cron/*`.
 
-Feature routes: `/colaboradores`, `/pdis`, `/feedbacks`, `/notificacoes`, `/configuracoes`, `/perfil`.
+Feature routes: `/colaboradores`, `/pdis`, `/feedbacks`, `/notificacoes`, `/configuracoes`, `/perfil`, `/programacao`, `/calendario`.
 
 ### Data Flow Pattern
 
@@ -44,7 +44,9 @@ There is **no separate API layer** for dashboard features — everything uses Se
 
 All Server Actions must call `getAccessibleEmployeeIds()` or the relevant filter helpers (`getPDIAccessFilter()`, `getFeedbackAccessFilter()`) before querying data. Tests in `src/lib/__tests__/access-control.test.ts`.
 
-### Authentication
+**Critical rule:** Always call `getEffectiveAuth()` from `src/lib/impersonation.ts` (never `auth()` directly) so that admin impersonation is respected in all access checks.
+
+### Authentication & Impersonation
 
 `src/lib/auth.ts` — NextAuth v5 with two providers:
 1. **Credentials** (email + bcryptjs password)
@@ -52,11 +54,28 @@ All Server Actions must call `getAccessibleEmployeeIds()` or the relevant filter
 
 On first SSO login, a user record is auto-created. If the email matches an existing credentials user, the SSO is linked to it. Role is stored in JWT and available via `session.user.role`.
 
+**Admin impersonation:** Admins can view the app as any user via `src/lib/impersonation.ts`. An HTTP-only cookie (`__impersonate`) stores the target user ID without affecting the real session. All Server Actions and access-control logic must call `getEffectiveAuth()` (from `src/lib/impersonation.ts`) instead of `auth()` directly. API routes: `POST/DELETE /api/impersonate` (activate/deactivate), `GET /api/impersonate/users` (list users). UI: `ImpersonationBanner` (yellow banner) and `ImpersonationSelector` (modal in sidebar).
+
 ### Database
 
 Prisma schema at `prisma/schema.prisma`. Generated client outputs to `src/generated/prisma/` (gitignored — always run `prisma:generate` after schema changes or fresh clone).
 
-Key models: `User` (with `UserRole` enum: admin/manager/employee), `OrganizationalUnit` (hierarchical), `EmployeeHierarchy` (manager-employee links with date ranges), `PDI` + `PDIGoal` + `PDIEvidence` + `PDIComment`, `Feedback` + `FeedbackSchedule`, `Notification`.
+Key models: `User` (with `UserRole` enum: admin/manager/employee), `OrganizationalUnit` (hierarchical), `EmployeeHierarchy` (manager-employee links with date ranges), `PDI` + `PDIGoal` + `PDIEvidence` + `PDIComment`, `Feedback` + `FeedbackSchedule`, `NineBoxEvaluation` + `NineBoxResponse`, `Notification`.
+
+### Nine Box
+
+Managers can trigger a Nine Box evaluation from within a Feedback. Evaluators receive internal notifications and email, then fill out the form at `/feedbacks/[id]/ninebox`. Results are visible to the manager (dashboard) and to the evaluated employee (read-only view). Actions in `src/app/(dashboard)/feedbacks/ninebox-actions.ts`.
+
+### Testing
+
+Test files live in `src/lib/__tests__/`. Shared mock fixtures (users, hierarchy, sessions) are in `src/lib/__tests__/fixtures.ts` — use these as the single source of truth for all tests.
+
+Mock conventions:
+- Prisma: `vi.mock("@/lib/prisma", () => ({ prisma: { ... } }))`
+- Auth: `vi.mock("@/lib/impersonation", () => ({ getEffectiveAuth: vi.fn() }))` — never mock `@/lib/auth` directly in Server Actions
+- Cookies: `vi.mock("next/headers", () => ({ cookies: vi.fn() }))`
+
+Every new Server Action or API route that touches access-controlled data must have a corresponding test file.
 
 ### Email
 
