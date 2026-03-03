@@ -37,6 +37,83 @@ export type ScheduledEvent = {
   href: string;
 };
 
+export type NineBoxEvaluationItem = {
+  evaluatorId: string;
+  evaluateeName: string;
+  feedbackPeriod: string;
+  createdAt: Date;
+};
+
+export type NineBoxEvaluationCompletedItem = NineBoxEvaluationItem & {
+  completedAt: Date;
+};
+
+export type MyNineBoxEvaluations = {
+  pending: NineBoxEvaluationItem[];
+  completed: NineBoxEvaluationCompletedItem[];
+};
+
+export async function getMyNineBoxEvaluations(): Promise<MyNineBoxEvaluations | null> {
+  const session = await auth();
+  if (!session?.user?.id) return null;
+
+  const userId = session.user.id;
+
+  // Pending: evaluator status=pending AND evaluation status=open
+  const pendingRecords = await prisma.nineBoxEvaluator.findMany({
+    where: {
+      evaluatorId: userId,
+      status: "pending",
+      evaluation: {
+        status: "open",
+      },
+    },
+    orderBy: { createdAt: "asc" },
+    include: {
+      evaluation: {
+        include: {
+          evaluatee: { select: { name: true } },
+          feedback: { select: { period: true } },
+        },
+      },
+    },
+  });
+
+  const pending: NineBoxEvaluationItem[] = pendingRecords.map((r: typeof pendingRecords[number]) => ({
+    evaluatorId: r.id,
+    evaluateeName: r.evaluation.evaluatee.name,
+    feedbackPeriod: r.evaluation.feedback.period,
+    createdAt: r.createdAt,
+  }));
+
+  // Completed: evaluator status=completed
+  const completedRecords = await prisma.nineBoxEvaluator.findMany({
+    where: {
+      evaluatorId: userId,
+      status: "completed",
+    },
+    orderBy: { completedAt: "desc" },
+    include: {
+      evaluation: {
+        include: {
+          evaluatee: { select: { name: true } },
+          feedback: { select: { period: true } },
+        },
+      },
+    },
+  });
+
+  const completed: NineBoxEvaluationCompletedItem[] = completedRecords.map((r: typeof completedRecords[number]) => ({
+    evaluatorId: r.id,
+    evaluateeName: r.evaluation.evaluatee.name,
+    feedbackPeriod: r.evaluation.feedback.period,
+    createdAt: r.createdAt,
+    completedAt: r.completedAt!,
+  }));
+
+  return { pending, completed };
+}
+
 export async function getDashboardData(): Promise<DashboardData | null> {
   const session = await auth();
   if (!session?.user?.id) return null;
