@@ -31,6 +31,7 @@ export type PDIFollowUpMinAggregateOutputType = {
   conductedAt: Date | null
   notes: string | null
   status: $Enums.FollowUpStatus | null
+  outlookEventId: string | null
   createdAt: Date | null
 }
 
@@ -41,6 +42,7 @@ export type PDIFollowUpMaxAggregateOutputType = {
   conductedAt: Date | null
   notes: string | null
   status: $Enums.FollowUpStatus | null
+  outlookEventId: string | null
   createdAt: Date | null
 }
 
@@ -51,6 +53,7 @@ export type PDIFollowUpCountAggregateOutputType = {
   conductedAt: number
   notes: number
   status: number
+  outlookEventId: number
   createdAt: number
   _all: number
 }
@@ -63,6 +66,7 @@ export type PDIFollowUpMinAggregateInputType = {
   conductedAt?: true
   notes?: true
   status?: true
+  outlookEventId?: true
   createdAt?: true
 }
 
@@ -73,6 +77,7 @@ export type PDIFollowUpMaxAggregateInputType = {
   conductedAt?: true
   notes?: true
   status?: true
+  outlookEventId?: true
   createdAt?: true
 }
 
@@ -83,6 +88,7 @@ export type PDIFollowUpCountAggregateInputType = {
   conductedAt?: true
   notes?: true
   status?: true
+  outlookEventId?: true
   createdAt?: true
   _all?: true
 }
@@ -166,6 +172,7 @@ export type PDIFollowUpGroupByOutputType = {
   conductedAt: Date | null
   notes: string | null
   status: $Enums.FollowUpStatus
+  outlookEventId: string | null
   createdAt: Date
   _count: PDIFollowUpCountAggregateOutputType | null
   _min: PDIFollowUpMinAggregateOutputType | null
@@ -197,6 +204,7 @@ export type PDIFollowUpWhereInput = {
   conductedAt?: Prisma.DateTimeNullableFilter<"PDIFollowUp"> | Date | string | null
   notes?: Prisma.StringNullableFilter<"PDIFollowUp"> | string | null
   status?: Prisma.EnumFollowUpStatusFilter<"PDIFollowUp"> | $Enums.FollowUpStatus
+  outlookEventId?: Prisma.StringNullableFilter<"PDIFollowUp"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PDIFollowUp"> | Date | string
   pdi?: Prisma.XOR<Prisma.PDIScalarRelationFilter, Prisma.PDIWhereInput>
 }
@@ -208,6 +216,7 @@ export type PDIFollowUpOrderByWithRelationInput = {
   conductedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  outlookEventId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   pdi?: Prisma.PDIOrderByWithRelationInput
 }
@@ -222,6 +231,7 @@ export type PDIFollowUpWhereUniqueInput = Prisma.AtLeast<{
   conductedAt?: Prisma.DateTimeNullableFilter<"PDIFollowUp"> | Date | string | null
   notes?: Prisma.StringNullableFilter<"PDIFollowUp"> | string | null
   status?: Prisma.EnumFollowUpStatusFilter<"PDIFollowUp"> | $Enums.FollowUpStatus
+  outlookEventId?: Prisma.StringNullableFilter<"PDIFollowUp"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PDIFollowUp"> | Date | string
   pdi?: Prisma.XOR<Prisma.PDIScalarRelationFilter, Prisma.PDIWhereInput>
 }, "id">
@@ -233,6 +243,7 @@ export type PDIFollowUpOrderByWithAggregationInput = {
   conductedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  outlookEventId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.PDIFollowUpCountOrderByAggregateInput
   _max?: Prisma.PDIFollowUpMaxOrderByAggregateInput
@@ -249,6 +260,7 @@ export type PDIFollowUpScalarWhereWithAggregatesInput = {
   conductedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PDIFollowUp"> | Date | string | null
   notes?: Prisma.StringNullableWithAggregatesFilter<"PDIFollowUp"> | string | null
   status?: Prisma.EnumFollowUpStatusWithAggregatesFilter<"PDIFollowUp"> | $Enums.FollowUpStatus
+  outlookEventId?: Prisma.StringNullableWithAggregatesFilter<"PDIFollowUp"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"PDIFollowUp"> | Date | string
 }
 
@@ -258,6 +270,7 @@ export type PDIFollowUpCreateInput = {
   conductedAt?: Date | string | null
   notes?: string | null
   status?: $Enums.FollowUpStatus
+  outlookEventId?: string | null
   createdAt?: Date | string
   pdi: Prisma.PDICreateNestedOneWithoutFollowUpsInput
 }
@@ -269,6 +282,7 @@ export type PDIFollowUpUncheckedCreateInput = {
   conductedAt?: Date | string | null
   notes?: string | null
   status?: $Enums.FollowUpStatus
+  outlookEventId?: string | null
   createdAt?: Date | string
 }
 
@@ -278,6 +292,7 @@ export type PDIFollowUpUpdateInput = {
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFollowUpStatusFieldUpdateOperationsInput | $Enums.FollowUpStatus
+  outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   pdi?: Prisma.PDIUpdateOneRequiredWithoutFollowUpsNestedInput
 }
@@ -289,6 +304,7 @@ export type PDIFollowUpUncheckedUpdateInput = {
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFollowUpStatusFieldUpdateOperationsInput | $Enums.FollowUpStatus
+  outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -299,6 +315,7 @@ export type PDIFollowUpCreateManyInput = {
   conductedAt?: Date | string | null
   notes?: string | null
   status?: $Enums.FollowUpStatus
+  outlookEventId?: string | null
   createdAt?: Date | string
 }
 
@@ -308,6 +325,7 @@ export type PDIFollowUpUpdateManyMutationInput = {
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFollowUpStatusFieldUpdateOperationsInput | $Enums.FollowUpStatus
+  outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -318,6 +336,7 @@ export type PDIFollowUpUncheckedUpdateManyInput = {
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFollowUpStatusFieldUpdateOperationsInput | $Enums.FollowUpStatus
+  outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -338,6 +357,7 @@ export type PDIFollowUpCountOrderByAggregateInput = {
   conductedAt?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  outlookEventId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -348,6 +368,7 @@ export type PDIFollowUpMaxOrderByAggregateInput = {
   conductedAt?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  outlookEventId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -358,6 +379,7 @@ export type PDIFollowUpMinOrderByAggregateInput = {
   conductedAt?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  outlookEventId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -413,6 +435,7 @@ export type PDIFollowUpCreateWithoutPdiInput = {
   conductedAt?: Date | string | null
   notes?: string | null
   status?: $Enums.FollowUpStatus
+  outlookEventId?: string | null
   createdAt?: Date | string
 }
 
@@ -422,6 +445,7 @@ export type PDIFollowUpUncheckedCreateWithoutPdiInput = {
   conductedAt?: Date | string | null
   notes?: string | null
   status?: $Enums.FollowUpStatus
+  outlookEventId?: string | null
   createdAt?: Date | string
 }
 
@@ -461,6 +485,7 @@ export type PDIFollowUpScalarWhereInput = {
   conductedAt?: Prisma.DateTimeNullableFilter<"PDIFollowUp"> | Date | string | null
   notes?: Prisma.StringNullableFilter<"PDIFollowUp"> | string | null
   status?: Prisma.EnumFollowUpStatusFilter<"PDIFollowUp"> | $Enums.FollowUpStatus
+  outlookEventId?: Prisma.StringNullableFilter<"PDIFollowUp"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PDIFollowUp"> | Date | string
 }
 
@@ -470,6 +495,7 @@ export type PDIFollowUpCreateManyPdiInput = {
   conductedAt?: Date | string | null
   notes?: string | null
   status?: $Enums.FollowUpStatus
+  outlookEventId?: string | null
   createdAt?: Date | string
 }
 
@@ -479,6 +505,7 @@ export type PDIFollowUpUpdateWithoutPdiInput = {
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFollowUpStatusFieldUpdateOperationsInput | $Enums.FollowUpStatus
+  outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -488,6 +515,7 @@ export type PDIFollowUpUncheckedUpdateWithoutPdiInput = {
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFollowUpStatusFieldUpdateOperationsInput | $Enums.FollowUpStatus
+  outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -497,6 +525,7 @@ export type PDIFollowUpUncheckedUpdateManyWithoutPdiInput = {
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFollowUpStatusFieldUpdateOperationsInput | $Enums.FollowUpStatus
+  outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -509,6 +538,7 @@ export type PDIFollowUpSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   conductedAt?: boolean
   notes?: boolean
   status?: boolean
+  outlookEventId?: boolean
   createdAt?: boolean
   pdi?: boolean | Prisma.PDIDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["pDIFollowUp"]>
@@ -520,6 +550,7 @@ export type PDIFollowUpSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   conductedAt?: boolean
   notes?: boolean
   status?: boolean
+  outlookEventId?: boolean
   createdAt?: boolean
   pdi?: boolean | Prisma.PDIDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["pDIFollowUp"]>
@@ -531,6 +562,7 @@ export type PDIFollowUpSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   conductedAt?: boolean
   notes?: boolean
   status?: boolean
+  outlookEventId?: boolean
   createdAt?: boolean
   pdi?: boolean | Prisma.PDIDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["pDIFollowUp"]>
@@ -542,10 +574,11 @@ export type PDIFollowUpSelectScalar = {
   conductedAt?: boolean
   notes?: boolean
   status?: boolean
+  outlookEventId?: boolean
   createdAt?: boolean
 }
 
-export type PDIFollowUpOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "pdiId" | "scheduledAt" | "conductedAt" | "notes" | "status" | "createdAt", ExtArgs["result"]["pDIFollowUp"]>
+export type PDIFollowUpOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "pdiId" | "scheduledAt" | "conductedAt" | "notes" | "status" | "outlookEventId" | "createdAt", ExtArgs["result"]["pDIFollowUp"]>
 export type PDIFollowUpInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   pdi?: boolean | Prisma.PDIDefaultArgs<ExtArgs>
 }
@@ -568,6 +601,7 @@ export type $PDIFollowUpPayload<ExtArgs extends runtime.Types.Extensions.Interna
     conductedAt: Date | null
     notes: string | null
     status: $Enums.FollowUpStatus
+    outlookEventId: string | null
     createdAt: Date
   }, ExtArgs["result"]["pDIFollowUp"]>
   composites: {}
@@ -999,6 +1033,7 @@ export interface PDIFollowUpFieldRefs {
   readonly conductedAt: Prisma.FieldRef<"PDIFollowUp", 'DateTime'>
   readonly notes: Prisma.FieldRef<"PDIFollowUp", 'String'>
   readonly status: Prisma.FieldRef<"PDIFollowUp", 'FollowUpStatus'>
+  readonly outlookEventId: Prisma.FieldRef<"PDIFollowUp", 'String'>
   readonly createdAt: Prisma.FieldRef<"PDIFollowUp", 'DateTime'>
 }
     

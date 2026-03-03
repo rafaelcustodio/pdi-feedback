@@ -1,73 +1,153 @@
 {
   "project": "pdi-feedback",
-  "branchName": "ralph/fix-pdi-duplicatas-evaluationmode",
-  "description": "Correção de PDIs duplicados por colaborador e filtro evaluationMode na tela de Programação",
+  "branchName": "ralph/outlook-calendar-integration",
+  "description": "Integração com Calendário do Outlook via Microsoft Graph API — criar, atualizar e cancelar eventos automaticamente ao agendar follow-ups de PDI e feedbacks futuros",
   "userStories": [
     {
       "id": "US-001",
-      "title": "Consolidar PDIs duplicados existentes e adicionar constraint único",
-      "description": "Como desenvolvedor, preciso criar uma migration que consolide PDIs duplicados ativos e adicione um índice único parcial para impedir recorrência.",
+      "title": "Add Microsoft token and Outlook event ID fields to database schema",
+      "description": "As a developer, I need to store Microsoft OAuth tokens per user and Outlook event IDs on follow-up/feedback records so the system can manage calendar events via Graph API.",
       "acceptanceCriteria": [
-        "Migration identifica colaboradores com mais de um PDI com status='active'",
-        "Para cada caso: mantém o PDI com updatedAt mais recente como ativo",
-        "Metas (PDIGoal), evidências (PDIEvidence via goal), comentários (PDIComment) e acompanhamentos (PDIFollowUp) dos PDIs cancelados são movidos para o PDI ativo mantido",
-        "PDIs redundantes são marcados como 'cancelled'",
-        "Nenhum dado é perdido na consolidação",
-        "Cria índice único parcial: CREATE UNIQUE INDEX idx_pdi_one_active_per_employee ON PDI(employeeId) WHERE status = 'active'",
-        "Migration é idempotente (rodar duas vezes não causa erro)",
-        "Migration aplica sem erros com prisma migrate dev",
-        "Rodar prisma generate sem erros",
-        "Typecheck passa"
+        "Add fields to User model: msAccessToken String?, msRefreshToken String?, msTokenExpiresAt DateTime?",
+        "Add field to PDIFollowUp model: outlookEventId String?",
+        "Add field to Feedback model: outlookEventId String?",
+        "Generate and apply migration with prisma migrate dev",
+        "Run prisma generate without errors",
+        "Typecheck passes"
       ],
       "priority": 1,
       "passes": true,
-      "notes": "A migration 20260302160000_consolidate_pdis_per_employee já consolidou PDIs mas NÃO adicionou o constraint único. Esta migration complementa aquela. Consolidar também PDIFollowUp (não feito na migration anterior)."
+      "notes": "All fields are nullable so no data migration is needed. Combine all changes in one migration file."
     },
     {
       "id": "US-002",
-      "title": "Tornar getOrCreatePDI() atômico contra race conditions",
-      "description": "Como gestor, ao acessar o PDI de um colaborador, o sistema deve garantir que apenas um PDI ativo seja criado mesmo com acessos simultâneos.",
+      "title": "Configure Microsoft OAuth scopes and persist tokens on SSO login",
+      "description": "As a developer, I need the system to request calendar permissions during SSO login and store the resulting tokens so they can be used for Graph API calls.",
       "acceptanceCriteria": [
-        "getOrCreatePDI() em src/app/(dashboard)/pdis/actions.ts usa try/catch no prisma.pDI.create()",
-        "Se o create falhar com erro P2002 (unique constraint violation), faz findFirst() como fallback e retorna o PDI existente",
-        "Se já existe PDI ativo, retorna o existente sem criar novo (comportamento atual mantido)",
-        "Se não existe, cria e retorna o novo PDI",
-        "Dois requests simultâneos para o mesmo colaborador nunca criam dois PDIs",
-        "Typecheck passa"
+        "Add authorization params to Microsoft Entra ID provider in src/lib/auth.ts: scope includes 'openid profile email Calendars.ReadWrite offline_access'",
+        "In the jwt callback of src/lib/auth.ts, when provider is 'microsoft-entra-id' and account object is present, persist account.access_token, account.refresh_token, and account.expires_at to the User record via prisma.user.update",
+        "Existing jwt callback logic for setting token.id, token.role, token.evaluationMode is preserved unchanged",
+        "Protected file: EXTEND src/lib/auth.ts, do NOT replace it or change its structure",
+        "Typecheck passes"
       ],
       "priority": 2,
-      "passes": true,
-      "notes": "O constraint único da US-001 é pré-requisito. O fallback com P2002 é a abordagem mais simples e robusta para PostgreSQL."
+      "passes": false,
+      "notes": "src/lib/auth.ts is a protected file per CLAUDE.md. Only add the scope config to the provider and token persistence logic inside the existing jwt callback. account.expires_at is a Unix timestamp (seconds) — convert to Date for msTokenExpiresAt."
     },
     {
       "id": "US-003",
-      "title": "Corrigir verificação de duplicatas no programEvents()",
-      "description": "Como admin, ao programar eventos em massa, o sistema deve respeitar o modelo contínuo e nunca criar PDIs duplicados.",
+      "title": "Create Microsoft Graph calendar utility",
+      "description": "As a developer, I need a reusable Graph API client so all calendar operations share the same token refresh and HTTP logic.",
       "acceptanceCriteria": [
-        "programEvents() em src/app/(dashboard)/programacao/actions.ts verifica se o colaborador já tem um PDI ativo (status='active') independente de datas/período antes de criar",
-        "Se já existe PDI ativo, pula o colaborador incrementando skipped",
-        "A criação de PDI usa try/catch para capturar P2002 (unique constraint) como fallback de segurança, incrementando skipped",
-        "A verificação e criação de Feedbacks permanece com a lógica de janela de datas (não é afetada)",
-        "Typecheck passa"
+        "Create new file src/lib/microsoft-graph.ts",
+        "Export type GraphCalendarEvent with fields: subject (string), start (object with dateTime and timeZone), end (object with dateTime and timeZone), body (object with contentType and content), attendees (array of objects with emailAddress and type)",
+        "Export async function getUserToken(userId: string): Promise<string | null> — reads User from DB, returns null if no msAccessToken, refreshes via refresh_token if expired (using POST to https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token), updates DB with new tokens, returns valid access token",
+        "Export async function createCalendarEvent(accessToken: string, event: GraphCalendarEvent): Promise<string | null> — POSTs to https://graph.microsoft.com/v1.0/me/events, returns event id on success, null on error",
+        "Export async function updateCalendarEvent(accessToken: string, eventId: string, event: Partial<GraphCalendarEvent>): Promise<boolean> — PATCHes event, returns true on success",
+        "Export async function deleteCalendarEvent(accessToken: string, eventId: string): Promise<boolean> — DELETEs event, returns true on success",
+        "All Graph API errors are caught with try/catch and logged via console.error, never propagated",
+        "Uses environment variables AZURE_AD_CLIENT_ID, AZURE_AD_CLIENT_SECRET, AZURE_AD_TENANT_ID for token refresh",
+        "Typecheck passes"
       ],
       "priority": 3,
-      "passes": true,
-      "notes": "A verificação atual usa janela de datas (createdAt/conductedAt entre periodStart e periodEnd) que é incorreta para o modelo contínuo. Deve verificar apenas status='active' para PDIs."
+      "passes": false,
+      "notes": "Use native fetch (no external HTTP library needed). Token refresh endpoint: POST https://login.microsoftonline.com/{AZURE_AD_TENANT_ID}/oauth2/v2.0/token with grant_type=refresh_token, client_id, client_secret, refresh_token, scope='https://graph.microsoft.com/.default'. Import prisma from @/lib/prisma for DB access."
     },
     {
       "id": "US-004",
-      "title": "Filtrar por evaluationMode na tela de Programação",
-      "description": "Como gestor, ao visualizar a programação de PDIs quero ver apenas colaboradores com evaluationMode='pdi', e na de Feedbacks apenas evaluationMode='feedback'.",
+      "title": "Add time input to PDI follow-up scheduling form and action",
+      "description": "As a gestor, I want to choose a start time when scheduling a PDI follow-up so the Outlook event reflects the correct meeting time.",
       "acceptanceCriteria": [
-        "getSectorComplianceStatus() em src/app/(dashboard)/programacao/actions.ts filtra hierarquias por employee.evaluationMode igual ao parâmetro type (pdi ou feedback)",
-        "Colaborador com evaluationMode='feedback' não aparece na compliance de PDI",
-        "Colaborador com evaluationMode='pdi' não aparece na compliance de Feedback",
-        "programEvents() valida que cada colaborador tem evaluationMode compatível com o tipo de evento antes de criar",
-        "Typecheck passa"
+        "In FollowUpsSection component in src/components/pdi-tracking.tsx, add a state variable scheduleTime with default '09:00'",
+        "Add <input type='time'> with label 'Horário de início' next to the existing date input in the schedule form",
+        "Pass scheduleTime as third argument when calling scheduleFollowUp",
+        "Update scheduleFollowUp function in src/app/(dashboard)/pdis/actions.ts to accept optional third parameter scheduledTime: string (default '09:00')",
+        "The scheduledTime parameter is accepted but not yet used (will be used in US-006)",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
       ],
       "priority": 4,
-      "passes": true,
-      "notes": "O bug está em getSectorComplianceStatus() linhas ~44-53 onde faz findMany em EmployeeHierarchy sem filtrar employee.evaluationMode. Adicionar o filtro no select/include do employee."
+      "passes": false,
+      "notes": "The FollowUpsSection is in src/components/pdi-tracking.tsx around lines 1074-1340. The schedule form is around lines 1192-1230. There are two places where scheduleFollowUp is called: (1) the main schedule form, (2) the 'schedule next' modal after completing a follow-up. Add time input to both."
+    },
+    {
+      "id": "US-005",
+      "title": "Add time input to future feedback scheduling form and action",
+      "description": "As a gestor, I want to choose a start time when scheduling a future feedback so the Outlook event reflects the correct meeting time.",
+      "acceptanceCriteria": [
+        "In the future feedback modal in src/components/feedback-table.tsx, add a state variable futureTime with default '09:00'",
+        "Add <input type='time'> with label 'Horário de início' next to the existing date input in the modal",
+        "Pass futureTime in the data object when calling createFutureFeedback",
+        "Update createFutureFeedback function in src/app/(dashboard)/feedbacks/actions.ts to accept optional scheduledTime field in the data parameter (default '09:00')",
+        "The scheduledTime parameter is accepted but not yet used (will be used in US-007)",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": "The future feedback modal is in src/components/feedback-table.tsx around lines 465-549. The createFutureFeedback action is in src/app/(dashboard)/feedbacks/actions.ts around lines 553-622."
+    },
+    {
+      "id": "US-006",
+      "title": "Create Outlook event when scheduling PDI follow-up",
+      "description": "As a gestor, I want a calendar event to be created in mine and the employee's Outlook when I schedule a PDI follow-up so that both parties are reminded automatically.",
+      "acceptanceCriteria": [
+        "In scheduleFollowUp in src/app/(dashboard)/pdis/actions.ts, after creating the PDIFollowUp record, call getUserToken for both the manager (session user) and the employee",
+        "For each user with a valid token, call createCalendarEvent with: subject='Acompanhamento PDI — [Employee Name]', body='Acompanhamento de PDI agendado pelo sistema. Acesse: {NEXTAUTH_URL}/pdis/{pdiId}', start=scheduledAt date + scheduledTime (or 09:00 default), end=start + 1 hour, timeZone='America/Sao_Paulo'",
+        "Use Promise.allSettled for parallel event creation (never Promise.all)",
+        "Save the manager's outlookEventId to the PDIFollowUp record via prisma update",
+        "If getUserToken returns null for a user, skip silently (no error)",
+        "If createCalendarEvent fails, the follow-up is still created successfully (no rollback)",
+        "Typecheck passes"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": "Need to fetch the employee name and the PDI's employeeId to get tokens for both parties. The manager is the session user. Use process.env.NEXTAUTH_URL for the link in the body."
+    },
+    {
+      "id": "US-007",
+      "title": "Create Outlook event when scheduling future feedback",
+      "description": "As a gestor, I want a calendar event to be created when I schedule a future feedback so both parties have it in their Outlook.",
+      "acceptanceCriteria": [
+        "In createFutureFeedback in src/app/(dashboard)/feedbacks/actions.ts, after creating the Feedback record, call getUserToken for both the manager and the employee",
+        "For each user with a valid token, call createCalendarEvent with: subject='Feedback — [Employee Name]', body='Feedback agendado pelo sistema. Acesse: {NEXTAUTH_URL}/feedbacks/{feedbackId}', start=scheduledAt date + scheduledTime (or 09:00 default), end=start + 1 hour, timeZone='America/Sao_Paulo'",
+        "Use Promise.allSettled for parallel event creation",
+        "Save the manager's outlookEventId to the Feedback record via prisma update",
+        "If getUserToken returns null, skip silently",
+        "If createCalendarEvent fails, the feedback is still created successfully",
+        "Typecheck passes"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": "Similar pattern to US-006. The manager is the session user (managerId). The employee is data.employeeId. Use process.env.NEXTAUTH_URL for the link."
+    },
+    {
+      "id": "US-008",
+      "title": "Cancel Outlook event when cancelling PDI follow-up",
+      "description": "As a gestor, I want the Outlook event to be deleted when I cancel a PDI follow-up so it disappears from calendars.",
+      "acceptanceCriteria": [
+        "In cancelFollowUp in src/app/(dashboard)/pdis/actions.ts, before or after updating status to 'cancelled', check if the PDIFollowUp record has an outlookEventId",
+        "If outlookEventId exists, get the manager's token via getUserToken and call deleteCalendarEvent",
+        "Failure to delete the Outlook event does not prevent the follow-up cancellation",
+        "Typecheck passes"
+      ],
+      "priority": 8,
+      "passes": false,
+      "notes": "Need to fetch the follow-up record first to check for outlookEventId. The manager is the session user."
+    },
+    {
+      "id": "US-009",
+      "title": "Cancel or update Outlook event when feedback is cancelled or rescheduled",
+      "description": "As a gestor, I want the Outlook event to be removed or updated when a feedback is cancelled or its date changes.",
+      "acceptanceCriteria": [
+        "In cancelScheduledFeedback in src/app/(dashboard)/feedbacks/actions.ts, if the Feedback record has outlookEventId, call deleteCalendarEvent via the manager's token",
+        "In rescheduleFeedback in src/app/(dashboard)/feedbacks/actions.ts, if the Feedback record has outlookEventId, call updateCalendarEvent with the new scheduledAt date+time",
+        "Failures in Outlook API calls do not prevent the database operations",
+        "Typecheck passes"
+      ],
+      "priority": 9,
+      "passes": false,
+      "notes": "cancelScheduledFeedback and rescheduleFeedback are both in src/app/(dashboard)/feedbacks/actions.ts. Need to import getUserToken, deleteCalendarEvent, updateCalendarEvent from src/lib/microsoft-graph.ts."
     }
   ]
 }

@@ -34,6 +34,9 @@ export type UserMinAggregateOutputType = {
   avatarUrl: string | null
   ssoProvider: string | null
   ssoId: string | null
+  msAccessToken: string | null
+  msRefreshToken: string | null
+  msTokenExpiresAt: Date | null
   isActive: boolean | null
   admissionDate: Date | null
   phone: string | null
@@ -58,6 +61,9 @@ export type UserMaxAggregateOutputType = {
   avatarUrl: string | null
   ssoProvider: string | null
   ssoId: string | null
+  msAccessToken: string | null
+  msRefreshToken: string | null
+  msTokenExpiresAt: Date | null
   isActive: boolean | null
   admissionDate: Date | null
   phone: string | null
@@ -82,6 +88,9 @@ export type UserCountAggregateOutputType = {
   avatarUrl: number
   ssoProvider: number
   ssoId: number
+  msAccessToken: number
+  msRefreshToken: number
+  msTokenExpiresAt: number
   isActive: number
   admissionDate: number
   phone: number
@@ -108,6 +117,9 @@ export type UserMinAggregateInputType = {
   avatarUrl?: true
   ssoProvider?: true
   ssoId?: true
+  msAccessToken?: true
+  msRefreshToken?: true
+  msTokenExpiresAt?: true
   isActive?: true
   admissionDate?: true
   phone?: true
@@ -132,6 +144,9 @@ export type UserMaxAggregateInputType = {
   avatarUrl?: true
   ssoProvider?: true
   ssoId?: true
+  msAccessToken?: true
+  msRefreshToken?: true
+  msTokenExpiresAt?: true
   isActive?: true
   admissionDate?: true
   phone?: true
@@ -156,6 +171,9 @@ export type UserCountAggregateInputType = {
   avatarUrl?: true
   ssoProvider?: true
   ssoId?: true
+  msAccessToken?: true
+  msRefreshToken?: true
+  msTokenExpiresAt?: true
   isActive?: true
   admissionDate?: true
   phone?: true
@@ -253,6 +271,9 @@ export type UserGroupByOutputType = {
   avatarUrl: string | null
   ssoProvider: string | null
   ssoId: string | null
+  msAccessToken: string | null
+  msRefreshToken: string | null
+  msTokenExpiresAt: Date | null
   isActive: boolean
   admissionDate: Date | null
   phone: string | null
@@ -298,6 +319,9 @@ export type UserWhereInput = {
   avatarUrl?: Prisma.StringNullableFilter<"User"> | string | null
   ssoProvider?: Prisma.StringNullableFilter<"User"> | string | null
   ssoId?: Prisma.StringNullableFilter<"User"> | string | null
+  msAccessToken?: Prisma.StringNullableFilter<"User"> | string | null
+  msRefreshToken?: Prisma.StringNullableFilter<"User"> | string | null
+  msTokenExpiresAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   isActive?: Prisma.BoolFilter<"User"> | boolean
   admissionDate?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   phone?: Prisma.StringNullableFilter<"User"> | string | null
@@ -334,6 +358,9 @@ export type UserOrderByWithRelationInput = {
   avatarUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   ssoProvider?: Prisma.SortOrderInput | Prisma.SortOrder
   ssoId?: Prisma.SortOrderInput | Prisma.SortOrder
+  msAccessToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  msRefreshToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  msTokenExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   admissionDate?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -374,6 +401,9 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   avatarUrl?: Prisma.StringNullableFilter<"User"> | string | null
   ssoProvider?: Prisma.StringNullableFilter<"User"> | string | null
   ssoId?: Prisma.StringNullableFilter<"User"> | string | null
+  msAccessToken?: Prisma.StringNullableFilter<"User"> | string | null
+  msRefreshToken?: Prisma.StringNullableFilter<"User"> | string | null
+  msTokenExpiresAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   isActive?: Prisma.BoolFilter<"User"> | boolean
   admissionDate?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   phone?: Prisma.StringNullableFilter<"User"> | string | null
@@ -409,6 +439,9 @@ export type UserOrderByWithAggregationInput = {
   avatarUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   ssoProvider?: Prisma.SortOrderInput | Prisma.SortOrder
   ssoId?: Prisma.SortOrderInput | Prisma.SortOrder
+  msAccessToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  msRefreshToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  msTokenExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   admissionDate?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -439,6 +472,9 @@ export type UserScalarWhereWithAggregatesInput = {
   avatarUrl?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   ssoProvider?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   ssoId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  msAccessToken?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  msRefreshToken?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  msTokenExpiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   isActive?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   admissionDate?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   phone?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
@@ -463,6 +499,9 @@ export type UserCreateInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -499,6 +538,9 @@ export type UserUncheckedCreateInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -535,6 +577,9 @@ export type UserUpdateInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -571,6 +616,9 @@ export type UserUncheckedUpdateInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -607,6 +655,9 @@ export type UserCreateManyInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -631,6 +682,9 @@ export type UserUpdateManyMutationInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -655,6 +709,9 @@ export type UserUncheckedUpdateManyInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -679,6 +736,9 @@ export type UserCountOrderByAggregateInput = {
   avatarUrl?: Prisma.SortOrder
   ssoProvider?: Prisma.SortOrder
   ssoId?: Prisma.SortOrder
+  msAccessToken?: Prisma.SortOrder
+  msRefreshToken?: Prisma.SortOrder
+  msTokenExpiresAt?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   admissionDate?: Prisma.SortOrder
   phone?: Prisma.SortOrder
@@ -703,6 +763,9 @@ export type UserMaxOrderByAggregateInput = {
   avatarUrl?: Prisma.SortOrder
   ssoProvider?: Prisma.SortOrder
   ssoId?: Prisma.SortOrder
+  msAccessToken?: Prisma.SortOrder
+  msRefreshToken?: Prisma.SortOrder
+  msTokenExpiresAt?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   admissionDate?: Prisma.SortOrder
   phone?: Prisma.SortOrder
@@ -727,6 +790,9 @@ export type UserMinOrderByAggregateInput = {
   avatarUrl?: Prisma.SortOrder
   ssoProvider?: Prisma.SortOrder
   ssoId?: Prisma.SortOrder
+  msAccessToken?: Prisma.SortOrder
+  msRefreshToken?: Prisma.SortOrder
+  msTokenExpiresAt?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   admissionDate?: Prisma.SortOrder
   phone?: Prisma.SortOrder
@@ -767,12 +833,12 @@ export type EnumEvaluationModeFieldUpdateOperationsInput = {
   set?: $Enums.EvaluationMode
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
+}
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -961,6 +1027,9 @@ export type UserCreateWithoutEmployeeHierarchiesInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -996,6 +1065,9 @@ export type UserUncheckedCreateWithoutEmployeeHierarchiesInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -1036,6 +1108,9 @@ export type UserCreateWithoutManagerHierarchiesInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -1071,6 +1146,9 @@ export type UserUncheckedCreateWithoutManagerHierarchiesInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -1122,6 +1200,9 @@ export type UserUpdateWithoutEmployeeHierarchiesInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1157,6 +1238,9 @@ export type UserUncheckedUpdateWithoutEmployeeHierarchiesInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1203,6 +1287,9 @@ export type UserUpdateWithoutManagerHierarchiesInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1238,6 +1325,9 @@ export type UserUncheckedUpdateWithoutManagerHierarchiesInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1273,6 +1363,9 @@ export type UserCreateWithoutPdisAsEmployeeInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -1308,6 +1401,9 @@ export type UserUncheckedCreateWithoutPdisAsEmployeeInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -1348,6 +1444,9 @@ export type UserCreateWithoutPdisAsManagerInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -1383,6 +1482,9 @@ export type UserUncheckedCreateWithoutPdisAsManagerInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -1434,6 +1536,9 @@ export type UserUpdateWithoutPdisAsEmployeeInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1469,6 +1574,9 @@ export type UserUncheckedUpdateWithoutPdisAsEmployeeInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1515,6 +1623,9 @@ export type UserUpdateWithoutPdisAsManagerInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1550,6 +1661,9 @@ export type UserUncheckedUpdateWithoutPdisAsManagerInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1585,6 +1699,9 @@ export type UserCreateWithoutGoalResponsibilitiesInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -1620,6 +1737,9 @@ export type UserUncheckedCreateWithoutGoalResponsibilitiesInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -1671,6 +1791,9 @@ export type UserUpdateWithoutGoalResponsibilitiesInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1706,6 +1829,9 @@ export type UserUncheckedUpdateWithoutGoalResponsibilitiesInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1741,6 +1867,9 @@ export type UserCreateWithoutPdiEvidencesInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -1776,6 +1905,9 @@ export type UserUncheckedCreateWithoutPdiEvidencesInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -1827,6 +1959,9 @@ export type UserUpdateWithoutPdiEvidencesInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1862,6 +1997,9 @@ export type UserUncheckedUpdateWithoutPdiEvidencesInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1897,6 +2035,9 @@ export type UserCreateWithoutPdiCommentsInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -1932,6 +2073,9 @@ export type UserUncheckedCreateWithoutPdiCommentsInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -1983,6 +2127,9 @@ export type UserUpdateWithoutPdiCommentsInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2018,6 +2165,9 @@ export type UserUncheckedUpdateWithoutPdiCommentsInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2053,6 +2203,9 @@ export type UserCreateWithoutFeedbacksReceivedInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -2088,6 +2241,9 @@ export type UserUncheckedCreateWithoutFeedbacksReceivedInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -2128,6 +2284,9 @@ export type UserCreateWithoutFeedbacksGivenInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -2163,6 +2322,9 @@ export type UserUncheckedCreateWithoutFeedbacksGivenInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -2214,6 +2376,9 @@ export type UserUpdateWithoutFeedbacksReceivedInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2249,6 +2414,9 @@ export type UserUncheckedUpdateWithoutFeedbacksReceivedInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2295,6 +2463,9 @@ export type UserUpdateWithoutFeedbacksGivenInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2330,6 +2501,9 @@ export type UserUncheckedUpdateWithoutFeedbacksGivenInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2365,6 +2539,9 @@ export type UserCreateWithoutFeedbackSchedulesAsEmployeeInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -2400,6 +2577,9 @@ export type UserUncheckedCreateWithoutFeedbackSchedulesAsEmployeeInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -2440,6 +2620,9 @@ export type UserCreateWithoutFeedbackSchedulesAsManagerInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -2475,6 +2658,9 @@ export type UserUncheckedCreateWithoutFeedbackSchedulesAsManagerInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -2526,6 +2712,9 @@ export type UserUpdateWithoutFeedbackSchedulesAsEmployeeInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2561,6 +2750,9 @@ export type UserUncheckedUpdateWithoutFeedbackSchedulesAsEmployeeInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2607,6 +2799,9 @@ export type UserUpdateWithoutFeedbackSchedulesAsManagerInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2642,6 +2837,9 @@ export type UserUncheckedUpdateWithoutFeedbackSchedulesAsManagerInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2677,6 +2875,9 @@ export type UserCreateWithoutNotificationsInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -2712,6 +2913,9 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   avatarUrl?: string | null
   ssoProvider?: string | null
   ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
   isActive?: boolean
   admissionDate?: Date | string | null
   phone?: string | null
@@ -2763,6 +2967,9 @@ export type UserUpdateWithoutNotificationsInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2798,6 +3005,9 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2963,6 +3173,9 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   avatarUrl?: boolean
   ssoProvider?: boolean
   ssoId?: boolean
+  msAccessToken?: boolean
+  msRefreshToken?: boolean
+  msTokenExpiresAt?: boolean
   isActive?: boolean
   admissionDate?: boolean
   phone?: boolean
@@ -3000,6 +3213,9 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   avatarUrl?: boolean
   ssoProvider?: boolean
   ssoId?: boolean
+  msAccessToken?: boolean
+  msRefreshToken?: boolean
+  msTokenExpiresAt?: boolean
   isActive?: boolean
   admissionDate?: boolean
   phone?: boolean
@@ -3024,6 +3240,9 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   avatarUrl?: boolean
   ssoProvider?: boolean
   ssoId?: boolean
+  msAccessToken?: boolean
+  msRefreshToken?: boolean
+  msTokenExpiresAt?: boolean
   isActive?: boolean
   admissionDate?: boolean
   phone?: boolean
@@ -3048,6 +3267,9 @@ export type UserSelectScalar = {
   avatarUrl?: boolean
   ssoProvider?: boolean
   ssoId?: boolean
+  msAccessToken?: boolean
+  msRefreshToken?: boolean
+  msTokenExpiresAt?: boolean
   isActive?: boolean
   admissionDate?: boolean
   phone?: boolean
@@ -3062,7 +3284,7 @@ export type UserSelectScalar = {
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "role" | "evaluationMode" | "avatarUrl" | "ssoProvider" | "ssoId" | "isActive" | "admissionDate" | "phone" | "cpf" | "birthDate" | "jobTitle" | "address" | "city" | "state" | "zipCode" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "role" | "evaluationMode" | "avatarUrl" | "ssoProvider" | "ssoId" | "msAccessToken" | "msRefreshToken" | "msTokenExpiresAt" | "isActive" | "admissionDate" | "phone" | "cpf" | "birthDate" | "jobTitle" | "address" | "city" | "state" | "zipCode" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   employeeHierarchies?: boolean | Prisma.User$employeeHierarchiesArgs<ExtArgs>
   pdisAsEmployee?: boolean | Prisma.User$pdisAsEmployeeArgs<ExtArgs>
@@ -3107,6 +3329,9 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     avatarUrl: string | null
     ssoProvider: string | null
     ssoId: string | null
+    msAccessToken: string | null
+    msRefreshToken: string | null
+    msTokenExpiresAt: Date | null
     isActive: boolean
     admissionDate: Date | null
     phone: string | null
@@ -3563,6 +3788,9 @@ export interface UserFieldRefs {
   readonly avatarUrl: Prisma.FieldRef<"User", 'String'>
   readonly ssoProvider: Prisma.FieldRef<"User", 'String'>
   readonly ssoId: Prisma.FieldRef<"User", 'String'>
+  readonly msAccessToken: Prisma.FieldRef<"User", 'String'>
+  readonly msRefreshToken: Prisma.FieldRef<"User", 'String'>
+  readonly msTokenExpiresAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly isActive: Prisma.FieldRef<"User", 'Boolean'>
   readonly admissionDate: Prisma.FieldRef<"User", 'DateTime'>
   readonly phone: Prisma.FieldRef<"User", 'String'>

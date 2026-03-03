@@ -1352,6 +1352,9 @@ export const UserScalarFieldEnum = {
   avatarUrl: 'avatarUrl',
   ssoProvider: 'ssoProvider',
   ssoId: 'ssoId',
+  msAccessToken: 'msAccessToken',
+  msRefreshToken: 'msRefreshToken',
+  msTokenExpiresAt: 'msTokenExpiresAt',
   isActive: 'isActive',
   admissionDate: 'admissionDate',
   phone: 'phone',
@@ -1425,6 +1428,7 @@ export const PDIFollowUpScalarFieldEnum = {
   conductedAt: 'conductedAt',
   notes: 'notes',
   status: 'status',
+  outlookEventId: 'outlookEventId',
   createdAt: 'createdAt'
 } as const
 
@@ -1487,6 +1491,7 @@ export const FeedbackScalarFieldEnum = {
   conductedAt: 'conductedAt',
   scheduledAt: 'scheduledAt',
   isOnboarding: 'isOnboarding',
+  outlookEventId: 'outlookEventId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1593,13 +1598,6 @@ export type ListEnumEvaluationModeFieldRefInput<$PrismaModel> = FieldRefInputTyp
 
 
 /**
- * Reference to a field of type 'Boolean'
- */
-export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
-    
-
-
-/**
  * Reference to a field of type 'DateTime'
  */
 export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -1610,6 +1608,13 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 

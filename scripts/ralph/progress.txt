@@ -1,73 +1,22 @@
 # Ralph Progress Log
-Started: Mon Mar  2 11:01:25 PST 2026
+Started: Mon Mar  2 16:11:11 PST 2026
 
 ## Codebase Patterns
-- Prisma partial unique indexes must be added via raw SQL migrations (Prisma schema doesn't support WHERE clause on indexes)
-- Use `IF NOT EXISTS` on CREATE INDEX in migrations for idempotency
-- Use `DISTINCT ON` with `ORDER BY` for "pick best per group" queries in PostgreSQL
-- Prisma 7 uses TypeScript-based generated client in `src/generated/prisma/` - schema model changes require `prisma generate`, but database-only changes (indexes) don't affect the generated client
-- Pre-existing lint errors on main: theme-provider setState-in-effect error, unused vars in programacao/actions.ts, pdi-tracking.tsx, sector-schedule-utils
-- PDIs use continuous model (one active per employee); check `status: "active"` not date ranges for duplicates
-- Use Prisma error code P2002 for unique constraint violations; pattern: `error.code === "P2002"` with `typeof error === "object" && "code" in error`
-- `evaluationMode` on User controls PDI vs Feedback; filter at Prisma query level with nested `employee: { evaluationMode: type }`
+- Prisma generate requires `PRISMA_SCHEMA_ENGINE_BINARY=/dev/null` env var workaround in this environment (no network for engine download)
+- Migration SQL must be created manually and applied via `prisma db execute` or direct DB connection since `prisma migrate dev` needs the schema engine binary
+- Generated Prisma client files are in `src/generated/prisma/` and have `@ts-nocheck` — they're regenerated via `prisma generate`
+- All pre-existing lint errors are in: theme-provider.tsx (setState in effect), programacao/actions.ts, pdi-tracking.tsx, sector-schedule-utils.ts — not from our changes
+
 ---
 
 ## 2026-03-02 - US-001
-- Created migration `20260302190000_unique_active_pdi_per_employee` that:
-  - Reparents PDIFollowUp from non-keeper active PDIs to keeper (most recent updatedAt)
-  - Re-runs consolidation of PDIGoal and PDIComment for safety (idempotent)
-  - Cancels non-keeper active PDIs
-  - Adds unique partial index: `CREATE UNIQUE INDEX IF NOT EXISTS idx_pdi_one_active_per_employee ON PDI(employeeId) WHERE status = 'active'`
+- What was implemented: Added Microsoft OAuth token fields (msAccessToken, msRefreshToken, msTokenExpiresAt) to User model, outlookEventId to PDIFollowUp and Feedback models
 - Files changed:
-  - `prisma/migrations/20260302190000_unique_active_pdi_per_employee/migration.sql` (new)
-  - `scripts/ralph/prd.json` (US-001 passes: true)
-  - `scripts/ralph/progress.txt` (this entry)
+  - prisma/schema.prisma — added 3 fields to User, 1 to PDIFollowUp, 1 to Feedback
+  - prisma/migrations/20260302200000_add_outlook_calendar_fields/migration.sql — migration SQL
+  - src/generated/prisma/* — regenerated Prisma client
 - **Learnings for future iterations:**
-  - Previous migration (20260302160000) consolidated goals and comments but missed PDIFollowUp (added in later migration 20260302170000)
-  - Network-restricted env: `prisma migrate dev` and `prisma generate` fail due to missing Linux engine binaries (only Windows cached). Migration SQL files can still be created manually.
-  - The PDI model uses `status` enum (active/cancelled) - partial unique index ensures one active PDI per employee at DB level
----
-
-## 2026-03-02 - US-002
-- Modified `getOrCreatePDI()` in `src/app/(dashboard)/pdis/actions.ts` to handle race conditions:
-  - Wrapped `prisma.pDI.create()` in try/catch
-  - On P2002 (unique constraint violation), falls back to `findFirst()` for the existing active PDI
-  - Non-P2002 errors are re-thrown
-- Files changed:
-  - `src/app/(dashboard)/pdis/actions.ts` (modified getOrCreatePDI)
-  - `scripts/ralph/prd.json` (US-002 passes: true)
-  - `scripts/ralph/progress.txt` (this entry)
-- **Learnings for future iterations:**
-  - Prisma P2002 error code is for unique constraint violations - check `error.code === "P2002"`
-  - For Prisma errors in "use server" actions, use `error && typeof error === "object" && "code" in error` pattern for safe type narrowing
-  - The `getOrCreatePDI()` function is the primary entry point for creating PDIs in the continuous model
----
-
-## 2026-03-02 - US-003
-- Fixed `programEvents()` in `src/app/(dashboard)/programacao/actions.ts`:
-  - Changed PDI duplicate check from date-range (createdAt/conductedAt between periodStart-periodEnd) to simple `status: "active"` check
-  - Added P2002 try/catch on `prisma.pDI.create()` as safety fallback, incrementing `skipped`
-  - Feedback duplicate check left unchanged (still uses date-range which is correct for feedbacks)
-- Files changed:
-  - `src/app/(dashboard)/programacao/actions.ts` (modified programEvents)
-  - `scripts/ralph/prd.json` (US-003 passes: true)
-  - `scripts/ralph/progress.txt` (this entry)
-- **Learnings for future iterations:**
-  - PDIs use continuous model (one active per employee), so duplicate checks should use `status: "active"` not date ranges
-  - Feedbacks use period-based model, so duplicate checks correctly use date ranges (scheduledAt/conductedAt between periodStart-periodEnd)
-  - `programEvents()` handles both types but with different duplicate detection logic
----
-
-## 2026-03-02 - US-004
-- Added `evaluationMode` filtering to `src/app/(dashboard)/programacao/actions.ts`:
-  - `getSectorComplianceStatus()`: Added `employee: { evaluationMode: type }` to EmployeeHierarchy where clause and `evaluationMode` to employee select
-  - `programEvents()`: Added `evaluationMode` to employee select, added early `continue` if `hierarchy.employee.evaluationMode !== params.type`
-- Files changed:
-  - `src/app/(dashboard)/programacao/actions.ts` (modified getSectorComplianceStatus, programEvents)
-  - `scripts/ralph/prd.json` (US-004 passes: true)
-  - `scripts/ralph/progress.txt` (this entry)
-- **Learnings for future iterations:**
-  - `evaluationMode` on User controls which evaluation type applies: 'pdi' or 'feedback'
-  - Filter at the Prisma query level when possible (using nested `employee: { evaluationMode: type }` in where clause) for efficiency
-  - Always include `evaluationMode` in select when it's needed for validation downstream
+  - All new fields are nullable (String?, DateTime?) so no data migration needed
+  - Database is not running in this environment — migration file is created but must be applied when DB is available
+  - `PRISMA_SCHEMA_ENGINE_BINARY=/dev/null npx prisma generate` works to regenerate client without network
 ---
