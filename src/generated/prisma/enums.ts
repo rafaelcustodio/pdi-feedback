@@ -178,3 +178,12 @@ export const NineBoxEvaluatorStatus = {
 } as const
 
 export type NineBoxEvaluatorStatus = (typeof NineBoxEvaluatorStatus)[keyof typeof NineBoxEvaluatorStatus]
+
+
+export const ChangeRequestStatus = {
+  pending: 'pending',
+  approved: 'approved',
+  rejected: 'rejected'
+} as const
+
+export type ChangeRequestStatus = (typeof ChangeRequestStatus)[keyof typeof ChangeRequestStatus]

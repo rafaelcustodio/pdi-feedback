@@ -111,3 +111,18 @@ export type NineBoxEvaluation = Prisma.NineBoxEvaluationModel
  * 
  */
 export type NineBoxEvaluator = Prisma.NineBoxEvaluatorModel
+/**
+ * Model ChangeRequest
+ * 
+ */
+export type ChangeRequest = Prisma.ChangeRequestModel
+/**
+ * Model Dependent
+ * 
+ */
+export type Dependent = Prisma.DependentModel
+/**
+ * Model EmergencyContact
+ * 
+ */
+export type EmergencyContact = Prisma.EmergencyContactModel

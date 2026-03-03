@@ -578,6 +578,10 @@ export type UserWhereInput = {
   pdiEvidences?: Prisma.PDIEvidenceListRelationFilter
   goalResponsibilities?: Prisma.PDIGoalListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
+  dependents?: Prisma.DependentListRelationFilter
+  emergencyContacts?: Prisma.EmergencyContactListRelationFilter
+  changeRequests?: Prisma.ChangeRequestListRelationFilter
+  reviewedChangeRequests?: Prisma.ChangeRequestListRelationFilter
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationListRelationFilter
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationListRelationFilter
   nineBoxResponses?: Prisma.NineBoxEvaluatorListRelationFilter
@@ -650,6 +654,10 @@ export type UserOrderByWithRelationInput = {
   pdiEvidences?: Prisma.PDIEvidenceOrderByRelationAggregateInput
   goalResponsibilities?: Prisma.PDIGoalOrderByRelationAggregateInput
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
+  dependents?: Prisma.DependentOrderByRelationAggregateInput
+  emergencyContacts?: Prisma.EmergencyContactOrderByRelationAggregateInput
+  changeRequests?: Prisma.ChangeRequestOrderByRelationAggregateInput
+  reviewedChangeRequests?: Prisma.ChangeRequestOrderByRelationAggregateInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationOrderByRelationAggregateInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationOrderByRelationAggregateInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorOrderByRelationAggregateInput
@@ -725,6 +733,10 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   pdiEvidences?: Prisma.PDIEvidenceListRelationFilter
   goalResponsibilities?: Prisma.PDIGoalListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
+  dependents?: Prisma.DependentListRelationFilter
+  emergencyContacts?: Prisma.EmergencyContactListRelationFilter
+  changeRequests?: Prisma.ChangeRequestListRelationFilter
+  reviewedChangeRequests?: Prisma.ChangeRequestListRelationFilter
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationListRelationFilter
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationListRelationFilter
   nineBoxResponses?: Prisma.NineBoxEvaluatorListRelationFilter
@@ -917,6 +929,10 @@ export type UserCreateInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -989,6 +1005,10 @@ export type UserUncheckedCreateInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -1061,6 +1081,10 @@ export type UserUpdateInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -1133,6 +1157,10 @@ export type UserUncheckedUpdateInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -1781,6 +1809,64 @@ export type UserUpdateOneRequiredWithoutNineBoxResponsesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNineBoxResponsesInput, Prisma.UserUpdateWithoutNineBoxResponsesInput>, Prisma.UserUncheckedUpdateWithoutNineBoxResponsesInput>
 }
 
+export type UserCreateNestedOneWithoutChangeRequestsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutChangeRequestsInput, Prisma.UserUncheckedCreateWithoutChangeRequestsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutChangeRequestsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutReviewedChangeRequestsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReviewedChangeRequestsInput, Prisma.UserUncheckedCreateWithoutReviewedChangeRequestsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReviewedChangeRequestsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutChangeRequestsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutChangeRequestsInput, Prisma.UserUncheckedCreateWithoutChangeRequestsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutChangeRequestsInput
+  upsert?: Prisma.UserUpsertWithoutChangeRequestsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutChangeRequestsInput, Prisma.UserUpdateWithoutChangeRequestsInput>, Prisma.UserUncheckedUpdateWithoutChangeRequestsInput>
+}
+
+export type UserUpdateOneWithoutReviewedChangeRequestsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReviewedChangeRequestsInput, Prisma.UserUncheckedCreateWithoutReviewedChangeRequestsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReviewedChangeRequestsInput
+  upsert?: Prisma.UserUpsertWithoutReviewedChangeRequestsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReviewedChangeRequestsInput, Prisma.UserUpdateWithoutReviewedChangeRequestsInput>, Prisma.UserUncheckedUpdateWithoutReviewedChangeRequestsInput>
+}
+
+export type UserCreateNestedOneWithoutDependentsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDependentsInput, Prisma.UserUncheckedCreateWithoutDependentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDependentsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutDependentsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDependentsInput, Prisma.UserUncheckedCreateWithoutDependentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDependentsInput
+  upsert?: Prisma.UserUpsertWithoutDependentsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDependentsInput, Prisma.UserUpdateWithoutDependentsInput>, Prisma.UserUncheckedUpdateWithoutDependentsInput>
+}
+
+export type UserCreateNestedOneWithoutEmergencyContactsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutEmergencyContactsInput, Prisma.UserUncheckedCreateWithoutEmergencyContactsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutEmergencyContactsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutEmergencyContactsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutEmergencyContactsInput, Prisma.UserUncheckedCreateWithoutEmergencyContactsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutEmergencyContactsInput
+  upsert?: Prisma.UserUpsertWithoutEmergencyContactsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutEmergencyContactsInput, Prisma.UserUpdateWithoutEmergencyContactsInput>, Prisma.UserUncheckedUpdateWithoutEmergencyContactsInput>
+}
+
 export type UserCreateWithoutEmployeeHierarchiesInput = {
   id?: string
   name: string
@@ -1847,6 +1933,10 @@ export type UserCreateWithoutEmployeeHierarchiesInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -1918,6 +2008,10 @@ export type UserUncheckedCreateWithoutEmployeeHierarchiesInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -1994,6 +2088,10 @@ export type UserCreateWithoutManagerHierarchiesInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -2065,6 +2163,10 @@ export type UserUncheckedCreateWithoutManagerHierarchiesInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -2152,6 +2254,10 @@ export type UserUpdateWithoutEmployeeHierarchiesInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -2223,6 +2329,10 @@ export type UserUncheckedUpdateWithoutEmployeeHierarchiesInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -2305,6 +2415,10 @@ export type UserUpdateWithoutManagerHierarchiesInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -2376,6 +2490,10 @@ export type UserUncheckedUpdateWithoutManagerHierarchiesInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -2447,6 +2565,10 @@ export type UserCreateWithoutPdisAsEmployeeInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -2518,6 +2640,10 @@ export type UserUncheckedCreateWithoutPdisAsEmployeeInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -2594,6 +2720,10 @@ export type UserCreateWithoutPdisAsManagerInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -2665,6 +2795,10 @@ export type UserUncheckedCreateWithoutPdisAsManagerInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -2752,6 +2886,10 @@ export type UserUpdateWithoutPdisAsEmployeeInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -2823,6 +2961,10 @@ export type UserUncheckedUpdateWithoutPdisAsEmployeeInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -2905,6 +3047,10 @@ export type UserUpdateWithoutPdisAsManagerInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -2976,6 +3122,10 @@ export type UserUncheckedUpdateWithoutPdisAsManagerInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -3047,6 +3197,10 @@ export type UserCreateWithoutGoalResponsibilitiesInput = {
   pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -3118,6 +3272,10 @@ export type UserUncheckedCreateWithoutGoalResponsibilitiesInput = {
   pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -3205,6 +3363,10 @@ export type UserUpdateWithoutGoalResponsibilitiesInput = {
   pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -3276,6 +3438,10 @@ export type UserUncheckedUpdateWithoutGoalResponsibilitiesInput = {
   pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -3347,6 +3513,10 @@ export type UserCreateWithoutPdiEvidencesInput = {
   pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -3418,6 +3588,10 @@ export type UserUncheckedCreateWithoutPdiEvidencesInput = {
   pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -3505,6 +3679,10 @@ export type UserUpdateWithoutPdiEvidencesInput = {
   pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -3576,6 +3754,10 @@ export type UserUncheckedUpdateWithoutPdiEvidencesInput = {
   pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -3647,6 +3829,10 @@ export type UserCreateWithoutPdiCommentsInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -3718,6 +3904,10 @@ export type UserUncheckedCreateWithoutPdiCommentsInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -3805,6 +3995,10 @@ export type UserUpdateWithoutPdiCommentsInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -3876,6 +4070,10 @@ export type UserUncheckedUpdateWithoutPdiCommentsInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -3947,6 +4145,10 @@ export type UserCreateWithoutFeedbacksReceivedInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -4018,6 +4220,10 @@ export type UserUncheckedCreateWithoutFeedbacksReceivedInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -4094,6 +4300,10 @@ export type UserCreateWithoutFeedbacksGivenInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -4165,6 +4375,10 @@ export type UserUncheckedCreateWithoutFeedbacksGivenInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -4252,6 +4466,10 @@ export type UserUpdateWithoutFeedbacksReceivedInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -4323,6 +4541,10 @@ export type UserUncheckedUpdateWithoutFeedbacksReceivedInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -4405,6 +4627,10 @@ export type UserUpdateWithoutFeedbacksGivenInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -4476,6 +4702,10 @@ export type UserUncheckedUpdateWithoutFeedbacksGivenInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -4547,6 +4777,10 @@ export type UserCreateWithoutFeedbackSchedulesAsEmployeeInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -4618,6 +4852,10 @@ export type UserUncheckedCreateWithoutFeedbackSchedulesAsEmployeeInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -4694,6 +4932,10 @@ export type UserCreateWithoutFeedbackSchedulesAsManagerInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -4765,6 +5007,10 @@ export type UserUncheckedCreateWithoutFeedbackSchedulesAsManagerInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -4852,6 +5098,10 @@ export type UserUpdateWithoutFeedbackSchedulesAsEmployeeInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -4923,6 +5173,10 @@ export type UserUncheckedUpdateWithoutFeedbackSchedulesAsEmployeeInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -5005,6 +5259,10 @@ export type UserUpdateWithoutFeedbackSchedulesAsManagerInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -5076,6 +5334,10 @@ export type UserUncheckedUpdateWithoutFeedbackSchedulesAsManagerInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -5147,6 +5409,10 @@ export type UserCreateWithoutNotificationsInput = {
   pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
@@ -5218,6 +5484,10 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
@@ -5305,6 +5575,10 @@ export type UserUpdateWithoutNotificationsInput = {
   pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
@@ -5376,6 +5650,10 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
@@ -5448,6 +5726,10 @@ export type UserCreateWithoutNineBoxEvaluationsReceivedInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
 }
@@ -5519,6 +5801,10 @@ export type UserUncheckedCreateWithoutNineBoxEvaluationsReceivedInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
 }
@@ -5595,6 +5881,10 @@ export type UserCreateWithoutNineBoxEvaluationsCreatedInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
 }
@@ -5666,6 +5956,10 @@ export type UserUncheckedCreateWithoutNineBoxEvaluationsCreatedInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
 }
@@ -5753,6 +6047,10 @@ export type UserUpdateWithoutNineBoxEvaluationsReceivedInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
 }
@@ -5824,6 +6122,10 @@ export type UserUncheckedUpdateWithoutNineBoxEvaluationsReceivedInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
 }
@@ -5906,6 +6208,10 @@ export type UserUpdateWithoutNineBoxEvaluationsCreatedInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
 }
@@ -5977,6 +6283,10 @@ export type UserUncheckedUpdateWithoutNineBoxEvaluationsCreatedInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
 }
@@ -6048,6 +6358,10 @@ export type UserCreateWithoutNineBoxResponsesInput = {
   pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
 }
@@ -6119,6 +6433,10 @@ export type UserUncheckedCreateWithoutNineBoxResponsesInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
 }
@@ -6206,6 +6524,10 @@ export type UserUpdateWithoutNineBoxResponsesInput = {
   pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
 }
@@ -6277,8 +6599,1276 @@ export type UserUncheckedUpdateWithoutNineBoxResponsesInput = {
   pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
   goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
   nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserCreateWithoutChangeRequestsInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  role?: $Enums.UserRole
+  evaluationMode?: $Enums.EvaluationMode
+  avatarUrl?: string | null
+  ssoProvider?: string | null
+  ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
+  isActive?: boolean
+  admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
+  pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
+  feedbacksReceived?: Prisma.FeedbackCreateNestedManyWithoutEmployeeInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleCreateNestedManyWithoutEmployeeInput
+  managerHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutManagerInput
+  pdisAsManager?: Prisma.PDICreateNestedManyWithoutManagerInput
+  feedbacksGiven?: Prisma.FeedbackCreateNestedManyWithoutManagerInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleCreateNestedManyWithoutManagerInput
+  pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
+  pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
+}
+
+export type UserUncheckedCreateWithoutChangeRequestsInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  role?: $Enums.UserRole
+  evaluationMode?: $Enums.EvaluationMode
+  avatarUrl?: string | null
+  ssoProvider?: string | null
+  ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
+  isActive?: boolean
+  admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
+  pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
+  feedbacksReceived?: Prisma.FeedbackUncheckedCreateNestedManyWithoutEmployeeInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutEmployeeInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutManagerInput
+  pdisAsManager?: Prisma.PDIUncheckedCreateNestedManyWithoutManagerInput
+  feedbacksGiven?: Prisma.FeedbackUncheckedCreateNestedManyWithoutManagerInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutManagerInput
+  pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
+  pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
+}
+
+export type UserCreateOrConnectWithoutChangeRequestsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutChangeRequestsInput, Prisma.UserUncheckedCreateWithoutChangeRequestsInput>
+}
+
+export type UserCreateWithoutReviewedChangeRequestsInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  role?: $Enums.UserRole
+  evaluationMode?: $Enums.EvaluationMode
+  avatarUrl?: string | null
+  ssoProvider?: string | null
+  ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
+  isActive?: boolean
+  admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
+  pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
+  feedbacksReceived?: Prisma.FeedbackCreateNestedManyWithoutEmployeeInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleCreateNestedManyWithoutEmployeeInput
+  managerHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutManagerInput
+  pdisAsManager?: Prisma.PDICreateNestedManyWithoutManagerInput
+  feedbacksGiven?: Prisma.FeedbackCreateNestedManyWithoutManagerInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleCreateNestedManyWithoutManagerInput
+  pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
+  pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
+}
+
+export type UserUncheckedCreateWithoutReviewedChangeRequestsInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  role?: $Enums.UserRole
+  evaluationMode?: $Enums.EvaluationMode
+  avatarUrl?: string | null
+  ssoProvider?: string | null
+  ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
+  isActive?: boolean
+  admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
+  pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
+  feedbacksReceived?: Prisma.FeedbackUncheckedCreateNestedManyWithoutEmployeeInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutEmployeeInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutManagerInput
+  pdisAsManager?: Prisma.PDIUncheckedCreateNestedManyWithoutManagerInput
+  feedbacksGiven?: Prisma.FeedbackUncheckedCreateNestedManyWithoutManagerInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutManagerInput
+  pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
+  pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
+}
+
+export type UserCreateOrConnectWithoutReviewedChangeRequestsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutReviewedChangeRequestsInput, Prisma.UserUncheckedCreateWithoutReviewedChangeRequestsInput>
+}
+
+export type UserUpsertWithoutChangeRequestsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutChangeRequestsInput, Prisma.UserUncheckedUpdateWithoutChangeRequestsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutChangeRequestsInput, Prisma.UserUncheckedCreateWithoutChangeRequestsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutChangeRequestsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutChangeRequestsInput, Prisma.UserUncheckedUpdateWithoutChangeRequestsInput>
+}
+
+export type UserUpdateWithoutChangeRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
+  pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
+  feedbacksReceived?: Prisma.FeedbackUpdateManyWithoutEmployeeNestedInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUpdateManyWithoutEmployeeNestedInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutManagerNestedInput
+  pdisAsManager?: Prisma.PDIUpdateManyWithoutManagerNestedInput
+  feedbacksGiven?: Prisma.FeedbackUpdateManyWithoutManagerNestedInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUpdateManyWithoutManagerNestedInput
+  pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
+  pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
+}
+
+export type UserUncheckedUpdateWithoutChangeRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
+  pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
+  feedbacksReceived?: Prisma.FeedbackUncheckedUpdateManyWithoutEmployeeNestedInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutManagerNestedInput
+  pdisAsManager?: Prisma.PDIUncheckedUpdateManyWithoutManagerNestedInput
+  feedbacksGiven?: Prisma.FeedbackUncheckedUpdateManyWithoutManagerNestedInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutManagerNestedInput
+  pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
+  pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
+}
+
+export type UserUpsertWithoutReviewedChangeRequestsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutReviewedChangeRequestsInput, Prisma.UserUncheckedUpdateWithoutReviewedChangeRequestsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutReviewedChangeRequestsInput, Prisma.UserUncheckedCreateWithoutReviewedChangeRequestsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutReviewedChangeRequestsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutReviewedChangeRequestsInput, Prisma.UserUncheckedUpdateWithoutReviewedChangeRequestsInput>
+}
+
+export type UserUpdateWithoutReviewedChangeRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
+  pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
+  feedbacksReceived?: Prisma.FeedbackUpdateManyWithoutEmployeeNestedInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUpdateManyWithoutEmployeeNestedInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutManagerNestedInput
+  pdisAsManager?: Prisma.PDIUpdateManyWithoutManagerNestedInput
+  feedbacksGiven?: Prisma.FeedbackUpdateManyWithoutManagerNestedInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUpdateManyWithoutManagerNestedInput
+  pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
+  pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
+}
+
+export type UserUncheckedUpdateWithoutReviewedChangeRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
+  pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
+  feedbacksReceived?: Prisma.FeedbackUncheckedUpdateManyWithoutEmployeeNestedInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutManagerNestedInput
+  pdisAsManager?: Prisma.PDIUncheckedUpdateManyWithoutManagerNestedInput
+  feedbacksGiven?: Prisma.FeedbackUncheckedUpdateManyWithoutManagerNestedInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutManagerNestedInput
+  pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
+  pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
+}
+
+export type UserCreateWithoutDependentsInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  role?: $Enums.UserRole
+  evaluationMode?: $Enums.EvaluationMode
+  avatarUrl?: string | null
+  ssoProvider?: string | null
+  ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
+  isActive?: boolean
+  admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
+  pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
+  feedbacksReceived?: Prisma.FeedbackCreateNestedManyWithoutEmployeeInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleCreateNestedManyWithoutEmployeeInput
+  managerHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutManagerInput
+  pdisAsManager?: Prisma.PDICreateNestedManyWithoutManagerInput
+  feedbacksGiven?: Prisma.FeedbackCreateNestedManyWithoutManagerInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleCreateNestedManyWithoutManagerInput
+  pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
+  pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
+}
+
+export type UserUncheckedCreateWithoutDependentsInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  role?: $Enums.UserRole
+  evaluationMode?: $Enums.EvaluationMode
+  avatarUrl?: string | null
+  ssoProvider?: string | null
+  ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
+  isActive?: boolean
+  admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
+  pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
+  feedbacksReceived?: Prisma.FeedbackUncheckedCreateNestedManyWithoutEmployeeInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutEmployeeInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutManagerInput
+  pdisAsManager?: Prisma.PDIUncheckedCreateNestedManyWithoutManagerInput
+  feedbacksGiven?: Prisma.FeedbackUncheckedCreateNestedManyWithoutManagerInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutManagerInput
+  pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
+  pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
+}
+
+export type UserCreateOrConnectWithoutDependentsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutDependentsInput, Prisma.UserUncheckedCreateWithoutDependentsInput>
+}
+
+export type UserUpsertWithoutDependentsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutDependentsInput, Prisma.UserUncheckedUpdateWithoutDependentsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutDependentsInput, Prisma.UserUncheckedCreateWithoutDependentsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutDependentsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutDependentsInput, Prisma.UserUncheckedUpdateWithoutDependentsInput>
+}
+
+export type UserUpdateWithoutDependentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
+  pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
+  feedbacksReceived?: Prisma.FeedbackUpdateManyWithoutEmployeeNestedInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUpdateManyWithoutEmployeeNestedInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutManagerNestedInput
+  pdisAsManager?: Prisma.PDIUpdateManyWithoutManagerNestedInput
+  feedbacksGiven?: Prisma.FeedbackUpdateManyWithoutManagerNestedInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUpdateManyWithoutManagerNestedInput
+  pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
+  pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
+}
+
+export type UserUncheckedUpdateWithoutDependentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
+  pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
+  feedbacksReceived?: Prisma.FeedbackUncheckedUpdateManyWithoutEmployeeNestedInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutManagerNestedInput
+  pdisAsManager?: Prisma.PDIUncheckedUpdateManyWithoutManagerNestedInput
+  feedbacksGiven?: Prisma.FeedbackUncheckedUpdateManyWithoutManagerNestedInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutManagerNestedInput
+  pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
+  pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  emergencyContacts?: Prisma.EmergencyContactUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
+}
+
+export type UserCreateWithoutEmergencyContactsInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  role?: $Enums.UserRole
+  evaluationMode?: $Enums.EvaluationMode
+  avatarUrl?: string | null
+  ssoProvider?: string | null
+  ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
+  isActive?: boolean
+  admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutEmployeeInput
+  pdisAsEmployee?: Prisma.PDICreateNestedManyWithoutEmployeeInput
+  feedbacksReceived?: Prisma.FeedbackCreateNestedManyWithoutEmployeeInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleCreateNestedManyWithoutEmployeeInput
+  managerHierarchies?: Prisma.EmployeeHierarchyCreateNestedManyWithoutManagerInput
+  pdisAsManager?: Prisma.PDICreateNestedManyWithoutManagerInput
+  feedbacksGiven?: Prisma.FeedbackCreateNestedManyWithoutManagerInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleCreateNestedManyWithoutManagerInput
+  pdiComments?: Prisma.PDICommentCreateNestedManyWithoutAuthorInput
+  pdiEvidences?: Prisma.PDIEvidenceCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalCreateNestedManyWithoutResponsibleInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestCreateNestedManyWithoutReviewedByInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorCreateNestedManyWithoutEvaluatorInput
+}
+
+export type UserUncheckedCreateWithoutEmergencyContactsInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  role?: $Enums.UserRole
+  evaluationMode?: $Enums.EvaluationMode
+  avatarUrl?: string | null
+  ssoProvider?: string | null
+  ssoId?: string | null
+  msAccessToken?: string | null
+  msRefreshToken?: string | null
+  msTokenExpiresAt?: Date | string | null
+  isActive?: boolean
+  admissionDate?: Date | string | null
+  phone?: string | null
+  cpf?: string | null
+  birthDate?: Date | string | null
+  jobTitle?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  rg?: string | null
+  ethnicity?: $Enums.Ethnicity | null
+  gender?: $Enums.Gender | null
+  maritalStatus?: $Enums.MaritalStatus | null
+  educationLevel?: $Enums.EducationLevel | null
+  livesWithDescription?: string | null
+  personalEmail?: string | null
+  addressNumber?: string | null
+  addressComplement?: string | null
+  hasBradescoAccount?: $Enums.BankAccountOption | null
+  bankAgency?: string | null
+  bankAccount?: string | null
+  hasOtherEmployment?: boolean | null
+  healthPlanOption?: $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: boolean | null
+  contractType?: $Enums.ContractType | null
+  shirtSize?: $Enums.ShirtSize | null
+  hasChildren?: boolean | null
+  childrenAges?: string | null
+  hasIRDependents?: boolean | null
+  hobbies?: Prisma.UserCreatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: string | null
+  favoriteBooks?: string | null
+  favoriteMovies?: string | null
+  favoriteMusic?: string | null
+  admiredValues?: string | null
+  foodAllergies?: string | null
+  hasPets?: string | null
+  participateInVideos?: boolean | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutEmployeeInput
+  pdisAsEmployee?: Prisma.PDIUncheckedCreateNestedManyWithoutEmployeeInput
+  feedbacksReceived?: Prisma.FeedbackUncheckedCreateNestedManyWithoutEmployeeInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutEmployeeInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedCreateNestedManyWithoutManagerInput
+  pdisAsManager?: Prisma.PDIUncheckedCreateNestedManyWithoutManagerInput
+  feedbacksGiven?: Prisma.FeedbackUncheckedCreateNestedManyWithoutManagerInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedCreateNestedManyWithoutManagerInput
+  pdiComments?: Prisma.PDICommentUncheckedCreateNestedManyWithoutAuthorInput
+  pdiEvidences?: Prisma.PDIEvidenceUncheckedCreateNestedManyWithoutAuthorInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedCreateNestedManyWithoutResponsibleInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  dependents?: Prisma.DependentUncheckedCreateNestedManyWithoutUserInput
+  changeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutUserInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedCreateNestedManyWithoutReviewedByInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutEvaluateeInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedCreateNestedManyWithoutCreatedByInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedCreateNestedManyWithoutEvaluatorInput
+}
+
+export type UserCreateOrConnectWithoutEmergencyContactsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutEmergencyContactsInput, Prisma.UserUncheckedCreateWithoutEmergencyContactsInput>
+}
+
+export type UserUpsertWithoutEmergencyContactsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutEmergencyContactsInput, Prisma.UserUncheckedUpdateWithoutEmergencyContactsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutEmergencyContactsInput, Prisma.UserUncheckedCreateWithoutEmergencyContactsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutEmergencyContactsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutEmergencyContactsInput, Prisma.UserUncheckedUpdateWithoutEmergencyContactsInput>
+}
+
+export type UserUpdateWithoutEmergencyContactsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutEmployeeNestedInput
+  pdisAsEmployee?: Prisma.PDIUpdateManyWithoutEmployeeNestedInput
+  feedbacksReceived?: Prisma.FeedbackUpdateManyWithoutEmployeeNestedInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUpdateManyWithoutEmployeeNestedInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUpdateManyWithoutManagerNestedInput
+  pdisAsManager?: Prisma.PDIUpdateManyWithoutManagerNestedInput
+  feedbacksGiven?: Prisma.FeedbackUpdateManyWithoutManagerNestedInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUpdateManyWithoutManagerNestedInput
+  pdiComments?: Prisma.PDICommentUpdateManyWithoutAuthorNestedInput
+  pdiEvidences?: Prisma.PDIEvidenceUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUpdateManyWithoutResponsibleNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUpdateManyWithoutReviewedByNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUpdateManyWithoutEvaluatorNestedInput
+}
+
+export type UserUncheckedUpdateWithoutEmergencyContactsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  evaluationMode?: Prisma.EnumEvaluationModeFieldUpdateOperationsInput | $Enums.EvaluationMode
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ssoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msRefreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  msTokenExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  admissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cpf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rg?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ethnicity?: Prisma.NullableEnumEthnicityFieldUpdateOperationsInput | $Enums.Ethnicity | null
+  gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+  maritalStatus?: Prisma.NullableEnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus | null
+  educationLevel?: Prisma.NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+  livesWithDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressComplement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBradescoAccount?: Prisma.NullableEnumBankAccountOptionFieldUpdateOperationsInput | $Enums.BankAccountOption | null
+  bankAgency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasOtherEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  healthPlanOption?: Prisma.NullableEnumHealthPlanOptionFieldUpdateOperationsInput | $Enums.HealthPlanOption | null
+  wantsTransportVoucher?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  contractType?: Prisma.NullableEnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType | null
+  shirtSize?: Prisma.NullableEnumShirtSizeFieldUpdateOperationsInput | $Enums.ShirtSize | null
+  hasChildren?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  childrenAges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasIRDependents?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hobbies?: Prisma.UserUpdatehobbiesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  favoriteBookMovieGenres?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteBooks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMovies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteMusic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  admiredValues?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodAllergies?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasPets?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participateInVideos?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutEmployeeNestedInput
+  pdisAsEmployee?: Prisma.PDIUncheckedUpdateManyWithoutEmployeeNestedInput
+  feedbacksReceived?: Prisma.FeedbackUncheckedUpdateManyWithoutEmployeeNestedInput
+  feedbackSchedulesAsEmployee?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutEmployeeNestedInput
+  managerHierarchies?: Prisma.EmployeeHierarchyUncheckedUpdateManyWithoutManagerNestedInput
+  pdisAsManager?: Prisma.PDIUncheckedUpdateManyWithoutManagerNestedInput
+  feedbacksGiven?: Prisma.FeedbackUncheckedUpdateManyWithoutManagerNestedInput
+  feedbackSchedulesAsManager?: Prisma.FeedbackScheduleUncheckedUpdateManyWithoutManagerNestedInput
+  pdiComments?: Prisma.PDICommentUncheckedUpdateManyWithoutAuthorNestedInput
+  pdiEvidences?: Prisma.PDIEvidenceUncheckedUpdateManyWithoutAuthorNestedInput
+  goalResponsibilities?: Prisma.PDIGoalUncheckedUpdateManyWithoutResponsibleNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  dependents?: Prisma.DependentUncheckedUpdateManyWithoutUserNestedInput
+  changeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutUserNestedInput
+  reviewedChangeRequests?: Prisma.ChangeRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+  nineBoxEvaluationsReceived?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutEvaluateeNestedInput
+  nineBoxEvaluationsCreated?: Prisma.NineBoxEvaluationUncheckedUpdateManyWithoutCreatedByNestedInput
+  nineBoxResponses?: Prisma.NineBoxEvaluatorUncheckedUpdateManyWithoutEvaluatorNestedInput
 }
 
 
@@ -6299,6 +7889,10 @@ export type UserCountOutputType = {
   pdiEvidences: number
   goalResponsibilities: number
   notifications: number
+  dependents: number
+  emergencyContacts: number
+  changeRequests: number
+  reviewedChangeRequests: number
   nineBoxEvaluationsReceived: number
   nineBoxEvaluationsCreated: number
   nineBoxResponses: number
@@ -6317,6 +7911,10 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   pdiEvidences?: boolean | UserCountOutputTypeCountPdiEvidencesArgs
   goalResponsibilities?: boolean | UserCountOutputTypeCountGoalResponsibilitiesArgs
   notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
+  dependents?: boolean | UserCountOutputTypeCountDependentsArgs
+  emergencyContacts?: boolean | UserCountOutputTypeCountEmergencyContactsArgs
+  changeRequests?: boolean | UserCountOutputTypeCountChangeRequestsArgs
+  reviewedChangeRequests?: boolean | UserCountOutputTypeCountReviewedChangeRequestsArgs
   nineBoxEvaluationsReceived?: boolean | UserCountOutputTypeCountNineBoxEvaluationsReceivedArgs
   nineBoxEvaluationsCreated?: boolean | UserCountOutputTypeCountNineBoxEvaluationsCreatedArgs
   nineBoxResponses?: boolean | UserCountOutputTypeCountNineBoxResponsesArgs
@@ -6419,6 +8017,34 @@ export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Ty
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountDependentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DependentWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountEmergencyContactsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmergencyContactWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountChangeRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ChangeRequestWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountReviewedChangeRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ChangeRequestWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountNineBoxEvaluationsReceivedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.NineBoxEvaluationWhereInput
 }
@@ -6505,6 +8131,10 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   pdiEvidences?: boolean | Prisma.User$pdiEvidencesArgs<ExtArgs>
   goalResponsibilities?: boolean | Prisma.User$goalResponsibilitiesArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
+  dependents?: boolean | Prisma.User$dependentsArgs<ExtArgs>
+  emergencyContacts?: boolean | Prisma.User$emergencyContactsArgs<ExtArgs>
+  changeRequests?: boolean | Prisma.User$changeRequestsArgs<ExtArgs>
+  reviewedChangeRequests?: boolean | Prisma.User$reviewedChangeRequestsArgs<ExtArgs>
   nineBoxEvaluationsReceived?: boolean | Prisma.User$nineBoxEvaluationsReceivedArgs<ExtArgs>
   nineBoxEvaluationsCreated?: boolean | Prisma.User$nineBoxEvaluationsCreatedArgs<ExtArgs>
   nineBoxResponses?: boolean | Prisma.User$nineBoxResponsesArgs<ExtArgs>
@@ -6696,6 +8326,10 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   pdiEvidences?: boolean | Prisma.User$pdiEvidencesArgs<ExtArgs>
   goalResponsibilities?: boolean | Prisma.User$goalResponsibilitiesArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
+  dependents?: boolean | Prisma.User$dependentsArgs<ExtArgs>
+  emergencyContacts?: boolean | Prisma.User$emergencyContactsArgs<ExtArgs>
+  changeRequests?: boolean | Prisma.User$changeRequestsArgs<ExtArgs>
+  reviewedChangeRequests?: boolean | Prisma.User$reviewedChangeRequestsArgs<ExtArgs>
   nineBoxEvaluationsReceived?: boolean | Prisma.User$nineBoxEvaluationsReceivedArgs<ExtArgs>
   nineBoxEvaluationsCreated?: boolean | Prisma.User$nineBoxEvaluationsCreatedArgs<ExtArgs>
   nineBoxResponses?: boolean | Prisma.User$nineBoxResponsesArgs<ExtArgs>
@@ -6719,6 +8353,10 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     pdiEvidences: Prisma.$PDIEvidencePayload<ExtArgs>[]
     goalResponsibilities: Prisma.$PDIGoalPayload<ExtArgs>[]
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
+    dependents: Prisma.$DependentPayload<ExtArgs>[]
+    emergencyContacts: Prisma.$EmergencyContactPayload<ExtArgs>[]
+    changeRequests: Prisma.$ChangeRequestPayload<ExtArgs>[]
+    reviewedChangeRequests: Prisma.$ChangeRequestPayload<ExtArgs>[]
     nineBoxEvaluationsReceived: Prisma.$NineBoxEvaluationPayload<ExtArgs>[]
     nineBoxEvaluationsCreated: Prisma.$NineBoxEvaluationPayload<ExtArgs>[]
     nineBoxResponses: Prisma.$NineBoxEvaluatorPayload<ExtArgs>[]
@@ -7184,6 +8822,10 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   pdiEvidences<T extends Prisma.User$pdiEvidencesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pdiEvidencesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PDIEvidencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   goalResponsibilities<T extends Prisma.User$goalResponsibilitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$goalResponsibilitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PDIGoalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notifications<T extends Prisma.User$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  dependents<T extends Prisma.User$dependentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$dependentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DependentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  emergencyContacts<T extends Prisma.User$emergencyContactsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$emergencyContactsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmergencyContactPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  changeRequests<T extends Prisma.User$changeRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$changeRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChangeRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reviewedChangeRequests<T extends Prisma.User$reviewedChangeRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewedChangeRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChangeRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   nineBoxEvaluationsReceived<T extends Prisma.User$nineBoxEvaluationsReceivedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$nineBoxEvaluationsReceivedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NineBoxEvaluationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   nineBoxEvaluationsCreated<T extends Prisma.User$nineBoxEvaluationsCreatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$nineBoxEvaluationsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NineBoxEvaluationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   nineBoxResponses<T extends Prisma.User$nineBoxResponsesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$nineBoxResponsesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NineBoxEvaluatorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -7943,6 +9585,102 @@ export type User$notificationsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
+}
+
+/**
+ * User.dependents
+ */
+export type User$dependentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Dependent
+   */
+  select?: Prisma.DependentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Dependent
+   */
+  omit?: Prisma.DependentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DependentInclude<ExtArgs> | null
+  where?: Prisma.DependentWhereInput
+  orderBy?: Prisma.DependentOrderByWithRelationInput | Prisma.DependentOrderByWithRelationInput[]
+  cursor?: Prisma.DependentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DependentScalarFieldEnum | Prisma.DependentScalarFieldEnum[]
+}
+
+/**
+ * User.emergencyContacts
+ */
+export type User$emergencyContactsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmergencyContact
+   */
+  select?: Prisma.EmergencyContactSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmergencyContact
+   */
+  omit?: Prisma.EmergencyContactOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmergencyContactInclude<ExtArgs> | null
+  where?: Prisma.EmergencyContactWhereInput
+  orderBy?: Prisma.EmergencyContactOrderByWithRelationInput | Prisma.EmergencyContactOrderByWithRelationInput[]
+  cursor?: Prisma.EmergencyContactWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EmergencyContactScalarFieldEnum | Prisma.EmergencyContactScalarFieldEnum[]
+}
+
+/**
+ * User.changeRequests
+ */
+export type User$changeRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ChangeRequest
+   */
+  select?: Prisma.ChangeRequestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ChangeRequest
+   */
+  omit?: Prisma.ChangeRequestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChangeRequestInclude<ExtArgs> | null
+  where?: Prisma.ChangeRequestWhereInput
+  orderBy?: Prisma.ChangeRequestOrderByWithRelationInput | Prisma.ChangeRequestOrderByWithRelationInput[]
+  cursor?: Prisma.ChangeRequestWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ChangeRequestScalarFieldEnum | Prisma.ChangeRequestScalarFieldEnum[]
+}
+
+/**
+ * User.reviewedChangeRequests
+ */
+export type User$reviewedChangeRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ChangeRequest
+   */
+  select?: Prisma.ChangeRequestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ChangeRequest
+   */
+  omit?: Prisma.ChangeRequestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChangeRequestInclude<ExtArgs> | null
+  where?: Prisma.ChangeRequestWhereInput
+  orderBy?: Prisma.ChangeRequestOrderByWithRelationInput | Prisma.ChangeRequestOrderByWithRelationInput[]
+  cursor?: Prisma.ChangeRequestWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ChangeRequestScalarFieldEnum | Prisma.ChangeRequestScalarFieldEnum[]
 }
 
 /**

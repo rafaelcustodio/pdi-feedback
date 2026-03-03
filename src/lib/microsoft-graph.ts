@@ -357,18 +357,20 @@ export async function getRoomScheduleForDateRange(
 
     const fullView = schedule.availabilityView as string;
 
-    // Each day has 21 chars (08:00-18:30, 30-min intervals = 21 slots)
-    // Calculate number of days in range
+    // The availabilityView is a continuous string from startDate T08:00 to endDate T18:30.
+    // Each calendar day = 24h = 48 half-hour slots from the query start perspective.
+    // Only the first 21 slots of each day (08:00-18:30) contain business hours data.
     const start = new Date(startDate);
     const end = new Date(endDate);
-    const slotsPerDay = 21; // 08:00 to 18:30 = 10.5 hours = 21 half-hours
+    const slotsPerFullDay = 48; // 24h * 2 slots/h
+    const slotsPerBusinessWindow = 21; // 08:00 to 18:30 = 21 half-hours
 
     let dayIndex = 0;
     const current = new Date(start);
     while (current <= end) {
       const dateKey = current.toISOString().slice(0, 10);
-      const offset = dayIndex * slotsPerDay;
-      const dayView = fullView.slice(offset, offset + slotsPerDay);
+      const offset = dayIndex * slotsPerFullDay;
+      const dayView = fullView.slice(offset, offset + slotsPerBusinessWindow);
       if (dayView.length > 0) {
         result.set(dateKey, dayView);
       }

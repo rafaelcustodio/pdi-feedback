@@ -64,7 +64,10 @@ export const ModelName = {
   FeedbackSchedule: 'FeedbackSchedule',
   Notification: 'Notification',
   NineBoxEvaluation: 'NineBoxEvaluation',
-  NineBoxEvaluator: 'NineBoxEvaluator'
+  NineBoxEvaluator: 'NineBoxEvaluator',
+  ChangeRequest: 'ChangeRequest',
+  Dependent: 'Dependent',
+  EmergencyContact: 'EmergencyContact'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -333,6 +336,47 @@ export const NineBoxEvaluatorScalarFieldEnum = {
 } as const
 
 export type NineBoxEvaluatorScalarFieldEnum = (typeof NineBoxEvaluatorScalarFieldEnum)[keyof typeof NineBoxEvaluatorScalarFieldEnum]
+
+
+export const ChangeRequestScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  fieldName: 'fieldName',
+  oldValue: 'oldValue',
+  newValue: 'newValue',
+  status: 'status',
+  reviewedById: 'reviewedById',
+  reviewedAt: 'reviewedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type ChangeRequestScalarFieldEnum = (typeof ChangeRequestScalarFieldEnum)[keyof typeof ChangeRequestScalarFieldEnum]
+
+
+export const DependentScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  relationship: 'relationship',
+  cpf: 'cpf',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DependentScalarFieldEnum = (typeof DependentScalarFieldEnum)[keyof typeof DependentScalarFieldEnum]
+
+
+export const EmergencyContactScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  phone: 'phone',
+  relationship: 'relationship',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EmergencyContactScalarFieldEnum = (typeof EmergencyContactScalarFieldEnum)[keyof typeof EmergencyContactScalarFieldEnum]
 
 
 export const SortOrder = {

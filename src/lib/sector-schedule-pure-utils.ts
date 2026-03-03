@@ -313,7 +313,7 @@ function slotToViewIndices(time: string): [number, number] {
  * Check if a time slot is free in the availabilityView for a given day.
  * '0' = free, anything else = busy/tentative/oof.
  */
-function isSlotFreeInView(view: string | undefined, time: string): boolean {
+export function isSlotFreeInView(view: string | undefined, time: string): boolean {
   if (!view) return true; // No data = assume free
   const [idx1, idx2] = slotToViewIndices(time);
   if (idx1 < 0 || idx2 >= view.length) return true; // Out of range = assume free
