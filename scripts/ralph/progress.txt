@@ -6,7 +6,96 @@ Started: Mon Mar  2 16:11:11 PST 2026
 - Migration SQL must be created manually and applied via `prisma db execute` or direct DB connection since `prisma migrate dev` needs the schema engine binary
 - Generated Prisma client files are in `src/generated/prisma/` and have `@ts-nocheck` — they're regenerated via `prisma generate`
 - All pre-existing lint errors are in: theme-provider.tsx (setState in effect), programacao/actions.ts, pdi-tracking.tsx, sector-schedule-utils.ts — not from our changes
+- Outlook calendar integration: import from `@/lib/microsoft-graph` — getUserToken, createCalendarEvent, updateCalendarEvent, deleteCalendarEvent
+- Use Promise.allSettled (never Promise.all) for parallel calendar event creation so failures don't cascade
+- Calendar events are fire-and-forget — failures never block the main DB operation
+- PDI actions use positional params; Feedback actions use a data object — follow existing patterns when adding fields
+- FollowUpsSection has TWO scheduleFollowUp call sites: handleSchedule() and handleScheduleNext()
 
+---
+
+## 2026-03-02 - US-009
+- What was implemented: Added Outlook event deletion to cancelScheduledFeedback and event update to rescheduleFeedback
+- Files changed:
+  - src/app/(dashboard)/feedbacks/actions.ts — added deleteCalendarEvent in cancelScheduledFeedback, updateCalendarEvent in rescheduleFeedback
+- **Learnings for future iterations:**
+  - cancelScheduledFeedback may delete OR update the feedback record (depending on content) — event deletion applies in both cases
+  - rescheduleFeedback uses default 09:00-10:00 time for the updated event since the reschedule form only has a date picker
+  - All imports (getUserToken, createCalendarEvent, deleteCalendarEvent, updateCalendarEvent) were already added in US-007
+---
+
+## 2026-03-02 - US-008
+- What was implemented: Added Outlook event deletion to cancelFollowUp — checks for outlookEventId, gets manager's token, deletes event
+- Files changed:
+  - src/app/(dashboard)/pdis/actions.ts — added deleteCalendarEvent call in cancelFollowUp
+- **Learnings for future iterations:**
+  - The follow-up record is already fetched (with pdi include) before the cancel — it includes outlookEventId
+  - Event deletion happens after the DB update so cancellation is never blocked by Outlook API failures
+---
+
+## 2026-03-02 - US-006
+- What was implemented: After creating PDIFollowUp record, get tokens for both manager and employee, create calendar events via Promise.allSettled, save manager's outlookEventId
+- Files changed:
+  - src/app/(dashboard)/pdis/actions.ts — added imports from microsoft-graph, added calendar event creation logic in scheduleFollowUp
+- **Learnings for future iterations:**
+  - Use Promise.allSettled (not Promise.all) for parallel event creation so one failure doesn't affect the other
+  - The manager is the session user (userId), the employee is pdi.employeeId
+  - Calendar event times are constructed from date + time strings: `${scheduledAt}T${scheduledTime}:00`
+  - End time is start + 1 hour (simple hour increment)
+  - Only the manager's outlookEventId is saved (first result from Promise.allSettled)
+---
+
+## 2026-03-02 - US-007
+- What was implemented: After creating Feedback record, get tokens for both manager and employee, create calendar events via Promise.allSettled, save manager's outlookEventId
+- Files changed:
+  - src/app/(dashboard)/feedbacks/actions.ts — added imports from microsoft-graph, added calendar event creation logic in createFutureFeedback, updated employee query to include email
+- **Learnings for future iterations:**
+  - Same calendar event pattern as US-006 but for feedbacks
+  - The employee query already existed (for notifications), just needed to add `email: true` to the select
+  - feedbacks/actions.ts now imports getUserToken, createCalendarEvent, deleteCalendarEvent, updateCalendarEvent (the latter two for US-009)
+---
+
+## 2026-03-02 - US-005
+- What was implemented: Added futureTime state and time input to the future feedback modal. Updated createFutureFeedback action to accept optional scheduledTime field.
+- Files changed:
+  - src/components/feedback-table.tsx — added futureTime state, time input in modal, pass scheduledTime to action, reset time on cancel/success
+  - src/app/(dashboard)/feedbacks/actions.ts — added scheduledTime? field to createFutureFeedback data parameter
+- **Learnings for future iterations:**
+  - The future feedback modal in feedback-table.tsx uses purple color scheme (focus:border-purple-500)
+  - createFutureFeedback takes a data object (not positional args) — add new fields as optional properties
+  - Remember to reset time state on both cancel and success paths
+---
+
+## 2026-03-02 - US-004
+- What was implemented: Added time input (scheduleTime/nextScheduleTime state) to both the schedule form and the "schedule next" modal in FollowUpsSection. Updated scheduleFollowUp action to accept optional scheduledTime parameter.
+- Files changed:
+  - src/components/pdi-tracking.tsx — added scheduleTime/nextScheduleTime state, time inputs in both forms, pass time to scheduleFollowUp
+  - src/app/(dashboard)/pdis/actions.ts — added scheduledTime parameter (default '09:00') to scheduleFollowUp
+- **Learnings for future iterations:**
+  - FollowUpsSection has TWO places that call scheduleFollowUp: handleSchedule() and handleScheduleNext()
+  - The "schedule next" modal is shown after completing a follow-up and pre-populates with nextMonthDate()
+  - When resetting form state, remember to also reset the time to '09:00'
+---
+
+## 2026-03-02 - US-003
+- What was implemented: Created src/lib/microsoft-graph.ts with GraphCalendarEvent type, getUserToken (with token refresh), createCalendarEvent, updateCalendarEvent, deleteCalendarEvent
+- Files changed:
+  - src/lib/microsoft-graph.ts — new file with all Graph API calendar utilities
+- **Learnings for future iterations:**
+  - Token refresh uses `https://graph.microsoft.com/.default` scope, not individual scopes
+  - getUserToken includes a 5-minute buffer before considering token expired
+  - All Graph API errors are caught and logged, never propagated — callers get null/false on failure
+  - Import from `@/lib/microsoft-graph` for calendar operations in actions
+---
+
+## 2026-03-02 - US-002
+- What was implemented: Added Calendars.ReadWrite and offline_access scopes to Microsoft Entra ID provider, persist access_token, refresh_token, and expires_at to User record on SSO login
+- Files changed:
+  - src/lib/auth.ts — added authorization.params.scope to MicrosoftEntraID provider, added prisma.user.update in jwt callback for token persistence
+- **Learnings for future iterations:**
+  - account.expires_at is a Unix timestamp in seconds — convert to Date with `new Date(account.expires_at * 1000)`
+  - The jwt callback fires on every token refresh, but account is only present on initial sign-in — token persistence only happens at login time
+  - Protected file: only extended, not replaced
 ---
 
 ## 2026-03-02 - US-001

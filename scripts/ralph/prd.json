@@ -31,7 +31,7 @@
         "Typecheck passes"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "src/lib/auth.ts is a protected file per CLAUDE.md. Only add the scope config to the provider and token persistence logic inside the existing jwt callback. account.expires_at is a Unix timestamp (seconds) — convert to Date for msTokenExpiresAt."
     },
     {
@@ -50,7 +50,7 @@
         "Typecheck passes"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "Use native fetch (no external HTTP library needed). Token refresh endpoint: POST https://login.microsoftonline.com/{AZURE_AD_TENANT_ID}/oauth2/v2.0/token with grant_type=refresh_token, client_id, client_secret, refresh_token, scope='https://graph.microsoft.com/.default'. Import prisma from @/lib/prisma for DB access."
     },
     {
@@ -67,7 +67,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "notes": "The FollowUpsSection is in src/components/pdi-tracking.tsx around lines 1074-1340. The schedule form is around lines 1192-1230. There are two places where scheduleFollowUp is called: (1) the main schedule form, (2) the 'schedule next' modal after completing a follow-up. Add time input to both."
     },
     {
@@ -84,7 +84,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "notes": "The future feedback modal is in src/components/feedback-table.tsx around lines 465-549. The createFutureFeedback action is in src/app/(dashboard)/feedbacks/actions.ts around lines 553-622."
     },
     {
@@ -101,7 +101,7 @@
         "Typecheck passes"
       ],
       "priority": 6,
-      "passes": false,
+      "passes": true,
       "notes": "Need to fetch the employee name and the PDI's employeeId to get tokens for both parties. The manager is the session user. Use process.env.NEXTAUTH_URL for the link in the body."
     },
     {
@@ -118,7 +118,7 @@
         "Typecheck passes"
       ],
       "priority": 7,
-      "passes": false,
+      "passes": true,
       "notes": "Similar pattern to US-006. The manager is the session user (managerId). The employee is data.employeeId. Use process.env.NEXTAUTH_URL for the link."
     },
     {
@@ -132,7 +132,7 @@
         "Typecheck passes"
       ],
       "priority": 8,
-      "passes": false,
+      "passes": true,
       "notes": "Need to fetch the follow-up record first to check for outlookEventId. The manager is the session user."
     },
     {
@@ -146,7 +146,7 @@
         "Typecheck passes"
       ],
       "priority": 9,
-      "passes": false,
+      "passes": true,
       "notes": "cancelScheduledFeedback and rescheduleFeedback are both in src/app/(dashboard)/feedbacks/actions.ts. Need to import getUserToken, deleteCalendarEvent, updateCalendarEvent from src/lib/microsoft-graph.ts."
     }
   ]
