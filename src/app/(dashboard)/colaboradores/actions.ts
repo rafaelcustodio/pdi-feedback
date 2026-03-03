@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { removeScheduledFeedbackEvents } from "@/lib/schedule-utils";
 import { createOnboardingFeedbacks, updateOnboardingFeedbacks, handleSectorTransfer } from "@/lib/sector-schedule-utils";
+import { canAccessEmployee } from "@/lib/access-control";
 
 function validateCPF(cpf: string): boolean {
   const digits = cpf.replace(/\D/g, "");
@@ -229,36 +230,16 @@ export async function getManagerCandidates(
     });
   }
 
-  // Show users linked to the selected org unit (as employee or manager) + admins
-  const usersInUnit = await prisma.user.findMany({
+  // Show all active managers/admins — a director in a parent OU must be selectable as manager for sub-units
+  return prisma.user.findMany({
     where: {
       isActive: true,
+      role: { in: ["admin", "manager"] },
       ...(excludeUserId ? { id: { not: excludeUserId } } : {}),
-      OR: [
-        {
-          employeeHierarchies: {
-            some: {
-              organizationalUnitId: orgUnitId,
-              endDate: null,
-            },
-          },
-        },
-        {
-          managerHierarchies: {
-            some: {
-              organizationalUnitId: orgUnitId,
-              endDate: null,
-            },
-          },
-        },
-        { role: "admin" },
-      ],
     },
     select: { id: true, name: true, email: true },
     orderBy: { name: "asc" },
   });
-
-  return usersInUnit;
 }
 
 export async function createEmployee(data: {
@@ -938,5 +919,509 @@ export async function toggleIndividualSchedule(
   // When toggling ON, user will use the existing save flow to configure
 
   revalidatePath(`/colaboradores/${employeeId}`);
+  return { success: true };
+}
+
+// ============================================================
+// US-005: Full profile read/write with role-based field filtering
+// ============================================================
+
+export type DependentData = {
+  id: string;
+  name: string;
+  relationship: string;
+  cpf: string | null;
+};
+
+export type EmergencyContactData = {
+  id: string;
+  name: string;
+  phone: string;
+  relationship: string | null;
+};
+
+export type EmployeeFullProfile = {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  evaluationMode: string;
+  isActive: boolean;
+  avatarUrl: string | null;
+  admissionDate: Date | null;
+  phone: string | null;
+  jobTitle: string | null;
+  createdAt: Date;
+  // Personal data
+  cpf: string | null;
+  rg: string | null;
+  birthDate: Date | null;
+  ethnicity: string | null;
+  gender: string | null;
+  maritalStatus: string | null;
+  educationLevel: string | null;
+  livesWithDescription: string | null;
+  // Address & Contact
+  address: string | null;
+  addressNumber: string | null;
+  addressComplement: string | null;
+  city: string | null;
+  state: string | null;
+  zipCode: string | null;
+  personalEmail: string | null;
+  // Financial & Benefits
+  hasBradescoAccount: string | null;
+  bankAgency: string | null;
+  bankAccount: string | null;
+  hasOtherEmployment: boolean | null;
+  healthPlanOption: string | null;
+  wantsTransportVoucher: boolean | null;
+  contractType: string | null;
+  shirtSize: string | null;
+  // Family
+  hasChildren: boolean | null;
+  childrenAges: string | null;
+  hasIRDependents: boolean | null;
+  // About Me
+  hobbies: string[];
+  socialNetworks: unknown;
+  favoriteBookMovieGenres: string | null;
+  favoriteBooks: string | null;
+  favoriteMovies: string | null;
+  favoriteMusic: string | null;
+  admiredValues: string | null;
+  foodAllergies: string | null;
+  hasPets: string | null;
+  participateInVideos: boolean | null;
+  // Related data
+  dependents: DependentData[];
+  emergencyContacts: EmergencyContactData[];
+  // Hierarchy
+  hierarchy: {
+    id: string;
+    managerId: string;
+    organizationalUnitId: string;
+    startDate: Date;
+    endDate: Date | null;
+  } | null;
+};
+
+/**
+ * Returns the full profile for an employee with role-based field filtering.
+ * - Admin: all fields of any employee
+ * - Manager: only name, email, phone, jobTitle, emergency contacts of subordinates
+ * - Employee: all own fields
+ */
+export async function getEmployeeFullProfile(
+  employeeId: string
+): Promise<EmployeeFullProfile | null> {
+  const session = await getEffectiveAuth();
+  if (!session?.user?.id) return null;
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  // Check access
+  const hasAccess = await canAccessEmployee(userId, role, employeeId);
+  if (!hasAccess) return null;
+
+  const user = await prisma.user.findUnique({
+    where: { id: employeeId },
+    include: {
+      dependents: {
+        select: { id: true, name: true, relationship: true, cpf: true },
+        orderBy: { createdAt: "asc" },
+      },
+      emergencyContacts: {
+        select: { id: true, name: true, phone: true, relationship: true },
+        orderBy: { createdAt: "asc" },
+      },
+      employeeHierarchies: {
+        where: { endDate: null },
+        take: 1,
+      },
+    },
+  });
+
+  if (!user) return null;
+
+  const activeHierarchy = user.employeeHierarchies[0] ?? null;
+  const isOwnProfile = userId === employeeId;
+
+  // Manager viewing subordinate: restricted fields
+  const isRestricted = role === "manager" && !isOwnProfile;
+
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    evaluationMode: user.evaluationMode,
+    isActive: user.isActive,
+    avatarUrl: user.avatarUrl,
+    admissionDate: user.admissionDate,
+    phone: user.phone ?? null,
+    jobTitle: user.jobTitle ?? null,
+    createdAt: user.createdAt,
+    // Personal data — restricted from managers
+    cpf: isRestricted ? null : (user.cpf ?? null),
+    rg: isRestricted ? null : (user.rg ?? null),
+    birthDate: isRestricted ? null : (user.birthDate ?? null),
+    ethnicity: isRestricted ? null : (user.ethnicity ?? null),
+    gender: isRestricted ? null : (user.gender ?? null),
+    maritalStatus: isRestricted ? null : (user.maritalStatus ?? null),
+    educationLevel: isRestricted ? null : (user.educationLevel ?? null),
+    livesWithDescription: isRestricted ? null : (user.livesWithDescription ?? null),
+    // Address & Contact — restricted from managers
+    address: isRestricted ? null : (user.address ?? null),
+    addressNumber: isRestricted ? null : (user.addressNumber ?? null),
+    addressComplement: isRestricted ? null : (user.addressComplement ?? null),
+    city: isRestricted ? null : (user.city ?? null),
+    state: isRestricted ? null : (user.state ?? null),
+    zipCode: isRestricted ? null : (user.zipCode ?? null),
+    personalEmail: isRestricted ? null : (user.personalEmail ?? null),
+    // Financial & Benefits — restricted from managers
+    hasBradescoAccount: isRestricted ? null : (user.hasBradescoAccount ?? null),
+    bankAgency: isRestricted ? null : (user.bankAgency ?? null),
+    bankAccount: isRestricted ? null : (user.bankAccount ?? null),
+    hasOtherEmployment: isRestricted ? null : (user.hasOtherEmployment ?? null),
+    healthPlanOption: isRestricted ? null : (user.healthPlanOption ?? null),
+    wantsTransportVoucher: isRestricted ? null : (user.wantsTransportVoucher ?? null),
+    contractType: isRestricted ? null : (user.contractType ?? null),
+    shirtSize: isRestricted ? null : (user.shirtSize ?? null),
+    // Family — restricted from managers
+    hasChildren: isRestricted ? null : (user.hasChildren ?? null),
+    childrenAges: isRestricted ? null : (user.childrenAges ?? null),
+    hasIRDependents: isRestricted ? null : (user.hasIRDependents ?? null),
+    // About Me — visible to all with access
+    hobbies: user.hobbies,
+    socialNetworks: isRestricted ? null : user.socialNetworks,
+    favoriteBookMovieGenres: isRestricted ? null : (user.favoriteBookMovieGenres ?? null),
+    favoriteBooks: isRestricted ? null : (user.favoriteBooks ?? null),
+    favoriteMovies: isRestricted ? null : (user.favoriteMovies ?? null),
+    favoriteMusic: isRestricted ? null : (user.favoriteMusic ?? null),
+    admiredValues: isRestricted ? null : (user.admiredValues ?? null),
+    foodAllergies: isRestricted ? null : (user.foodAllergies ?? null),
+    hasPets: isRestricted ? null : (user.hasPets ?? null),
+    participateInVideos: isRestricted ? null : (user.participateInVideos ?? null),
+    // Related data — dependents restricted from managers
+    dependents: isRestricted ? [] : user.dependents,
+    emergencyContacts: user.emergencyContacts,
+    // Hierarchy
+    hierarchy: activeHierarchy
+      ? {
+          id: activeHierarchy.id,
+          managerId: activeHierarchy.managerId,
+          organizationalUnitId: activeHierarchy.organizationalUnitId,
+          startDate: activeHierarchy.startDate,
+          endDate: activeHierarchy.endDate,
+        }
+      : null,
+  };
+}
+
+/**
+ * Updates employee profile fields directly (admin only for sensitive fields,
+ * employee can update own About Me fields).
+ */
+export async function updateEmployeeProfile(
+  employeeId: string,
+  data: {
+    // Personal data
+    rg?: string | null;
+    ethnicity?: string | null;
+    gender?: string | null;
+    maritalStatus?: string | null;
+    educationLevel?: string | null;
+    livesWithDescription?: string | null;
+    birthDate?: string | null;
+    cpf?: string | null;
+    // Address & Contact
+    personalEmail?: string | null;
+    addressNumber?: string | null;
+    addressComplement?: string | null;
+    address?: string | null;
+    city?: string | null;
+    state?: string | null;
+    zipCode?: string | null;
+    phone?: string | null;
+    // Financial & Benefits
+    hasBradescoAccount?: string | null;
+    bankAgency?: string | null;
+    bankAccount?: string | null;
+    hasOtherEmployment?: boolean | null;
+    healthPlanOption?: string | null;
+    wantsTransportVoucher?: boolean | null;
+    contractType?: string | null;
+    shirtSize?: string | null;
+    // Family
+    hasChildren?: boolean | null;
+    childrenAges?: string | null;
+    hasIRDependents?: boolean | null;
+    // About Me
+    hobbies?: string[];
+    socialNetworks?: unknown;
+    favoriteBookMovieGenres?: string | null;
+    favoriteBooks?: string | null;
+    favoriteMovies?: string | null;
+    favoriteMusic?: string | null;
+    admiredValues?: string | null;
+    foodAllergies?: string | null;
+    hasPets?: string | null;
+    participateInVideos?: boolean | null;
+  }
+): Promise<{ success: boolean; error?: string }> {
+  const session = await getEffectiveAuth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Não autenticado" };
+  }
+
+  const role = (session.user as { role?: string }).role || "employee";
+  const userId = session.user.id;
+  const isAdmin = role === "admin";
+  const isOwnProfile = userId === employeeId;
+
+  // Admin can update anyone; employees can update their own "About Me" fields only
+  if (!isAdmin && !isOwnProfile) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const user = await prisma.user.findUnique({ where: { id: employeeId } });
+  if (!user) {
+    return { success: false, error: "Colaborador não encontrado" };
+  }
+
+  // Validate CPF if provided
+  if (data.cpf !== undefined && data.cpf !== null) {
+    const cpfDigits = data.cpf.replace(/\D/g, "");
+    if (cpfDigits && !validateCPF(cpfDigits)) {
+      return { success: false, error: "CPF inválido" };
+    }
+  }
+
+  // Build update payload — only include fields that were explicitly provided
+  const updateData: Record<string, unknown> = {};
+
+  // For non-admin (employee editing own profile), only allow "About Me" fields
+  if (!isAdmin) {
+    const aboutMeFields = [
+      "hobbies", "socialNetworks", "favoriteBookMovieGenres", "favoriteBooks",
+      "favoriteMovies", "favoriteMusic", "admiredValues", "foodAllergies",
+      "hasPets", "participateInVideos",
+    ] as const;
+    for (const field of aboutMeFields) {
+      if (data[field] !== undefined) {
+        updateData[field] = data[field];
+      }
+    }
+  } else {
+    // Admin can update all fields
+    const stringFields = [
+      "rg", "livesWithDescription", "personalEmail", "addressNumber",
+      "addressComplement", "address", "city", "state", "phone",
+      "bankAgency", "bankAccount", "childrenAges",
+      "favoriteBookMovieGenres", "favoriteBooks", "favoriteMovies",
+      "favoriteMusic", "admiredValues", "foodAllergies", "hasPets",
+    ] as const;
+    for (const field of stringFields) {
+      if (data[field] !== undefined) {
+        updateData[field] = data[field]?.trim() || null;
+      }
+    }
+
+    // Enum fields
+    const enumFields = [
+      "ethnicity", "gender", "maritalStatus", "educationLevel",
+      "hasBradescoAccount", "healthPlanOption", "contractType", "shirtSize",
+    ] as const;
+    for (const field of enumFields) {
+      if (data[field] !== undefined) {
+        updateData[field] = data[field] || null;
+      }
+    }
+
+    // Boolean fields
+    const boolFields = [
+      "hasOtherEmployment", "wantsTransportVoucher", "hasChildren",
+      "hasIRDependents", "participateInVideos",
+    ] as const;
+    for (const field of boolFields) {
+      if (data[field] !== undefined) {
+        updateData[field] = data[field];
+      }
+    }
+
+    // Special fields
+    if (data.cpf !== undefined) {
+      updateData.cpf = data.cpf ? data.cpf.replace(/\D/g, "") : null;
+    }
+    if (data.zipCode !== undefined) {
+      updateData.zipCode = data.zipCode ? data.zipCode.replace(/\D/g, "") : null;
+    }
+    if (data.birthDate !== undefined) {
+      updateData.birthDate = data.birthDate ? new Date(data.birthDate) : null;
+    }
+    if (data.hobbies !== undefined) {
+      updateData.hobbies = data.hobbies;
+    }
+    if (data.socialNetworks !== undefined) {
+      updateData.socialNetworks = data.socialNetworks ?? null;
+    }
+  }
+
+  if (Object.keys(updateData).length === 0) {
+    return { success: true };
+  }
+
+  await prisma.user.update({
+    where: { id: employeeId },
+    data: updateData,
+  });
+
+  revalidatePath(`/colaboradores/${employeeId}`);
+  revalidatePath("/perfil");
+  return { success: true };
+}
+
+/**
+ * Manages the list of dependents for an employee (create/update/delete).
+ * Admin can manage any employee's dependents.
+ * Employee can manage their own dependents (via profile).
+ */
+export async function updateEmployeeDependents(
+  employeeId: string,
+  dependents: { id?: string; name: string; relationship: string; cpf?: string | null }[]
+): Promise<{ success: boolean; error?: string }> {
+  const session = await getEffectiveAuth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Não autenticado" };
+  }
+
+  const role = (session.user as { role?: string }).role || "employee";
+  const userId = session.user.id;
+  const isAdmin = role === "admin";
+  const isOwnProfile = userId === employeeId;
+
+  if (!isAdmin && !isOwnProfile) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const user = await prisma.user.findUnique({ where: { id: employeeId } });
+  if (!user) {
+    return { success: false, error: "Colaborador não encontrado" };
+  }
+
+  // Get existing dependents
+  const existing = await prisma.dependent.findMany({
+    where: { userId: employeeId },
+  });
+  const existingIds = new Set(existing.map((d) => d.id));
+  const incomingIds = new Set(dependents.filter((d) => d.id).map((d) => d.id!));
+
+  // Delete removed dependents
+  const toDelete = [...existingIds].filter((id) => !incomingIds.has(id));
+  if (toDelete.length > 0) {
+    await prisma.dependent.deleteMany({
+      where: { id: { in: toDelete }, userId: employeeId },
+    });
+  }
+
+  // Update existing and create new
+  for (const dep of dependents) {
+    const cpfClean = dep.cpf ? dep.cpf.replace(/\D/g, "") : null;
+    if (dep.id && existingIds.has(dep.id)) {
+      await prisma.dependent.update({
+        where: { id: dep.id },
+        data: {
+          name: dep.name.trim(),
+          relationship: dep.relationship.trim(),
+          cpf: cpfClean || null,
+        },
+      });
+    } else {
+      await prisma.dependent.create({
+        data: {
+          userId: employeeId,
+          name: dep.name.trim(),
+          relationship: dep.relationship.trim(),
+          cpf: cpfClean || null,
+        },
+      });
+    }
+  }
+
+  revalidatePath(`/colaboradores/${employeeId}`);
+  revalidatePath("/perfil");
+  return { success: true };
+}
+
+/**
+ * Manages the list of emergency contacts for an employee (create/update/delete).
+ * Admin can manage any employee's contacts.
+ * Employee can manage their own contacts (via profile).
+ */
+export async function updateEmployeeEmergencyContacts(
+  employeeId: string,
+  contacts: { id?: string; name: string; phone: string; relationship?: string | null }[]
+): Promise<{ success: boolean; error?: string }> {
+  const session = await getEffectiveAuth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Não autenticado" };
+  }
+
+  const role = (session.user as { role?: string }).role || "employee";
+  const userId = session.user.id;
+  const isAdmin = role === "admin";
+  const isOwnProfile = userId === employeeId;
+
+  if (!isAdmin && !isOwnProfile) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const user = await prisma.user.findUnique({ where: { id: employeeId } });
+  if (!user) {
+    return { success: false, error: "Colaborador não encontrado" };
+  }
+
+  // Get existing contacts
+  const existing = await prisma.emergencyContact.findMany({
+    where: { userId: employeeId },
+  });
+  const existingIds = new Set(existing.map((c) => c.id));
+  const incomingIds = new Set(contacts.filter((c) => c.id).map((c) => c.id!));
+
+  // Delete removed contacts
+  const toDelete = [...existingIds].filter((id) => !incomingIds.has(id));
+  if (toDelete.length > 0) {
+    await prisma.emergencyContact.deleteMany({
+      where: { id: { in: toDelete }, userId: employeeId },
+    });
+  }
+
+  // Update existing and create new
+  for (const contact of contacts) {
+    if (contact.id && existingIds.has(contact.id)) {
+      await prisma.emergencyContact.update({
+        where: { id: contact.id },
+        data: {
+          name: contact.name.trim(),
+          phone: contact.phone.trim(),
+          relationship: contact.relationship?.trim() || null,
+        },
+      });
+    } else {
+      await prisma.emergencyContact.create({
+        data: {
+          userId: employeeId,
+          name: contact.name.trim(),
+          phone: contact.phone.trim(),
+          relationship: contact.relationship?.trim() || null,
+        },
+      });
+    }
+  }
+
+  revalidatePath(`/colaboradores/${employeeId}`);
+  revalidatePath("/perfil");
   return { success: true };
 }
