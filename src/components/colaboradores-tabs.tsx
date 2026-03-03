@@ -1,8 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import type { EmployeeListItem } from "@/app/(dashboard)/colaboradores/actions";
+import type { EmployeeListItem, ChangeRequestItem } from "@/app/(dashboard)/colaboradores/actions";
 import { EmployeeTable } from "@/components/employee-table";
+import { ChangeRequestsTable } from "@/components/change-requests-table";
 
 interface ColaboradoresTabsProps {
   activeTab: string;
@@ -17,6 +18,13 @@ interface ColaboradoresTabsProps {
   pendingPageSize: number;
   pendingSearch: string;
   pendingCount: number;
+  changeRequests: ChangeRequestItem[];
+  changeRequestsTotal: number;
+  changeRequestsPage: number;
+  changeRequestsPageSize: number;
+  changeRequestsSearch: string;
+  changeRequestsStatus: string;
+  changeRequestsPendingCount: number;
 }
 
 export function ColaboradoresTabs({
@@ -32,6 +40,13 @@ export function ColaboradoresTabs({
   pendingPageSize,
   pendingSearch,
   pendingCount,
+  changeRequests,
+  changeRequestsTotal,
+  changeRequestsPage,
+  changeRequestsPageSize,
+  changeRequestsSearch,
+  changeRequestsStatus,
+  changeRequestsPendingCount,
 }: ColaboradoresTabsProps) {
   const router = useRouter();
 
@@ -42,6 +57,7 @@ export function ColaboradoresTabs({
   const tabs = [
     { id: "all", label: "Colaboradores" },
     { id: "pending", label: "Cadastros Pendentes", count: pendingCount },
+    { id: "changes", label: "Solicitações de Alteração", count: changeRequestsPendingCount },
   ];
 
   return (
@@ -78,7 +94,16 @@ export function ColaboradoresTabs({
       </div>
 
       {/* Tab content */}
-      {activeTab === "pending" ? (
+      {activeTab === "changes" ? (
+        <ChangeRequestsTable
+          requests={changeRequests}
+          total={changeRequestsTotal}
+          page={changeRequestsPage}
+          pageSize={changeRequestsPageSize}
+          search={changeRequestsSearch}
+          statusFilter={changeRequestsStatus}
+        />
+      ) : activeTab === "pending" ? (
         <EmployeeTable
           employees={pending}
           total={pendingTotal}
