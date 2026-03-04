@@ -1,153 +1,157 @@
 {
   "project": "pdi-feedback",
-  "branchName": "ralph/outlook-calendar-integration",
-  "description": "Integração com Calendário do Outlook via Microsoft Graph API — criar, atualizar e cancelar eventos automaticamente ao agendar follow-ups de PDI e feedbacks futuros",
+  "branchName": "ralph/agendamento-onboarding-rh",
+  "description": "Agendamento de Feedbacks de Onboarding (45/90 dias) com Conversa RH — controle manual do admin, 4 ocasiões por colaborador",
   "userStories": [
     {
       "id": "US-001",
-      "title": "Add Microsoft token and Outlook event ID fields to database schema",
-      "description": "As a developer, I need to store Microsoft OAuth tokens per user and Outlook event IDs on follow-up/feedback records so the system can manage calendar events via Graph API.",
+      "title": "Adicionar campo onboardingType ao modelo Feedback",
+      "description": "As a developer, I need a field to distinguish manager feedback from HR conversation in onboarding feedback records.",
       "acceptanceCriteria": [
-        "Add fields to User model: msAccessToken String?, msRefreshToken String?, msTokenExpiresAt DateTime?",
-        "Add field to PDIFollowUp model: outlookEventId String?",
-        "Add field to Feedback model: outlookEventId String?",
-        "Generate and apply migration with prisma migrate dev",
-        "Run prisma generate without errors",
+        "Criar enum OnboardingType com valores: manager_feedback, hr_conversation",
+        "Adicionar campo onboardingType OnboardingType? ao modelo Feedback no schema.prisma",
+        "Gerar e aplicar migration com sucesso",
+        "npm run prisma:generate executa sem erros",
+        "Feedbacks existentes não são afetados (campo é opcional/nullable)",
         "Typecheck passes"
       ],
       "priority": 1,
       "passes": true,
-      "notes": "All fields are nullable so no data migration is needed. Combine all changes in one migration file."
+      "notes": ""
     },
     {
       "id": "US-002",
-      "title": "Configure Microsoft OAuth scopes and persist tokens on SSO login",
-      "description": "As a developer, I need the system to request calendar permissions during SSO login and store the resulting tokens so they can be used for Graph API calls.",
+      "title": "Remover criação automática de feedbacks de onboarding",
+      "description": "As a developer, I need to remove the automatic creation of 45/90 day onboarding feedbacks from employee create/update flows so that admins control this manually.",
       "acceptanceCriteria": [
-        "Add authorization params to Microsoft Entra ID provider in src/lib/auth.ts: scope includes 'openid profile email Calendars.ReadWrite offline_access'",
-        "In the jwt callback of src/lib/auth.ts, when provider is 'microsoft-entra-id' and account object is present, persist account.access_token, account.refresh_token, and account.expires_at to the User record via prisma.user.update",
-        "Existing jwt callback logic for setting token.id, token.role, token.evaluationMode is preserved unchanged",
-        "Protected file: EXTEND src/lib/auth.ts, do NOT replace it or change its structure",
-        "Typecheck passes"
+        "createEmployee em src/app/(dashboard)/colaboradores/actions.ts não chama mais createOnboardingFeedbacks() automaticamente",
+        "updateEmployee em src/app/(dashboard)/colaboradores/actions.ts não chama mais updateOnboardingFeedbacks() automaticamente",
+        "Remover a lógica de generateOnboarding flag do updateEmployee",
+        "Feedbacks de onboarding já existentes (status submitted ou draft) não são afetados",
+        "Atualizar testes em src/lib/__tests__/ que validam criação automática de onboarding",
+        "Typecheck passes",
+        "Tests pass"
       ],
       "priority": 2,
       "passes": true,
-      "notes": "src/lib/auth.ts is a protected file per CLAUDE.md. Only add the scope config to the provider and token persistence logic inside the existing jwt callback. account.expires_at is a Unix timestamp (seconds) — convert to Date for msTokenExpiresAt."
+      "notes": ""
     },
     {
       "id": "US-003",
-      "title": "Create Microsoft Graph calendar utility",
-      "description": "As a developer, I need a reusable Graph API client so all calendar operations share the same token refresh and HTTP logic.",
+      "title": "Criar Server Action generateOnboardingSchedules",
+      "description": "As an admin, I need a server action that generates the 4 onboarding schedules (manager feedback 45d, HR conversation 45d, manager feedback 90d, HR conversation 90d) for a given employee.",
       "acceptanceCriteria": [
-        "Create new file src/lib/microsoft-graph.ts",
-        "Export type GraphCalendarEvent with fields: subject (string), start (object with dateTime and timeZone), end (object with dateTime and timeZone), body (object with contentType and content), attendees (array of objects with emailAddress and type)",
-        "Export async function getUserToken(userId: string): Promise<string | null> — reads User from DB, returns null if no msAccessToken, refreshes via refresh_token if expired (using POST to https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token), updates DB with new tokens, returns valid access token",
-        "Export async function createCalendarEvent(accessToken: string, event: GraphCalendarEvent): Promise<string | null> — POSTs to https://graph.microsoft.com/v1.0/me/events, returns event id on success, null on error",
-        "Export async function updateCalendarEvent(accessToken: string, eventId: string, event: Partial<GraphCalendarEvent>): Promise<boolean> — PATCHes event, returns true on success",
-        "Export async function deleteCalendarEvent(accessToken: string, eventId: string): Promise<boolean> — DELETEs event, returns true on success",
-        "All Graph API errors are caught with try/catch and logged via console.error, never propagated",
-        "Uses environment variables AZURE_AD_CLIENT_ID, AZURE_AD_CLIENT_SECRET, AZURE_AD_TENANT_ID for token refresh",
+        "Criar action generateOnboardingSchedules(employeeId: string) em src/app/(dashboard)/colaboradores/actions.ts",
+        "Usar getEffectiveAuth() para verificar sessão — apenas admin pode executar",
+        "Validar que colaborador tem admissionDate preenchida",
+        "Validar que colaborador tem managerId atribuído (via EmployeeHierarchy ativa)",
+        "Validar que today - admissionDate <= 90 dias, retornar erro claro caso contrário",
+        "Validar que não existem agendamentos de onboarding pendentes (status=scheduled, isOnboarding=true) para o colaborador",
+        "Calcular 4 datas: admissionDate + 45 dias e admissionDate + 90 dias, ajustando para próxima segunda se cair em fim de semana (reutilizar adjustToNextMonday de sector-schedule-utils.ts)",
+        "Não criar agendamentos para datas que já passaram",
+        "Criar registros Feedback com: status=scheduled, isOnboarding=true, onboardingType adequado (manager_feedback ou hr_conversation)",
+        "Para feedbacks do gestor: authorId = managerId do colaborador",
+        "Para conversas RH: authorId = admin logado (da sessão efetiva)",
+        "Retornar objeto de sucesso com as datas criadas",
         "Typecheck passes"
       ],
       "priority": 3,
       "passes": true,
-      "notes": "Use native fetch (no external HTTP library needed). Token refresh endpoint: POST https://login.microsoftonline.com/{AZURE_AD_TENANT_ID}/oauth2/v2.0/token with grant_type=refresh_token, client_id, client_secret, refresh_token, scope='https://graph.microsoft.com/.default'. Import prisma from @/lib/prisma for DB access."
+      "notes": ""
     },
     {
       "id": "US-004",
-      "title": "Add time input to PDI follow-up scheduling form and action",
-      "description": "As a gestor, I want to choose a start time when scheduling a PDI follow-up so the Outlook event reflects the correct meeting time.",
+      "title": "Testes unitários para generateOnboardingSchedules",
+      "description": "As a developer, I need comprehensive tests for the onboarding schedule generation logic.",
       "acceptanceCriteria": [
-        "In FollowUpsSection component in src/components/pdi-tracking.tsx, add a state variable scheduleTime with default '09:00'",
-        "Add <input type='time'> with label 'Horário de início' next to the existing date input in the schedule form",
-        "Pass scheduleTime as third argument when calling scheduleFollowUp",
-        "Update scheduleFollowUp function in src/app/(dashboard)/pdis/actions.ts to accept optional third parameter scheduledTime: string (default '09:00')",
-        "The scheduledTime parameter is accepted but not yet used (will be used in US-006)",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
+        "Criar arquivo de teste em src/lib/__tests__/ para a nova action",
+        "Testar cenário feliz: gera 4 feedbacks com datas corretas",
+        "Testar ajuste de fim de semana: sábado e domingo movem para segunda",
+        "Testar validação: colaborador com mais de 90 dias retorna erro",
+        "Testar validação: sem admissionDate retorna erro",
+        "Testar validação: sem managerId retorna erro",
+        "Testar validação: já existem onboarding pendentes retorna erro",
+        "Testar datas passadas: se 45d já passou mas 90d não, cria apenas os 2 de 90d",
+        "Testar que authorId do manager_feedback é o gestor e authorId do hr_conversation é o admin",
+        "Usar fixtures de src/lib/__tests__/fixtures.ts",
+        "Mock prisma e getEffectiveAuth conforme convenções do projeto",
+        "Tests pass",
+        "Typecheck passes"
       ],
       "priority": 4,
       "passes": true,
-      "notes": "The FollowUpsSection is in src/components/pdi-tracking.tsx around lines 1074-1340. The schedule form is around lines 1192-1230. There are two places where scheduleFollowUp is called: (1) the main schedule form, (2) the 'schedule next' modal after completing a follow-up. Add time input to both."
+      "notes": ""
     },
     {
       "id": "US-005",
-      "title": "Add time input to future feedback scheduling form and action",
-      "description": "As a gestor, I want to choose a start time when scheduling a future feedback so the Outlook event reflects the correct meeting time.",
+      "title": "Botão 'Gerar Agendamentos de Onboarding' no employee-form",
+      "description": "As an admin, I want a button in the employee form that triggers onboarding schedule generation with a confirmation dialog showing the 4 dates.",
       "acceptanceCriteria": [
-        "In the future feedback modal in src/components/feedback-table.tsx, add a state variable futureTime with default '09:00'",
-        "Add <input type='time'> with label 'Horário de início' next to the existing date input in the modal",
-        "Pass futureTime in the data object when calling createFutureFeedback",
-        "Update createFutureFeedback function in src/app/(dashboard)/feedbacks/actions.ts to accept optional scheduledTime field in the data parameter (default '09:00')",
-        "The scheduledTime parameter is accepted but not yet used (will be used in US-007)",
+        "Botão 'Gerar Agendamentos de Onboarding' visível apenas para role=admin no employee-form.tsx",
+        "Botão aparece na seção 'Dados do Sistema' ou abaixo das abas, próximo aos dados do colaborador",
+        "Botão desabilitado com tooltip se: admissionDate não preenchida, managerId não atribuído, já existem onboarding pendentes, ou colaborador tem mais de 90 dias de casa",
+        "Ao clicar: abre dialog de confirmação mostrando preview das 4 datas calculadas (Feedback Gestor 45d, Conversa RH 45d, Feedback Gestor 90d, Conversa RH 90d)",
+        "Datas que já passaram mostram indicador '(data passada — não será criado)' no preview",
+        "Botão 'Confirmar' no dialog chama generateOnboardingSchedules e mostra toast de sucesso",
+        "Botão 'Cancelar' fecha o dialog sem ação",
+        "Loading state no botão durante a chamada da action",
+        "Dark mode aplicado (dialog, botão, textos)",
         "Typecheck passes",
         "Verify in browser using dev-browser skill"
       ],
       "priority": 5,
       "passes": true,
-      "notes": "The future feedback modal is in src/components/feedback-table.tsx around lines 465-549. The createFutureFeedback action is in src/app/(dashboard)/feedbacks/actions.ts around lines 553-622."
+      "notes": ""
     },
     {
       "id": "US-006",
-      "title": "Create Outlook event when scheduling PDI follow-up",
-      "description": "As a gestor, I want a calendar event to be created in mine and the employee's Outlook when I schedule a PDI follow-up so that both parties are reminded automatically.",
+      "title": "Exibir tipo de onboarding na listagem de feedbacks",
+      "description": "As a user, I want to see whether an onboarding feedback is a 'Manager Feedback' or 'HR Conversation' in the feedback list.",
       "acceptanceCriteria": [
-        "In scheduleFollowUp in src/app/(dashboard)/pdis/actions.ts, after creating the PDIFollowUp record, call getUserToken for both the manager (session user) and the employee",
-        "For each user with a valid token, call createCalendarEvent with: subject='Acompanhamento PDI — [Employee Name]', body='Acompanhamento de PDI agendado pelo sistema. Acesse: {NEXTAUTH_URL}/pdis/{pdiId}', start=scheduledAt date + scheduledTime (or 09:00 default), end=start + 1 hour, timeZone='America/Sao_Paulo'",
-        "Use Promise.allSettled for parallel event creation (never Promise.all)",
-        "Save the manager's outlookEventId to the PDIFollowUp record via prisma update",
-        "If getUserToken returns null for a user, skip silently (no error)",
-        "If createCalendarEvent fails, the follow-up is still created successfully (no rollback)",
-        "Typecheck passes"
+        "Na tabela/lista de feedbacks, itens com isOnboarding=true exibem badge adicional com o tipo",
+        "Labels: 'Feedback Gestor 45d', 'Conversa RH 45d', 'Feedback Gestor 90d', 'Conversa RH 90d'",
+        "Determinar 45d vs 90d pela data agendada relativa à admissionDate do colaborador (diferença <= 60 dias = 45d, senão = 90d)",
+        "Badge com cores diferenciadas: azul para feedback gestor, roxo para conversa RH",
+        "Filtro existente de feedbacks continua funcionando corretamente",
+        "Dark mode nas badges",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
       ],
       "priority": 6,
-      "passes": true,
-      "notes": "Need to fetch the employee name and the PDI's employeeId to get tokens for both parties. The manager is the session user. Use process.env.NEXTAUTH_URL for the link in the body."
+      "passes": false,
+      "notes": ""
     },
     {
       "id": "US-007",
-      "title": "Create Outlook event when scheduling future feedback",
-      "description": "As a gestor, I want a calendar event to be created when I schedule a future feedback so both parties have it in their Outlook.",
+      "title": "Reatribuir feedbacks de onboarding quando gestor muda",
+      "description": "As a system, when an employee's manager changes, I need to reassign pending onboarding manager feedbacks to the new manager.",
       "acceptanceCriteria": [
-        "In createFutureFeedback in src/app/(dashboard)/feedbacks/actions.ts, after creating the Feedback record, call getUserToken for both the manager and the employee",
-        "For each user with a valid token, call createCalendarEvent with: subject='Feedback — [Employee Name]', body='Feedback agendado pelo sistema. Acesse: {NEXTAUTH_URL}/feedbacks/{feedbackId}', start=scheduledAt date + scheduledTime (or 09:00 default), end=start + 1 hour, timeZone='America/Sao_Paulo'",
-        "Use Promise.allSettled for parallel event creation",
-        "Save the manager's outlookEventId to the Feedback record via prisma update",
-        "If getUserToken returns null, skip silently",
-        "If createCalendarEvent fails, the feedback is still created successfully",
+        "Quando EmployeeHierarchy é atualizada (novo gestor atribuído ao colaborador), verificar se existem feedbacks de onboarding pendentes (status=scheduled, isOnboarding=true, onboardingType=manager_feedback)",
+        "Reatribuir authorId desses feedbacks para o novo managerId",
+        "Não reatribuir feedbacks de conversa RH (onboardingType=hr_conversation) — esses permanecem com o admin original",
+        "Não reatribuir feedbacks já submetidos (status=submitted ou draft)",
+        "Adicionar lógica no updateEmployee ou na função de troca de gestor existente",
         "Typecheck passes"
       ],
       "priority": 7,
-      "passes": true,
-      "notes": "Similar pattern to US-006. The manager is the session user (managerId). The employee is data.employeeId. Use process.env.NEXTAUTH_URL for the link."
+      "passes": false,
+      "notes": ""
     },
     {
       "id": "US-008",
-      "title": "Cancel Outlook event when cancelling PDI follow-up",
-      "description": "As a gestor, I want the Outlook event to be deleted when I cancel a PDI follow-up so it disappears from calendars.",
+      "title": "Notificação por email ao RH para conversas próximas",
+      "description": "As an admin/HR, I want to receive email notifications when an HR conversation date is approaching.",
       "acceptanceCriteria": [
-        "In cancelFollowUp in src/app/(dashboard)/pdis/actions.ts, before or after updating status to 'cancelled', check if the PDIFollowUp record has an outlookEventId",
-        "If outlookEventId exists, get the manager's token via getUserToken and call deleteCalendarEvent",
-        "Failure to delete the Outlook event does not prevent the follow-up cancellation",
+        "No cron job existente (/api/cron/email-reminders), adicionar verificação de feedbacks de onboarding com onboardingType=hr_conversation e status=scheduled",
+        "Enviar email de lembrete ao authorId (admin que gerou) quando faltam 3 dias úteis para a data agendada",
+        "Criar template de email em src/lib/email-templates.ts com: nome do colaborador, tipo (Conversa RH 45d/90d), data agendada",
+        "Não enviar lembrete duplicado (verificar se já foi enviado — usar campo existente ou criar flag)",
+        "Fallback para console.log se SMTP não configurado",
         "Typecheck passes"
       ],
       "priority": 8,
-      "passes": true,
-      "notes": "Need to fetch the follow-up record first to check for outlookEventId. The manager is the session user."
-    },
-    {
-      "id": "US-009",
-      "title": "Cancel or update Outlook event when feedback is cancelled or rescheduled",
-      "description": "As a gestor, I want the Outlook event to be removed or updated when a feedback is cancelled or its date changes.",
-      "acceptanceCriteria": [
-        "In cancelScheduledFeedback in src/app/(dashboard)/feedbacks/actions.ts, if the Feedback record has outlookEventId, call deleteCalendarEvent via the manager's token",
-        "In rescheduleFeedback in src/app/(dashboard)/feedbacks/actions.ts, if the Feedback record has outlookEventId, call updateCalendarEvent with the new scheduledAt date+time",
-        "Failures in Outlook API calls do not prevent the database operations",
-        "Typecheck passes"
-      ],
-      "priority": 9,
-      "passes": true,
-      "notes": "cancelScheduledFeedback and rescheduleFeedback are both in src/app/(dashboard)/feedbacks/actions.ts. Need to import getUserToken, deleteCalendarEvent, updateCalendarEvent from src/lib/microsoft-graph.ts."
+      "passes": false,
+      "notes": ""
     }
   ]
 }

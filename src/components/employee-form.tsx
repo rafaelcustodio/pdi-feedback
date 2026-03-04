@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Save, ArrowLeft, Plus, Trash2 } from "lucide-react";
+import { Save, ArrowLeft, Plus, Trash2, CalendarPlus } from "lucide-react";
 import Link from "next/link";
 import {
   createEmployee,
@@ -10,6 +10,7 @@ import {
   getManagerCandidates,
   updateEmployeeDependents,
   updateEmployeeEmergencyContacts,
+  generateOnboardingSchedules,
 } from "@/app/(dashboard)/colaboradores/actions";
 
 const UF_OPTIONS = [
@@ -148,6 +149,7 @@ interface EmployeeFormProps {
   mode: "create" | "edit";
   orgUnits: { id: string; name: string }[];
   isPending?: boolean;
+  currentUserRole?: string;
   initialData?: {
     id: string;
     name: string;
@@ -214,7 +216,7 @@ type EmergencyContactFormItem = {
   relationship: string;
 };
 
-export function EmployeeForm({ mode, orgUnits, isPending = false, initialData }: EmployeeFormProps) {
+export function EmployeeForm({ mode, orgUnits, isPending = false, currentUserRole, initialData }: EmployeeFormProps) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState(0);
 
@@ -308,6 +310,11 @@ export function EmployeeForm({ mode, orgUnits, isPending = false, initialData }:
   const [loadingManagers, setLoadingManagers] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const initialOrgUnitId = useRef(initialData?.orgUnitId ?? "");
+
+  // Onboarding scheduling state
+  const [showOnboardingDialog, setShowOnboardingDialog] = useState(false);
+  const [onboardingLoading, setOnboardingLoading] = useState(false);
+  const [onboardingSuccess, setOnboardingSuccess] = useState<string | null>(null);
 
   // Pre-fill from Forms import (sessionStorage) on create mode
   useEffect(() => {
@@ -547,6 +554,74 @@ export function EmployeeForm({ mode, orgUnits, isPending = false, initialData }:
     }
   }
 
+  // Onboarding date preview calculation (client-side)
+  function getOnboardingPreview() {
+    if (!admissionDate) return null;
+    const admission = new Date(admissionDate + "T00:00:00");
+    const now = new Date();
+    const daysSince = Math.floor((now.getTime() - admission.getTime()) / (1000 * 60 * 60 * 24));
+
+    function snapWeekend(date: Date): Date {
+      const d = new Date(date);
+      const dow = d.getDay();
+      if (dow === 0) d.setDate(d.getDate() + 1);
+      else if (dow === 6) d.setDate(d.getDate() + 2);
+      return d;
+    }
+
+    const d45 = snapWeekend(new Date(admission.getTime() + 45 * 24 * 60 * 60 * 1000));
+    const d90 = snapWeekend(new Date(admission.getTime() + 90 * 24 * 60 * 60 * 1000));
+    const fmt = (d: Date) => d.toLocaleDateString("pt-BR");
+
+    return {
+      daysSince,
+      dates: [
+        { label: "Feedback Gestor 45d", date: d45, past: d45 <= now },
+        { label: "Conversa RH 45d", date: d45, past: d45 <= now },
+        { label: "Feedback Gestor 90d", date: d90, past: d90 <= now },
+        { label: "Conversa RH 90d", date: d90, past: d90 <= now },
+      ],
+      formatted: {
+        d45: fmt(d45),
+        d90: fmt(d90),
+      },
+    };
+  }
+
+  const onboardingPreview = mode === "edit" && currentUserRole === "admin" ? getOnboardingPreview() : null;
+  const canGenerateOnboarding =
+    mode === "edit" &&
+    currentUserRole === "admin" &&
+    !!admissionDate &&
+    !!managerId &&
+    onboardingPreview !== null &&
+    onboardingPreview.daysSince <= 90;
+
+  function getOnboardingDisabledReason(): string | null {
+    if (!admissionDate) return "Data de admissão não preenchida";
+    if (!managerId) return "Gestor direto não atribuído";
+    if (onboardingPreview && onboardingPreview.daysSince > 90)
+      return `Colaborador tem ${onboardingPreview.daysSince} dias de casa (máx. 90)`;
+    return null;
+  }
+
+  async function handleGenerateOnboarding() {
+    if (!initialData?.id) return;
+    setOnboardingLoading(true);
+    setError(null);
+    const result = await generateOnboardingSchedules(initialData.id);
+    setOnboardingLoading(false);
+    setShowOnboardingDialog(false);
+
+    if (result.success) {
+      setOnboardingSuccess(
+        `Agendamentos de onboarding criados com sucesso! ${result.created?.length ?? 0} feedbacks agendados.`
+      );
+    } else {
+      setError(result.error ?? "Erro ao gerar agendamentos de onboarding");
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     await doSave();
@@ -585,6 +660,12 @@ export function EmployeeForm({ mode, orgUnits, isPending = false, initialData }:
       {error && (
         <div className="rounded-md border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30 p-3 text-sm text-red-700 dark:text-red-400">
           {error}
+        </div>
+      )}
+
+      {onboardingSuccess && (
+        <div className="rounded-md border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/30 p-3 text-sm text-green-700 dark:text-green-400">
+          {onboardingSuccess}
         </div>
       )}
 
@@ -737,7 +818,85 @@ export function EmployeeForm({ mode, orgUnits, isPending = false, initialData }:
             </div>
           )}
         </div>
+
+        {/* Onboarding Schedule Button - Admin only, edit mode */}
+        {mode === "edit" && currentUserRole === "admin" && (
+          <div className="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                disabled={!canGenerateOnboarding || onboardingLoading || !!onboardingSuccess}
+                onClick={() => setShowOnboardingDialog(true)}
+                className="inline-flex items-center gap-2 rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                title={getOnboardingDisabledReason() ?? (onboardingSuccess ? "Agendamentos já gerados" : undefined)}
+              >
+                <CalendarPlus size={16} />
+                {onboardingLoading ? "Gerando..." : "Gerar Agendamentos de Onboarding"}
+              </button>
+              {getOnboardingDisabledReason() && (
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {getOnboardingDisabledReason()}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Onboarding Confirmation Dialog */}
+      {showOnboardingDialog && onboardingPreview && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="mx-4 w-full max-w-md rounded-lg bg-white dark:bg-gray-800 p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Confirmar Agendamentos de Onboarding
+            </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              Serão criados os seguintes agendamentos de feedback:
+            </p>
+            <div className="space-y-2 mb-6">
+              {onboardingPreview.dates.map((item, idx) => (
+                <div
+                  key={idx}
+                  className={`flex items-center justify-between rounded-md border px-3 py-2 text-sm ${
+                    item.past
+                      ? "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-400 dark:text-gray-500"
+                      : item.label.startsWith("Conversa")
+                        ? "border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300"
+                        : "border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                  }`}
+                >
+                  <span>{item.label}</span>
+                  <span className="flex items-center gap-1">
+                    {item.date.toLocaleDateString("pt-BR")}
+                    {item.past && (
+                      <span className="ml-1 text-xs italic text-gray-400 dark:text-gray-500">
+                        (data passada — não será criado)
+                      </span>
+                    )}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setShowOnboardingDialog(false)}
+                className="rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleGenerateOnboarding}
+                disabled={onboardingLoading}
+                className="inline-flex items-center gap-2 rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+              >
+                {onboardingLoading ? "Gerando..." : "Confirmar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Tab Navigation */}
       <div className={sectionClass}>

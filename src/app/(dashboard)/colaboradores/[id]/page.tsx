@@ -34,6 +34,7 @@ export default async function EditarColaboradorPage({
         mode="edit"
         orgUnits={orgUnits}
         isPending={!employee.hierarchy && !!employee.isActive}
+        currentUserRole={session.user.role}
         initialData={{
           id: employee.id,
           name: employee.name,

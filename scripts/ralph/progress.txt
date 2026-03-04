@@ -1,111 +1,90 @@
 # Ralph Progress Log
-Started: Mon Mar  2 16:11:11 PST 2026
+Started: Wed Mar  4 09:48:17 PST 2026
 
 ## Codebase Patterns
-- Prisma generate requires `PRISMA_SCHEMA_ENGINE_BINARY=/dev/null` env var workaround in this environment (no network for engine download)
-- Migration SQL must be created manually and applied via `prisma db execute` or direct DB connection since `prisma migrate dev` needs the schema engine binary
-- Generated Prisma client files are in `src/generated/prisma/` and have `@ts-nocheck` — they're regenerated via `prisma generate`
-- All pre-existing lint errors are in: theme-provider.tsx (setState in effect), programacao/actions.ts, pdi-tracking.tsx, sector-schedule-utils.ts — not from our changes
-- Outlook calendar integration: import from `@/lib/microsoft-graph` — getUserToken, createCalendarEvent, updateCalendarEvent, deleteCalendarEvent
-- Use Promise.allSettled (never Promise.all) for parallel calendar event creation so failures don't cascade
-- Calendar events are fire-and-forget — failures never block the main DB operation
-- PDI actions use positional params; Feedback actions use a data object — follow existing patterns when adding fields
-- FollowUpsSection has TWO scheduleFollowUp call sites: handleSchedule() and handleScheduleNext()
+- Prisma migrations are manually created SQL files in `prisma/migrations/<timestamp>_<name>/migration.sql`
+- Run `npm run prisma:generate` after schema changes (no DB needed for client generation)
+- Pre-existing lint errors exist (7 errors, 11 warnings) — not related to this feature branch
+- All 81 tests pass as baseline before this feature work
+- Database is not available in dev container — migrations must be created manually
 
 ---
 
-## 2026-03-02 - US-009
-- What was implemented: Added Outlook event deletion to cancelScheduledFeedback and event update to rescheduleFeedback
-- Files changed:
-  - src/app/(dashboard)/feedbacks/actions.ts — added deleteCalendarEvent in cancelScheduledFeedback, updateCalendarEvent in rescheduleFeedback
+## 2026-03-04 - US-001
+- Added `OnboardingType` enum with values `manager_feedback` and `hr_conversation` to schema.prisma
+- Added nullable `onboardingType OnboardingType?` field to `Feedback` model
+- Created migration `20260304150000_add_onboarding_type`
+- Prisma client generated successfully, typecheck passes, all 81 tests pass
+- Files changed: `prisma/schema.prisma`, `prisma/migrations/20260304150000_add_onboarding_type/migration.sql`
 - **Learnings for future iterations:**
-  - cancelScheduledFeedback may delete OR update the feedback record (depending on content) — event deletion applies in both cases
-  - rescheduleFeedback uses default 09:00-10:00 time for the updated event since the reschedule form only has a date picker
-  - All imports (getUserToken, createCalendarEvent, deleteCalendarEvent, updateCalendarEvent) were already added in US-007
+  - No PostgreSQL in dev container — cannot run `prisma migrate dev`, must create migration SQL manually
+  - Migration format: `CREATE TYPE "EnumName" AS ENUM (...)` then `ALTER TABLE "TableName" ADD COLUMN ...`
+  - Prisma generate works without DB connection
 ---
 
-## 2026-03-02 - US-008
-- What was implemented: Added Outlook event deletion to cancelFollowUp — checks for outlookEventId, gets manager's token, deletes event
-- Files changed:
-  - src/app/(dashboard)/pdis/actions.ts — added deleteCalendarEvent call in cancelFollowUp
+## 2026-03-04 - US-002
+- Removed automatic onboarding feedback creation from createEmployee and updateEmployee
+- Removed `generateOnboarding` flag from updateEmployee signature and client form
+- Removed onboarding confirmation modal from employee-form.tsx
+- Removed `showOnboardingModal` state and `getOnboardingInfo` helper
+- Removed unused `admissionChanged` variable
+- Updated import to only keep `handleSectorTransfer` from sector-schedule-utils
+- No test changes needed — no existing tests covered auto onboarding creation
+- Files changed: `src/app/(dashboard)/colaboradores/actions.ts`, `src/components/employee-form.tsx`
 - **Learnings for future iterations:**
-  - The follow-up record is already fetched (with pdi include) before the cancel — it includes outlookEventId
-  - Event deletion happens after the DB update so cancellation is never blocked by Outlook API failures
+  - The employee-form.tsx had a modal that prompted users to generate onboarding feedbacks — this was tied to the `isPending` prop and `generateOnboarding` param
+  - The `isPending` prop still exists on EmployeeForm but is no longer used for onboarding modal — may be useful for US-005 button visibility
+  - `createOnboardingFeedbacks` and `updateOnboardingFeedbacks` still exist in sector-schedule-utils.ts but are no longer imported by actions.ts
 ---
 
-## 2026-03-02 - US-006
-- What was implemented: After creating PDIFollowUp record, get tokens for both manager and employee, create calendar events via Promise.allSettled, save manager's outlookEventId
-- Files changed:
-  - src/app/(dashboard)/pdis/actions.ts — added imports from microsoft-graph, added calendar event creation logic in scheduleFollowUp
+## 2026-03-04 - US-003
+- Implemented `generateOnboardingSchedules(employeeId)` server action in `src/app/(dashboard)/colaboradores/actions.ts`
+- Admin-only via `requireAdmin()` helper
+- Validates: admissionDate exists, manager assigned (via active EmployeeHierarchy), <= 90 days since admission, no existing pending onboarding feedbacks
+- Calculates 4 dates (45d and 90d from admission), adjusts weekends via `snapToBusinessDay` from sector-schedule-pure-utils
+- Skips dates that already passed
+- Creates Feedback records with `isOnboarding=true`, correct `onboardingType` (manager_feedback / hr_conversation)
+- For manager_feedback: managerId = employee's manager; for hr_conversation: managerId = admin (session user)
+- Returns created schedules with dates, period, and type
+- Added `snapToBusinessDay` import from sector-schedule-utils (re-exported from pure-utils)
+- Exported `OnboardingScheduleResult` type for UI consumption
+- Files changed: `src/app/(dashboard)/colaboradores/actions.ts`
 - **Learnings for future iterations:**
-  - Use Promise.allSettled (not Promise.all) for parallel event creation so one failure doesn't affect the other
-  - The manager is the session user (userId), the employee is pdi.employeeId
-  - Calendar event times are constructed from date + time strings: `${scheduledAt}T${scheduledTime}:00`
-  - End time is start + 1 hour (simple hour increment)
-  - Only the manager's outlookEventId is saved (first result from Promise.allSettled)
+  - `requireAdmin()` is a local helper in actions.ts that calls `getEffectiveAuth()` and checks for admin role
+  - Feedback model uses `managerId` field (not `authorId`) — for HR conversations, set managerId to the admin who triggered the action
+  - `snapToBusinessDay` is exported from `sector-schedule-pure-utils.ts` and re-exported via `sector-schedule-utils.ts`
+  - Use `prisma.feedback.createMany` for batch creation of feedbacks
+  - The existing `createOnboardingFeedbacks` in sector-schedule-utils.ts used a similar pattern but without onboardingType
 ---
 
-## 2026-03-02 - US-007
-- What was implemented: After creating Feedback record, get tokens for both manager and employee, create calendar events via Promise.allSettled, save manager's outlookEventId
-- Files changed:
-  - src/app/(dashboard)/feedbacks/actions.ts — added imports from microsoft-graph, added calendar event creation logic in createFutureFeedback, updated employee query to include email
+## 2026-03-04 - US-004
+- Created comprehensive test file `src/lib/__tests__/generate-onboarding-schedules.test.ts` with 10 tests
+- Tests cover: happy path (4 feedbacks), weekend adjustment, >90 days error, missing admissionDate, missing manager, existing pending feedbacks, 45d past (only 90d created), authorId correctness, non-admin rejection, employee not found
+- All 91 tests pass (10 new + 81 existing), typecheck clean
+- Files changed: `src/lib/__tests__/generate-onboarding-schedules.test.ts`
 - **Learnings for future iterations:**
-  - Same calendar event pattern as US-006 but for feedbacks
-  - The employee query already existed (for notifications), just needed to add `email: true` to the select
-  - feedbacks/actions.ts now imports getUserToken, createCalendarEvent, deleteCalendarEvent, updateCalendarEvent (the latter two for US-009)
+  - Mock `@/lib/sector-schedule-utils` with both `snapToBusinessDay` and `handleSectorTransfer` since actions.ts imports both
+  - Mock `@/lib/schedule-utils` with `removeScheduledFeedbackEvents` since it's imported by actions.ts
+  - Use `vi.useFakeTimers()` + `vi.setSystemTime()` to control `new Date()` in the action for date comparisons
+  - The action file is large and imports many dependencies — all must be mocked even if not used by the tested function
 ---
 
-## 2026-03-02 - US-005
-- What was implemented: Added futureTime state and time input to the future feedback modal. Updated createFutureFeedback action to accept optional scheduledTime field.
-- Files changed:
-  - src/components/feedback-table.tsx — added futureTime state, time input in modal, pass scheduledTime to action, reset time on cancel/success
-  - src/app/(dashboard)/feedbacks/actions.ts — added scheduledTime? field to createFutureFeedback data parameter
+## 2026-03-04 - US-005
+- Added "Gerar Agendamentos de Onboarding" button to employee-form.tsx
+- Button visible only for admin users in edit mode, placed in "Dados do Sistema" section
+- Button disabled with reason text when: no admissionDate, no managerId, or >90 days since admission
+- Confirmation dialog shows 4 date previews (Feedback Gestor 45d/90d, Conversa RH 45d/90d)
+- Past dates shown with "(data passada — não será criado)" indicator in gray
+- Color-coded: blue for manager feedback, purple for HR conversation, gray for past dates
+- Loading state during action call, success/error messages displayed
+- Dark mode fully supported (dialog, button, badges)
+- Added `currentUserRole` prop to EmployeeForm, passed from [id]/page.tsx
+- Imported `generateOnboardingSchedules` action and `CalendarPlus` icon
+- All 91 tests pass, typecheck clean
+- Files changed: `src/components/employee-form.tsx`, `src/app/(dashboard)/colaboradores/[id]/page.tsx`
 - **Learnings for future iterations:**
-  - The future feedback modal in feedback-table.tsx uses purple color scheme (focus:border-purple-500)
-  - createFutureFeedback takes a data object (not positional args) — add new fields as optional properties
-  - Remember to reset time state on both cancel and success paths
----
-
-## 2026-03-02 - US-004
-- What was implemented: Added time input (scheduleTime/nextScheduleTime state) to both the schedule form and the "schedule next" modal in FollowUpsSection. Updated scheduleFollowUp action to accept optional scheduledTime parameter.
-- Files changed:
-  - src/components/pdi-tracking.tsx — added scheduleTime/nextScheduleTime state, time inputs in both forms, pass time to scheduleFollowUp
-  - src/app/(dashboard)/pdis/actions.ts — added scheduledTime parameter (default '09:00') to scheduleFollowUp
-- **Learnings for future iterations:**
-  - FollowUpsSection has TWO places that call scheduleFollowUp: handleSchedule() and handleScheduleNext()
-  - The "schedule next" modal is shown after completing a follow-up and pre-populates with nextMonthDate()
-  - When resetting form state, remember to also reset the time to '09:00'
----
-
-## 2026-03-02 - US-003
-- What was implemented: Created src/lib/microsoft-graph.ts with GraphCalendarEvent type, getUserToken (with token refresh), createCalendarEvent, updateCalendarEvent, deleteCalendarEvent
-- Files changed:
-  - src/lib/microsoft-graph.ts — new file with all Graph API calendar utilities
-- **Learnings for future iterations:**
-  - Token refresh uses `https://graph.microsoft.com/.default` scope, not individual scopes
-  - getUserToken includes a 5-minute buffer before considering token expired
-  - All Graph API errors are caught and logged, never propagated — callers get null/false on failure
-  - Import from `@/lib/microsoft-graph` for calendar operations in actions
----
-
-## 2026-03-02 - US-002
-- What was implemented: Added Calendars.ReadWrite and offline_access scopes to Microsoft Entra ID provider, persist access_token, refresh_token, and expires_at to User record on SSO login
-- Files changed:
-  - src/lib/auth.ts — added authorization.params.scope to MicrosoftEntraID provider, added prisma.user.update in jwt callback for token persistence
-- **Learnings for future iterations:**
-  - account.expires_at is a Unix timestamp in seconds — convert to Date with `new Date(account.expires_at * 1000)`
-  - The jwt callback fires on every token refresh, but account is only present on initial sign-in — token persistence only happens at login time
-  - Protected file: only extended, not replaced
----
-
-## 2026-03-02 - US-001
-- What was implemented: Added Microsoft OAuth token fields (msAccessToken, msRefreshToken, msTokenExpiresAt) to User model, outlookEventId to PDIFollowUp and Feedback models
-- Files changed:
-  - prisma/schema.prisma — added 3 fields to User, 1 to PDIFollowUp, 1 to Feedback
-  - prisma/migrations/20260302200000_add_outlook_calendar_fields/migration.sql — migration SQL
-  - src/generated/prisma/* — regenerated Prisma client
-- **Learnings for future iterations:**
-  - All new fields are nullable (String?, DateTime?) so no data migration needed
-  - Database is not running in this environment — migration file is created but must be applied when DB is available
-  - `PRISMA_SCHEMA_ENGINE_BINARY=/dev/null npx prisma generate` works to regenerate client without network
+  - The edit employee page (`[id]/page.tsx`) already checks for admin role, but passing `currentUserRole` as prop allows the client component to conditionally render admin-only UI
+  - Client-side date preview uses a local `snapWeekend` helper (same logic as `snapToBusinessDay`) since pure-utils is server-side
+  - No toast library exists in this project — use inline success/error messages
+  - The form uses a `sectionClass` constant for consistent card styling
 ---
