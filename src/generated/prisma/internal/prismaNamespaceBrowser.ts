@@ -267,6 +267,7 @@ export const FeedbackScalarFieldEnum = {
   conductedAt: 'conductedAt',
   scheduledAt: 'scheduledAt',
   isOnboarding: 'isOnboarding',
+  onboardingType: 'onboardingType',
   outlookEventId: 'outlookEventId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

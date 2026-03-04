@@ -13,3 +13,43 @@
 - Enum fields in Prisma: use `(value as never) || null` to satisfy type-checker
 - Boolean fields in Prisma: use `data.field ?? null` (not `|| null`) since `false` is valid
 - Weekend adjustment: existing `adjustToNextMonday` logic in sector-schedule-utils.ts
+- FeedbackListItem type in feedbacks/actions.ts: extend with new fields and update the mapping in getFeedbacks()
+- Onboarding badge logic: determine 45d vs 90d by comparing scheduledAt to employee admissionDate (<=60 days = 45d)
+
+## 2026-03-04 - US-007
+- Implemented onboarding feedback reassignment when manager changes
+- Files changed: `src/app/(dashboard)/colaboradores/actions.ts`
+- Added `prisma.feedback.updateMany()` call inside the manager change block of `updateEmployee()`
+- Reassigns only `status=scheduled`, `isOnboarding=true`, `onboardingType=manager_feedback` feedbacks
+- HR conversation feedbacks (`hr_conversation`) are untouched — they stay with the original admin
+- **Learnings for future iterations:**
+  - The manager change logic is in `updateEmployee()` lines ~646-667, inside the `if (needsUpdate)` block
+  - `currentHierarchy.managerId !== data.managerId` is the correct check for manager-specific changes (vs orgUnit-only changes)
+  - `updateMany` is ideal here since we don't need to know which specific feedbacks were affected
+---
+
+## 2026-03-04 - US-008
+- Implemented HR onboarding conversation email reminder in cron job
+- Files changed: `src/app/api/cron/email-reminders/route.ts`, `src/lib/email-templates.ts`
+- Added `buildOnboardingHrReminderHtml` and `buildOnboardingHrReminderSubject` templates in email-templates.ts
+- Added Step 1.4 in cron route: queries scheduled HR conversation feedbacks, counts business days to scheduledAt, sends reminder when <= 3 business days remain
+- Uses messageKey `onboarding_hr_reminder_{feedbackId}_{date}` for idempotency (no duplicate notifications)
+- Sends dedicated email immediately (not consolidated) and marks notification.emailSent=true
+- Determines 45d vs 90d label by comparing scheduledAt to employee admissionDate (<=60 days = 45d)
+- **Learnings for future iterations:**
+  - The cron job creates notifications first, then sends emails — for dedicated emails, send immediately and mark emailSent=true to avoid double sending in the consolidated step
+  - Business days calculation: iterate day by day, skip Saturday (6) and Sunday (0) using getUTCDay()
+  - Feedback.managerId is the authorId for HR conversations (the admin who created them)
+---
+
+## 2026-03-04 - US-006
+- Implemented onboarding type badges in feedback listing table
+- Files changed: `src/app/(dashboard)/feedbacks/actions.ts`, `src/components/feedback-table.tsx`
+- Added `isOnboarding`, `onboardingType`, `employeeAdmissionDate` to `FeedbackListItem` type
+- Added `getOnboardingLabel()` helper to determine badge label (Feedback Gestor / Conversa RH + 45d/90d)
+- Blue badges for manager_feedback, purple badges for hr_conversation, with dark mode support
+- **Learnings for future iterations:**
+  - The feedback table period column is a good place to show inline badges for onboarding type
+  - Employee admissionDate needs to be included in the Prisma select when extending feedback queries
+  - Use IIFE pattern `{(() => { ... })()}` for inline conditional rendering with complex logic in JSX
+---

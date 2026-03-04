@@ -2046,6 +2046,7 @@ export const FeedbackScalarFieldEnum = {
   conductedAt: 'conductedAt',
   scheduledAt: 'scheduledAt',
   isOnboarding: 'isOnboarding',
+  onboardingType: 'onboardingType',
   outlookEventId: 'outlookEventId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -2510,6 +2511,20 @@ export type EnumFeedbackStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$P
  * Reference to a field of type 'FeedbackStatus[]'
  */
 export type ListEnumFeedbackStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FeedbackStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'OnboardingType'
+ */
+export type EnumOnboardingTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OnboardingType'>
+    
+
+
+/**
+ * Reference to a field of type 'OnboardingType[]'
+ */
+export type ListEnumOnboardingTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OnboardingType[]'>
     
 
 

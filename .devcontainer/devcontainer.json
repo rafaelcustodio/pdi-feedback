@@ -52,8 +52,8 @@
   },
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
   "workspaceFolder": "/workspace",
-  "initializeCommand": "bash -c 'cp -r ~/.claude/skills \"${localWorkspaceFolder}/.devcontainer/_skills\" 2>/dev/null || true'",
+  "initializeCommand": "bash .devcontainer/copy-skills.sh ${localWorkspaceFolder}",
   "postCreateCommand": "bash -c 'if [ -d /workspace/.devcontainer/_skills ]; then cp -r /workspace/.devcontainer/_skills/. /home/node/.claude/skills/; fi'",
-  "postStartCommand": "sudo /usr/local/bin/init-firewall.sh",
+  "postStartCommand": "sudo /usr/local/bin/init-firewall.sh || echo 'WARNING: Firewall setup failed, continuing without firewall'",
   "waitFor": "postStartCommand"
 }

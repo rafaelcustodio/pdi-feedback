@@ -50,6 +50,7 @@ export type FeedbackMinAggregateOutputType = {
   conductedAt: Date | null
   scheduledAt: Date | null
   isOnboarding: boolean | null
+  onboardingType: $Enums.OnboardingType | null
   outlookEventId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -69,6 +70,7 @@ export type FeedbackMaxAggregateOutputType = {
   conductedAt: Date | null
   scheduledAt: Date | null
   isOnboarding: boolean | null
+  onboardingType: $Enums.OnboardingType | null
   outlookEventId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -88,6 +90,7 @@ export type FeedbackCountAggregateOutputType = {
   conductedAt: number
   scheduledAt: number
   isOnboarding: number
+  onboardingType: number
   outlookEventId: number
   createdAt: number
   updatedAt: number
@@ -119,6 +122,7 @@ export type FeedbackMinAggregateInputType = {
   conductedAt?: true
   scheduledAt?: true
   isOnboarding?: true
+  onboardingType?: true
   outlookEventId?: true
   createdAt?: true
   updatedAt?: true
@@ -138,6 +142,7 @@ export type FeedbackMaxAggregateInputType = {
   conductedAt?: true
   scheduledAt?: true
   isOnboarding?: true
+  onboardingType?: true
   outlookEventId?: true
   createdAt?: true
   updatedAt?: true
@@ -157,6 +162,7 @@ export type FeedbackCountAggregateInputType = {
   conductedAt?: true
   scheduledAt?: true
   isOnboarding?: true
+  onboardingType?: true
   outlookEventId?: true
   createdAt?: true
   updatedAt?: true
@@ -263,6 +269,7 @@ export type FeedbackGroupByOutputType = {
   conductedAt: Date | null
   scheduledAt: Date | null
   isOnboarding: boolean
+  onboardingType: $Enums.OnboardingType | null
   outlookEventId: string | null
   createdAt: Date
   updatedAt: Date
@@ -305,6 +312,7 @@ export type FeedbackWhereInput = {
   conductedAt?: Prisma.DateTimeNullableFilter<"Feedback"> | Date | string | null
   scheduledAt?: Prisma.DateTimeNullableFilter<"Feedback"> | Date | string | null
   isOnboarding?: Prisma.BoolFilter<"Feedback"> | boolean
+  onboardingType?: Prisma.EnumOnboardingTypeNullableFilter<"Feedback"> | $Enums.OnboardingType | null
   outlookEventId?: Prisma.StringNullableFilter<"Feedback"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Feedback"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Feedback"> | Date | string
@@ -328,6 +336,7 @@ export type FeedbackOrderByWithRelationInput = {
   conductedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   scheduledAt?: Prisma.SortOrderInput | Prisma.SortOrder
   isOnboarding?: Prisma.SortOrder
+  onboardingType?: Prisma.SortOrderInput | Prisma.SortOrder
   outlookEventId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -354,6 +363,7 @@ export type FeedbackWhereUniqueInput = Prisma.AtLeast<{
   conductedAt?: Prisma.DateTimeNullableFilter<"Feedback"> | Date | string | null
   scheduledAt?: Prisma.DateTimeNullableFilter<"Feedback"> | Date | string | null
   isOnboarding?: Prisma.BoolFilter<"Feedback"> | boolean
+  onboardingType?: Prisma.EnumOnboardingTypeNullableFilter<"Feedback"> | $Enums.OnboardingType | null
   outlookEventId?: Prisma.StringNullableFilter<"Feedback"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Feedback"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Feedback"> | Date | string
@@ -377,6 +387,7 @@ export type FeedbackOrderByWithAggregationInput = {
   conductedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   scheduledAt?: Prisma.SortOrderInput | Prisma.SortOrder
   isOnboarding?: Prisma.SortOrder
+  onboardingType?: Prisma.SortOrderInput | Prisma.SortOrder
   outlookEventId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -404,6 +415,7 @@ export type FeedbackScalarWhereWithAggregatesInput = {
   conductedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Feedback"> | Date | string | null
   scheduledAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Feedback"> | Date | string | null
   isOnboarding?: Prisma.BoolWithAggregatesFilter<"Feedback"> | boolean
+  onboardingType?: Prisma.EnumOnboardingTypeNullableWithAggregatesFilter<"Feedback"> | $Enums.OnboardingType | null
   outlookEventId?: Prisma.StringNullableWithAggregatesFilter<"Feedback"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Feedback"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Feedback"> | Date | string
@@ -421,6 +433,7 @@ export type FeedbackCreateInput = {
   conductedAt?: Date | string | null
   scheduledAt?: Date | string | null
   isOnboarding?: boolean
+  onboardingType?: $Enums.OnboardingType | null
   outlookEventId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -444,6 +457,7 @@ export type FeedbackUncheckedCreateInput = {
   conductedAt?: Date | string | null
   scheduledAt?: Date | string | null
   isOnboarding?: boolean
+  onboardingType?: $Enums.OnboardingType | null
   outlookEventId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -463,6 +477,7 @@ export type FeedbackUpdateInput = {
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  onboardingType?: Prisma.NullableEnumOnboardingTypeFieldUpdateOperationsInput | $Enums.OnboardingType | null
   outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -486,6 +501,7 @@ export type FeedbackUncheckedUpdateInput = {
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  onboardingType?: Prisma.NullableEnumOnboardingTypeFieldUpdateOperationsInput | $Enums.OnboardingType | null
   outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -507,6 +523,7 @@ export type FeedbackCreateManyInput = {
   conductedAt?: Date | string | null
   scheduledAt?: Date | string | null
   isOnboarding?: boolean
+  onboardingType?: $Enums.OnboardingType | null
   outlookEventId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -524,6 +541,7 @@ export type FeedbackUpdateManyMutationInput = {
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  onboardingType?: Prisma.NullableEnumOnboardingTypeFieldUpdateOperationsInput | $Enums.OnboardingType | null
   outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -543,6 +561,7 @@ export type FeedbackUncheckedUpdateManyInput = {
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  onboardingType?: Prisma.NullableEnumOnboardingTypeFieldUpdateOperationsInput | $Enums.OnboardingType | null
   outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -572,6 +591,7 @@ export type FeedbackCountOrderByAggregateInput = {
   conductedAt?: Prisma.SortOrder
   scheduledAt?: Prisma.SortOrder
   isOnboarding?: Prisma.SortOrder
+  onboardingType?: Prisma.SortOrder
   outlookEventId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -596,6 +616,7 @@ export type FeedbackMaxOrderByAggregateInput = {
   conductedAt?: Prisma.SortOrder
   scheduledAt?: Prisma.SortOrder
   isOnboarding?: Prisma.SortOrder
+  onboardingType?: Prisma.SortOrder
   outlookEventId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -615,6 +636,7 @@ export type FeedbackMinOrderByAggregateInput = {
   conductedAt?: Prisma.SortOrder
   scheduledAt?: Prisma.SortOrder
   isOnboarding?: Prisma.SortOrder
+  onboardingType?: Prisma.SortOrder
   outlookEventId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -731,6 +753,10 @@ export type EnumFeedbackStatusFieldUpdateOperationsInput = {
   set?: $Enums.FeedbackStatus
 }
 
+export type NullableEnumOnboardingTypeFieldUpdateOperationsInput = {
+  set?: $Enums.OnboardingType | null
+}
+
 export type FeedbackCreateNestedOneWithoutNineBoxEvaluationInput = {
   create?: Prisma.XOR<Prisma.FeedbackCreateWithoutNineBoxEvaluationInput, Prisma.FeedbackUncheckedCreateWithoutNineBoxEvaluationInput>
   connectOrCreate?: Prisma.FeedbackCreateOrConnectWithoutNineBoxEvaluationInput
@@ -773,6 +799,7 @@ export type FeedbackCreateWithoutEmployeeInput = {
   conductedAt?: Date | string | null
   scheduledAt?: Date | string | null
   isOnboarding?: boolean
+  onboardingType?: $Enums.OnboardingType | null
   outlookEventId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -794,6 +821,7 @@ export type FeedbackUncheckedCreateWithoutEmployeeInput = {
   conductedAt?: Date | string | null
   scheduledAt?: Date | string | null
   isOnboarding?: boolean
+  onboardingType?: $Enums.OnboardingType | null
   outlookEventId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -823,6 +851,7 @@ export type FeedbackCreateWithoutManagerInput = {
   conductedAt?: Date | string | null
   scheduledAt?: Date | string | null
   isOnboarding?: boolean
+  onboardingType?: $Enums.OnboardingType | null
   outlookEventId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -844,6 +873,7 @@ export type FeedbackUncheckedCreateWithoutManagerInput = {
   conductedAt?: Date | string | null
   scheduledAt?: Date | string | null
   isOnboarding?: boolean
+  onboardingType?: $Enums.OnboardingType | null
   outlookEventId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -894,6 +924,7 @@ export type FeedbackScalarWhereInput = {
   conductedAt?: Prisma.DateTimeNullableFilter<"Feedback"> | Date | string | null
   scheduledAt?: Prisma.DateTimeNullableFilter<"Feedback"> | Date | string | null
   isOnboarding?: Prisma.BoolFilter<"Feedback"> | boolean
+  onboardingType?: Prisma.EnumOnboardingTypeNullableFilter<"Feedback"> | $Enums.OnboardingType | null
   outlookEventId?: Prisma.StringNullableFilter<"Feedback"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Feedback"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Feedback"> | Date | string
@@ -927,6 +958,7 @@ export type FeedbackCreateWithoutNineBoxEvaluationInput = {
   conductedAt?: Date | string | null
   scheduledAt?: Date | string | null
   isOnboarding?: boolean
+  onboardingType?: $Enums.OnboardingType | null
   outlookEventId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -949,6 +981,7 @@ export type FeedbackUncheckedCreateWithoutNineBoxEvaluationInput = {
   conductedAt?: Date | string | null
   scheduledAt?: Date | string | null
   isOnboarding?: boolean
+  onboardingType?: $Enums.OnboardingType | null
   outlookEventId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -983,6 +1016,7 @@ export type FeedbackUpdateWithoutNineBoxEvaluationInput = {
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  onboardingType?: Prisma.NullableEnumOnboardingTypeFieldUpdateOperationsInput | $Enums.OnboardingType | null
   outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1005,6 +1039,7 @@ export type FeedbackUncheckedUpdateWithoutNineBoxEvaluationInput = {
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  onboardingType?: Prisma.NullableEnumOnboardingTypeFieldUpdateOperationsInput | $Enums.OnboardingType | null
   outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1023,6 +1058,7 @@ export type FeedbackCreateWithoutCalendarEventInput = {
   conductedAt?: Date | string | null
   scheduledAt?: Date | string | null
   isOnboarding?: boolean
+  onboardingType?: $Enums.OnboardingType | null
   outlookEventId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1045,6 +1081,7 @@ export type FeedbackUncheckedCreateWithoutCalendarEventInput = {
   conductedAt?: Date | string | null
   scheduledAt?: Date | string | null
   isOnboarding?: boolean
+  onboardingType?: $Enums.OnboardingType | null
   outlookEventId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1079,6 +1116,7 @@ export type FeedbackUpdateWithoutCalendarEventInput = {
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  onboardingType?: Prisma.NullableEnumOnboardingTypeFieldUpdateOperationsInput | $Enums.OnboardingType | null
   outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1101,6 +1139,7 @@ export type FeedbackUncheckedUpdateWithoutCalendarEventInput = {
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  onboardingType?: Prisma.NullableEnumOnboardingTypeFieldUpdateOperationsInput | $Enums.OnboardingType | null
   outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1120,6 +1159,7 @@ export type FeedbackCreateManyEmployeeInput = {
   conductedAt?: Date | string | null
   scheduledAt?: Date | string | null
   isOnboarding?: boolean
+  onboardingType?: $Enums.OnboardingType | null
   outlookEventId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1138,6 +1178,7 @@ export type FeedbackCreateManyManagerInput = {
   conductedAt?: Date | string | null
   scheduledAt?: Date | string | null
   isOnboarding?: boolean
+  onboardingType?: $Enums.OnboardingType | null
   outlookEventId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1155,6 +1196,7 @@ export type FeedbackUpdateWithoutEmployeeInput = {
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  onboardingType?: Prisma.NullableEnumOnboardingTypeFieldUpdateOperationsInput | $Enums.OnboardingType | null
   outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1176,6 +1218,7 @@ export type FeedbackUncheckedUpdateWithoutEmployeeInput = {
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  onboardingType?: Prisma.NullableEnumOnboardingTypeFieldUpdateOperationsInput | $Enums.OnboardingType | null
   outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1196,6 +1239,7 @@ export type FeedbackUncheckedUpdateManyWithoutEmployeeInput = {
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  onboardingType?: Prisma.NullableEnumOnboardingTypeFieldUpdateOperationsInput | $Enums.OnboardingType | null
   outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1213,6 +1257,7 @@ export type FeedbackUpdateWithoutManagerInput = {
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  onboardingType?: Prisma.NullableEnumOnboardingTypeFieldUpdateOperationsInput | $Enums.OnboardingType | null
   outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1234,6 +1279,7 @@ export type FeedbackUncheckedUpdateWithoutManagerInput = {
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  onboardingType?: Prisma.NullableEnumOnboardingTypeFieldUpdateOperationsInput | $Enums.OnboardingType | null
   outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1254,6 +1300,7 @@ export type FeedbackUncheckedUpdateManyWithoutManagerInput = {
   conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  onboardingType?: Prisma.NullableEnumOnboardingTypeFieldUpdateOperationsInput | $Enums.OnboardingType | null
   outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1275,6 +1322,7 @@ export type FeedbackSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   conductedAt?: boolean
   scheduledAt?: boolean
   isOnboarding?: boolean
+  onboardingType?: boolean
   outlookEventId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1298,6 +1346,7 @@ export type FeedbackSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   conductedAt?: boolean
   scheduledAt?: boolean
   isOnboarding?: boolean
+  onboardingType?: boolean
   outlookEventId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1319,6 +1368,7 @@ export type FeedbackSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   conductedAt?: boolean
   scheduledAt?: boolean
   isOnboarding?: boolean
+  onboardingType?: boolean
   outlookEventId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1340,12 +1390,13 @@ export type FeedbackSelectScalar = {
   conductedAt?: boolean
   scheduledAt?: boolean
   isOnboarding?: boolean
+  onboardingType?: boolean
   outlookEventId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type FeedbackOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "employeeId" | "managerId" | "period" | "content" | "strengths" | "improvements" | "rating" | "status" | "frequencyMonths" | "conductedAt" | "scheduledAt" | "isOnboarding" | "outlookEventId" | "createdAt" | "updatedAt", ExtArgs["result"]["feedback"]>
+export type FeedbackOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "employeeId" | "managerId" | "period" | "content" | "strengths" | "improvements" | "rating" | "status" | "frequencyMonths" | "conductedAt" | "scheduledAt" | "isOnboarding" | "onboardingType" | "outlookEventId" | "createdAt" | "updatedAt", ExtArgs["result"]["feedback"]>
 export type FeedbackInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   employee?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   manager?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1383,6 +1434,7 @@ export type $FeedbackPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     conductedAt: Date | null
     scheduledAt: Date | null
     isOnboarding: boolean
+    onboardingType: $Enums.OnboardingType | null
     outlookEventId: string | null
     createdAt: Date
     updatedAt: Date
@@ -1826,6 +1878,7 @@ export interface FeedbackFieldRefs {
   readonly conductedAt: Prisma.FieldRef<"Feedback", 'DateTime'>
   readonly scheduledAt: Prisma.FieldRef<"Feedback", 'DateTime'>
   readonly isOnboarding: Prisma.FieldRef<"Feedback", 'Boolean'>
+  readonly onboardingType: Prisma.FieldRef<"Feedback", 'OnboardingType'>
   readonly outlookEventId: Prisma.FieldRef<"Feedback", 'String'>
   readonly createdAt: Prisma.FieldRef<"Feedback", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Feedback", 'DateTime'>

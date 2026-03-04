@@ -76,7 +76,9 @@ export type EducationLevel = (typeof EducationLevel)[keyof typeof EducationLevel
 
 export const ContractType = {
   efetivo: 'efetivo',
-  estagio: 'estagio'
+  estagio: 'estagio',
+  becomex: 'becomex',
+  socio: 'socio'
 } as const
 
 export type ContractType = (typeof ContractType)[keyof typeof ContractType]
@@ -150,6 +152,14 @@ export const FeedbackStatus = {
 } as const
 
 export type FeedbackStatus = (typeof FeedbackStatus)[keyof typeof FeedbackStatus]
+
+
+export const OnboardingType = {
+  manager_feedback: 'manager_feedback',
+  hr_conversation: 'hr_conversation'
+} as const
+
+export type OnboardingType = (typeof OnboardingType)[keyof typeof OnboardingType]
 
 
 export const NotificationType = {
