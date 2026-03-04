@@ -325,7 +325,6 @@ export async function getRoomScheduleForDateRange(
   const result: RoomScheduleMap = new Map();
 
   try {
-    // Query from 08:00 to 18:30 each day to cover all business slots
     const startDateTime = `${startDate}T08:00:00`;
     const endDateTime = `${endDate}T18:30:00`;
 
@@ -347,13 +346,17 @@ export async function getRoomScheduleForDateRange(
     );
 
     if (!response.ok) {
-      console.error("Failed to get room schedule for date range:", response.status);
+      const body = await response.text().catch(() => "");
+      console.error("[getRoomScheduleForDateRange] HTTP", response.status, "for", roomEmail, body);
       return result;
     }
 
     const data = await response.json();
     const schedule = data.value?.[0];
-    if (!schedule?.availabilityView) return result;
+    if (!schedule?.availabilityView) {
+      console.warn("[getRoomScheduleForDateRange] Empty availabilityView for", roomEmail, "data:", JSON.stringify(data));
+      return result;
+    }
 
     const fullView = schedule.availabilityView as string;
 

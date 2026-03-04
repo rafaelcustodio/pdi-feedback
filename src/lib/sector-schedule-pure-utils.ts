@@ -291,7 +291,7 @@ export const BUSINESS_TIME_SLOTS = [
   "13:30", "14:30", "15:30", "16:30", "17:00",
 ] as const;
 
-export const DEFAULT_TIME_SLOT = "09:00";
+export const DEFAULT_TIME_SLOT = "08:30";
 
 export interface DistributedEventWithTime extends DistributedEvent {
   scheduledTime: string; // HH:mm
@@ -323,7 +323,7 @@ export function isSlotFreeInView(view: string | undefined, time: string): boolea
 /**
  * Distribute employees across business days WITH time slots.
  * If roomSchedule is provided, picks the first available slot per day.
- * Without roomSchedule, falls back to DEFAULT_TIME_SLOT ("09:00").
+ * Without roomSchedule, falls back to DEFAULT_TIME_SLOT ("08:30").
  *
  * @param roomSchedule - Map<"YYYY-MM-DD", availabilityView> from getRoomScheduleForDateRange
  */

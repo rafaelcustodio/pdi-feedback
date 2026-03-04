@@ -16,6 +16,7 @@ import type {
 import {
   snapToBusinessDay,
   getBusinessDays,
+  distributeEvents,
   distributeEventsWithTimeSlots,
   isSlotFreeInView,
   BUSINESS_TIME_SLOTS,
@@ -126,15 +127,22 @@ export function ProgramEventsWizard({
         .filter((e) => selectedIds.has(e.employeeId))
         .map((e) => ({ id: e.employeeId, name: e.employeeName }));
 
-      // Fetch room schedule if a room is selected
+      // Fetch room schedule if a room is selected, using only the date range
+      // that the distribution will actually occupy (avoids the 62-day API limit).
       let roomSchedule: Map<string, string> | undefined;
       roomScheduleRef.current = null;
       if (selectedRoom) {
-        const startStr = new Date(periodStart).toISOString().slice(0, 10);
-        const endStr = new Date(periodEnd).toISOString().slice(0, 10);
-        const scheduleObj = await fetchRoomScheduleForPeriod(selectedRoom.email, startStr, endStr);
+        const draftDates = distributeEvents(employees, businessDays, perDay, direction)
+          .map((e) => e.scheduledDate.toISOString().slice(0, 10))
+          .sort();
+        const scheduleStart = draftDates[0] ?? new Date(periodStart).toISOString().slice(0, 10);
+        const scheduleEnd = draftDates[draftDates.length - 1] ?? new Date(periodEnd).toISOString().slice(0, 10);
+        const scheduleObj = await fetchRoomScheduleForPeriod(selectedRoom.email, scheduleStart, scheduleEnd);
         roomSchedule = new Map(Object.entries(scheduleObj));
         roomScheduleRef.current = roomSchedule;
+        if (roomSchedule.size === 0) {
+          setError("Não foi possível verificar a disponibilidade da sala — verifique os horários manualmente antes de confirmar.");
+        }
       }
 
       // Distribute with time slots
@@ -233,21 +241,41 @@ export function ProgramEventsWizard({
     if (!preview || preview.length === 0) return;
 
     setError(null);
+    setLoading(true);
 
-    // Validate room availability before confirming
-    if (roomScheduleRef.current) {
-      const conflicts = preview.filter((event) => {
-        if (!event.roomEmail) return false;
-        const dayView = roomScheduleRef.current!.get(event.scheduledDate);
-        return !isSlotFreeInView(dayView, event.scheduledTime);
-      });
-      if (conflicts.length > 0) {
-        setError(`Conflito de sala: ${conflicts.map((e) => `${e.employeeName} — ${e.scheduledDate} às ${e.scheduledTime}`).join(", ")}. Ajuste os horários antes de confirmar.`);
+    // Re-fetch room schedule at confirm time for fresh conflict validation.
+    // This also covers rooms selected per-event (not just from step 1 picker).
+    const eventsWithRoom = preview.filter((e) => e.roomEmail);
+    if (eventsWithRoom.length > 0) {
+      // Group events by room email
+      const byRoom = new Map<string, PreviewEvent[]>();
+      for (const event of eventsWithRoom) {
+        const key = event.roomEmail!;
+        if (!byRoom.has(key)) byRoom.set(key, []);
+        byRoom.get(key)!.push(event);
+      }
+
+      const conflictMessages: string[] = [];
+      for (const [roomEmail, roomEvents] of byRoom) {
+        const dates = roomEvents.map((e) => e.scheduledDate).sort();
+        const freshObj = await fetchRoomScheduleForPeriod(roomEmail, dates[0], dates[dates.length - 1]);
+        if (Object.keys(freshObj).length > 0) {
+          const freshSchedule = new Map(Object.entries(freshObj));
+          for (const event of roomEvents) {
+            const dayView = freshSchedule.get(event.scheduledDate);
+            if (!isSlotFreeInView(dayView, event.scheduledTime)) {
+              conflictMessages.push(`${event.employeeName} — ${event.scheduledDate} às ${event.scheduledTime}`);
+            }
+          }
+        }
+      }
+
+      if (conflictMessages.length > 0) {
+        setError(`Conflito de sala: ${conflictMessages.join(", ")}. Ajuste os horários antes de confirmar.`);
+        setLoading(false);
         return;
       }
     }
-
-    setLoading(true);
 
     // Build event room and time selections
     const roomSelections: EventRoomSelection[] = [];
@@ -277,6 +305,7 @@ export function ProgramEventsWizard({
       direction,
       eventRooms: roomSelections.length > 0 ? roomSelections : undefined,
       eventTimes: eventTimes.length > 0 ? eventTimes : undefined,
+      scheduledDates: preview.map((e) => ({ employeeId: e.employeeId, scheduledDate: e.scheduledDate })),
     });
 
     setLoading(false);

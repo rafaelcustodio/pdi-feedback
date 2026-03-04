@@ -192,6 +192,7 @@ export async function programEvents(params: {
   dryRun?: boolean;
   eventRooms?: EventRoomSelection[];
   eventTimes?: Array<{ employeeId: string; scheduledTime: string }>;
+  scheduledDates?: Array<{ employeeId: string; scheduledDate: string }>; // explicit dates from wizard preview
 }): Promise<ProgramEventsResult> {
   const session = await getEffectiveAuth();
   if (!session?.user?.id) {
@@ -307,6 +308,17 @@ export async function programEvents(params: {
       skipped,
       events: eventsToCreate,
     };
+  }
+
+  // Apply explicit scheduled dates from the wizard preview (overrides server-side redistribution)
+  if (params.scheduledDates && params.scheduledDates.length > 0) {
+    const dateOverrides = new Map(
+      params.scheduledDates.map((d) => [d.employeeId, new Date(`${d.scheduledDate}T12:00:00`)])
+    );
+    for (const event of eventsToCreate) {
+      const override = dateOverrides.get(event.employeeId);
+      if (override) event.scheduledDate = override;
+    }
   }
 
   // Build room lookup from eventRooms
