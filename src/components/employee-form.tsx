@@ -1219,25 +1219,6 @@ export function EmployeeForm({ mode, orgUnits, isPending = false, initialData }:
                 </select>
               </div>
 
-              {/* Tamanho Camiseta */}
-              <div>
-                <label htmlFor="emp-shirtsize" className={labelClass}>
-                  Tamanho da Camiseta
-                </label>
-                <select
-                  id="emp-shirtsize"
-                  value={shirtSize}
-                  onChange={(e) => setShirtSize(e.target.value)}
-                  className={inputClass}
-                  disabled={loading}
-                >
-                  {SHIRT_SIZE_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
             </div>
           )}
 
@@ -1576,6 +1557,24 @@ export function EmployeeForm({ mode, orgUnits, isPending = false, initialData }:
                     />
                   </div>
                 </div>
+              </div>
+
+              {/* Tamanho Camiseta */}
+              <div className={sectionClass}>
+                <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Tamanho da Camiseta</h3>
+                <select
+                  id="emp-shirtsize"
+                  value={shirtSize}
+                  onChange={(e) => setShirtSize(e.target.value)}
+                  className={inputClass}
+                  disabled={loading}
+                >
+                  {SHIRT_SIZE_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               {/* Food allergies */}

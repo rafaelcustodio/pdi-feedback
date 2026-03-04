@@ -6,7 +6,7 @@ import { ColaboradoresTabs } from "@/components/colaboradores-tabs";
 export default async function ColaboradoresPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; page?: string; tab?: string; psearch?: string; ppage?: string; crsearch?: string; crpage?: string; crstatus?: string }>;
+  searchParams: Promise<{ search?: string; page?: string; tab?: string; psearch?: string; ppage?: string; crsearch?: string; crpage?: string; crstatus?: string; crpagesize?: string }>;
 }) {
   const session = await getEffectiveAuth();
   if (!session?.user || session.user.role !== "admin") {
@@ -22,6 +22,7 @@ export default async function ColaboradoresPage({
   const crsearch = params.crsearch ?? "";
   const crpage = Math.max(1, parseInt(params.crpage ?? "1", 10) || 1);
   const crstatus = params.crstatus ?? "";
+  const crpagesize = Math.max(10, parseInt(params.crpagesize ?? "50", 10) || 50);
 
   const [data, pendingData, pendingCount, changeRequestsData, crPendingCount] = await Promise.all([
     getEmployees(search, page, 10),
@@ -31,7 +32,7 @@ export default async function ColaboradoresPage({
       search: crsearch || undefined,
       status: crstatus || undefined,
       page: crpage,
-      pageSize: 10,
+      pageSize: crpagesize,
     }),
     getPendingChangeRequestsCount(),
   ]);

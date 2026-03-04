@@ -186,7 +186,7 @@ export function EmployeeTable({
                   Criado em
                 </th>
               )}
-              <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              <th className="sticky right-0 bg-gray-50 px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:bg-gray-800">
                 Ações
               </th>
             </tr>
@@ -271,7 +271,7 @@ export function EmployeeTable({
                       {new Date(emp.createdAt).toLocaleDateString("pt-BR", { timeZone: "UTC" })}
                     </td>
                   )}
-                  <td className="whitespace-nowrap px-4 py-3 text-right">
+                  <td className="sticky right-0 whitespace-nowrap bg-white px-4 py-3 text-right dark:bg-gray-900">
                     <div className="flex items-center justify-end gap-1">
                       {isPending ? (
                         <Link

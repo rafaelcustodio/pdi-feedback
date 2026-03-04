@@ -1166,6 +1166,44 @@ export async function cancelFollowUp(
   return { success: true };
 }
 
+export type SubordinateWithoutPDI = {
+  id: string;
+  name: string;
+  email: string;
+};
+
+export async function getSubordinatesWithoutActivePDI(): Promise<SubordinateWithoutPDI[]> {
+  const session = await getEffectiveAuth();
+  if (!session?.user?.id) return [];
+
+  const userId = session.user.id;
+  const role = (session.user as { role?: string }).role || "employee";
+
+  if (role === "employee") return [];
+
+  const accessible = await getAccessibleEmployeeIds(userId, role);
+
+  const whereClause: Record<string, unknown> = {
+    isActive: true,
+    evaluationMode: "pdi",
+    pdisAsEmployee: { none: { status: "active" } },
+  };
+
+  if (accessible === "all") {
+    whereClause.id = { not: userId };
+  } else {
+    const subordinateIds = accessible.filter((id) => id !== userId);
+    if (subordinateIds.length === 0) return [];
+    whereClause.id = { in: subordinateIds };
+  }
+
+  return prisma.user.findMany({
+    where: whereClause,
+    select: { id: true, name: true, email: true },
+    orderBy: { name: "asc" },
+  });
+}
+
 export async function cancelPDI(
   pdiId: string
 ): Promise<{ success: boolean; error?: string }> {

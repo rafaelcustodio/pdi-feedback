@@ -158,7 +158,9 @@ export async function updateOnboardingFeedbacks(
     isOnboarding: true;
   }> = [];
 
-  if (!has45d) {
+  const now = new Date();
+
+  if (!has45d && d45 > now) {
     toCreate.push({
       employeeId,
       managerId,
@@ -168,7 +170,7 @@ export async function updateOnboardingFeedbacks(
       isOnboarding: true,
     });
   }
-  if (!has90d) {
+  if (!has90d && d90 > now) {
     toCreate.push({
       employeeId,
       managerId,

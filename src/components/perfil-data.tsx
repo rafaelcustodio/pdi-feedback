@@ -58,10 +58,6 @@ const HEALTH_PLAN_OPTIONS = [
   { value: "", label: "Selecione" }, { value: "regional", label: "Regional" },
   { value: "nacional", label: "Nacional" }, { value: "nao", label: "Não" },
 ];
-const CONTRACT_TYPE_OPTIONS = [
-  { value: "", label: "Selecione" }, { value: "efetivo", label: "Efetivo" },
-  { value: "estagio", label: "Estágio" },
-];
 const SHIRT_SIZE_OPTIONS = [
   { value: "", label: "Selecione" },
   { value: "p_fem", label: "P Feminino" }, { value: "m_fem", label: "M Feminino" },
@@ -535,8 +531,6 @@ function TabFinanceiroBeneficios({ profile, pendingFields }: TabProps) {
   const [hasOtherEmployment, setHasOtherEmployment] = useState(profile.hasOtherEmployment ?? false);
   const [healthPlanOption, setHealthPlanOption] = useState(profile.healthPlanOption || "");
   const [wantsTransportVoucher, setWantsTransportVoucher] = useState(profile.wantsTransportVoucher ?? false);
-  const [contractType, setContractType] = useState(profile.contractType || "");
-  const [shirtSize, setShirtSize] = useState(profile.shirtSize || "");
 
   const resetForm = () => {
     setHasBradescoAccount(profile.hasBradescoAccount || "");
@@ -545,8 +539,6 @@ function TabFinanceiroBeneficios({ profile, pendingFields }: TabProps) {
     setHasOtherEmployment(profile.hasOtherEmployment ?? false);
     setHealthPlanOption(profile.healthPlanOption || "");
     setWantsTransportVoucher(profile.wantsTransportVoucher ?? false);
-    setContractType(profile.contractType || "");
-    setShirtSize(profile.shirtSize || "");
   };
 
   const handleSave = async () => {
@@ -561,8 +553,6 @@ function TabFinanceiroBeneficios({ profile, pendingFields }: TabProps) {
     if (hasOtherEmployment !== (profile.hasOtherEmployment ?? false)) changes.push({ fieldName: "hasOtherEmployment", oldValue: profile.hasOtherEmployment === null ? null : String(profile.hasOtherEmployment), newValue: String(hasOtherEmployment) });
     if (healthPlanOption !== (profile.healthPlanOption || "")) changes.push({ fieldName: "healthPlanOption", oldValue: profile.healthPlanOption, newValue: healthPlanOption || null });
     if (wantsTransportVoucher !== (profile.wantsTransportVoucher ?? false)) changes.push({ fieldName: "wantsTransportVoucher", oldValue: profile.wantsTransportVoucher === null ? null : String(profile.wantsTransportVoucher), newValue: String(wantsTransportVoucher) });
-    if (contractType !== (profile.contractType || "")) changes.push({ fieldName: "contractType", oldValue: profile.contractType, newValue: contractType || null });
-    if (shirtSize !== (profile.shirtSize || "")) changes.push({ fieldName: "shirtSize", oldValue: profile.shirtSize, newValue: shirtSize || null });
 
     const { ok, message: msg } = await submitChangeRequests(profile.id, changes, pendingFields);
     if (msg) setMessage(msg);
@@ -591,8 +581,7 @@ function TabFinanceiroBeneficios({ profile, pendingFields }: TabProps) {
           <ReadField label="Outro Emprego Registrado" value={boolLabel(profile.hasOtherEmployment)} pending={pendingFields.has("hasOtherEmployment")} />
           <ReadField label="Plano de Saúde Unimed" value={enumLabel(HEALTH_PLAN_LABELS, profile.healthPlanOption)} pending={pendingFields.has("healthPlanOption")} />
           <ReadField label="Vale Transporte" value={boolLabel(profile.wantsTransportVoucher)} pending={pendingFields.has("wantsTransportVoucher")} />
-          <ReadField label="Formato de Contratação" value={enumLabel(CONTRACT_TYPE_LABELS, profile.contractType)} pending={pendingFields.has("contractType")} />
-          <ReadField label="Tamanho Camiseta" value={enumLabel(SHIRT_SIZE_LABELS, profile.shirtSize)} pending={pendingFields.has("shirtSize")} />
+          <ReadField label="Formato de Contratação" value={enumLabel(CONTRACT_TYPE_LABELS, profile.contractType)} />
         </dl>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -632,18 +621,7 @@ function TabFinanceiroBeneficios({ profile, pendingFields }: TabProps) {
               Vale Transporte {pendingFields.has("wantsTransportVoucher") && <PendingBadge />}
             </label>
           </div>
-          <div>
-            <label className={labelClass}>Formato de Contratação {pendingFields.has("contractType") && <PendingBadge />}</label>
-            <select value={contractType} onChange={e => setContractType(e.target.value)} disabled={pendingFields.has("contractType")} className={selectClass}>
-              {CONTRACT_TYPE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className={labelClass}>Tamanho Camiseta {pendingFields.has("shirtSize") && <PendingBadge />}</label>
-            <select value={shirtSize} onChange={e => setShirtSize(e.target.value)} disabled={pendingFields.has("shirtSize")} className={selectClass}>
-              {SHIRT_SIZE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-            </select>
-          </div>
+          <ReadField label="Formato de Contratação" value={enumLabel(CONTRACT_TYPE_LABELS, profile.contractType)} />
         </div>
       )}
     </div>
@@ -819,6 +797,7 @@ function TabSobreMim({ profile }: { profile: MyFullProfile }) {
   const [hasPetsSelect, setHasPetsSelect] = useState(initPetsSelect);
   const [hasPetsDescription, setHasPetsDescription] = useState(initPetsDesc);
   const [participateInVideos, setParticipateInVideos] = useState(profile.participateInVideos ?? false);
+  const [shirtSize, setShirtSize] = useState(profile.shirtSize || "");
 
   const resetForm = () => {
     setHobbies(profile.hobbies || []);
@@ -836,6 +815,7 @@ function TabSobreMim({ profile }: { profile: MyFullProfile }) {
     setHasPetsSelect(p.startsWith("outra: ") ? "outra" : p);
     setHasPetsDescription(p.startsWith("outra: ") ? p.slice(7) : "");
     setParticipateInVideos(profile.participateInVideos ?? false);
+    setShirtSize(profile.shirtSize || "");
   };
 
   const toggleHobby = (hobby: string) => {
@@ -875,6 +855,7 @@ function TabSobreMim({ profile }: { profile: MyFullProfile }) {
       foodAllergies: foodAllergies || null,
       hasPets: petsValue,
       participateInVideos,
+      shirtSize: shirtSize || null,
     });
 
     if (result.success) {
@@ -957,6 +938,7 @@ function TabSobreMim({ profile }: { profile: MyFullProfile }) {
             <div>
               <h4 className="mb-2 text-sm font-semibold text-gray-700 dark:text-gray-300">Outros</h4>
               <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <ReadField label="Tamanho Camiseta" value={enumLabel(SHIRT_SIZE_LABELS, profile.shirtSize)} />
                 <ReadField label="Alergias/Intolerâncias Alimentares" value={profile.foodAllergies || "—"} />
                 <ReadField label="Animais de Estimação" value={petsDisplay} />
                 <ReadField label="Participação em Vídeos Institucionais" value={boolLabel(profile.participateInVideos)} />
@@ -1038,6 +1020,12 @@ function TabSobreMim({ profile }: { profile: MyFullProfile }) {
             <div>
               <h4 className="mb-2 text-sm font-semibold text-gray-700 dark:text-gray-300">Outros</h4>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <label className={labelClass}>Tamanho Camiseta</label>
+                  <select value={shirtSize} onChange={e => setShirtSize(e.target.value)} className={selectClass}>
+                    {SHIRT_SIZE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                  </select>
+                </div>
                 <div>
                   <label className={labelClass}>Alergias/Intolerâncias Alimentares <span className="font-normal text-gray-400">(opcional)</span></label>
                   <input type="text" value={foodAllergies} onChange={e => setFoodAllergies(e.target.value)} className={inputClass} />

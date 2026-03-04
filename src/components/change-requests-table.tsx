@@ -126,7 +126,13 @@ export function ChangeRequestsTable({
     if (params.crsearch || search) sp.set("crsearch", String(params.crsearch ?? search));
     if (params.crpage || page > 1) sp.set("crpage", String(params.crpage ?? page));
     if (params.crstatus || statusFilter) sp.set("crstatus", String(params.crstatus ?? statusFilter));
+    const ps = params.crpagesize ?? pageSize;
+    if (ps !== 50) sp.set("crpagesize", String(ps));
     return `/colaboradores?${sp.toString()}`;
+  }
+
+  function handlePageSizeChange(newSize: number) {
+    router.replace(buildUrl({ crpagesize: newSize, crpage: 1 }));
   }
 
   function handleSearch() {
@@ -406,11 +412,25 @@ export function ChangeRequestsTable({
       </div>
 
       {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Mostrando {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, total)} de {total}
+            {total > 0 ? `Mostrando ${(page - 1) * pageSize + 1}–${Math.min(page * pageSize, total)} de ${total}` : "Nenhum resultado"}
           </p>
+          <div className="flex items-center gap-1.5">
+            <label className="text-sm text-gray-500 dark:text-gray-400">Por página:</label>
+            <select
+              value={pageSize}
+              onChange={(e) => handlePageSizeChange(Number(e.target.value))}
+              className="rounded-md border border-gray-300 bg-white px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300"
+            >
+              {[50, 100, 200].map((size) => (
+                <option key={size} value={size}>{size}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+        {totalPages > 1 && (
           <div className="flex items-center gap-1">
             <button
               onClick={() => handlePageChange(page - 1)}
@@ -430,8 +450,8 @@ export function ChangeRequestsTable({
               Próxima
             </button>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Confirmation modal */}
       {confirmAction && (

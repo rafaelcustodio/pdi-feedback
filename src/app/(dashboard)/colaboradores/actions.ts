@@ -1399,7 +1399,7 @@ export async function updateEmployeeProfile(
     const aboutMeFields = [
       "hobbies", "socialNetworks", "favoriteBookMovieGenres", "favoriteBooks",
       "favoriteMovies", "favoriteMusic", "admiredValues", "foodAllergies",
-      "hasPets", "participateInVideos",
+      "hasPets", "participateInVideos", "shirtSize",
     ] as const;
     for (const field of aboutMeFields) {
       if (data[field] !== undefined) {

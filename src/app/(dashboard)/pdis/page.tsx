@@ -1,7 +1,8 @@
-import { auth } from "@/lib/auth";
+import { getEffectiveAuth } from "@/lib/impersonation";
 import { redirect } from "next/navigation";
-import { getPDIs } from "./actions";
+import { getPDIs, getSubordinatesWithoutActivePDI } from "./actions";
 import { PDITable } from "@/components/pdi-table";
+import { PdiMissingAlert } from "@/components/pdi-missing-alert";
 
 export default async function PDIsPage({
   searchParams,
@@ -14,7 +15,7 @@ export default async function PDIsPage({
     status?: string;
   }>;
 }) {
-  const session = await auth();
+  const session = await getEffectiveAuth();
   if (!session?.user) {
     redirect("/login");
   }
@@ -27,20 +28,27 @@ export default async function PDIsPage({
   const statusFilter = params.status ?? "";
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
 
-  const data = await getPDIs(search, page, 10, conductedAtFrom, conductedAtTo, statusFilter);
+  const [data, subordinatesWithoutPDI] = await Promise.all([
+    getPDIs(search, page, 10, conductedAtFrom, conductedAtTo, statusFilter),
+    role !== "employee" ? getSubordinatesWithoutActivePDI() : Promise.resolve([]),
+  ]);
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-gray-900">
+        <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
           {role === "employee" ? "Meus PDIs" : "Planos de Desenvolvimento Individual"}
         </h1>
-        <p className="mt-1 text-sm text-gray-600">
+        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
           {role === "employee"
             ? "Acompanhe seus planos de desenvolvimento individual."
             : "Gerencie os PDIs dos colaboradores da sua equipe."}
         </p>
       </div>
+
+      {role !== "employee" && (
+        <PdiMissingAlert subordinates={subordinatesWithoutPDI} />
+      )}
 
       <PDITable
         pdis={data.pdis}
