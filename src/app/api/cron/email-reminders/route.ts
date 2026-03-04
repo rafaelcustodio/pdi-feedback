@@ -4,6 +4,8 @@ import { sendEmail } from "@/lib/email";
 import {
   buildReminderEmailHtml,
   buildReminderEmailSubject,
+  buildOnboardingHrReminderHtml,
+  buildOnboardingHrReminderSubject,
   type ReminderItem,
 } from "@/lib/email-templates";
 import {
@@ -241,6 +243,112 @@ export async function GET(request: Request) {
           },
         });
         notificationsCreated++;
+      }
+    }
+
+    // -------------------------------------------------------
+    // Step 1.4: HR onboarding conversation reminders (3 business days before)
+    // -------------------------------------------------------
+
+    const scheduledHrConversations = await prisma.feedback.findMany({
+      where: {
+        status: "scheduled",
+        isOnboarding: true,
+        onboardingType: "hr_conversation",
+        scheduledAt: { not: null, gte: now },
+      },
+      include: {
+        manager: { select: { id: true, name: true, email: true } },
+        employee: {
+          select: { id: true, name: true, admissionDate: true },
+        },
+      },
+    });
+
+    for (const feedback of scheduledHrConversations) {
+      if (!feedback.scheduledAt) continue;
+
+      // Count business days between now and scheduledAt
+      let businessDays = 0;
+      const checkDate = new Date(now);
+      checkDate.setHours(0, 0, 0, 0);
+      const targetDate = new Date(feedback.scheduledAt);
+      targetDate.setHours(0, 0, 0, 0);
+
+      const tempDate = new Date(checkDate);
+      tempDate.setDate(tempDate.getDate() + 1);
+      while (tempDate <= targetDate) {
+        const dayOfWeek = tempDate.getUTCDay();
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+          businessDays++;
+        }
+        tempDate.setDate(tempDate.getDate() + 1);
+      }
+
+      // Send reminder when exactly 3 or fewer business days remain
+      if (businessDays > 3) continue;
+
+      const dueDateStr = feedback.scheduledAt.toLocaleDateString("pt-BR");
+      const messageKey = `onboarding_hr_reminder_${feedback.id}_${dueDateStr}`;
+
+      const existing = await prisma.notification.findFirst({
+        where: {
+          userId: feedback.managerId,
+          type: "feedback_reminder",
+          message: { contains: messageKey },
+        },
+      });
+
+      if (!existing) {
+        // Determine 45d vs 90d label
+        let typeLabel = "Conversa RH";
+        if (feedback.employee.admissionDate) {
+          const admDate = new Date(feedback.employee.admissionDate);
+          const schedDate = new Date(feedback.scheduledAt);
+          const diffDays = Math.round(
+            (schedDate.getTime() - admDate.getTime()) / (1000 * 60 * 60 * 24)
+          );
+          typeLabel = diffDays <= 60 ? "Conversa RH 45d" : "Conversa RH 90d";
+        }
+
+        const title = `Conversa RH de Onboarding próxima - ${feedback.employee.name}`;
+        const message = `A ${typeLabel} do colaborador ${feedback.employee.name} está agendada para ${dueDateStr}. Faltam ${businessDays} dia(s) útil(eis). [${messageKey}]`;
+
+        const notification = await prisma.notification.create({
+          data: {
+            userId: feedback.managerId,
+            type: "feedback_reminder",
+            title,
+            message,
+          },
+        });
+        notificationsCreated++;
+
+        // Send dedicated HR onboarding reminder email immediately
+        const subject = buildOnboardingHrReminderSubject(
+          feedback.employee.name,
+          typeLabel
+        );
+        const html = buildOnboardingHrReminderHtml(
+          feedback.manager.name,
+          feedback.employee.name,
+          typeLabel,
+          dueDateStr,
+          baseUrl
+        );
+
+        const sent = await sendEmail({
+          to: feedback.manager.email,
+          subject,
+          html,
+        });
+
+        if (sent) {
+          await prisma.notification.update({
+            where: { id: notification.id },
+            data: { emailSent: true },
+          });
+        }
       }
     }
 

@@ -360,3 +360,66 @@ export function buildChangeRequestNotificationSubject(
 ): string {
   return `[RH] Solicitação de alteração cadastral - ${employeeName} (${fieldName})`;
 }
+
+/**
+ * Build the subject line for an HR onboarding conversation reminder email.
+ */
+export function buildOnboardingHrReminderSubject(
+  employeeName: string,
+  type: string
+): string {
+  return `[RH] Lembrete: ${type} — ${employeeName}`;
+}
+
+/**
+ * Build the HTML email sent to the HR admin when an onboarding HR conversation is approaching.
+ */
+export function buildOnboardingHrReminderHtml(
+  adminName: string,
+  employeeName: string,
+  type: string,
+  scheduledDate: string,
+  baseUrl: string
+): string {
+  return `
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; background: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <div style="max-width: 640px; margin: 0 auto; padding: 32px 16px;">
+    <div style="background: #7c3aed; color: #fff; padding: 24px 32px; border-radius: 8px 8px 0 0;">
+      <h1 style="margin: 0; font-size: 22px; font-weight: 600;">
+        Conversa RH de Onboarding
+      </h1>
+      <p style="margin: 8px 0 0; font-size: 14px; opacity: 0.9;">
+        Lembrete de conversa próxima
+      </p>
+    </div>
+    <div style="background: #fff; padding: 24px 32px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
+      <p style="color: #374151; font-size: 15px; line-height: 1.6; margin-top: 0;">
+        Olá <strong>${adminName}</strong>,
+      </p>
+      <p style="color: #374151; font-size: 15px; line-height: 1.6;">
+        A <strong>${type}</strong> do colaborador <strong>${employeeName}</strong> está agendada para <strong>${scheduledDate}</strong>.
+      </p>
+      <p style="color: #374151; font-size: 15px; line-height: 1.6;">
+        Faltam aproximadamente 3 dias úteis. Prepare-se para a conversa.
+      </p>
+      <div style="margin-top: 24px; text-align: center;">
+        <a href="${baseUrl}/feedbacks" style="display: inline-block; padding: 12px 32px; background: #7c3aed; color: #fff; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 15px;">
+          Ver Feedbacks
+        </a>
+      </div>
+    </div>
+    <div style="text-align: center; padding: 16px; font-size: 12px; color: #9ca3af;">
+      Este é um e-mail automático do sistema PDI &amp; Feedback HR.
+      <br>
+      Não responda a este e-mail.
+    </div>
+  </div>
+</body>
+</html>`;
+}
