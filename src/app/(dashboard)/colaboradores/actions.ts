@@ -4,7 +4,7 @@ import { getEffectiveAuth } from "@/lib/impersonation";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { removeScheduledFeedbackEvents } from "@/lib/schedule-utils";
-import { createOnboardingFeedbacks, updateOnboardingFeedbacks, handleSectorTransfer } from "@/lib/sector-schedule-utils";
+import { handleSectorTransfer } from "@/lib/sector-schedule-utils";
 import { canAccessEmployee } from "@/lib/access-control";
 
 function validateCPF(cpf: string): boolean {
@@ -474,14 +474,6 @@ export async function createEmployee(data: {
       },
     });
 
-    // Create onboarding feedbacks if admission date provided
-    if (data.admissionDate) {
-      await createOnboardingFeedbacks(
-        user.id,
-        new Date(data.admissionDate),
-        data.managerId
-      );
-    }
   }
 
   revalidatePath("/colaboradores");
@@ -536,7 +528,6 @@ export async function updateEmployee(
     foodAllergies?: string;
     hasPets?: string;
     participateInVideos?: boolean;
-    generateOnboarding?: boolean;
   }
 ): Promise<{ success: boolean; error?: string }> {
   const session = await requireAdmin();
@@ -589,8 +580,6 @@ export async function updateEmployee(
 
   // Update user fields
   const newAdmissionDate = data.admissionDate ? new Date(data.admissionDate) : null;
-  const admissionChanged =
-    newAdmissionDate?.getTime() !== user.admissionDate?.getTime();
 
   const cpfClean = data.cpf?.replace(/\D/g, "") || null;
 
@@ -687,16 +676,6 @@ export async function updateEmployee(
         data: { endDate: new Date() },
       });
     }
-  }
-
-  // Handle onboarding feedbacks when admission date changes
-  if (admissionChanged && newAdmissionDate && data.managerId) {
-    await updateOnboardingFeedbacks(id, newAdmissionDate, data.managerId);
-  }
-
-  // Generate onboarding feedbacks for newly assigned pending employees
-  if (data.generateOnboarding && newAdmissionDate && data.managerId) {
-    await createOnboardingFeedbacks(id, newAdmissionDate, data.managerId);
   }
 
   revalidatePath("/colaboradores");
