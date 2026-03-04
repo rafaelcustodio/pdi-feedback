@@ -145,3 +145,46 @@ export function mockFeedback(
     ...overrides,
   };
 }
+
+// ── CalendarEvent Factory ────────────────────────────────────
+
+type CalendarEventFixture = {
+  id: string;
+  type: "feedback" | "pdi_followup";
+  title: string;
+  scheduledAt: Date;
+  durationMinutes: number;
+  roomEmail: string | null;
+  roomDisplayName: string | null;
+  status: "scheduled" | "completed" | "cancelled";
+  outlookEventId: string | null;
+  employeeId: string;
+  managerId: string;
+  feedbackId: string | null;
+  pdiFollowUpId: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export function mockCalendarEvent(
+  overrides?: Partial<CalendarEventFixture>
+): CalendarEventFixture {
+  return {
+    id: "cal-event-1",
+    type: "feedback",
+    title: "Feedback — emp-a1",
+    scheduledAt: new Date("2025-03-15T09:00:00Z"),
+    durationMinutes: 60,
+    roomEmail: null,
+    roomDisplayName: null,
+    status: "scheduled",
+    outlookEventId: null,
+    employeeId: "emp-a1",
+    managerId: "mgr-a",
+    feedbackId: "feedback-1",
+    pdiFollowUpId: null,
+    createdAt: BASE_DATE,
+    updatedAt: BASE_DATE,
+    ...overrides,
+  };
+}

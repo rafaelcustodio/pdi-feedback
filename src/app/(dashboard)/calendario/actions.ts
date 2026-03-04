@@ -3,6 +3,7 @@
 import { getEffectiveAuth } from "@/lib/impersonation";
 import { prisma } from "@/lib/prisma";
 import { getAccessibleEmployeeIds } from "@/lib/access-control";
+import type { CalendarEventType } from "@/generated/prisma/client";
 
 export type CalendarEvent = {
   id: string;
@@ -20,7 +21,7 @@ export type CalendarFilters = {
 };
 
 /**
- * Fetch calendar events (PDIs and Feedbacks) for a given month/year.
+ * Fetch calendar events from CalendarEvent table for a given month/year.
  * Respects access control and supports optional filters.
  */
 export async function getCalendarEvents(
@@ -69,84 +70,58 @@ export async function getCalendarEvents(
   const employeeFilter =
     accessibleIds === "all" ? {} : { employeeId: { in: accessibleIds } };
 
+  // Map tipo filter to CalendarEventType
   const tipo = filters?.tipo || "all";
+  const typeFilter: { type?: CalendarEventType | { in: CalendarEventType[] } } = {};
+  if (tipo === "feedback") {
+    typeFilter.type = "feedback";
+  } else if (tipo === "pdi") {
+    typeFilter.type = "pdi_followup";
+  }
+
+  // For employees, exclude non-submitted feedback events
+  // We need to filter via the linked feedback status
+  const calendarEvents = await prisma.calendarEvent.findMany({
+    where: {
+      ...employeeFilter,
+      ...typeFilter,
+      scheduledAt: { gte: startOfMonth, lte: endOfMonth },
+      status: { not: "cancelled" },
+    },
+    include: {
+      employee: { select: { name: true } },
+      manager: { select: { name: true } },
+      feedback: role === "employee" ? { select: { status: true } } : false,
+    },
+    orderBy: { scheduledAt: "asc" },
+  });
+
   const events: CalendarEvent[] = [];
 
-  // Fetch PDI Follow-Up events
-  if (tipo === "all" || tipo === "pdi") {
-    const followUps = await prisma.pDIFollowUp.findMany({
-      where: {
-        pdi: { ...employeeFilter, status: "active" },
-        scheduledAt: { gte: startOfMonth, lte: endOfMonth },
-        status: { not: "cancelled" },
-      },
-      include: {
-        pdi: {
-          include: {
-            employee: { select: { name: true } },
-            manager: { select: { name: true } },
-          },
-        },
-      },
-    });
-
-    for (const fu of followUps) {
-      events.push({
-        id: fu.id,
-        type: "followup",
-        employeeName: fu.pdi.employee.name,
-        managerName: fu.pdi.manager.name,
-        scheduledAt: fu.scheduledAt,
-        status: fu.status,
-        href: `/pdis/${fu.pdiId}`,
-      });
+  for (const ce of calendarEvents) {
+    // Employees can't see non-submitted feedback events (unless they are the manager)
+    if (
+      role === "employee" &&
+      ce.type === "feedback" &&
+      ce.feedback &&
+      typeof ce.feedback === "object" &&
+      "status" in ce.feedback &&
+      ce.feedback.status !== "submitted" &&
+      ce.managerId !== userId
+    ) {
+      continue;
     }
-  }
 
-  // Fetch Feedback events
-  if (tipo === "all" || tipo === "feedback") {
-    // Employees don't see scheduled or draft feedbacks
-    const feedbackStatusFilter =
-      role === "employee"
-        ? { status: "submitted" as const }
-        : {};
-
-    const feedbacks = await prisma.feedback.findMany({
-      where: {
-        ...employeeFilter,
-        ...feedbackStatusFilter,
-        OR: [
-          { scheduledAt: { gte: startOfMonth, lte: endOfMonth } },
-          {
-            scheduledAt: null,
-            conductedAt: { gte: startOfMonth, lte: endOfMonth },
-          },
-        ],
-      },
-      include: {
-        employee: { select: { name: true } },
-        manager: { select: { name: true } },
-      },
-      orderBy: { scheduledAt: "asc" },
+    events.push({
+      id: ce.id,
+      type: ce.type === "pdi_followup" ? "followup" : "feedback",
+      employeeName: ce.employee.name,
+      managerName: ce.manager.name,
+      scheduledAt: ce.scheduledAt,
+      status: ce.status,
+      href: `/calendario/${ce.id}`,
     });
-
-    for (const fb of feedbacks) {
-      events.push({
-        id: fb.id,
-        type: "feedback",
-        employeeName: fb.employee.name,
-        managerName: fb.manager.name,
-        scheduledAt: fb.scheduledAt ?? fb.conductedAt!,
-        status: fb.status,
-        href: `/feedbacks/${fb.id}`,
-      });
-    }
   }
-
-  // Sort all events by date
-  events.sort(
-    (a, b) => new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime()
-  );
 
   return events;
 }

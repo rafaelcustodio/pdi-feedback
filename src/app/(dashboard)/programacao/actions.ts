@@ -18,6 +18,7 @@ import {
   getRoomScheduleForDateRange,
 } from "@/lib/microsoft-graph";
 import type { GraphCalendarEvent, MeetingRoom, RoomScheduleMap } from "@/lib/microsoft-graph";
+import { createCalendarEventForFeedback } from "@/lib/calendar-event-utils";
 
 export interface ComplianceEmployee {
   employeeId: string;
@@ -429,15 +430,39 @@ export async function programEvents(params: {
 
         const results = await Promise.allSettled(eventPromises);
 
+        let savedOutlookEventId: string | null = null;
         if (managerAccessToken && results.length > 0) {
           const managerResult = results[0];
           if (managerResult.status === "fulfilled" && managerResult.value) {
+            savedOutlookEventId = managerResult.value;
             await prisma.feedback.update({
               where: { id: feedback.id },
-              data: { outlookEventId: managerResult.value },
+              data: { outlookEventId: savedOutlookEventId },
             });
           }
         }
+
+        // Create CalendarEvent for the feedback
+        const room = roomMap.get(event.employeeId);
+        await createCalendarEventForFeedback({
+          feedbackId: feedback.id,
+          employeeId: event.employeeId,
+          managerId: emp.managerId,
+          employeeName: employee.name,
+          scheduledAt: event.scheduledDate,
+          roomEmail: room?.roomEmail,
+          roomDisplayName: room?.roomDisplayName,
+          outlookEventId: savedOutlookEventId ?? undefined,
+        });
+      } else {
+        // No employee found — still create CalendarEvent
+        await createCalendarEventForFeedback({
+          feedbackId: feedback.id,
+          employeeId: event.employeeId,
+          managerId: emp.managerId,
+          employeeName: event.employeeName,
+          scheduledAt: event.scheduledDate,
+        });
       }
     }
   }

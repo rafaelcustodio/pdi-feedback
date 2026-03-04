@@ -22,7 +22,7 @@ const EDUCATION_LEVEL_LABELS: Record<string, string> = {
 };
 const BANK_ACCOUNT_LABELS: Record<string, string> = { sim: "Sim", nao: "Não", outra: "Outra" };
 const HEALTH_PLAN_LABELS: Record<string, string> = { regional: "Regional", nacional: "Nacional", nao: "Não" };
-const CONTRACT_TYPE_LABELS: Record<string, string> = { efetivo: "Efetivo", estagio: "Estágio" };
+const CONTRACT_TYPE_LABELS: Record<string, string> = { efetivo: "Efetivo", estagio: "Estágio", becomex: "Becomex", socio: "Sócio" };
 const SHIRT_SIZE_LABELS: Record<string, string> = {
   p_fem: "P Feminino", m_fem: "M Feminino", g_fem: "G Feminino", gg_fem: "GG Feminino", xg_fem: "XG Feminino",
   p_masc: "P Masculino", m_masc: "M Masculino", g_masc: "G Masculino", gg_masc: "GG Masculino", xg_masc: "XG Masculino",

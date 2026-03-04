@@ -207,6 +207,7 @@ export type PDIFollowUpWhereInput = {
   outlookEventId?: Prisma.StringNullableFilter<"PDIFollowUp"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PDIFollowUp"> | Date | string
   pdi?: Prisma.XOR<Prisma.PDIScalarRelationFilter, Prisma.PDIWhereInput>
+  calendarEvent?: Prisma.XOR<Prisma.CalendarEventNullableScalarRelationFilter, Prisma.CalendarEventWhereInput> | null
 }
 
 export type PDIFollowUpOrderByWithRelationInput = {
@@ -219,6 +220,7 @@ export type PDIFollowUpOrderByWithRelationInput = {
   outlookEventId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   pdi?: Prisma.PDIOrderByWithRelationInput
+  calendarEvent?: Prisma.CalendarEventOrderByWithRelationInput
 }
 
 export type PDIFollowUpWhereUniqueInput = Prisma.AtLeast<{
@@ -234,6 +236,7 @@ export type PDIFollowUpWhereUniqueInput = Prisma.AtLeast<{
   outlookEventId?: Prisma.StringNullableFilter<"PDIFollowUp"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PDIFollowUp"> | Date | string
   pdi?: Prisma.XOR<Prisma.PDIScalarRelationFilter, Prisma.PDIWhereInput>
+  calendarEvent?: Prisma.XOR<Prisma.CalendarEventNullableScalarRelationFilter, Prisma.CalendarEventWhereInput> | null
 }, "id">
 
 export type PDIFollowUpOrderByWithAggregationInput = {
@@ -273,6 +276,7 @@ export type PDIFollowUpCreateInput = {
   outlookEventId?: string | null
   createdAt?: Date | string
   pdi: Prisma.PDICreateNestedOneWithoutFollowUpsInput
+  calendarEvent?: Prisma.CalendarEventCreateNestedOneWithoutPdiFollowUpInput
 }
 
 export type PDIFollowUpUncheckedCreateInput = {
@@ -284,6 +288,7 @@ export type PDIFollowUpUncheckedCreateInput = {
   status?: $Enums.FollowUpStatus
   outlookEventId?: string | null
   createdAt?: Date | string
+  calendarEvent?: Prisma.CalendarEventUncheckedCreateNestedOneWithoutPdiFollowUpInput
 }
 
 export type PDIFollowUpUpdateInput = {
@@ -295,6 +300,7 @@ export type PDIFollowUpUpdateInput = {
   outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   pdi?: Prisma.PDIUpdateOneRequiredWithoutFollowUpsNestedInput
+  calendarEvent?: Prisma.CalendarEventUpdateOneWithoutPdiFollowUpNestedInput
 }
 
 export type PDIFollowUpUncheckedUpdateInput = {
@@ -306,6 +312,7 @@ export type PDIFollowUpUncheckedUpdateInput = {
   status?: Prisma.EnumFollowUpStatusFieldUpdateOperationsInput | $Enums.FollowUpStatus
   outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  calendarEvent?: Prisma.CalendarEventUncheckedUpdateOneWithoutPdiFollowUpNestedInput
 }
 
 export type PDIFollowUpCreateManyInput = {
@@ -383,6 +390,11 @@ export type PDIFollowUpMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
 }
 
+export type PDIFollowUpNullableScalarRelationFilter = {
+  is?: Prisma.PDIFollowUpWhereInput | null
+  isNot?: Prisma.PDIFollowUpWhereInput | null
+}
+
 export type PDIFollowUpCreateNestedManyWithoutPdiInput = {
   create?: Prisma.XOR<Prisma.PDIFollowUpCreateWithoutPdiInput, Prisma.PDIFollowUpUncheckedCreateWithoutPdiInput> | Prisma.PDIFollowUpCreateWithoutPdiInput[] | Prisma.PDIFollowUpUncheckedCreateWithoutPdiInput[]
   connectOrCreate?: Prisma.PDIFollowUpCreateOrConnectWithoutPdiInput | Prisma.PDIFollowUpCreateOrConnectWithoutPdiInput[]
@@ -429,6 +441,22 @@ export type EnumFollowUpStatusFieldUpdateOperationsInput = {
   set?: $Enums.FollowUpStatus
 }
 
+export type PDIFollowUpCreateNestedOneWithoutCalendarEventInput = {
+  create?: Prisma.XOR<Prisma.PDIFollowUpCreateWithoutCalendarEventInput, Prisma.PDIFollowUpUncheckedCreateWithoutCalendarEventInput>
+  connectOrCreate?: Prisma.PDIFollowUpCreateOrConnectWithoutCalendarEventInput
+  connect?: Prisma.PDIFollowUpWhereUniqueInput
+}
+
+export type PDIFollowUpUpdateOneWithoutCalendarEventNestedInput = {
+  create?: Prisma.XOR<Prisma.PDIFollowUpCreateWithoutCalendarEventInput, Prisma.PDIFollowUpUncheckedCreateWithoutCalendarEventInput>
+  connectOrCreate?: Prisma.PDIFollowUpCreateOrConnectWithoutCalendarEventInput
+  upsert?: Prisma.PDIFollowUpUpsertWithoutCalendarEventInput
+  disconnect?: Prisma.PDIFollowUpWhereInput | boolean
+  delete?: Prisma.PDIFollowUpWhereInput | boolean
+  connect?: Prisma.PDIFollowUpWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PDIFollowUpUpdateToOneWithWhereWithoutCalendarEventInput, Prisma.PDIFollowUpUpdateWithoutCalendarEventInput>, Prisma.PDIFollowUpUncheckedUpdateWithoutCalendarEventInput>
+}
+
 export type PDIFollowUpCreateWithoutPdiInput = {
   id?: string
   scheduledAt: Date | string
@@ -437,6 +465,7 @@ export type PDIFollowUpCreateWithoutPdiInput = {
   status?: $Enums.FollowUpStatus
   outlookEventId?: string | null
   createdAt?: Date | string
+  calendarEvent?: Prisma.CalendarEventCreateNestedOneWithoutPdiFollowUpInput
 }
 
 export type PDIFollowUpUncheckedCreateWithoutPdiInput = {
@@ -447,6 +476,7 @@ export type PDIFollowUpUncheckedCreateWithoutPdiInput = {
   status?: $Enums.FollowUpStatus
   outlookEventId?: string | null
   createdAt?: Date | string
+  calendarEvent?: Prisma.CalendarEventUncheckedCreateNestedOneWithoutPdiFollowUpInput
 }
 
 export type PDIFollowUpCreateOrConnectWithoutPdiInput = {
@@ -489,6 +519,66 @@ export type PDIFollowUpScalarWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"PDIFollowUp"> | Date | string
 }
 
+export type PDIFollowUpCreateWithoutCalendarEventInput = {
+  id?: string
+  scheduledAt: Date | string
+  conductedAt?: Date | string | null
+  notes?: string | null
+  status?: $Enums.FollowUpStatus
+  outlookEventId?: string | null
+  createdAt?: Date | string
+  pdi: Prisma.PDICreateNestedOneWithoutFollowUpsInput
+}
+
+export type PDIFollowUpUncheckedCreateWithoutCalendarEventInput = {
+  id?: string
+  pdiId: string
+  scheduledAt: Date | string
+  conductedAt?: Date | string | null
+  notes?: string | null
+  status?: $Enums.FollowUpStatus
+  outlookEventId?: string | null
+  createdAt?: Date | string
+}
+
+export type PDIFollowUpCreateOrConnectWithoutCalendarEventInput = {
+  where: Prisma.PDIFollowUpWhereUniqueInput
+  create: Prisma.XOR<Prisma.PDIFollowUpCreateWithoutCalendarEventInput, Prisma.PDIFollowUpUncheckedCreateWithoutCalendarEventInput>
+}
+
+export type PDIFollowUpUpsertWithoutCalendarEventInput = {
+  update: Prisma.XOR<Prisma.PDIFollowUpUpdateWithoutCalendarEventInput, Prisma.PDIFollowUpUncheckedUpdateWithoutCalendarEventInput>
+  create: Prisma.XOR<Prisma.PDIFollowUpCreateWithoutCalendarEventInput, Prisma.PDIFollowUpUncheckedCreateWithoutCalendarEventInput>
+  where?: Prisma.PDIFollowUpWhereInput
+}
+
+export type PDIFollowUpUpdateToOneWithWhereWithoutCalendarEventInput = {
+  where?: Prisma.PDIFollowUpWhereInput
+  data: Prisma.XOR<Prisma.PDIFollowUpUpdateWithoutCalendarEventInput, Prisma.PDIFollowUpUncheckedUpdateWithoutCalendarEventInput>
+}
+
+export type PDIFollowUpUpdateWithoutCalendarEventInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  scheduledAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumFollowUpStatusFieldUpdateOperationsInput | $Enums.FollowUpStatus
+  outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  pdi?: Prisma.PDIUpdateOneRequiredWithoutFollowUpsNestedInput
+}
+
+export type PDIFollowUpUncheckedUpdateWithoutCalendarEventInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  pdiId?: Prisma.StringFieldUpdateOperationsInput | string
+  scheduledAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumFollowUpStatusFieldUpdateOperationsInput | $Enums.FollowUpStatus
+  outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type PDIFollowUpCreateManyPdiInput = {
   id?: string
   scheduledAt: Date | string
@@ -507,6 +597,7 @@ export type PDIFollowUpUpdateWithoutPdiInput = {
   status?: Prisma.EnumFollowUpStatusFieldUpdateOperationsInput | $Enums.FollowUpStatus
   outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  calendarEvent?: Prisma.CalendarEventUpdateOneWithoutPdiFollowUpNestedInput
 }
 
 export type PDIFollowUpUncheckedUpdateWithoutPdiInput = {
@@ -517,6 +608,7 @@ export type PDIFollowUpUncheckedUpdateWithoutPdiInput = {
   status?: Prisma.EnumFollowUpStatusFieldUpdateOperationsInput | $Enums.FollowUpStatus
   outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  calendarEvent?: Prisma.CalendarEventUncheckedUpdateOneWithoutPdiFollowUpNestedInput
 }
 
 export type PDIFollowUpUncheckedUpdateManyWithoutPdiInput = {
@@ -541,6 +633,7 @@ export type PDIFollowUpSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   outlookEventId?: boolean
   createdAt?: boolean
   pdi?: boolean | Prisma.PDIDefaultArgs<ExtArgs>
+  calendarEvent?: boolean | Prisma.PDIFollowUp$calendarEventArgs<ExtArgs>
 }, ExtArgs["result"]["pDIFollowUp"]>
 
 export type PDIFollowUpSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -581,6 +674,7 @@ export type PDIFollowUpSelectScalar = {
 export type PDIFollowUpOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "pdiId" | "scheduledAt" | "conductedAt" | "notes" | "status" | "outlookEventId" | "createdAt", ExtArgs["result"]["pDIFollowUp"]>
 export type PDIFollowUpInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   pdi?: boolean | Prisma.PDIDefaultArgs<ExtArgs>
+  calendarEvent?: boolean | Prisma.PDIFollowUp$calendarEventArgs<ExtArgs>
 }
 export type PDIFollowUpIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   pdi?: boolean | Prisma.PDIDefaultArgs<ExtArgs>
@@ -593,6 +687,7 @@ export type $PDIFollowUpPayload<ExtArgs extends runtime.Types.Extensions.Interna
   name: "PDIFollowUp"
   objects: {
     pdi: Prisma.$PDIPayload<ExtArgs>
+    calendarEvent: Prisma.$CalendarEventPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -998,6 +1093,7 @@ readonly fields: PDIFollowUpFieldRefs;
 export interface Prisma__PDIFollowUpClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   pdi<T extends Prisma.PDIDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PDIDefaultArgs<ExtArgs>>): Prisma.Prisma__PDIClient<runtime.Types.Result.GetResult<Prisma.$PDIPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  calendarEvent<T extends Prisma.PDIFollowUp$calendarEventArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PDIFollowUp$calendarEventArgs<ExtArgs>>): Prisma.Prisma__CalendarEventClient<runtime.Types.Result.GetResult<Prisma.$CalendarEventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1428,6 +1524,25 @@ export type PDIFollowUpDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Limit how many PDIFollowUps to delete.
    */
   limit?: number
+}
+
+/**
+ * PDIFollowUp.calendarEvent
+ */
+export type PDIFollowUp$calendarEventArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CalendarEvent
+   */
+  select?: Prisma.CalendarEventSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CalendarEvent
+   */
+  omit?: Prisma.CalendarEventOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CalendarEventInclude<ExtArgs> | null
+  where?: Prisma.CalendarEventWhereInput
 }
 
 /**

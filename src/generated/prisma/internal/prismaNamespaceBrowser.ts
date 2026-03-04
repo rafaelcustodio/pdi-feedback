@@ -67,7 +67,9 @@ export const ModelName = {
   NineBoxEvaluator: 'NineBoxEvaluator',
   ChangeRequest: 'ChangeRequest',
   Dependent: 'Dependent',
-  EmergencyContact: 'EmergencyContact'
+  EmergencyContact: 'EmergencyContact',
+  CalendarEvent: 'CalendarEvent',
+  CalendarEventParticipant: 'CalendarEventParticipant'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -377,6 +379,39 @@ export const EmergencyContactScalarFieldEnum = {
 } as const
 
 export type EmergencyContactScalarFieldEnum = (typeof EmergencyContactScalarFieldEnum)[keyof typeof EmergencyContactScalarFieldEnum]
+
+
+export const CalendarEventScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  title: 'title',
+  scheduledAt: 'scheduledAt',
+  durationMinutes: 'durationMinutes',
+  roomEmail: 'roomEmail',
+  roomDisplayName: 'roomDisplayName',
+  status: 'status',
+  outlookEventId: 'outlookEventId',
+  employeeId: 'employeeId',
+  managerId: 'managerId',
+  feedbackId: 'feedbackId',
+  pdiFollowUpId: 'pdiFollowUpId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CalendarEventScalarFieldEnum = (typeof CalendarEventScalarFieldEnum)[keyof typeof CalendarEventScalarFieldEnum]
+
+
+export const CalendarEventParticipantScalarFieldEnum = {
+  id: 'id',
+  calendarEventId: 'calendarEventId',
+  userId: 'userId',
+  externalEmail: 'externalEmail',
+  role: 'role',
+  createdAt: 'createdAt'
+} as const
+
+export type CalendarEventParticipantScalarFieldEnum = (typeof CalendarEventParticipantScalarFieldEnum)[keyof typeof CalendarEventParticipantScalarFieldEnum]
 
 
 export const SortOrder = {

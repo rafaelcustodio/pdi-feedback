@@ -14,6 +14,10 @@ import {
   deleteCalendarEvent,
 } from "@/lib/microsoft-graph";
 import type { GraphCalendarEvent } from "@/lib/microsoft-graph";
+import {
+  createCalendarEventForFollowUp,
+  syncCalendarEventStatus,
+} from "@/lib/calendar-event-utils";
 export type PDIListItem = {
   id: string;
   status: string;
@@ -1065,15 +1069,38 @@ export async function scheduleFollowUp(
     const results = await Promise.allSettled(eventPromises);
 
     // Save manager's outlookEventId if available
+    let savedOutlookId: string | null = null;
     if (managerAccessToken && results.length > 0) {
       const managerResult = results[0];
       if (managerResult.status === "fulfilled" && managerResult.value) {
+        savedOutlookId = managerResult.value;
         await prisma.pDIFollowUp.update({
           where: { id: followUp.id },
-          data: { outlookEventId: managerResult.value },
+          data: { outlookEventId: savedOutlookId },
         });
       }
     }
+
+    // Create CalendarEvent
+    await createCalendarEventForFollowUp({
+      pdiFollowUpId: followUp.id,
+      employeeId: pdi.employeeId,
+      managerId: userId,
+      employeeName: employee.name,
+      scheduledAt: date,
+      roomEmail: roomEmail ?? undefined,
+      roomDisplayName: roomDisplayName ?? undefined,
+      outlookEventId: savedOutlookId ?? undefined,
+    });
+  } else {
+    // No employee found — still create CalendarEvent
+    await createCalendarEventForFollowUp({
+      pdiFollowUpId: followUp.id,
+      employeeId: pdi.employeeId,
+      managerId: userId,
+      employeeName: "",
+      scheduledAt: date,
+    });
   }
 
   revalidatePath(`/pdis/${pdiId}`);
@@ -1119,6 +1146,9 @@ export async function completeFollowUp(
     },
   });
 
+  // Sync CalendarEvent status
+  await syncCalendarEventStatus(followUpId, "pdi_followup", "completed");
+
   revalidatePath(`/pdis/${followUp.pdiId}`);
   return { success: true };
 }
@@ -1153,6 +1183,9 @@ export async function cancelFollowUp(
     where: { id: followUpId },
     data: { status: "cancelled" },
   });
+
+  // Sync CalendarEvent status
+  await syncCalendarEventStatus(followUpId, "pdi_followup", "cancelled");
 
   // Delete Outlook calendar event if one exists
   if (followUp.outlookEventId) {

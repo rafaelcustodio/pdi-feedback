@@ -21,6 +21,10 @@ import {
 } from "@/lib/microsoft-graph";
 import type { GraphCalendarEvent, RoomAvailability } from "@/lib/microsoft-graph";
 export type { RoomAvailability, MeetingRoom } from "@/lib/microsoft-graph";
+import {
+  createCalendarEventForFeedback,
+  syncCalendarEventStatus,
+} from "@/lib/calendar-event-utils";
 
 export type FeedbackListItem = {
   id: string;
@@ -351,6 +355,24 @@ export async function createFeedback(data: {
     },
   });
 
+  // Create CalendarEvent for the feedback
+  const empName = await prisma.user.findUnique({
+    where: { id: data.employeeId },
+    select: { name: true },
+  });
+  await createCalendarEventForFeedback({
+    feedbackId: feedback.id,
+    employeeId: data.employeeId,
+    managerId: userId,
+    employeeName: empName?.name ?? "",
+    scheduledAt: scheduledAtDate,
+  });
+
+  // If submitted, sync CalendarEvent status
+  if (data.submit) {
+    await syncCalendarEventStatus(feedback.id, "feedback", "completed");
+  }
+
   // Recalculate feedback schedule and notify employee after submission
   if (data.submit) {
     await recalculateFeedbackSchedule(data.employeeId);
@@ -470,6 +492,11 @@ export async function updateFeedback(
       status: data.submit ? "submitted" : (feedback.status === "scheduled" ? "draft" : feedback.status),
     },
   });
+
+  // Sync CalendarEvent status on submit
+  if (data.submit) {
+    await syncCalendarEventStatus(id, "feedback", "completed");
+  }
 
   // Recalculate feedback schedule and notify employee after submission
   if (data.submit) {
@@ -723,14 +750,43 @@ export async function scheduleFeedback(
 
     const results = await Promise.allSettled(eventPromises);
 
+    let savedOutlookId: string | null = null;
     if (managerAccessToken && results.length > 0) {
       const managerResult = results[0];
       if (managerResult.status === "fulfilled" && managerResult.value) {
+        savedOutlookId = managerResult.value;
         await prisma.feedback.update({
           where: { id },
-          data: { outlookEventId: managerResult.value },
+          data: { outlookEventId: savedOutlookId },
         });
       }
+    }
+
+    // Create or update CalendarEvent
+    const existingCE = await prisma.calendarEvent.findUnique({
+      where: { feedbackId: id },
+    });
+    if (existingCE) {
+      await prisma.calendarEvent.update({
+        where: { id: existingCE.id },
+        data: {
+          scheduledAt: scheduledDate,
+          roomEmail: roomEmail ?? null,
+          roomDisplayName: roomDisplayName ?? null,
+          outlookEventId: savedOutlookId ?? existingCE.outlookEventId,
+        },
+      });
+    } else {
+      await createCalendarEventForFeedback({
+        feedbackId: id,
+        employeeId: feedback.employeeId,
+        managerId: userId,
+        employeeName: employee.name,
+        scheduledAt: scheduledDate,
+        roomEmail: roomEmail ?? undefined,
+        roomDisplayName: roomDisplayName ?? undefined,
+        outlookEventId: savedOutlookId ?? undefined,
+      });
     }
   }
 
@@ -860,15 +916,29 @@ export async function createFutureFeedback(data: {
   const results = await Promise.allSettled(eventPromises);
 
   // Save manager's outlookEventId if available
+  let savedOutlookId: string | null = null;
   if (managerAccessToken && results.length > 0) {
     const managerResult = results[0];
     if (managerResult.status === "fulfilled" && managerResult.value) {
+      savedOutlookId = managerResult.value;
       await prisma.feedback.update({
         where: { id: feedback.id },
-        data: { outlookEventId: managerResult.value },
+        data: { outlookEventId: savedOutlookId },
       });
     }
   }
+
+  // Create CalendarEvent
+  await createCalendarEventForFeedback({
+    feedbackId: feedback.id,
+    employeeId: data.employeeId,
+    managerId: userId,
+    employeeName: employee.name,
+    scheduledAt: scheduledDate,
+    roomEmail: data.roomEmail ?? undefined,
+    roomDisplayName: data.roomDisplayName ?? undefined,
+    outlookEventId: savedOutlookId ?? undefined,
+  });
 
   revalidatePath("/feedbacks");
   return { success: true, id: feedback.id };
@@ -970,6 +1040,21 @@ export async function rescheduleFeedback(
     }
   }
 
+  // Update CalendarEvent
+  const existingCE = await prisma.calendarEvent.findUnique({
+    where: { feedbackId: id },
+  });
+  if (existingCE) {
+    await prisma.calendarEvent.update({
+      where: { id: existingCE.id },
+      data: {
+        scheduledAt: scheduledDate,
+        roomEmail: roomEmail ?? existingCE.roomEmail,
+        roomDisplayName: roomDisplayName ?? existingCE.roomDisplayName,
+      },
+    });
+  }
+
   // Notify employee
   const dateStr = scheduledDate.toLocaleDateString("pt-BR");
   await prisma.notification.create({
@@ -1015,6 +1100,14 @@ export async function cancelScheduledFeedback(
   }
 
   const hasContent = !!(feedback.content?.trim() || feedback.strengths?.trim() || feedback.improvements?.trim());
+
+  // Cancel/delete CalendarEvent first (before feedback deletion)
+  const existingCE = await prisma.calendarEvent.findUnique({
+    where: { feedbackId: id },
+  });
+  if (existingCE) {
+    await prisma.calendarEvent.delete({ where: { id: existingCE.id } });
+  }
 
   if (feedback.status === "scheduled" && !hasContent) {
     // Delete the record entirely if scheduled with no content

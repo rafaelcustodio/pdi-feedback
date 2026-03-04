@@ -100,6 +100,8 @@ const CONTRACT_TYPE_OPTIONS = [
   { value: "", label: "Selecione" },
   { value: "efetivo", label: "Efetivo" },
   { value: "estagio", label: "Estágio" },
+  { value: "becomex", label: "Becomex" },
+  { value: "socio", label: "Sócio" },
 ];
 
 const SHIRT_SIZE_OPTIONS = [
