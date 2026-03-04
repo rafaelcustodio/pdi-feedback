@@ -9,6 +9,7 @@ vi.mock("@/lib/prisma", () => ({
     sectorSchedule: { findUnique: vi.fn() },
     pDI: { updateMany: vi.fn() },
     feedback: { updateMany: vi.fn(), findMany: vi.fn(), createMany: vi.fn(), deleteMany: vi.fn() },
+    calendarEvent: { updateMany: vi.fn() },
   },
 }));
 
@@ -22,6 +23,7 @@ const mockPrisma = prisma as unknown as {
   sectorSchedule: { findUnique: ReturnType<typeof vi.fn> };
   pDI: { updateMany: ReturnType<typeof vi.fn> };
   feedback: { updateMany: ReturnType<typeof vi.fn>; findMany: ReturnType<typeof vi.fn>; createMany: ReturnType<typeof vi.fn>; deleteMany: ReturnType<typeof vi.fn> };
+  calendarEvent: { updateMany: ReturnType<typeof vi.fn> };
 };
 
 describe("getEffectiveSchedule", () => {
@@ -137,7 +139,9 @@ describe("handleSectorTransfer", () => {
   });
 
   it("cancels future scheduled feedbacks (not PDIs in continuous model)", async () => {
+    mockPrisma.feedback.findMany.mockResolvedValue([{ id: "fb-1" }]);
     mockPrisma.feedback.updateMany.mockResolvedValue({ count: 1 });
+    mockPrisma.calendarEvent.updateMany.mockResolvedValue({ count: 1 });
 
     const result = await handleSectorTransfer("e1", "new-unit");
 
@@ -159,6 +163,7 @@ describe("handleSectorTransfer", () => {
   });
 
   it("returns zero counts when no events to cancel", async () => {
+    mockPrisma.feedback.findMany.mockResolvedValue([]);
     mockPrisma.feedback.updateMany.mockResolvedValue({ count: 0 });
 
     const result = await handleSectorTransfer("e1", "new-unit");
@@ -166,7 +171,9 @@ describe("handleSectorTransfer", () => {
   });
 
   it("preserves onboarding feedbacks (only cancels non-onboarding)", async () => {
+    mockPrisma.feedback.findMany.mockResolvedValue([{ id: "fb-1" }, { id: "fb-2" }, { id: "fb-3" }]);
     mockPrisma.feedback.updateMany.mockResolvedValue({ count: 3 });
+    mockPrisma.calendarEvent.updateMany.mockResolvedValue({ count: 3 });
 
     await handleSectorTransfer("e1", "new-unit");
 

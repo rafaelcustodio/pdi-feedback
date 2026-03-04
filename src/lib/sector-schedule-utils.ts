@@ -197,6 +197,17 @@ export async function handleSectorTransfer(
 ): Promise<{ cancelledFeedbacks: number }> {
   const now = new Date();
 
+  // Find feedbacks that will be cancelled (to sync CalendarEvents)
+  const feedbacksToCancel = await prisma.feedback.findMany({
+    where: {
+      employeeId,
+      status: "scheduled",
+      scheduledAt: { gt: now },
+      isOnboarding: false,
+    },
+    select: { id: true },
+  });
+
   // Cancel future scheduled Feedbacks (except onboarding)
   const cancelledFeedbacks = await prisma.feedback.updateMany({
     where: {
@@ -207,6 +218,18 @@ export async function handleSectorTransfer(
     },
     data: { status: "cancelled" },
   });
+
+  // Cancel corresponding CalendarEvents
+  if (feedbacksToCancel.length > 0) {
+    const feedbackIds = feedbacksToCancel.map((f) => f.id);
+    await prisma.calendarEvent.updateMany({
+      where: {
+        feedbackId: { in: feedbackIds },
+        status: "scheduled",
+      },
+      data: { status: "cancelled" },
+    });
+  }
 
   return {
     cancelledFeedbacks: cancelledFeedbacks.count,

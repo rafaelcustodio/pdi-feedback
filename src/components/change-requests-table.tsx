@@ -49,7 +49,7 @@ const ENUM_LABELS: Record<string, Record<string, string>> = {
   educationLevel: { ensino_medio: "Ensino Médio", ensino_tecnico: "Ensino Técnico", superior_incompleto: "Superior Incompleto", superior_completo: "Superior Completo", pos_graduado: "Pós-graduado" },
   hasBradescoAccount: { sim: "Sim", nao: "Não", outra: "Outra" },
   healthPlanOption: { regional: "Regional", nacional: "Nacional", nao: "Não" },
-  contractType: { efetivo: "Efetivo", estagio: "Estágio" },
+  contractType: { efetivo: "Efetivo", estagio: "Estágio", becomex: "Becomex", socio: "Sócio" },
   shirtSize: { p_fem: "P Fem", m_fem: "M Fem", g_fem: "G Fem", gg_fem: "GG Fem", xg_fem: "XG Fem", p_masc: "P Masc", m_masc: "M Masc", g_masc: "G Masc", gg_masc: "GG Masc", xg_masc: "XG Masc" },
 };
 

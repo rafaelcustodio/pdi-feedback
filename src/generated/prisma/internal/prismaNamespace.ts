@@ -400,7 +400,9 @@ export const ModelName = {
   NineBoxEvaluator: 'NineBoxEvaluator',
   ChangeRequest: 'ChangeRequest',
   Dependent: 'Dependent',
-  EmergencyContact: 'EmergencyContact'
+  EmergencyContact: 'EmergencyContact',
+  CalendarEvent: 'CalendarEvent',
+  CalendarEventParticipant: 'CalendarEventParticipant'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -416,7 +418,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "organizationalUnit" | "sectorSchedule" | "employeeHierarchy" | "pDI" | "pDIFollowUp" | "pDIGoal" | "pDIEvidence" | "pDIComment" | "feedback" | "feedbackSchedule" | "notification" | "nineBoxEvaluation" | "nineBoxEvaluator" | "changeRequest" | "dependent" | "emergencyContact"
+    modelProps: "user" | "organizationalUnit" | "sectorSchedule" | "employeeHierarchy" | "pDI" | "pDIFollowUp" | "pDIGoal" | "pDIEvidence" | "pDIComment" | "feedback" | "feedbackSchedule" | "notification" | "nineBoxEvaluation" | "nineBoxEvaluator" | "changeRequest" | "dependent" | "emergencyContact" | "calendarEvent" | "calendarEventParticipant"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1678,6 +1680,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    CalendarEvent: {
+      payload: Prisma.$CalendarEventPayload<ExtArgs>
+      fields: Prisma.CalendarEventFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CalendarEventFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalendarEventPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CalendarEventFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalendarEventPayload>
+        }
+        findFirst: {
+          args: Prisma.CalendarEventFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalendarEventPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CalendarEventFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalendarEventPayload>
+        }
+        findMany: {
+          args: Prisma.CalendarEventFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalendarEventPayload>[]
+        }
+        create: {
+          args: Prisma.CalendarEventCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalendarEventPayload>
+        }
+        createMany: {
+          args: Prisma.CalendarEventCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CalendarEventCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalendarEventPayload>[]
+        }
+        delete: {
+          args: Prisma.CalendarEventDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalendarEventPayload>
+        }
+        update: {
+          args: Prisma.CalendarEventUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalendarEventPayload>
+        }
+        deleteMany: {
+          args: Prisma.CalendarEventDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CalendarEventUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CalendarEventUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalendarEventPayload>[]
+        }
+        upsert: {
+          args: Prisma.CalendarEventUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalendarEventPayload>
+        }
+        aggregate: {
+          args: Prisma.CalendarEventAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCalendarEvent>
+        }
+        groupBy: {
+          args: Prisma.CalendarEventGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CalendarEventGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CalendarEventCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CalendarEventCountAggregateOutputType> | number
+        }
+      }
+    }
+    CalendarEventParticipant: {
+      payload: Prisma.$CalendarEventParticipantPayload<ExtArgs>
+      fields: Prisma.CalendarEventParticipantFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CalendarEventParticipantFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalendarEventParticipantPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CalendarEventParticipantFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalendarEventParticipantPayload>
+        }
+        findFirst: {
+          args: Prisma.CalendarEventParticipantFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalendarEventParticipantPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CalendarEventParticipantFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalendarEventParticipantPayload>
+        }
+        findMany: {
+          args: Prisma.CalendarEventParticipantFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalendarEventParticipantPayload>[]
+        }
+        create: {
+          args: Prisma.CalendarEventParticipantCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalendarEventParticipantPayload>
+        }
+        createMany: {
+          args: Prisma.CalendarEventParticipantCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CalendarEventParticipantCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalendarEventParticipantPayload>[]
+        }
+        delete: {
+          args: Prisma.CalendarEventParticipantDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalendarEventParticipantPayload>
+        }
+        update: {
+          args: Prisma.CalendarEventParticipantUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalendarEventParticipantPayload>
+        }
+        deleteMany: {
+          args: Prisma.CalendarEventParticipantDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CalendarEventParticipantUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CalendarEventParticipantUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalendarEventParticipantPayload>[]
+        }
+        upsert: {
+          args: Prisma.CalendarEventParticipantUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalendarEventParticipantPayload>
+        }
+        aggregate: {
+          args: Prisma.CalendarEventParticipantAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCalendarEventParticipant>
+        }
+        groupBy: {
+          args: Prisma.CalendarEventParticipantGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CalendarEventParticipantGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CalendarEventParticipantCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CalendarEventParticipantCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2008,6 +2158,39 @@ export const EmergencyContactScalarFieldEnum = {
 } as const
 
 export type EmergencyContactScalarFieldEnum = (typeof EmergencyContactScalarFieldEnum)[keyof typeof EmergencyContactScalarFieldEnum]
+
+
+export const CalendarEventScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  title: 'title',
+  scheduledAt: 'scheduledAt',
+  durationMinutes: 'durationMinutes',
+  roomEmail: 'roomEmail',
+  roomDisplayName: 'roomDisplayName',
+  status: 'status',
+  outlookEventId: 'outlookEventId',
+  employeeId: 'employeeId',
+  managerId: 'managerId',
+  feedbackId: 'feedbackId',
+  pdiFollowUpId: 'pdiFollowUpId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CalendarEventScalarFieldEnum = (typeof CalendarEventScalarFieldEnum)[keyof typeof CalendarEventScalarFieldEnum]
+
+
+export const CalendarEventParticipantScalarFieldEnum = {
+  id: 'id',
+  calendarEventId: 'calendarEventId',
+  userId: 'userId',
+  externalEmail: 'externalEmail',
+  role: 'role',
+  createdAt: 'createdAt'
+} as const
+
+export type CalendarEventParticipantScalarFieldEnum = (typeof CalendarEventParticipantScalarFieldEnum)[keyof typeof CalendarEventParticipantScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -2387,6 +2570,48 @@ export type ListEnumChangeRequestStatusFieldRefInput<$PrismaModel> = FieldRefInp
 
 
 /**
+ * Reference to a field of type 'CalendarEventType'
+ */
+export type EnumCalendarEventTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CalendarEventType'>
+    
+
+
+/**
+ * Reference to a field of type 'CalendarEventType[]'
+ */
+export type ListEnumCalendarEventTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CalendarEventType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'CalendarEventStatus'
+ */
+export type EnumCalendarEventStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CalendarEventStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'CalendarEventStatus[]'
+ */
+export type ListEnumCalendarEventStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CalendarEventStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ParticipantRole'
+ */
+export type EnumParticipantRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParticipantRole'>
+    
+
+
+/**
+ * Reference to a field of type 'ParticipantRole[]'
+ */
+export type ListEnumParticipantRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParticipantRole[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -2511,6 +2736,8 @@ export type GlobalOmitConfig = {
   changeRequest?: Prisma.ChangeRequestOmit
   dependent?: Prisma.DependentOmit
   emergencyContact?: Prisma.EmergencyContactOmit
+  calendarEvent?: Prisma.CalendarEventOmit
+  calendarEventParticipant?: Prisma.CalendarEventParticipantOmit
 }
 
 /* Types for Logging */

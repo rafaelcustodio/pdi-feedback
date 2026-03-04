@@ -58,6 +58,8 @@ enum EducationLevel {
 enum ContractType {
   efetivo
   estagio
+  becomex
+  socio
 }
 
 enum HealthPlanOption {
@@ -174,6 +176,11 @@ model User {
   changeRequests          ChangeRequest[] @relation("ChangeRequestUser")
   reviewedChangeRequests  ChangeRequest[] @relation("ChangeRequestReviewer")
 
+  // Calendar Event relations
+  calendarEventsAsEmployee     CalendarEvent[]              @relation("CalendarEventEmployee")
+  calendarEventsAsManager      CalendarEvent[]              @relation("CalendarEventManager")
+  calendarEventParticipations  CalendarEventParticipant[]
+
   // Nine Box relations
   nineBoxEvaluationsReceived NineBoxEvaluation[] @relation("NineBoxEvaluatee")
   nineBoxEvaluationsCreated  NineBoxEvaluation[] @relation("NineBoxCreatedBy")
@@ -288,7 +295,8 @@ model PDIFollowUp {
   outlookEventId  String?
   createdAt       DateTime       @default(now())
 
-  pdi PDI @relation(fields: [pdiId], references: [id], onDelete: Cascade)
+  pdi           PDI            @relation(fields: [pdiId], references: [id], onDelete: Cascade)
+  calendarEvent CalendarEvent?
 
   @@index([pdiId])
 }
@@ -379,6 +387,7 @@ model Feedback {
   manager  User @relation("FeedbackManager", fields: [managerId], references: [id])
 
   nineBoxEvaluation NineBoxEvaluation?
+  calendarEvent     CalendarEvent?
 
   @@index([employeeId])
   @@index([managerId])
@@ -569,4 +578,67 @@ model EmergencyContact {
   user User @relation(fields: [userId], references: [id])
 
   @@index([userId])
+}
+
+// ============================================================
+// Calendar Events
+// ============================================================
+
+enum CalendarEventType {
+  feedback
+  pdi_followup
+}
+
+enum CalendarEventStatus {
+  scheduled
+  completed
+  cancelled
+}
+
+enum ParticipantRole {
+  required
+  optional
+}
+
+model CalendarEvent {
+  id              String              @id @default(cuid())
+  type            CalendarEventType
+  title           String
+  scheduledAt     DateTime
+  durationMinutes Int                 @default(60)
+  roomEmail       String?
+  roomDisplayName String?
+  status          CalendarEventStatus @default(scheduled)
+  outlookEventId  String?
+  employeeId      String
+  managerId       String
+  feedbackId      String?             @unique
+  pdiFollowUpId   String?             @unique
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  employee     User                        @relation("CalendarEventEmployee", fields: [employeeId], references: [id])
+  manager      User                        @relation("CalendarEventManager", fields: [managerId], references: [id])
+  feedback     Feedback?                   @relation(fields: [feedbackId], references: [id])
+  pdiFollowUp  PDIFollowUp?                @relation(fields: [pdiFollowUpId], references: [id])
+  participants CalendarEventParticipant[]
+
+  @@index([employeeId])
+  @@index([managerId])
+  @@index([scheduledAt])
+  @@index([status])
+}
+
+model CalendarEventParticipant {
+  id              String          @id @default(cuid())
+  calendarEventId String
+  userId          String?
+  externalEmail   String?
+  role            ParticipantRole @default(required)
+  createdAt       DateTime        @default(now())
+
+  calendarEvent CalendarEvent @relation(fields: [calendarEventId], references: [id], onDelete: Cascade)
+  user          User?         @relation(fields: [userId], references: [id])
+
+  @@index([calendarEventId])
 }

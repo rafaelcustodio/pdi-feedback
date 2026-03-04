@@ -126,3 +126,13 @@ export type Dependent = Prisma.DependentModel
  * 
  */
 export type EmergencyContact = Prisma.EmergencyContactModel
+/**
+ * Model CalendarEvent
+ * 
+ */
+export type CalendarEvent = Prisma.CalendarEventModel
+/**
+ * Model CalendarEventParticipant
+ * 
+ */
+export type CalendarEventParticipant = Prisma.CalendarEventParticipantModel

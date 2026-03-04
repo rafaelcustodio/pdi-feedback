@@ -311,6 +311,7 @@ export type FeedbackWhereInput = {
   employee?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   manager?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   nineBoxEvaluation?: Prisma.XOR<Prisma.NineBoxEvaluationNullableScalarRelationFilter, Prisma.NineBoxEvaluationWhereInput> | null
+  calendarEvent?: Prisma.XOR<Prisma.CalendarEventNullableScalarRelationFilter, Prisma.CalendarEventWhereInput> | null
 }
 
 export type FeedbackOrderByWithRelationInput = {
@@ -333,6 +334,7 @@ export type FeedbackOrderByWithRelationInput = {
   employee?: Prisma.UserOrderByWithRelationInput
   manager?: Prisma.UserOrderByWithRelationInput
   nineBoxEvaluation?: Prisma.NineBoxEvaluationOrderByWithRelationInput
+  calendarEvent?: Prisma.CalendarEventOrderByWithRelationInput
 }
 
 export type FeedbackWhereUniqueInput = Prisma.AtLeast<{
@@ -358,6 +360,7 @@ export type FeedbackWhereUniqueInput = Prisma.AtLeast<{
   employee?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   manager?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   nineBoxEvaluation?: Prisma.XOR<Prisma.NineBoxEvaluationNullableScalarRelationFilter, Prisma.NineBoxEvaluationWhereInput> | null
+  calendarEvent?: Prisma.XOR<Prisma.CalendarEventNullableScalarRelationFilter, Prisma.CalendarEventWhereInput> | null
 }, "id">
 
 export type FeedbackOrderByWithAggregationInput = {
@@ -424,6 +427,7 @@ export type FeedbackCreateInput = {
   employee: Prisma.UserCreateNestedOneWithoutFeedbacksReceivedInput
   manager: Prisma.UserCreateNestedOneWithoutFeedbacksGivenInput
   nineBoxEvaluation?: Prisma.NineBoxEvaluationCreateNestedOneWithoutFeedbackInput
+  calendarEvent?: Prisma.CalendarEventCreateNestedOneWithoutFeedbackInput
 }
 
 export type FeedbackUncheckedCreateInput = {
@@ -444,6 +448,7 @@ export type FeedbackUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   nineBoxEvaluation?: Prisma.NineBoxEvaluationUncheckedCreateNestedOneWithoutFeedbackInput
+  calendarEvent?: Prisma.CalendarEventUncheckedCreateNestedOneWithoutFeedbackInput
 }
 
 export type FeedbackUpdateInput = {
@@ -464,6 +469,7 @@ export type FeedbackUpdateInput = {
   employee?: Prisma.UserUpdateOneRequiredWithoutFeedbacksReceivedNestedInput
   manager?: Prisma.UserUpdateOneRequiredWithoutFeedbacksGivenNestedInput
   nineBoxEvaluation?: Prisma.NineBoxEvaluationUpdateOneWithoutFeedbackNestedInput
+  calendarEvent?: Prisma.CalendarEventUpdateOneWithoutFeedbackNestedInput
 }
 
 export type FeedbackUncheckedUpdateInput = {
@@ -484,6 +490,7 @@ export type FeedbackUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nineBoxEvaluation?: Prisma.NineBoxEvaluationUncheckedUpdateOneWithoutFeedbackNestedInput
+  calendarEvent?: Prisma.CalendarEventUncheckedUpdateOneWithoutFeedbackNestedInput
 }
 
 export type FeedbackCreateManyInput = {
@@ -623,6 +630,11 @@ export type FeedbackScalarRelationFilter = {
   isNot?: Prisma.FeedbackWhereInput
 }
 
+export type FeedbackNullableScalarRelationFilter = {
+  is?: Prisma.FeedbackWhereInput | null
+  isNot?: Prisma.FeedbackWhereInput | null
+}
+
 export type FeedbackCreateNestedManyWithoutEmployeeInput = {
   create?: Prisma.XOR<Prisma.FeedbackCreateWithoutEmployeeInput, Prisma.FeedbackUncheckedCreateWithoutEmployeeInput> | Prisma.FeedbackCreateWithoutEmployeeInput[] | Prisma.FeedbackUncheckedCreateWithoutEmployeeInput[]
   connectOrCreate?: Prisma.FeedbackCreateOrConnectWithoutEmployeeInput | Prisma.FeedbackCreateOrConnectWithoutEmployeeInput[]
@@ -733,6 +745,22 @@ export type FeedbackUpdateOneRequiredWithoutNineBoxEvaluationNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.FeedbackUpdateToOneWithWhereWithoutNineBoxEvaluationInput, Prisma.FeedbackUpdateWithoutNineBoxEvaluationInput>, Prisma.FeedbackUncheckedUpdateWithoutNineBoxEvaluationInput>
 }
 
+export type FeedbackCreateNestedOneWithoutCalendarEventInput = {
+  create?: Prisma.XOR<Prisma.FeedbackCreateWithoutCalendarEventInput, Prisma.FeedbackUncheckedCreateWithoutCalendarEventInput>
+  connectOrCreate?: Prisma.FeedbackCreateOrConnectWithoutCalendarEventInput
+  connect?: Prisma.FeedbackWhereUniqueInput
+}
+
+export type FeedbackUpdateOneWithoutCalendarEventNestedInput = {
+  create?: Prisma.XOR<Prisma.FeedbackCreateWithoutCalendarEventInput, Prisma.FeedbackUncheckedCreateWithoutCalendarEventInput>
+  connectOrCreate?: Prisma.FeedbackCreateOrConnectWithoutCalendarEventInput
+  upsert?: Prisma.FeedbackUpsertWithoutCalendarEventInput
+  disconnect?: Prisma.FeedbackWhereInput | boolean
+  delete?: Prisma.FeedbackWhereInput | boolean
+  connect?: Prisma.FeedbackWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FeedbackUpdateToOneWithWhereWithoutCalendarEventInput, Prisma.FeedbackUpdateWithoutCalendarEventInput>, Prisma.FeedbackUncheckedUpdateWithoutCalendarEventInput>
+}
+
 export type FeedbackCreateWithoutEmployeeInput = {
   id?: string
   period: string
@@ -750,6 +778,7 @@ export type FeedbackCreateWithoutEmployeeInput = {
   updatedAt?: Date | string
   manager: Prisma.UserCreateNestedOneWithoutFeedbacksGivenInput
   nineBoxEvaluation?: Prisma.NineBoxEvaluationCreateNestedOneWithoutFeedbackInput
+  calendarEvent?: Prisma.CalendarEventCreateNestedOneWithoutFeedbackInput
 }
 
 export type FeedbackUncheckedCreateWithoutEmployeeInput = {
@@ -769,6 +798,7 @@ export type FeedbackUncheckedCreateWithoutEmployeeInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   nineBoxEvaluation?: Prisma.NineBoxEvaluationUncheckedCreateNestedOneWithoutFeedbackInput
+  calendarEvent?: Prisma.CalendarEventUncheckedCreateNestedOneWithoutFeedbackInput
 }
 
 export type FeedbackCreateOrConnectWithoutEmployeeInput = {
@@ -798,6 +828,7 @@ export type FeedbackCreateWithoutManagerInput = {
   updatedAt?: Date | string
   employee: Prisma.UserCreateNestedOneWithoutFeedbacksReceivedInput
   nineBoxEvaluation?: Prisma.NineBoxEvaluationCreateNestedOneWithoutFeedbackInput
+  calendarEvent?: Prisma.CalendarEventCreateNestedOneWithoutFeedbackInput
 }
 
 export type FeedbackUncheckedCreateWithoutManagerInput = {
@@ -817,6 +848,7 @@ export type FeedbackUncheckedCreateWithoutManagerInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   nineBoxEvaluation?: Prisma.NineBoxEvaluationUncheckedCreateNestedOneWithoutFeedbackInput
+  calendarEvent?: Prisma.CalendarEventUncheckedCreateNestedOneWithoutFeedbackInput
 }
 
 export type FeedbackCreateOrConnectWithoutManagerInput = {
@@ -900,6 +932,7 @@ export type FeedbackCreateWithoutNineBoxEvaluationInput = {
   updatedAt?: Date | string
   employee: Prisma.UserCreateNestedOneWithoutFeedbacksReceivedInput
   manager: Prisma.UserCreateNestedOneWithoutFeedbacksGivenInput
+  calendarEvent?: Prisma.CalendarEventCreateNestedOneWithoutFeedbackInput
 }
 
 export type FeedbackUncheckedCreateWithoutNineBoxEvaluationInput = {
@@ -919,6 +952,7 @@ export type FeedbackUncheckedCreateWithoutNineBoxEvaluationInput = {
   outlookEventId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  calendarEvent?: Prisma.CalendarEventUncheckedCreateNestedOneWithoutFeedbackInput
 }
 
 export type FeedbackCreateOrConnectWithoutNineBoxEvaluationInput = {
@@ -954,6 +988,7 @@ export type FeedbackUpdateWithoutNineBoxEvaluationInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employee?: Prisma.UserUpdateOneRequiredWithoutFeedbacksReceivedNestedInput
   manager?: Prisma.UserUpdateOneRequiredWithoutFeedbacksGivenNestedInput
+  calendarEvent?: Prisma.CalendarEventUpdateOneWithoutFeedbackNestedInput
 }
 
 export type FeedbackUncheckedUpdateWithoutNineBoxEvaluationInput = {
@@ -973,6 +1008,103 @@ export type FeedbackUncheckedUpdateWithoutNineBoxEvaluationInput = {
   outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  calendarEvent?: Prisma.CalendarEventUncheckedUpdateOneWithoutFeedbackNestedInput
+}
+
+export type FeedbackCreateWithoutCalendarEventInput = {
+  id?: string
+  period: string
+  content?: string | null
+  strengths?: string | null
+  improvements?: string | null
+  rating?: number | null
+  status?: $Enums.FeedbackStatus
+  frequencyMonths?: number | null
+  conductedAt?: Date | string | null
+  scheduledAt?: Date | string | null
+  isOnboarding?: boolean
+  outlookEventId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employee: Prisma.UserCreateNestedOneWithoutFeedbacksReceivedInput
+  manager: Prisma.UserCreateNestedOneWithoutFeedbacksGivenInput
+  nineBoxEvaluation?: Prisma.NineBoxEvaluationCreateNestedOneWithoutFeedbackInput
+}
+
+export type FeedbackUncheckedCreateWithoutCalendarEventInput = {
+  id?: string
+  employeeId: string
+  managerId: string
+  period: string
+  content?: string | null
+  strengths?: string | null
+  improvements?: string | null
+  rating?: number | null
+  status?: $Enums.FeedbackStatus
+  frequencyMonths?: number | null
+  conductedAt?: Date | string | null
+  scheduledAt?: Date | string | null
+  isOnboarding?: boolean
+  outlookEventId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  nineBoxEvaluation?: Prisma.NineBoxEvaluationUncheckedCreateNestedOneWithoutFeedbackInput
+}
+
+export type FeedbackCreateOrConnectWithoutCalendarEventInput = {
+  where: Prisma.FeedbackWhereUniqueInput
+  create: Prisma.XOR<Prisma.FeedbackCreateWithoutCalendarEventInput, Prisma.FeedbackUncheckedCreateWithoutCalendarEventInput>
+}
+
+export type FeedbackUpsertWithoutCalendarEventInput = {
+  update: Prisma.XOR<Prisma.FeedbackUpdateWithoutCalendarEventInput, Prisma.FeedbackUncheckedUpdateWithoutCalendarEventInput>
+  create: Prisma.XOR<Prisma.FeedbackCreateWithoutCalendarEventInput, Prisma.FeedbackUncheckedCreateWithoutCalendarEventInput>
+  where?: Prisma.FeedbackWhereInput
+}
+
+export type FeedbackUpdateToOneWithWhereWithoutCalendarEventInput = {
+  where?: Prisma.FeedbackWhereInput
+  data: Prisma.XOR<Prisma.FeedbackUpdateWithoutCalendarEventInput, Prisma.FeedbackUncheckedUpdateWithoutCalendarEventInput>
+}
+
+export type FeedbackUpdateWithoutCalendarEventInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  period?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  strengths?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  improvements?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status?: Prisma.EnumFeedbackStatusFieldUpdateOperationsInput | $Enums.FeedbackStatus
+  frequencyMonths?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employee?: Prisma.UserUpdateOneRequiredWithoutFeedbacksReceivedNestedInput
+  manager?: Prisma.UserUpdateOneRequiredWithoutFeedbacksGivenNestedInput
+  nineBoxEvaluation?: Prisma.NineBoxEvaluationUpdateOneWithoutFeedbackNestedInput
+}
+
+export type FeedbackUncheckedUpdateWithoutCalendarEventInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeId?: Prisma.StringFieldUpdateOperationsInput | string
+  managerId?: Prisma.StringFieldUpdateOperationsInput | string
+  period?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  strengths?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  improvements?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status?: Prisma.EnumFeedbackStatusFieldUpdateOperationsInput | $Enums.FeedbackStatus
+  frequencyMonths?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  conductedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnboarding?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  outlookEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  nineBoxEvaluation?: Prisma.NineBoxEvaluationUncheckedUpdateOneWithoutFeedbackNestedInput
 }
 
 export type FeedbackCreateManyEmployeeInput = {
@@ -1028,6 +1160,7 @@ export type FeedbackUpdateWithoutEmployeeInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   manager?: Prisma.UserUpdateOneRequiredWithoutFeedbacksGivenNestedInput
   nineBoxEvaluation?: Prisma.NineBoxEvaluationUpdateOneWithoutFeedbackNestedInput
+  calendarEvent?: Prisma.CalendarEventUpdateOneWithoutFeedbackNestedInput
 }
 
 export type FeedbackUncheckedUpdateWithoutEmployeeInput = {
@@ -1047,6 +1180,7 @@ export type FeedbackUncheckedUpdateWithoutEmployeeInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nineBoxEvaluation?: Prisma.NineBoxEvaluationUncheckedUpdateOneWithoutFeedbackNestedInput
+  calendarEvent?: Prisma.CalendarEventUncheckedUpdateOneWithoutFeedbackNestedInput
 }
 
 export type FeedbackUncheckedUpdateManyWithoutEmployeeInput = {
@@ -1084,6 +1218,7 @@ export type FeedbackUpdateWithoutManagerInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employee?: Prisma.UserUpdateOneRequiredWithoutFeedbacksReceivedNestedInput
   nineBoxEvaluation?: Prisma.NineBoxEvaluationUpdateOneWithoutFeedbackNestedInput
+  calendarEvent?: Prisma.CalendarEventUpdateOneWithoutFeedbackNestedInput
 }
 
 export type FeedbackUncheckedUpdateWithoutManagerInput = {
@@ -1103,6 +1238,7 @@ export type FeedbackUncheckedUpdateWithoutManagerInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nineBoxEvaluation?: Prisma.NineBoxEvaluationUncheckedUpdateOneWithoutFeedbackNestedInput
+  calendarEvent?: Prisma.CalendarEventUncheckedUpdateOneWithoutFeedbackNestedInput
 }
 
 export type FeedbackUncheckedUpdateManyWithoutManagerInput = {
@@ -1145,6 +1281,7 @@ export type FeedbackSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   employee?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   manager?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   nineBoxEvaluation?: boolean | Prisma.Feedback$nineBoxEvaluationArgs<ExtArgs>
+  calendarEvent?: boolean | Prisma.Feedback$calendarEventArgs<ExtArgs>
 }, ExtArgs["result"]["feedback"]>
 
 export type FeedbackSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1213,6 +1350,7 @@ export type FeedbackInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   employee?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   manager?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   nineBoxEvaluation?: boolean | Prisma.Feedback$nineBoxEvaluationArgs<ExtArgs>
+  calendarEvent?: boolean | Prisma.Feedback$calendarEventArgs<ExtArgs>
 }
 export type FeedbackIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   employee?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1229,6 +1367,7 @@ export type $FeedbackPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     employee: Prisma.$UserPayload<ExtArgs>
     manager: Prisma.$UserPayload<ExtArgs>
     nineBoxEvaluation: Prisma.$NineBoxEvaluationPayload<ExtArgs> | null
+    calendarEvent: Prisma.$CalendarEventPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1644,6 +1783,7 @@ export interface Prisma__FeedbackClient<T, Null = never, ExtArgs extends runtime
   employee<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   manager<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   nineBoxEvaluation<T extends Prisma.Feedback$nineBoxEvaluationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Feedback$nineBoxEvaluationArgs<ExtArgs>>): Prisma.Prisma__NineBoxEvaluationClient<runtime.Types.Result.GetResult<Prisma.$NineBoxEvaluationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  calendarEvent<T extends Prisma.Feedback$calendarEventArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Feedback$calendarEventArgs<ExtArgs>>): Prisma.Prisma__CalendarEventClient<runtime.Types.Result.GetResult<Prisma.$CalendarEventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2101,6 +2241,25 @@ export type Feedback$nineBoxEvaluationArgs<ExtArgs extends runtime.Types.Extensi
    */
   include?: Prisma.NineBoxEvaluationInclude<ExtArgs> | null
   where?: Prisma.NineBoxEvaluationWhereInput
+}
+
+/**
+ * Feedback.calendarEvent
+ */
+export type Feedback$calendarEventArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CalendarEvent
+   */
+  select?: Prisma.CalendarEventSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CalendarEvent
+   */
+  omit?: Prisma.CalendarEventOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CalendarEventInclude<ExtArgs> | null
+  where?: Prisma.CalendarEventWhereInput
 }
 
 /**

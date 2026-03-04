@@ -1,314 +1,157 @@
 {
   "project": "pdi-feedback",
-  "branchName": "ralph/cadastro-rh-colaborador",
-  "description": "Cadastro Completo de Colaborador para RH — novos campos, 5 sub-abas, fluxo de aprovação de alterações, importação de Excel do Microsoft Forms",
+  "branchName": "ralph/agendamento-onboarding-rh",
+  "description": "Agendamento de Feedbacks de Onboarding (45/90 dias) com Conversa RH — controle manual do admin, 4 ocasiões por colaborador",
   "userStories": [
     {
       "id": "US-001",
-      "title": "Adicionar enums e campos pessoais ao schema.prisma",
-      "description": "As a developer, I need to add new enums and personal data fields to the User model to store all HR form data.",
+      "title": "Adicionar campo onboardingType ao modelo Feedback",
+      "description": "As a developer, I need a field to distinguish manager feedback from HR conversation in onboarding feedback records.",
       "acceptanceCriteria": [
-        "Criar enum Ethnicity com valores: branco, preto, amarelo, indigena, pardo",
-        "Criar enum Gender com valores: masculino, feminino, outra",
-        "Criar enum MaritalStatus com valores: solteiro, casado, outra",
-        "Criar enum EducationLevel com valores: ensino_medio, ensino_tecnico, superior_incompleto, superior_completo, pos_graduado",
-        "Criar enum ContractType com valores: efetivo, estagio",
-        "Criar enum HealthPlanOption com valores: regional, nacional, nao",
-        "Criar enum ShirtSize com valores: p_fem, m_fem, g_fem, gg_fem, xg_fem, p_masc, m_masc, g_masc, gg_masc, xg_masc",
-        "Criar enum BankAccountOption com valores: sim, nao, outra",
-        "Adicionar ao User: rg String?, ethnicity Ethnicity?, gender Gender?, maritalStatus MaritalStatus?, educationLevel EducationLevel?, livesWithDescription String?",
-        "Adicionar ao User: personalEmail String?, addressNumber String?, addressComplement String?",
-        "Adicionar ao User: hasBradescoAccount BankAccountOption?, bankAgency String?, bankAccount String?, hasOtherEmployment Boolean?, healthPlanOption HealthPlanOption?, wantsTransportVoucher Boolean?, contractType ContractType?, shirtSize ShirtSize?",
-        "Adicionar ao User: hasChildren Boolean?, childrenAges String?, hasIRDependents Boolean?",
-        "Adicionar ao User: hobbies String[] (array), socialNetworks Json?, favoriteBookMovieGenres String?, favoriteBooks String?, favoriteMovies String?, favoriteMusic String?, admiredValues String?, foodAllergies String?, hasPets String?, participateInVideos Boolean?",
-        "Todos os novos campos devem ser opcionais (não quebrar dados existentes)",
-        "Gerar e aplicar migration com sucesso (npm run prisma:migrate)",
+        "Criar enum OnboardingType com valores: manager_feedback, hr_conversation",
+        "Adicionar campo onboardingType OnboardingType? ao modelo Feedback no schema.prisma",
+        "Gerar e aplicar migration com sucesso",
         "npm run prisma:generate executa sem erros",
+        "Feedbacks existentes não são afetados (campo é opcional/nullable)",
         "Typecheck passes"
       ],
       "priority": 1,
-      "passes": true,
-      "notes": "Migration created manually (20260303100000_add_hr_enums_and_personal_fields). prisma:generate requires PRISMA_SCHEMA_ENGINE_BINARY=/tmp/schema-engine mock due to network restrictions on binaries.prisma.sh."
+      "passes": false,
+      "notes": ""
     },
     {
       "id": "US-002",
-      "title": "Criar modelos Dependent e EmergencyContact",
-      "description": "As a developer, I need models to store employee dependents (for IR) and emergency contacts as separate related tables.",
+      "title": "Remover criação automática de feedbacks de onboarding",
+      "description": "As a developer, I need to remove the automatic creation of 45/90 day onboarding feedbacks from employee create/update flows so that admins control this manually.",
       "acceptanceCriteria": [
-        "Criar modelo Dependent com: id (cuid), userId (relação com User), name String, relationship String, cpf String?, createdAt, updatedAt",
-        "Criar modelo EmergencyContact com: id (cuid), userId (relação com User), name String, phone String, relationship String?, createdAt, updatedAt",
-        "Adicionar relação dependents Dependent[] no modelo User",
-        "Adicionar relação emergencyContacts EmergencyContact[] no modelo User",
-        "Gerar e aplicar migration com sucesso",
-        "npm run prisma:generate executa sem erros",
-        "Typecheck passes"
+        "createEmployee em src/app/(dashboard)/colaboradores/actions.ts não chama mais createOnboardingFeedbacks() automaticamente",
+        "updateEmployee em src/app/(dashboard)/colaboradores/actions.ts não chama mais updateOnboardingFeedbacks() automaticamente",
+        "Remover a lógica de generateOnboarding flag do updateEmployee",
+        "Feedbacks de onboarding já existentes (status submitted ou draft) não são afetados",
+        "Atualizar testes em src/lib/__tests__/ que validam criação automática de onboarding",
+        "Typecheck passes",
+        "Tests pass"
       ],
       "priority": 2,
-      "passes": true,
-      "notes": "Migration 20260303110000_add_dependent_and_emergency_contact created manually. Both models added with proper relations and indexes."
+      "passes": false,
+      "notes": ""
     },
     {
       "id": "US-003",
-      "title": "Criar modelo ChangeRequest para fluxo de aprovação",
-      "description": "As a developer, I need a ChangeRequest model to track employee data change requests that need HR approval.",
+      "title": "Criar Server Action generateOnboardingSchedules",
+      "description": "As an admin, I need a server action that generates the 4 onboarding schedules (manager feedback 45d, HR conversation 45d, manager feedback 90d, HR conversation 90d) for a given employee.",
       "acceptanceCriteria": [
-        "Criar enum ChangeRequestStatus com valores: pending, approved, rejected",
-        "Criar modelo ChangeRequest com: id (cuid), userId (relação com User — solicitante), fieldName String, oldValue String?, newValue String?, status ChangeRequestStatus (default pending), reviewedById String? (relação com User — revisor), reviewedAt DateTime?, createdAt DateTime",
-        "Adicionar relação changeRequests ChangeRequest[] no modelo User (para solicitante)",
-        "Adicionar relação reviewedChangeRequests ChangeRequest[] no modelo User (para revisor)",
-        "Gerar e aplicar migration com sucesso",
-        "npm run prisma:generate executa sem erros",
+        "Criar action generateOnboardingSchedules(employeeId: string) em src/app/(dashboard)/colaboradores/actions.ts",
+        "Usar getEffectiveAuth() para verificar sessão — apenas admin pode executar",
+        "Validar que colaborador tem admissionDate preenchida",
+        "Validar que colaborador tem managerId atribuído (via EmployeeHierarchy ativa)",
+        "Validar que today - admissionDate <= 90 dias, retornar erro claro caso contrário",
+        "Validar que não existem agendamentos de onboarding pendentes (status=scheduled, isOnboarding=true) para o colaborador",
+        "Calcular 4 datas: admissionDate + 45 dias e admissionDate + 90 dias, ajustando para próxima segunda se cair em fim de semana",
+        "Não criar agendamentos para datas que já passaram",
+        "Criar registros Feedback com: status=scheduled, isOnboarding=true, onboardingType adequado (manager_feedback ou hr_conversation)",
+        "Para feedbacks do gestor: authorId = managerId do colaborador",
+        "Para conversas RH: authorId = admin logado (da sessão efetiva)",
+        "Retornar objeto de sucesso com as datas criadas",
         "Typecheck passes"
       ],
       "priority": 3,
-      "passes": true,
-      "notes": "Migration 20260303120000_add_change_request created manually. ChangeRequestStatus enum (pending/approved/rejected) and ChangeRequest model with dual User relations (user + reviewedBy) added."
+      "passes": false,
+      "notes": ""
     },
     {
       "id": "US-004",
-      "title": "Atualizar seed com dados dos novos campos",
-      "description": "As a developer, I want the seed to include example data for all new fields to facilitate testing.",
+      "title": "Testes unitários para generateOnboardingSchedules",
+      "description": "As a developer, I need comprehensive tests for the onboarding schedule generation logic.",
       "acceptanceCriteria": [
-        "Atualizar prisma/seed.ts para incluir dados dos novos campos nos usuários existentes do seed",
-        "Pelo menos 3 usuários com dados completos (pessoais, endereço, financeiro, sobre mim)",
-        "Criar pelo menos 2 Dependent por usuário (com nome, parentesco, cpf)",
-        "Criar pelo menos 1 EmergencyContact por usuário (com nome, telefone, parentesco)",
-        "Incluir hobbies variados (array de strings) por usuário",
-        "npm run prisma:seed executa sem erros",
+        "Criar arquivo de teste em src/lib/__tests__/ para a nova action",
+        "Testar cenário feliz: gera 4 feedbacks com datas corretas",
+        "Testar ajuste de fim de semana: sábado e domingo movem para segunda",
+        "Testar validação: colaborador com mais de 90 dias retorna erro",
+        "Testar validação: sem admissionDate retorna erro",
+        "Testar validação: sem managerId retorna erro",
+        "Testar validação: já existem onboarding pendentes retorna erro",
+        "Testar datas passadas: se 45d já passou mas 90d não, cria apenas os 2 de 90d",
+        "Testar que authorId do manager_feedback é o gestor e authorId do hr_conversation é o admin",
+        "Usar fixtures de src/lib/__tests__/fixtures.ts",
+        "Mock prisma e getEffectiveAuth conforme convenções do projeto",
+        "Tests pass",
         "Typecheck passes"
       ],
       "priority": 4,
-      "passes": true,
-      "notes": "Seed updated with complete HR data for Admin, CEO, and Vinicius (3 users). 7 dependents and 4 emergency contacts created. All new enums imported."
+      "passes": false,
+      "notes": ""
     },
     {
       "id": "US-005",
-      "title": "Server Actions para leitura e edição dos novos campos do colaborador",
-      "description": "As a developer, I need server actions to read and update the expanded employee data, with proper access control and field filtering by role.",
+      "title": "Botão 'Gerar Agendamentos de Onboarding' no employee-form",
+      "description": "As an admin, I want a button in the employee form that triggers onboarding schedule generation with a confirmation dialog showing the 4 dates.",
       "acceptanceCriteria": [
-        "Criar action getEmployeeFullProfile(employeeId) em src/app/(dashboard)/colaboradores/actions.ts que retorna todos os novos campos + dependents + emergencyContacts",
-        "Usar getEffectiveAuth() (nunca auth() direto) para verificar acesso",
-        "Admin: retorna todos os campos de qualquer colaborador",
-        "Manager: retorna apenas nome, email, telefone, cargo, contato de emergência dos subordinados — NÃO retorna CPF, RG, banco, dependentes IR, plano saúde, VT",
-        "Employee: retorna todos os próprios campos (via /perfil)",
-        "Criar action updateEmployeeProfile(employeeId, data) que atualiza os campos diretamente (para admin)",
-        "Criar action updateEmployeeDependents(employeeId, dependents[]) que gerencia a lista de dependentes (create/update/delete)",
-        "Criar action updateEmployeeEmergencyContacts(employeeId, contacts[]) que gerencia contatos de emergência",
-        "Typecheck passes"
+        "Botão 'Gerar Agendamentos de Onboarding' visível apenas para role=admin no employee-form.tsx",
+        "Botão aparece na seção 'Dados do Sistema' ou abaixo das abas, próximo aos dados do colaborador",
+        "Botão desabilitado com tooltip se: admissionDate não preenchida, managerId não atribuído, já existem onboarding pendentes, ou colaborador tem mais de 90 dias de casa",
+        "Ao clicar: abre dialog de confirmação mostrando preview das 4 datas calculadas (Feedback Gestor 45d, Conversa RH 45d, Feedback Gestor 90d, Conversa RH 90d)",
+        "Datas que já passaram mostram indicador '(data passada — não será criado)' no preview",
+        "Botão 'Confirmar' no dialog chama generateOnboardingSchedules e mostra toast de sucesso",
+        "Botão 'Cancelar' fecha o dialog sem ação",
+        "Loading state no botão durante a chamada da action",
+        "Dark mode aplicado (dialog, botão, textos)",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
       ],
       "priority": 5,
-      "passes": true,
-      "notes": "Added getEmployeeFullProfile (role-based field filtering: admin=all, manager=restricted, employee=own), updateEmployeeProfile (admin=all fields, employee=about me only), updateEmployeeDependents, updateEmployeeEmergencyContacts. Uses canAccessEmployee from access-control.ts."
+      "passes": false,
+      "notes": ""
     },
     {
       "id": "US-006",
-      "title": "Reorganizar employee-form em sub-abas — Dados do Sistema + Aba 1 (Dados Pessoais)",
-      "description": "As a developer, I need to restructure the employee form with a tab navigation system, starting with the System Data section and the Personal Data tab.",
+      "title": "Exibir tipo de onboarding na listagem de feedbacks",
+      "description": "As a user, I want to see whether an onboarding feedback is a 'Manager Feedback' or 'HR Conversation' in the feedback list.",
       "acceptanceCriteria": [
-        "Refatorar src/components/employee-form.tsx para usar componente de tabs (pode ser shadcn Tabs ou tabs customizadas)",
-        "Seção 'Dados do Sistema' fixa no topo (antes das abas): role, evaluation mode, org unit, gestor, data admissão, senha — mantendo os campos existentes intactos",
-        "Aba 1 — Dados Pessoais: nome completo, data nascimento, idade (calculada, read-only), gênero (select com enum), etnia (select com enum), estado civil (select com enum), CPF (com máscara existente), RG (texto), nível escolaridade (select com enum), com quem mora (texto)",
-        "Navegação entre abas preserva estado do formulário (sem perder dados ao trocar)",
-        "Admin pode editar todos os campos diretamente",
-        "Dark mode em todas as novas seções (bg-white dark:bg-gray-800, etc.)",
+        "Na tabela/lista de feedbacks, itens com isOnboarding=true exibem badge adicional com o tipo",
+        "Labels: 'Feedback Gestor 45d', 'Conversa RH 45d', 'Feedback Gestor 90d', 'Conversa RH 90d'",
+        "Determinar 45d vs 90d pela data agendada relativa à admissionDate do colaborador (diferença <= 60 dias = 45d, senão = 90d)",
+        "Badge com cores diferenciadas: azul para feedback gestor, roxo para conversa RH",
+        "Filtro existente de feedbacks continua funcionando corretamente",
+        "Dark mode nas badges",
         "Typecheck passes",
         "Verify in browser using dev-browser skill"
       ],
       "priority": 6,
-      "passes": true,
-      "notes": "Refactored employee-form.tsx with 5-tab navigation. System Data section fixed at top (email, role, evaluation mode, org unit, manager, admission date, job title, password). Tab 1 (Dados Pessoais) with: nome, nascimento, idade calculada, gênero, etnia, estado civil, CPF, RG, escolaridade, com quem mora. Tab 2 has existing address/contact fields. Tabs 3-5 are placeholders. Extended EmployeeDetail type and getEmployeeById to include all new HR fields. Dark mode applied to all sections."
+      "passes": false,
+      "notes": ""
     },
     {
       "id": "US-007",
-      "title": "Employee-form Aba 2 (Endereço e Contato) + Aba 3 (Financeiro e Benefícios)",
-      "description": "As a developer, I need to add the Address/Contact and Financial/Benefits tabs to the employee form.",
+      "title": "Reatribuir feedbacks de onboarding quando gestor muda",
+      "description": "As a system, when an employee's manager changes, I need to reassign pending onboarding manager feedbacks to the new manager.",
       "acceptanceCriteria": [
-        "Aba 2 — Endereço e Contato: endereço (rua — campo existente 'address'), número (novo 'addressNumber'), complemento (novo 'addressComplement'), CEP (com máscara existente), cidade, estado (UF dropdown existente), email pessoal (novo 'personalEmail'), telefone (com máscara existente)",
-        "Aba 3 — Financeiro e Benefícios: conta Bradesco (select: sim/não/outra), agência (texto, visível se conta=sim), conta (texto, visível se conta=sim), outro emprego registrado (checkbox sim/não), plano saúde Unimed (select: regional/nacional/não), vale transporte (checkbox sim/não), formato contratação (select: efetivo/estágio), tamanho camiseta (select com enum ShirtSize)",
-        "Campos condicionais: agência e conta bancária só aparecem quando hasBradescoAccount=sim",
-        "Dark mode em ambas as abas",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
+        "Quando EmployeeHierarchy é atualizada (novo gestor atribuído ao colaborador), verificar se existem feedbacks de onboarding pendentes (status=scheduled, isOnboarding=true, onboardingType=manager_feedback)",
+        "Reatribuir authorId desses feedbacks para o novo managerId",
+        "Não reatribuir feedbacks de conversa RH (onboardingType=hr_conversation) — esses permanecem com o admin original",
+        "Não reatribuir feedbacks já submetidos (status=submitted ou draft)",
+        "Adicionar lógica no updateEmployee ou na função de troca de gestor existente",
+        "Typecheck passes"
       ],
       "priority": 7,
-      "passes": true,
-      "notes": "Tab 2 (Endereço e Contato): address, addressNumber, addressComplement, CEP, city, state, personalEmail, phone — all wired with masks and dark mode. Tab 3 (Financeiro e Benefícios): hasBradescoAccount (select), bankAgency/bankAccount (conditional on sim), hasOtherEmployment (checkbox), healthPlanOption (select), wantsTransportVoucher (checkbox), contractType (select), shirtSize (select). Updated createEmployee and updateEmployee server actions to accept and persist all new fields. Enum option arrays defined at module scope."
+      "passes": false,
+      "notes": ""
     },
     {
       "id": "US-008",
-      "title": "Employee-form Aba 4 (Família e Dependentes)",
-      "description": "As a developer, I need the Family/Dependents tab with dynamic lists for IR dependents and emergency contacts.",
+      "title": "Notificação por email ao RH para conversas próximas",
+      "description": "As an admin/HR, I want to receive email notifications when an HR conversation date is approaching.",
       "acceptanceCriteria": [
-        "Aba 4 — Família e Dependentes: possui filhos (checkbox sim/não), idades dos filhos (texto, visível se hasChildren=true)",
-        "Seção 'Dependentes IR': checkbox possui dependentes, lista dinâmica com botão 'Adicionar dependente' — cada item tem: nome (texto), parentesco (texto), CPF (texto com máscara)",
-        "Botão de remover dependente por item (ícone X ou lixeira)",
-        "Seção 'Contatos de Emergência': lista dinâmica com botão 'Adicionar contato' — cada item tem: nome (texto), telefone (texto com máscara), parentesco (texto opcional)",
-        "Botão de remover contato por item",
-        "Salvar cria/atualiza/remove dependentes e contatos via server actions (US-005)",
-        "Dark mode",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
+        "No cron job existente (/api/cron/email-reminders), adicionar verificação de feedbacks de onboarding com onboardingType=hr_conversation e status=scheduled",
+        "Enviar email de lembrete ao authorId (admin que gerou) quando faltam 3 dias úteis para a data agendada",
+        "Criar template de email em src/lib/email-templates.ts com: nome do colaborador, tipo (Conversa RH 45d/90d), data agendada",
+        "Não enviar lembrete duplicado (verificar se já foi enviado — usar campo existente ou criar flag)",
+        "Fallback para console.log se SMTP não configurado",
+        "Typecheck passes"
       ],
       "priority": 8,
-      "passes": true,
-      "notes": "Tab 4 (Família e Dependentes): hasChildren checkbox + conditional childrenAges, hasIRDependents checkbox + dynamic dependents list (name/relationship/CPF with mask), emergency contacts dynamic list (name/phone with mask/relationship). Trash2 icon to remove items, Plus button to add. Save wires to updateEmployeeDependents and updateEmployeeEmergencyContacts server actions. Updated getEmployeeById to include dependents and emergencyContacts. Added hasChildren/childrenAges/hasIRDependents to createEmployee and updateEmployee."
-    },
-    {
-      "id": "US-009",
-      "title": "Employee-form Aba 5 (Sobre Mim)",
-      "description": "As a developer, I need the About Me tab with multi-select fields for hobbies, social networks, and personal preferences.",
-      "acceptanceCriteria": [
-        "Aba 5 — Sobre Mim: hobbies (checkboxes multi-select com opções: Games, Leitura, Cinema, Música, Pintura/Desenho, Escrita, Esporte, Canto, Instrumentos Musicais, Viagens, Voluntariado, Dança, Jardinagem, Teatro, Pescaria, Artesanato, Skate, Outra)",
-        "Redes sociais (checkboxes multi-select: Instagram, LinkedIn, Twitter, Facebook, TikTok, Outra) — para cada rede selecionada, campo de texto para o handle/perfil",
-        "Campos de texto: gênero de livros/filmes que curte, livro(s) favorito(s), filme(s) favorito(s), música/banda favorita, valores que admira",
-        "Alergias/intolerâncias alimentares (texto, com label informando que é opcional)",
-        "Animais de estimação (select: não, sim cachorros, sim gatos, outra + campo texto se outra)",
-        "Participação em vídeos institucionais (checkbox sim/não)",
-        "Dark mode",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 9,
-      "passes": true,
-      "notes": "Tab 5 (Sobre Mim): hobbies multi-select checkboxes (18 options), social networks multi-select with per-network handle input fields, favorites section (genres, books, movies, music, values), food allergies (optional text), pets (select with 'outra' description field), participate in videos checkbox. All fields wired to createEmployee and updateEmployee server actions. socialNetworks stored as JSON object {network: handle}. hasPets 'outra' stored as 'outra: description' string."
-    },
-    {
-      "id": "US-010",
-      "title": "Server Actions para ChangeRequest (criar, listar, aprovar, rejeitar)",
-      "description": "As a developer, I need server actions for the change request approval workflow.",
-      "acceptanceCriteria": [
-        "Criar action createChangeRequest(userId, fieldName, oldValue, newValue) em src/app/(dashboard)/colaboradores/actions.ts",
-        "Verificar que o userId pertence ao usuário logado (employee só pode solicitar para si mesmo)",
-        "Usar getEffectiveAuth() para obter sessão",
-        "Criar action getChangeRequests(filters?) que lista ChangeRequests — admin vê todos, employee vê apenas os próprios",
-        "Criar action approveChangeRequest(changeRequestId) — apenas admin — atualiza o campo no User e marca status=approved, reviewedById e reviewedAt",
-        "Criar action rejectChangeRequest(changeRequestId) — apenas admin — marca status=rejected",
-        "Criar action bulkApproveChangeRequests(ids[]) e bulkRejectChangeRequests(ids[]) para operações em lote",
-        "Criar action getPendingChangeRequestsCount() para badge de contagem",
-        "Typecheck passes"
-      ],
-      "priority": 10,
-      "passes": true,
-      "notes": "Added 7 server actions: createChangeRequest (employee self-only, checks for pending duplicates), getChangeRequests (admin=all, employee=own, with search/status/pagination), approveChangeRequest (admin, applies field change + marks approved in transaction), rejectChangeRequest (admin), bulkApproveChangeRequests (admin, transaction), bulkRejectChangeRequests (admin), getPendingChangeRequestsCount. Helper parseChangeRequestValue converts string values to correct types (boolean/date/string) for User model updates."
-    },
-    {
-      "id": "US-011",
-      "title": "Email e notificação interna ao criar ChangeRequest",
-      "description": "As a developer, I need to send email and internal notification to HR admins when an employee submits a change request.",
-      "acceptanceCriteria": [
-        "Ao criar ChangeRequest (via createChangeRequest), enviar email para todos os Users com role=admin e isActive=true",
-        "Criar template de email changeRequestNotification em src/lib/email-templates.ts com: nome do colaborador, campo alterado, valor antigo → valor novo",
-        "Usar infraestrutura existente de src/lib/email.ts (sendEmail)",
-        "Criar notificação interna (modelo Notification existente) para cada admin com link para painel de aprovação",
-        "Fallback para console.log se SMTP não configurado (padrão do projeto)",
-        "Typecheck passes"
-      ],
-      "priority": 11,
-      "passes": true,
-      "notes": "Added change_request to NotificationType enum with migration. Created buildChangeRequestNotificationHtml and buildChangeRequestNotificationSubject templates in email-templates.ts. Updated createChangeRequest to: fetch employee name + all active admins, create internal notifications via createMany, send emails to each admin (non-blocking with catch). Fallback to console.log if SMTP not configured (project default)."
-    },
-    {
-      "id": "US-012",
-      "title": "Expandir página Meu Perfil com dados completos (leitura)",
-      "description": "As an employee, I want to see all my HR data organized in 5 tabs on my Profile page.",
-      "acceptanceCriteria": [
-        "Página /perfil exibe os dados do colaborador logado nas 5 sub-abas (mesma organização do employee-form)",
-        "Aba 1 — Dados Pessoais: exibe nome, nascimento, idade calculada, gênero, etnia, estado civil, CPF, RG, escolaridade, com quem mora",
-        "Aba 2 — Endereço e Contato: endereço completo, CEP, cidade, estado, email pessoal, telefone",
-        "Aba 3 — Financeiro e Benefícios: conta Bradesco, plano saúde, vale transporte, contratação, camiseta",
-        "Aba 4 — Família e Dependentes: filhos, dependentes IR (tabela), contatos de emergência (tabela)",
-        "Aba 5 — Sobre Mim: hobbies (tags), redes sociais (links), favoritos, valores, alergias, pets",
-        "Todos os campos em modo leitura (read-only) por padrão",
-        "Usar getEffectiveAuth() para obter sessão e buscar dados do usuário logado",
-        "Dark mode",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 12,
-      "passes": true,
-      "notes": "Created getMyFullProfile server action in perfil/actions.ts (fetches logged-in user's own full profile). Created perfil-data.tsx with 5 read-only tabs: Dados Pessoais (name, birthDate, age, gender, ethnicity, maritalStatus, CPF, RG, educationLevel, livesWithDescription), Endereço e Contato (address, CEP, city, state, personalEmail, phone), Financeiro e Benefícios (bank, health plan, transport, contract, shirt size), Família e Dependentes (children, IR dependents table, emergency contacts table), Sobre Mim (hobbies tags, social networks, favorites, allergies, pets, videos). Updated perfil-tabs.tsx and page.tsx to fetch and render profile data. Dark mode applied throughout."
-    },
-    {
-      "id": "US-013",
-      "title": "Edição no Meu Perfil com fluxo de aprovação (abas 1-4) e edição livre (aba 5)",
-      "description": "As an employee, I want to edit my data from My Profile — preferences save directly, sensitive data requires HR approval.",
-      "acceptanceCriteria": [
-        "Botão 'Editar' em cada aba habilita modo de edição inline nos campos",
-        "Aba 5 (Sobre Mim): ao salvar, atualiza diretamente no User sem criar ChangeRequest",
-        "Abas 1-4 (Dados Pessoais, Endereço, Financeiro, Família): ao salvar, cria ChangeRequest para cada campo alterado em vez de atualizar direto",
-        "Mostrar mensagem de sucesso 'Alteração enviada para aprovação do RH' ao submeter alteração pendente",
-        "Campos com ChangeRequest pendente mostram indicador visual (badge amarelo ou ícone com tooltip 'Aguardando aprovação do RH')",
-        "Não permitir nova solicitação para campo que já tem ChangeRequest pendente",
-        "Dark mode",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 13,
-      "passes": true,
-      "notes": "Added edit mode to all 5 profile tabs. Tabs 1-4 (Dados Pessoais, Endereço, Financeiro, Família) create ChangeRequests for each changed field via createChangeRequest server action. Tab 5 (Sobre Mim) saves directly via updateEmployeeProfile. Pending CRs shown as amber 'Pendente' badges on fields in both read and edit mode. Fields with pending CRs are disabled in edit mode. Success message 'Alteração enviada para aprovação do RH' shown after submitting. New getMyPendingChangeRequests server action fetches pending CRs for current user. router.refresh() reloads data after save."
-    },
-    {
-      "id": "US-014",
-      "title": "Painel de aprovação de alterações para o RH",
-      "description": "As an admin/HR, I want a panel to review, approve, or reject employee change requests.",
-      "acceptanceCriteria": [
-        "Nova aba 'Solicitações de Alteração' na página de Colaboradores (/colaboradores)",
-        "Tabela com colunas: colaborador (nome), campo alterado, valor antigo, valor novo, data da solicitação, ações",
-        "Botões 'Aprovar' e 'Rejeitar' por linha (com confirmação)",
-        "Checkboxes para selecionar múltiplas solicitações + botões de ação em lote (aprovar/rejeitar selecionadas)",
-        "Filtro por status (Pendente/Aprovado/Rejeitado) e busca por nome do colaborador",
-        "Badge com contagem de pendentes na aba 'Solicitações de Alteração'",
-        "Aprovar atualiza o campo no User e marca ChangeRequest como approved",
-        "Rejeitar marca como rejected sem alterar o User",
-        "Dark mode",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 14,
-      "passes": true,
-      "notes": "Created change-requests-table.tsx with: table (colaborador, campo, valor antigo/novo, data, status, ações), per-row Aprovar/Rejeitar buttons with confirmation modal, checkbox multi-select + bulk approve/reject, status filter (Todos/Pendente/Aprovado/Rejeitado), search by name, pagination, pending count badge on tab. Added 'Solicitações de Alteração' third tab to colaboradores-tabs.tsx. Updated page.tsx to fetch change requests data + pending count via Promise.all. Field labels and enum values humanized in Portuguese. Dark mode throughout."
-    },
-    {
-      "id": "US-015",
-      "title": "Tabela de mapeamento Forms → Sistema e utilitário de parse Excel",
-      "description": "As a developer, I need a mapping table and Excel parser utility that converts Microsoft Forms export columns to system fields.",
-      "acceptanceCriteria": [
-        "Instalar dependência xlsx (SheetJS) via npm install xlsx",
-        "Criar src/lib/forms-import-mapping.ts com a tabela de mapeamento: objeto que mapeia título da pergunta do Forms (string) → campo do sistema (string)",
-        "Mapear todas as perguntas relevantes do formulário Talento I Narwal: Q2→name, Q3→birthDate, Q4→ethnicity, Q5→(ignorar idade), Q6→gender, Q7→cpf, Q8→rg, Q9→maritalStatus, Q11→hasChildren, Q12→childrenAges, Q14→hasBradescoAccount, Q15→bankAgency/bankAccount, Q16→hasOtherEmployment, Q17→hasIRDependents, Q18→dependentInfo, Q19→shirtSize, Q20→address, Q21→city/state, Q22→personalEmail, Q23→phone, Q24→emergencyContact, Q25→foodAllergies, Q26→educationLevel, Q27→livesWithDescription, Q28→hasPets, Q29→contractType, Q30→healthPlanOption, Q31→wantsTransportVoucher, Q32→hobbies, Q33→socialNetworks, Q34→favoriteBookMovieGenres, Q35→favoriteBooks, Q36→favoriteMovies, Q37→favoriteMusic, Q38→admiredValues, Q39→participateInVideos",
-        "Ignorar perguntas de admissão: Q1 (consentimento), Q10 (iniciando na Narwal), Q13 (Grupo Becomex)",
-        "Criar função parseFormsExcel(file: File): Promise<FormsRow[]> que lê o .xlsx e retorna array de objetos com os dados mapeados",
-        "Criar função mapFormsRowToEmployee(row: FormsRow): Partial<EmployeeFormData> que converte valores texto para enums do sistema",
-        "Conversão de multi-select: valores separados por ';' no Excel são convertidos para arrays",
-        "Conversão de enums: 'Branco'→'branco', 'Ensino Médio'→'ensino_medio', 'Sim, modalidade regional'→'regional', etc.",
-        "Export types: FormsRow, EmployeeFormData",
-        "Typecheck passes"
-      ],
-      "priority": 15,
-      "passes": true,
-      "notes": "Installed xlsx (SheetJS) dependency. Created src/lib/forms-import-mapping.ts with: FORMS_FIELD_MAPPING (38 question-to-field mappings), parseFormsExcel (reads .xlsx client-side, returns FormsRow[]), mapFormsRowToEmployee (converts FormsRow to EmployeeFormData with enum conversions, multi-select parsing, date parsing, address/city-state/bank parsing). Exported types: FormsRow, EmployeeFormData. All enum maps cover Portuguese variants (e.g., branco/branca, solteiro/solteira)."
-    },
-    {
-      "id": "US-016",
-      "title": "UI de importação do Forms (upload, preview e pré-preenchimento)",
-      "description": "As an admin/HR, I want to upload an Excel file from Microsoft Forms and have it pre-fill the employee registration form.",
-      "acceptanceCriteria": [
-        "Botão 'Importar do Forms' na página de Colaboradores (visível apenas para admin), ao lado do botão 'Novo Colaborador'",
-        "Clicar abre modal com área de upload (drag-and-drop ou clique) que aceita apenas .xlsx",
-        "Após upload: parse client-side usando parseFormsExcel() de US-015 — mostra spinner durante parse",
-        "Tela de preview: tabela com colunas Nome, Email, CPF e botão 'Selecionar' por linha",
-        "Se Excel tiver múltiplas linhas (respostas), mostrar todas para seleção",
-        "Validação de CPF no preview: highlight vermelho em CPFs inválidos",
-        "Aviso se já existir usuário com mesmo email ou CPF (verificar via server action)",
-        "Ao clicar 'Selecionar': fecha modal e abre formulário de novo colaborador pré-preenchido com os dados mapeados (via mapFormsRowToEmployee de US-015)",
-        "Campos do sistema (role, org unit, gestor, data admissão) ficam vazios para o RH completar",
-        "Dark mode",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 16,
-      "passes": true,
-      "notes": "Created FormsImportModal component (upload drag-and-drop, client-side parse via parseFormsExcel, preview table with Nome/Email/CPF/Status columns, CPF validation with red highlight, duplicate detection via checkExistingEmployees server action, 'Selecionar' button per row). Added 'Importar do Forms' button next to 'Novo Colaborador' in employee-table.tsx (visible on non-pending variant). On select: stores mapped EmployeeFormData in sessionStorage, navigates to /colaboradores/novo. Employee-form reads sessionStorage on create mode mount and pre-fills all fields (personal, address, financial, family, about me). System fields (role, org unit, gestor, admissão) left empty for HR to complete."
+      "passes": false,
+      "notes": ""
     }
   ]
 }

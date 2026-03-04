@@ -199,6 +199,9 @@ const CONTRACT_TYPE_MAP: Record<string, string> = {
   efetivo: "efetivo",
   "estágio": "estagio",
   estagio: "estagio",
+  becomex: "becomex",
+  "sócio": "socio",
+  socio: "socio",
 };
 
 const HEALTH_PLAN_MAP: Record<string, string> = {

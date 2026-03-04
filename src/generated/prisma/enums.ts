@@ -158,6 +158,7 @@ export const NotificationType = {
   feedback_scheduled: 'feedback_scheduled',
   feedback_submitted_auto: 'feedback_submitted_auto',
   ninebox_invite: 'ninebox_invite',
+  change_request: 'change_request',
   general: 'general'
 } as const
 
@@ -187,3 +188,28 @@ export const ChangeRequestStatus = {
 } as const
 
 export type ChangeRequestStatus = (typeof ChangeRequestStatus)[keyof typeof ChangeRequestStatus]
+
+
+export const CalendarEventType = {
+  feedback: 'feedback',
+  pdi_followup: 'pdi_followup'
+} as const
+
+export type CalendarEventType = (typeof CalendarEventType)[keyof typeof CalendarEventType]
+
+
+export const CalendarEventStatus = {
+  scheduled: 'scheduled',
+  completed: 'completed',
+  cancelled: 'cancelled'
+} as const
+
+export type CalendarEventStatus = (typeof CalendarEventStatus)[keyof typeof CalendarEventStatus]
+
+
+export const ParticipantRole = {
+  required: 'required',
+  optional: 'optional'
+} as const
+
+export type ParticipantRole = (typeof ParticipantRole)[keyof typeof ParticipantRole]
