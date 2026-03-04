@@ -664,6 +664,21 @@ export async function updateEmployee(
           organizationalUnitId: data.orgUnitId,
         },
       });
+
+      // Reassign pending onboarding manager feedbacks to the new manager
+      if (currentHierarchy && currentHierarchy.managerId !== data.managerId) {
+        await prisma.feedback.updateMany({
+          where: {
+            employeeId: id,
+            isOnboarding: true,
+            onboardingType: "manager_feedback",
+            status: "scheduled",
+          },
+          data: {
+            managerId: data.managerId,
+          },
+        });
+      }
     }
   } else {
     // If org unit or manager removed, close current hierarchy
