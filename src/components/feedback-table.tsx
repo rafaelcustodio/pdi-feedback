@@ -44,6 +44,27 @@ const statusLabels: Record<string, string> = {
   submitted: "Submetido",
 };
 
+function getOnboardingLabel(fb: FeedbackListItem): string | null {
+  if (!fb.isOnboarding || !fb.onboardingType) return null;
+
+  // Determine 45d vs 90d based on scheduledAt relative to admissionDate
+  let period = "";
+  if (fb.scheduledAt && fb.employeeAdmissionDate) {
+    const scheduled = new Date(fb.scheduledAt).getTime();
+    const admission = new Date(fb.employeeAdmissionDate).getTime();
+    const diffDays = (scheduled - admission) / (1000 * 60 * 60 * 24);
+    period = diffDays <= 60 ? "45d" : "90d";
+  }
+
+  if (fb.onboardingType === "manager_feedback") {
+    return `Feedback Gestor${period ? ` ${period}` : ""}`;
+  }
+  if (fb.onboardingType === "hr_conversation") {
+    return `Conversa RH${period ? ` ${period}` : ""}`;
+  }
+  return null;
+}
+
 export function FeedbackTable({
   feedbacks,
   total,
@@ -343,7 +364,23 @@ export function FeedbackTable({
                     {fb.managerName}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
-                    {fb.period}
+                    <span>{fb.period}</span>
+                    {(() => {
+                      const label = getOnboardingLabel(fb);
+                      if (!label) return null;
+                      const isHR = fb.onboardingType === "hr_conversation";
+                      return (
+                        <span
+                          className={`ml-2 inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
+                            isHR
+                              ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300"
+                              : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+                          }`}
+                        >
+                          {label}
+                        </span>
+                      );
+                    })()}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
                     {fb.rating ? (

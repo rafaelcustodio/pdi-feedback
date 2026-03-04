@@ -37,6 +37,9 @@ export type FeedbackListItem = {
   updatedAt: Date;
   employeeName: string;
   managerName: string;
+  isOnboarding: boolean;
+  onboardingType: string | null;
+  employeeAdmissionDate: Date | null;
 };
 
 export type FeedbackDetail = {
@@ -176,7 +179,7 @@ export async function getFeedbacks(
       skip: (page - 1) * pageSize,
       take: pageSize,
       include: {
-        employee: { select: { name: true } },
+        employee: { select: { name: true, admissionDate: true } },
         manager: { select: { name: true } },
       },
     }),
@@ -195,6 +198,9 @@ export async function getFeedbacks(
       updatedAt: f.updatedAt,
       employeeName: f.employee.name,
       managerName: f.manager.name,
+      isOnboarding: f.isOnboarding,
+      onboardingType: f.onboardingType,
+      employeeAdmissionDate: f.employee.admissionDate,
     })),
     total,
     page,
