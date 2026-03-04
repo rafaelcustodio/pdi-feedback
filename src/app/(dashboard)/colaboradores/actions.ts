@@ -4,7 +4,7 @@ import { getEffectiveAuth } from "@/lib/impersonation";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { removeScheduledFeedbackEvents } from "@/lib/schedule-utils";
-import { handleSectorTransfer } from "@/lib/sector-schedule-utils";
+import { handleSectorTransfer, snapToBusinessDay } from "@/lib/sector-schedule-utils";
 import { canAccessEmployee } from "@/lib/access-control";
 
 function validateCPF(cpf: string): boolean {
@@ -2057,4 +2057,172 @@ export async function checkExistingEmployees(
     existsByEmail: !!(entry.email && existingEmails.has(entry.email.trim().toLowerCase())),
     existsByCpf: !!(entry.cpf && existingCpfs.has(entry.cpf.replace(/\D/g, ""))),
   }));
+}
+
+// ============================================================
+// US-003: Generate Onboarding Schedules
+// ============================================================
+
+export type OnboardingScheduleResult = {
+  success: boolean;
+  error?: string;
+  created?: { date: Date; period: string; onboardingType: string }[];
+};
+
+/**
+ * Generate 4 onboarding feedback schedules for an employee:
+ * - Manager Feedback 45d
+ * - HR Conversation 45d
+ * - Manager Feedback 90d
+ * - HR Conversation 90d
+ *
+ * Admin-only. Validates admission date, manager, and no existing pending schedules.
+ */
+export async function generateOnboardingSchedules(
+  employeeId: string
+): Promise<OnboardingScheduleResult> {
+  const session = await requireAdmin();
+  if (!session) {
+    return { success: false, error: "Acesso não autorizado — apenas administradores podem gerar agendamentos de onboarding." };
+  }
+
+  // Fetch employee
+  const employee = await prisma.user.findUnique({
+    where: { id: employeeId },
+    select: { id: true, name: true, admissionDate: true },
+  });
+
+  if (!employee) {
+    return { success: false, error: "Colaborador não encontrado." };
+  }
+
+  if (!employee.admissionDate) {
+    return { success: false, error: "Colaborador não possui data de admissão preenchida." };
+  }
+
+  // Find active manager via EmployeeHierarchy
+  const hierarchy = await prisma.employeeHierarchy.findFirst({
+    where: { employeeId, endDate: null },
+    select: { managerId: true },
+  });
+
+  if (!hierarchy?.managerId) {
+    return { success: false, error: "Colaborador não possui gestor atribuído." };
+  }
+
+  // Validate admission within 90 days
+  const now = new Date();
+  const admissionDate = employee.admissionDate;
+  const daysSinceAdmission = Math.floor(
+    (now.getTime() - admissionDate.getTime()) / (1000 * 60 * 60 * 24)
+  );
+
+  if (daysSinceAdmission > 90) {
+    return {
+      success: false,
+      error: `Colaborador tem ${daysSinceAdmission} dias de casa. Agendamentos de onboarding só podem ser gerados para colaboradores com até 90 dias.`,
+    };
+  }
+
+  // Check for existing pending onboarding feedbacks
+  const existingOnboarding = await prisma.feedback.count({
+    where: {
+      employeeId,
+      isOnboarding: true,
+      status: "scheduled",
+    },
+  });
+
+  if (existingOnboarding > 0) {
+    return {
+      success: false,
+      error: "Já existem agendamentos de onboarding pendentes para este colaborador.",
+    };
+  }
+
+  // Calculate dates
+  const d45 = snapToBusinessDay(
+    new Date(admissionDate.getTime() + 45 * 24 * 60 * 60 * 1000)
+  );
+  const d90 = snapToBusinessDay(
+    new Date(admissionDate.getTime() + 90 * 24 * 60 * 60 * 1000)
+  );
+
+  const managerId = hierarchy.managerId;
+  const adminId = session.user.id;
+
+  // Build the 4 schedules, skipping past dates
+  const schedules: {
+    employeeId: string;
+    managerId: string;
+    status: "scheduled";
+    period: string;
+    scheduledAt: Date;
+    isOnboarding: true;
+    onboardingType: "manager_feedback" | "hr_conversation";
+  }[] = [];
+
+  if (d45 > now) {
+    schedules.push({
+      employeeId,
+      managerId,
+      status: "scheduled",
+      period: "Onboarding 45d",
+      scheduledAt: d45,
+      isOnboarding: true,
+      onboardingType: "manager_feedback",
+    });
+    schedules.push({
+      employeeId,
+      managerId: adminId,
+      status: "scheduled",
+      period: "Onboarding 45d",
+      scheduledAt: d45,
+      isOnboarding: true,
+      onboardingType: "hr_conversation",
+    });
+  }
+
+  if (d90 > now) {
+    schedules.push({
+      employeeId,
+      managerId,
+      status: "scheduled",
+      period: "Onboarding 90d",
+      scheduledAt: d90,
+      isOnboarding: true,
+      onboardingType: "manager_feedback",
+    });
+    schedules.push({
+      employeeId,
+      managerId: adminId,
+      status: "scheduled",
+      period: "Onboarding 90d",
+      scheduledAt: d90,
+      isOnboarding: true,
+      onboardingType: "hr_conversation",
+    });
+  }
+
+  if (schedules.length === 0) {
+    return {
+      success: false,
+      error: "Todas as datas de onboarding já passaram. Nenhum agendamento foi criado.",
+    };
+  }
+
+  await prisma.feedback.createMany({ data: schedules });
+
+  revalidatePath("/colaboradores");
+  revalidatePath(`/colaboradores/${employeeId}`);
+  revalidatePath("/feedbacks");
+
+  return {
+    success: true,
+    created: schedules.map((s) => ({
+      date: s.scheduledAt,
+      period: s.period,
+      onboardingType: s.onboardingType,
+    })),
+  };
 }
