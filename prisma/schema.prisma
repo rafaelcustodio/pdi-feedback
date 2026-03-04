@@ -365,6 +365,11 @@ enum FeedbackStatus {
   cancelled
 }
 
+enum OnboardingType {
+  manager_feedback
+  hr_conversation
+}
+
 model Feedback {
   id              String         @id @default(cuid())
   employeeId      String
@@ -379,6 +384,7 @@ model Feedback {
   conductedAt     DateTime?
   scheduledAt     DateTime?
   isOnboarding    Boolean        @default(false)
+  onboardingType  OnboardingType?
   outlookEventId  String?
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
