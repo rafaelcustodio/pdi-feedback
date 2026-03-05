@@ -262,6 +262,21 @@ export function distributeEvents(
   return events;
 }
 
+/**
+ * Subtract N business days (Mon-Fri) from a date.
+ * Uses UTC methods to avoid timezone issues with dates stored as UTC.
+ */
+export function subtractBusinessDays(date: Date, days: number): Date {
+  const d = new Date(date);
+  let remaining = days;
+  while (remaining > 0) {
+    d.setUTCDate(d.getUTCDate() - 1);
+    const dow = d.getUTCDay();
+    if (dow !== 0 && dow !== 6) remaining--;
+  }
+  return d;
+}
+
 export interface EffectiveSchedule {
   source: "individual" | "sector";
   frequencyMonths: number;

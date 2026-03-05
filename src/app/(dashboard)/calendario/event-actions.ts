@@ -3,7 +3,8 @@
 import { getEffectiveAuth } from "@/lib/impersonation";
 import { prisma } from "@/lib/prisma";
 import { canAccessEmployee } from "@/lib/access-control";
-import { syncCalendarEventStatus } from "@/lib/calendar-event-utils";
+import { syncCalendarEventStatus, syncOutlookEvent } from "@/lib/calendar-event-utils";
+import type { GraphCalendarEvent } from "@/lib/microsoft-graph";
 import { revalidatePath } from "next/cache";
 
 export type CalendarEventDetail = {
@@ -380,4 +381,122 @@ export async function searchUsersForParticipant(
   });
 
   return users;
+}
+
+/**
+ * Manually sync a CalendarEvent to Outlook.
+ * Only the manager who created the event (managerId) can trigger this.
+ */
+export async function syncEventToOutlook(
+  eventId: string
+): Promise<{ success: boolean; error?: string }> {
+  const session = await getEffectiveAuth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Acesso não autorizado" };
+  }
+
+  const userId = session.user.id;
+
+  const event = await prisma.calendarEvent.findUnique({
+    where: { id: eventId },
+    include: {
+      employee: { select: { name: true, email: true } },
+      manager: { select: { name: true, email: true } },
+    },
+  });
+
+  if (!event) {
+    return { success: false, error: "Evento não encontrado" };
+  }
+
+  // Only the manager who created the event can sync
+  if (event.managerId !== userId) {
+    return { success: false, error: "Apenas o gestor que criou o evento pode sincronizar com o Outlook" };
+  }
+
+  if (event.outlookEventId) {
+    return { success: false, error: "Evento já está sincronizado com o Outlook" };
+  }
+
+  if (event.status !== "scheduled") {
+    return { success: false, error: "Apenas eventos agendados podem ser sincronizados" };
+  }
+
+  // Build start/end times from scheduledAt + durationMinutes
+  const scheduledAt = event.scheduledAt;
+  const endAt = new Date(scheduledAt.getTime() + event.durationMinutes * 60 * 1000);
+
+  // Format as local datetime strings for São Paulo timezone
+  const fmt = (d: Date) => {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "America/Sao_Paulo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    }).formatToParts(d);
+    const get = (t: string) => parts.find((p) => p.type === t)!.value;
+    return `${get("year")}-${get("month")}-${get("day")}T${get("hour")}:${get("minute")}:${get("second")}`;
+  };
+
+  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+  const graphEvent: GraphCalendarEvent = {
+    subject: event.title,
+    start: { dateTime: fmt(scheduledAt), timeZone: "America/Sao_Paulo" },
+    end: { dateTime: fmt(endAt), timeZone: "America/Sao_Paulo" },
+    body: {
+      contentType: "text",
+      content: `Evento agendado pelo sistema.\n\nAcesse o sistema para mais detalhes: ${baseUrl}`,
+    },
+    attendees: [
+      { emailAddress: { address: event.employee.email, name: event.employee.name }, type: "required" },
+    ],
+  };
+
+  // Add room if present
+  if (event.roomEmail && event.roomDisplayName) {
+    graphEvent.attendees.push({
+      emailAddress: { address: event.roomEmail, name: event.roomDisplayName },
+      type: "resource",
+    });
+    graphEvent.location = {
+      displayName: event.roomDisplayName,
+      locationEmailAddress: event.roomEmail,
+    };
+  }
+
+  // Determine source type and ID
+  const sourceType = event.type === "feedback" ? "feedback" : "pdi_followup";
+  const sourceId = event.type === "feedback" ? event.feedbackId : event.pdiFollowUpId;
+
+  if (!sourceId) {
+    return { success: false, error: "Evento sem registro vinculado" };
+  }
+
+  const outlookEventId = await syncOutlookEvent({
+    organizerUserId: userId,
+    attendeeUserIds: [event.employeeId],
+    graphEvent,
+    sourceType: sourceType as "feedback" | "pdi_followup",
+    sourceId,
+  });
+
+  // Also save outlookEventId on the CalendarEvent itself
+  if (outlookEventId) {
+    await prisma.calendarEvent.update({
+      where: { id: eventId },
+      data: { outlookEventId },
+    });
+  }
+
+  if (!outlookEventId) {
+    return { success: false, error: "Não foi possível sincronizar. Verifique se você está conectado ao Microsoft 365." };
+  }
+
+  revalidatePath("/calendario");
+  revalidatePath(`/calendario/${eventId}`);
+  return { success: true };
 }

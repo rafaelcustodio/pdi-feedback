@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+  db:
+    image: docker.io/library/postgres:16-alpine
+    container_name: pdi-feedback-db
+    restart: always
+    environment:
+      POSTGRES_DB: pdi_feedback
+      POSTGRES_USER: ${POSTGRES_USER:-pdi_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no .env}
+    volumes:
+      - pdi-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-pdi_admin} -d pdi_feedback"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    image: pdi-feedback:latest  # tagueada localmente após pull do ACR
+    container_name: pdi-feedback-app
+    restart: always
+    expose:
+      - "3000"
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-pdi_admin}:${POSTGRES_PASSWORD}@db:5432/pdi_feedback
+    depends_on:
+      db:
+        condition: service_healthy
+
+  caddy:
+    image: docker.io/library/caddy:2-alpine
+    container_name: pdi-feedback-caddy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./certs:/etc/caddy/certs:ro
+      - pdi-caddy-data:/data
+      - pdi-caddy-config:/config
+    depends_on:
+      - app
+
+volumes:
+  pdi-pgdata:
+  pdi-caddy-data:
+  pdi-caddy-config:

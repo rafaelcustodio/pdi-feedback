@@ -13,12 +13,11 @@ import {
 import { formatPeriodLabel } from "@/lib/sector-schedule-pure-utils";
 import {
   getUserToken,
-  createCalendarEvent,
   listMeetingRooms,
   getRoomScheduleForDateRange,
 } from "@/lib/microsoft-graph";
 import type { GraphCalendarEvent, MeetingRoom, RoomScheduleMap } from "@/lib/microsoft-graph";
-import { createCalendarEventForFeedback } from "@/lib/calendar-event-utils";
+import { createCalendarEventForFeedback, syncOutlookEvent } from "@/lib/calendar-event-utils";
 
 export interface ComplianceEmployee {
   employeeId: string;
@@ -376,7 +375,7 @@ export async function programEvents(params: {
         },
       });
 
-      // Create Outlook calendar events with room if available
+      // Sync Outlook + CalendarEvent
       const employee = await prisma.user.findUnique({
         where: { id: event.employeeId },
         select: { name: true, email: true },
@@ -391,7 +390,7 @@ export async function programEvents(params: {
         const endDateTime = `${dateStr}T${String(endH).padStart(2, "0")}:${String(startM).padStart(2, "0")}:00`;
 
         const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
-        const calendarEvent: GraphCalendarEvent = {
+        const graphEvent: GraphCalendarEvent = {
           subject: `Feedback — ${employee.name}`,
           start: { dateTime: startDateTime, timeZone: "America/Sao_Paulo" },
           end: { dateTime: endDateTime, timeZone: "America/Sao_Paulo" },
@@ -406,41 +405,23 @@ export async function programEvents(params: {
 
         const roomSelection = roomMap.get(event.employeeId);
         if (roomSelection) {
-          calendarEvent.attendees.push({
+          graphEvent.attendees.push({
             emailAddress: { address: roomSelection.roomEmail, name: roomSelection.roomDisplayName },
             type: "resource",
           });
-          calendarEvent.location = {
+          graphEvent.location = {
             displayName: roomSelection.roomDisplayName,
             locationEmailAddress: roomSelection.roomEmail,
           };
         }
 
-        const [managerToken, employeeToken] = await Promise.allSettled([
-          getUserToken(emp.managerId),
-          getUserToken(event.employeeId),
-        ]);
-
-        const managerAccessToken = managerToken.status === "fulfilled" ? managerToken.value : null;
-        const employeeAccessToken = employeeToken.status === "fulfilled" ? employeeToken.value : null;
-
-        const eventPromises: Promise<string | null>[] = [];
-        if (managerAccessToken) eventPromises.push(createCalendarEvent(managerAccessToken, calendarEvent));
-        if (employeeAccessToken) eventPromises.push(createCalendarEvent(employeeAccessToken, calendarEvent));
-
-        const results = await Promise.allSettled(eventPromises);
-
-        let savedOutlookEventId: string | null = null;
-        if (managerAccessToken && results.length > 0) {
-          const managerResult = results[0];
-          if (managerResult.status === "fulfilled" && managerResult.value) {
-            savedOutlookEventId = managerResult.value;
-            await prisma.feedback.update({
-              where: { id: feedback.id },
-              data: { outlookEventId: savedOutlookEventId },
-            });
-          }
-        }
+        const savedOutlookEventId = await syncOutlookEvent({
+          organizerUserId: emp.managerId,
+          attendeeUserIds: [event.employeeId],
+          graphEvent,
+          sourceType: "feedback",
+          sourceId: feedback.id,
+        });
 
         // Create CalendarEvent for the feedback
         const room = roomMap.get(event.employeeId);

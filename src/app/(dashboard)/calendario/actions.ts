@@ -13,6 +13,7 @@ export type CalendarEvent = {
   scheduledAt: Date;
   status: string;
   href: string;
+  outlookEventId: string | null;
 };
 
 export type CalendarFilters = {
@@ -120,6 +121,7 @@ export async function getCalendarEvents(
       scheduledAt: ce.scheduledAt,
       status: ce.status,
       href: `/calendario/${ce.id}`,
+      outlookEventId: ce.outlookEventId,
     });
   }
 

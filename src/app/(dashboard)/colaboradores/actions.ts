@@ -3,9 +3,11 @@
 import { getEffectiveAuth } from "@/lib/impersonation";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { createCalendarEventForFeedback, syncOutlookEvent } from "@/lib/calendar-event-utils";
 import { removeScheduledFeedbackEvents } from "@/lib/schedule-utils";
-import { handleSectorTransfer, snapToBusinessDay } from "@/lib/sector-schedule-utils";
+import { handleSectorTransfer, snapToBusinessDay, subtractBusinessDays } from "@/lib/sector-schedule-utils";
 import { canAccessEmployee } from "@/lib/access-control";
+import type { GraphCalendarEvent } from "@/lib/microsoft-graph";
 
 function validateCPF(cpf: string): boolean {
   const digits = cpf.replace(/\D/g, "");
@@ -2078,6 +2080,15 @@ export async function checkExistingEmployees(
 // US-003: Generate Onboarding Schedules
 // ============================================================
 
+export type OnboardingEventConfig = {
+  time: string;            // HH:mm
+  roomEmail?: string;
+  roomDisplayName?: string;
+};
+
+// Key: "manager_45" | "hr_45" | "manager_90" | "hr_90"
+export type OnboardingEventsConfig = Record<string, OnboardingEventConfig>;
+
 export type OnboardingScheduleResult = {
   success: boolean;
   error?: string;
@@ -2094,7 +2105,8 @@ export type OnboardingScheduleResult = {
  * Admin-only. Validates admission date, manager, and no existing pending schedules.
  */
 export async function generateOnboardingSchedules(
-  employeeId: string
+  employeeId: string,
+  options?: { events?: OnboardingEventsConfig }
 ): Promise<OnboardingScheduleResult> {
   const session = await requireAdmin();
   if (!session) {
@@ -2104,7 +2116,7 @@ export async function generateOnboardingSchedules(
   // Fetch employee
   const employee = await prisma.user.findUnique({
     where: { id: employeeId },
-    select: { id: true, name: true, admissionDate: true },
+    select: { id: true, name: true, email: true, admissionDate: true },
   });
 
   if (!employee) {
@@ -2155,16 +2167,29 @@ export async function generateOnboardingSchedules(
     };
   }
 
-  // Calculate dates
-  const d45 = snapToBusinessDay(
-    new Date(admissionDate.getTime() + 45 * 24 * 60 * 60 * 1000)
+  // Calculate dates — manager dates on day 44/89 (internal rule), labels keep "45d"/"90d"
+  // HR dates are 5 business days before the manager date
+  const d45Manager = snapToBusinessDay(
+    new Date(admissionDate.getTime() + 44 * 24 * 60 * 60 * 1000)
   );
-  const d90 = snapToBusinessDay(
-    new Date(admissionDate.getTime() + 90 * 24 * 60 * 60 * 1000)
+  const d90Manager = snapToBusinessDay(
+    new Date(admissionDate.getTime() + 89 * 24 * 60 * 60 * 1000)
   );
+  const d45Hr = subtractBusinessDays(d45Manager, 5);
+  const d90Hr = subtractBusinessDays(d90Manager, 5);
 
   const managerId = hierarchy.managerId;
   const adminId = session.user.id;
+  const eventsConfig = options?.events;
+
+  // Apply time to a date. Default: 09:30 UTC
+  function applyTime(date: Date, configKey: string): Date {
+    const d = new Date(date);
+    const time = eventsConfig?.[configKey]?.time ?? "09:30";
+    const [h, m] = time.split(":").map(Number);
+    d.setUTCHours(h, m, 0, 0);
+    return d;
+  }
 
   // Build the 4 schedules, skipping past dates
   const schedules: {
@@ -2175,47 +2200,56 @@ export async function generateOnboardingSchedules(
     scheduledAt: Date;
     isOnboarding: true;
     onboardingType: "manager_feedback" | "hr_conversation";
+    configKey: string;
   }[] = [];
 
-  if (d45 > now) {
+  if (d45Manager > now) {
     schedules.push({
       employeeId,
       managerId,
       status: "scheduled",
       period: "Onboarding 45d",
-      scheduledAt: d45,
+      scheduledAt: applyTime(d45Manager, "manager_45"),
       isOnboarding: true,
       onboardingType: "manager_feedback",
+      configKey: "manager_45",
     });
+  }
+  if (d45Hr > now) {
     schedules.push({
       employeeId,
       managerId: adminId,
       status: "scheduled",
       period: "Onboarding 45d",
-      scheduledAt: d45,
+      scheduledAt: applyTime(d45Hr, "hr_45"),
       isOnboarding: true,
       onboardingType: "hr_conversation",
+      configKey: "hr_45",
     });
   }
 
-  if (d90 > now) {
+  if (d90Manager > now) {
     schedules.push({
       employeeId,
       managerId,
       status: "scheduled",
       period: "Onboarding 90d",
-      scheduledAt: d90,
+      scheduledAt: applyTime(d90Manager, "manager_90"),
       isOnboarding: true,
       onboardingType: "manager_feedback",
+      configKey: "manager_90",
     });
+  }
+  if (d90Hr > now) {
     schedules.push({
       employeeId,
       managerId: adminId,
       status: "scheduled",
       period: "Onboarding 90d",
-      scheduledAt: d90,
+      scheduledAt: applyTime(d90Hr, "hr_90"),
       isOnboarding: true,
       onboardingType: "hr_conversation",
+      configKey: "hr_90",
     });
   }
 
@@ -2226,11 +2260,94 @@ export async function generateOnboardingSchedules(
     };
   }
 
-  await prisma.feedback.createMany({ data: schedules });
+  // Fetch manager email for Outlook attendees (1 query before the loop)
+  const managerUser = await prisma.user.findUnique({
+    where: { id: managerId },
+    select: { name: true, email: true },
+  });
+
+  // Create feedbacks individually, sync to Outlook, then create CalendarEvent in DB
+  const employeeName = employee.name ?? "Colaborador";
+  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+
+  for (const schedule of schedules) {
+    const { configKey, ...feedbackData } = schedule;
+    const feedback = await prisma.feedback.create({ data: feedbackData });
+
+    const calendarTitle =
+      schedule.onboardingType === "hr_conversation"
+        ? `Conversa RH ${schedule.period} — ${employeeName}`
+        : `Feedback Gestor ${schedule.period} — ${employeeName}`;
+
+    const eventConfig = eventsConfig?.[configKey];
+
+    // Build Outlook event
+    const dateStr = schedule.scheduledAt.toISOString().slice(0, 10);
+    const hh = String(schedule.scheduledAt.getUTCHours()).padStart(2, "0");
+    const mm = String(schedule.scheduledAt.getUTCMinutes()).padStart(2, "0");
+    const endHH = String(schedule.scheduledAt.getUTCHours() + 1).padStart(2, "0");
+    const startDateTime = `${dateStr}T${hh}:${mm}:00`;
+    const endDateTime = `${dateStr}T${endHH}:${mm}:00`;
+
+    const graphEvent: GraphCalendarEvent = {
+      subject: calendarTitle,
+      start: { dateTime: startDateTime, timeZone: "America/Sao_Paulo" },
+      end: { dateTime: endDateTime, timeZone: "America/Sao_Paulo" },
+      body: {
+        contentType: "text",
+        content: `Você tem um ${schedule.onboardingType === "hr_conversation" ? "conversa de RH" : "feedback com gestor"} de onboarding agendado.\n\nAcesse o sistema para mais detalhes: ${baseUrl}`,
+      },
+      attendees: [
+        { emailAddress: { address: employee.email, name: employeeName }, type: "required" },
+      ],
+    };
+
+    // Add manager as attendee (if different from admin and email available)
+    if (managerUser && managerId !== adminId) {
+      graphEvent.attendees.push({
+        emailAddress: { address: managerUser.email, name: managerUser.name },
+        type: "required",
+      });
+    }
+
+    if (eventConfig?.roomEmail && eventConfig?.roomDisplayName) {
+      graphEvent.attendees.push({
+        emailAddress: { address: eventConfig.roomEmail, name: eventConfig.roomDisplayName },
+        type: "resource",
+      });
+      graphEvent.location = {
+        displayName: eventConfig.roomDisplayName,
+        locationEmailAddress: eventConfig.roomEmail,
+      };
+    }
+
+    // Sync to Outlook — organizer is admin (logged-in user), attendees are manager + employee
+    const savedOutlookEventId = await syncOutlookEvent({
+      organizerUserId: adminId,
+      attendeeUserIds: [managerId, employeeId],
+      graphEvent,
+      sourceType: "feedback",
+      sourceId: feedback.id,
+    });
+
+    // Create CalendarEvent in DB
+    await createCalendarEventForFeedback({
+      feedbackId: feedback.id,
+      employeeId: schedule.employeeId,
+      managerId: schedule.managerId,
+      employeeName,
+      scheduledAt: schedule.scheduledAt,
+      title: calendarTitle,
+      roomEmail: eventConfig?.roomEmail,
+      roomDisplayName: eventConfig?.roomDisplayName,
+      outlookEventId: savedOutlookEventId ?? undefined,
+    });
+  }
 
   revalidatePath("/colaboradores");
   revalidatePath(`/colaboradores/${employeeId}`);
   revalidatePath("/feedbacks");
+  revalidatePath("/calendario");
 
   return {
     success: true,

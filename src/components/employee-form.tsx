@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Save, ArrowLeft, Plus, Trash2, CalendarPlus } from "lucide-react";
+import { Save, ArrowLeft, Plus, Trash2, CalendarPlus, MapPin } from "lucide-react";
 import Link from "next/link";
 import {
   createEmployee,
@@ -12,6 +12,9 @@ import {
   updateEmployeeEmergencyContacts,
   generateOnboardingSchedules,
 } from "@/app/(dashboard)/colaboradores/actions";
+import type { OnboardingEventsConfig } from "@/app/(dashboard)/colaboradores/actions";
+import { BUSINESS_TIME_SLOTS } from "@/lib/sector-schedule-pure-utils";
+import { RoomPicker } from "@/components/room-picker";
 
 const UF_OPTIONS = [
   "AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG",
@@ -315,6 +318,14 @@ export function EmployeeForm({ mode, orgUnits, isPending = false, currentUserRol
   const [showOnboardingDialog, setShowOnboardingDialog] = useState(false);
   const [onboardingLoading, setOnboardingLoading] = useState(false);
   const [onboardingSuccess, setOnboardingSuccess] = useState<string | null>(null);
+  const [onboardingEventConfigs, setOnboardingEventConfigs] = useState<OnboardingEventsConfig>({
+    manager_45: { time: "09:30" },
+    hr_45: { time: "09:30" },
+    manager_90: { time: "09:30" },
+    hr_90: { time: "09:30" },
+  });
+  const [onboardingGlobalTime, setOnboardingGlobalTime] = useState("09:30");
+  const [expandedOnboardingRoom, setExpandedOnboardingRoom] = useState<string | null>(null);
 
   // Pre-fill from Forms import (sessionStorage) on create mode
   useEffect(() => {
@@ -569,22 +580,29 @@ export function EmployeeForm({ mode, orgUnits, isPending = false, currentUserRol
       return d;
     }
 
-    const d45 = snapWeekend(new Date(admission.getTime() + 45 * 24 * 60 * 60 * 1000));
-    const d90 = snapWeekend(new Date(admission.getTime() + 90 * 24 * 60 * 60 * 1000));
-    const fmt = (d: Date) => d.toLocaleDateString("pt-BR");
+    function subBizDays(date: Date, days: number): Date {
+      const d = new Date(date);
+      let remaining = days;
+      while (remaining > 0) {
+        d.setDate(d.getDate() - 1);
+        if (d.getDay() !== 0 && d.getDay() !== 6) remaining--;
+      }
+      return d;
+    }
+
+    const d45Manager = snapWeekend(new Date(admission.getTime() + 44 * 24 * 60 * 60 * 1000));
+    const d90Manager = snapWeekend(new Date(admission.getTime() + 89 * 24 * 60 * 60 * 1000));
+    const d45Hr = subBizDays(d45Manager, 5);
+    const d90Hr = subBizDays(d90Manager, 5);
 
     return {
       daysSince,
       dates: [
-        { label: "Feedback Gestor 45d", date: d45, past: d45 <= now },
-        { label: "Conversa RH 45d", date: d45, past: d45 <= now },
-        { label: "Feedback Gestor 90d", date: d90, past: d90 <= now },
-        { label: "Conversa RH 90d", date: d90, past: d90 <= now },
+        { label: "Feedback Gestor 45d", date: d45Manager, past: d45Manager <= now, configKey: "manager_45" },
+        { label: "Conversa RH 45d", date: d45Hr, past: d45Hr <= now, configKey: "hr_45" },
+        { label: "Feedback Gestor 90d", date: d90Manager, past: d90Manager <= now, configKey: "manager_90" },
+        { label: "Conversa RH 90d", date: d90Hr, past: d90Hr <= now, configKey: "hr_90" },
       ],
-      formatted: {
-        d45: fmt(d45),
-        d90: fmt(d90),
-      },
     };
   }
 
@@ -605,11 +623,57 @@ export function EmployeeForm({ mode, orgUnits, isPending = false, currentUserRol
     return null;
   }
 
+  // Apply time to ALL non-past events
+  function applyTimeToAll(time: string) {
+    setOnboardingEventConfigs((prev) => {
+      const next = { ...prev };
+      const items = onboardingPreview?.dates ?? [];
+      for (const item of items) {
+        if (!item.past) {
+          next[item.configKey] = { ...next[item.configKey], time };
+        }
+      }
+      return next;
+    });
+  }
+
+  // Apply room to ALL non-past events
+  function applyRoomToAll(room: { email: string; displayName: string } | null) {
+    setOnboardingEventConfigs((prev) => {
+      const next = { ...prev };
+      const items = onboardingPreview?.dates ?? [];
+      for (const item of items) {
+        if (!item.past) {
+          next[item.configKey] = {
+            ...next[item.configKey],
+            roomEmail: room?.email,
+            roomDisplayName: room?.displayName,
+          };
+        }
+      }
+      return next;
+    });
+  }
+
+  function handleRoomSelect(configKey: string, room: { email: string; displayName: string } | null) {
+    setOnboardingEventConfigs((prev) => ({
+      ...prev,
+      [configKey]: {
+        ...prev[configKey],
+        roomEmail: room?.email,
+        roomDisplayName: room?.displayName,
+      },
+    }));
+    setExpandedOnboardingRoom(null);
+  }
+
   async function handleGenerateOnboarding() {
     if (!initialData?.id) return;
     setOnboardingLoading(true);
     setError(null);
-    const result = await generateOnboardingSchedules(initialData.id);
+    const result = await generateOnboardingSchedules(initialData.id, {
+      events: onboardingEventConfigs,
+    });
     setOnboardingLoading(false);
     setShowOnboardingDialog(false);
 
@@ -846,37 +910,143 @@ export function EmployeeForm({ mode, orgUnits, isPending = false, currentUserRol
       {/* Onboarding Confirmation Dialog */}
       {showOnboardingDialog && onboardingPreview && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="mx-4 w-full max-w-md rounded-lg bg-white dark:bg-gray-800 p-6 shadow-xl">
+          <div className="mx-4 w-full max-w-2xl rounded-lg bg-white dark:bg-gray-800 p-6 shadow-xl max-h-[90vh] overflow-y-auto">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               Confirmar Agendamentos de Onboarding
             </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              Serão criados os seguintes agendamentos de feedback:
-            </p>
-            <div className="space-y-2 mb-6">
-              {onboardingPreview.dates.map((item, idx) => (
-                <div
-                  key={idx}
-                  className={`flex items-center justify-between rounded-md border px-3 py-2 text-sm ${
-                    item.past
-                      ? "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-400 dark:text-gray-500"
-                      : item.label.startsWith("Conversa")
-                        ? "border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300"
-                        : "border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
-                  }`}
-                >
-                  <span>{item.label}</span>
-                  <span className="flex items-center gap-1">
-                    {item.date.toLocaleDateString("pt-BR")}
-                    {item.past && (
-                      <span className="ml-1 text-xs italic text-gray-400 dark:text-gray-500">
-                        (data passada — não será criado)
-                      </span>
+
+            {/* Global controls — apply to all events */}
+            {(() => {
+              const firstActive = onboardingPreview.dates.find((d) => !d.past);
+              if (!firstActive) return null;
+              const globalRoom = onboardingEventConfigs[firstActive.configKey];
+              const isGlobalExpanded = expandedOnboardingRoom === "__global";
+              const dateStr = `${firstActive.date.getFullYear()}-${String(firstActive.date.getMonth() + 1).padStart(2, "0")}-${String(firstActive.date.getDate()).padStart(2, "0")}`;
+              const [hh, mm] = onboardingGlobalTime.split(":").map(Number);
+              const endTime = `${String(hh + 1).padStart(2, "0")}:${String(mm).padStart(2, "0")}`;
+
+              return (
+                <div className="mb-4 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-4 space-y-3">
+                  <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                    Aplicar a todos os eventos
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">Horário:</label>
+                    <select
+                      value={onboardingGlobalTime}
+                      onChange={(e) => {
+                        setOnboardingGlobalTime(e.target.value);
+                        applyTimeToAll(e.target.value);
+                      }}
+                      className="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100"
+                    >
+                      {BUSINESS_TIME_SLOTS.map((slot) => (
+                        <option key={slot} value={slot}>{slot}</option>
+                      ))}
+                    </select>
+                    {globalRoom?.roomDisplayName ? (
+                      <button
+                        type="button"
+                        onClick={() => setExpandedOnboardingRoom(isGlobalExpanded ? null : "__global")}
+                        className="inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/70 transition-colors"
+                      >
+                        <MapPin size={10} className="shrink-0" />
+                        {globalRoom.roomDisplayName}
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setExpandedOnboardingRoom(isGlobalExpanded ? null : "__global")}
+                        className="shrink-0 rounded px-2 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                        title="Selecionar sala para todos"
+                      >
+                        Sala
+                      </button>
                     )}
-                  </span>
+                  </div>
+                  {isGlobalExpanded && (
+                    <RoomPicker
+                      date={dateStr}
+                      startTime={onboardingGlobalTime}
+                      endTime={endTime}
+                      selectedRoomEmail={globalRoom?.roomEmail}
+                      onSelect={(room) => {
+                        applyRoomToAll(room);
+                        setExpandedOnboardingRoom(null);
+                      }}
+                    />
+                  )}
                 </div>
-              ))}
+              );
+            })()}
+
+            {/* Event list */}
+            <div className="space-y-2 mb-6">
+              {onboardingPreview.dates.map((item, idx) => {
+                const config = onboardingEventConfigs[item.configKey];
+                const timeVal = config?.time ?? "09:30";
+                const isExpanded = expandedOnboardingRoom === item.configKey;
+
+                return (
+                  <div
+                    key={idx}
+                    className={`rounded-md border px-3 py-2 text-sm ${
+                      item.past
+                        ? "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-400 dark:text-gray-500 opacity-60"
+                        : item.label.startsWith("Conversa")
+                          ? "border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300"
+                          : "border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-medium">{item.label}</span>
+                      <div className="flex items-center gap-2">
+                        {!item.past && (
+                          <>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">{timeVal}</span>
+                            {config?.roomDisplayName ? (
+                              <button
+                                type="button"
+                                onClick={() => setExpandedOnboardingRoom(isExpanded ? null : item.configKey)}
+                                className="inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/70 transition-colors"
+                              >
+                                <MapPin size={10} className="shrink-0" />
+                                {config.roomDisplayName}
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => setExpandedOnboardingRoom(isExpanded ? null : item.configKey)}
+                                className="shrink-0 rounded px-2 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                                title="Selecionar sala"
+                              >
+                                Sala
+                              </button>
+                            )}
+                          </>
+                        )}
+                        <span>{item.date.toLocaleDateString("pt-BR")}</span>
+                        {item.past && (
+                          <span className="text-xs italic">(passada)</span>
+                        )}
+                      </div>
+                    </div>
+                    {!item.past && isExpanded && (
+                      <div className="mt-2">
+                        <RoomPicker
+                          date={`${item.date.getFullYear()}-${String(item.date.getMonth() + 1).padStart(2, "0")}-${String(item.date.getDate()).padStart(2, "0")}`}
+                          startTime={timeVal}
+                          endTime={`${String(parseInt(timeVal.split(":")[0]) + 1).padStart(2, "0")}:${timeVal.split(":")[1]}`}
+                          selectedRoomEmail={config?.roomEmail}
+                          onSelect={(room) => handleRoomSelect(item.configKey, room)}
+                        />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
+
             <div className="flex justify-end gap-3">
               <button
                 type="button"

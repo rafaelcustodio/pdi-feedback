@@ -13,7 +13,6 @@ import { sendEmail } from "@/lib/email";
 import { buildFeedbackSubmittedEmployeeHtml } from "@/lib/email-templates";
 import {
   getUserToken,
-  createCalendarEvent,
   deleteCalendarEvent,
   updateCalendarEvent,
   listMeetingRooms,
@@ -24,6 +23,7 @@ export type { RoomAvailability, MeetingRoom } from "@/lib/microsoft-graph";
 import {
   createCalendarEventForFeedback,
   syncCalendarEventStatus,
+  syncOutlookEvent,
 } from "@/lib/calendar-event-utils";
 
 export type FeedbackListItem = {
@@ -704,7 +704,7 @@ export async function scheduleFeedback(
     },
   });
 
-  // Create Outlook calendar event for the manager
+  // Sync Outlook + CalendarEvent
   const [employee, manager] = await Promise.all([
     prisma.user.findUnique({ where: { id: feedback.employeeId }, select: { name: true, email: true } }),
     prisma.user.findUnique({ where: { id: userId }, select: { name: true } }),
@@ -718,7 +718,7 @@ export async function scheduleFeedback(
     const endDateTime = `${dateStr}T${String(h + 1).padStart(2, "0")}:${String(m).padStart(2, "0")}:00`;
 
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
-    const calendarEvent: GraphCalendarEvent = {
+    const graphEvent: GraphCalendarEvent = {
       subject: `Feedback — ${employee.name}`,
       start: { dateTime: startDateTime, timeZone: "America/Sao_Paulo" },
       end: { dateTime: endDateTime, timeZone: "America/Sao_Paulo" },
@@ -732,41 +732,23 @@ export async function scheduleFeedback(
     };
 
     if (roomEmail && roomDisplayName) {
-      calendarEvent.attendees.push({
+      graphEvent.attendees.push({
         emailAddress: { address: roomEmail, name: roomDisplayName },
         type: "resource",
       });
-      calendarEvent.location = {
+      graphEvent.location = {
         displayName: roomDisplayName,
         locationEmailAddress: roomEmail,
       };
     }
 
-    const [managerToken, employeeToken] = await Promise.allSettled([
-      getUserToken(userId),
-      getUserToken(feedback.employeeId),
-    ]);
-
-    const managerAccessToken = managerToken.status === "fulfilled" ? managerToken.value : null;
-    const employeeAccessToken = employeeToken.status === "fulfilled" ? employeeToken.value : null;
-
-    const eventPromises: Promise<string | null>[] = [];
-    if (managerAccessToken) eventPromises.push(createCalendarEvent(managerAccessToken, calendarEvent));
-    if (employeeAccessToken) eventPromises.push(createCalendarEvent(employeeAccessToken, calendarEvent));
-
-    const results = await Promise.allSettled(eventPromises);
-
-    let savedOutlookId: string | null = null;
-    if (managerAccessToken && results.length > 0) {
-      const managerResult = results[0];
-      if (managerResult.status === "fulfilled" && managerResult.value) {
-        savedOutlookId = managerResult.value;
-        await prisma.feedback.update({
-          where: { id },
-          data: { outlookEventId: savedOutlookId },
-        });
-      }
-    }
+    const savedOutlookId = await syncOutlookEvent({
+      organizerUserId: userId,
+      attendeeUserIds: [feedback.employeeId],
+      graphEvent,
+      sourceType: "feedback",
+      sourceId: id,
+    });
 
     // Create or update CalendarEvent
     const existingCE = await prisma.calendarEvent.findUnique({
@@ -875,7 +857,7 @@ export async function createFutureFeedback(data: {
     },
   });
 
-  // Create Outlook calendar events for manager and employee
+  // Sync Outlook + CalendarEvent
   const scheduledTime = data.scheduledTime || "09:00";
   const startDateTime = `${data.scheduledAt}T${scheduledTime}:00`;
   const [hours, minutes] = scheduledTime.split(":").map(Number);
@@ -883,7 +865,7 @@ export async function createFutureFeedback(data: {
   const endDateTime = `${data.scheduledAt}T${String(endHours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00`;
 
   const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
-  const calendarEvent: GraphCalendarEvent = {
+  const graphEvent: GraphCalendarEvent = {
     subject: `Feedback — ${employee.name}`,
     start: { dateTime: startDateTime, timeZone: "America/Sao_Paulo" },
     end: { dateTime: endDateTime, timeZone: "America/Sao_Paulo" },
@@ -897,42 +879,23 @@ export async function createFutureFeedback(data: {
   };
 
   if (data.roomEmail && data.roomDisplayName) {
-    calendarEvent.attendees.push({
+    graphEvent.attendees.push({
       emailAddress: { address: data.roomEmail, name: data.roomDisplayName },
       type: "resource",
     });
-    calendarEvent.location = {
+    graphEvent.location = {
       displayName: data.roomDisplayName,
       locationEmailAddress: data.roomEmail,
     };
   }
 
-  const [managerToken, employeeToken] = await Promise.allSettled([
-    getUserToken(userId),
-    getUserToken(data.employeeId),
-  ]);
-
-  const managerAccessToken = managerToken.status === "fulfilled" ? managerToken.value : null;
-  const employeeAccessToken = employeeToken.status === "fulfilled" ? employeeToken.value : null;
-
-  const eventPromises: Promise<string | null>[] = [];
-  if (managerAccessToken) eventPromises.push(createCalendarEvent(managerAccessToken, calendarEvent));
-  if (employeeAccessToken) eventPromises.push(createCalendarEvent(employeeAccessToken, calendarEvent));
-
-  const results = await Promise.allSettled(eventPromises);
-
-  // Save manager's outlookEventId if available
-  let savedOutlookId: string | null = null;
-  if (managerAccessToken && results.length > 0) {
-    const managerResult = results[0];
-    if (managerResult.status === "fulfilled" && managerResult.value) {
-      savedOutlookId = managerResult.value;
-      await prisma.feedback.update({
-        where: { id: feedback.id },
-        data: { outlookEventId: savedOutlookId },
-      });
-    }
-  }
+  const savedOutlookId = await syncOutlookEvent({
+    organizerUserId: userId,
+    attendeeUserIds: [data.employeeId],
+    graphEvent,
+    sourceType: "feedback",
+    sourceId: feedback.id,
+  });
 
   // Create CalendarEvent
   await createCalendarEventForFeedback({

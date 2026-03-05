@@ -14,6 +14,7 @@ import {
   Calendar,
   LayoutGrid,
   List,
+  CloudOff,
 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 
@@ -25,6 +26,7 @@ export type SerializedCalendarEvent = {
   scheduledAt: string;
   status: string;
   href: string;
+  outlookEventId: string | null;
 };
 
 interface CalendarViewProps {
@@ -340,18 +342,22 @@ function EventBadge({ event }: { event: SerializedCalendarEvent }) {
   const borderColor = getTypeBorderColor(event.type);
   const Icon = style.Icon;
   const typeLabel = TYPE_LABELS[event.type];
+  const noOutlook = !event.outlookEventId;
 
   return (
     <Link
       href={event.href}
       className={`block rounded border-l-2 ${borderColor} ${style.bg} px-1.5 py-1 text-xs ${style.text} transition-opacity hover:opacity-80`}
-      title={`${typeLabel} — ${event.employeeName} | Gestor: ${event.managerName} (${style.label})`}
+      title={`${typeLabel} — ${event.employeeName} | Gestor: ${event.managerName} (${style.label})${noOutlook ? " | Não sincronizado com Outlook" : ""}`}
     >
       <div className="flex items-center gap-1">
         <Icon size={10} className="shrink-0" />
         <span className="truncate font-medium">
           [{typeLabel}] {event.employeeName}
         </span>
+        {noOutlook && (
+          <span title="Não sincronizado com Outlook"><CloudOff size={10} className="shrink-0 text-orange-500" /></span>
+        )}
       </div>
       <div className="mt-0.5 truncate text-[10px] opacity-70">
         {event.managerName}
@@ -455,8 +461,11 @@ function MobileAgendaView({
                         <EventIcon size={16} />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                        <p className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-gray-100">
                           [{TYPE_LABELS[event.type]}] {event.employeeName}
+                          {!event.outlookEventId && (
+                            <span title="Não sincronizado com Outlook"><CloudOff size={12} className="text-orange-500" /></span>
+                          )}
                         </p>
                         <p className="text-xs text-gray-500 dark:text-gray-400">
                           Gestor: {event.managerName}
@@ -579,8 +588,11 @@ function AgendaListView({
 
                   {/* Content */}
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <p className="flex items-center gap-1 truncate text-sm font-medium text-gray-900 dark:text-gray-100">
                       [{TYPE_LABELS[event.type]}] {event.employeeName}
+                      {!event.outlookEventId && (
+                        <span title="Não sincronizado com Outlook"><CloudOff size={12} className="shrink-0 text-orange-500" /></span>
+                      )}
                     </p>
                     <p className="truncate text-xs text-gray-500 dark:text-gray-400">
                       Gestor: {event.managerName}

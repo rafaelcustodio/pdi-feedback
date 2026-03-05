@@ -10,13 +10,13 @@ import {
 } from "@/lib/access-control";
 import {
   getUserToken,
-  createCalendarEvent,
   deleteCalendarEvent,
 } from "@/lib/microsoft-graph";
 import type { GraphCalendarEvent } from "@/lib/microsoft-graph";
 import {
   createCalendarEventForFollowUp,
   syncCalendarEventStatus,
+  syncOutlookEvent,
 } from "@/lib/calendar-event-utils";
 export type PDIListItem = {
   id: string;
@@ -1018,7 +1018,7 @@ export async function scheduleFollowUp(
     },
   });
 
-  // Create Outlook calendar events for manager and employee
+  // Sync Outlook + CalendarEvent
   const employee = await prisma.user.findUnique({
     where: { id: pdi.employeeId },
     select: { name: true, email: true },
@@ -1030,7 +1030,7 @@ export async function scheduleFollowUp(
     const endHours = hours + 1;
     const endDateTime = `${scheduledAt}T${String(endHours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00`;
 
-    const calendarEvent: GraphCalendarEvent = {
+    const graphEvent: GraphCalendarEvent = {
       subject: `Acompanhamento PDI — ${employee.name}`,
       start: { dateTime: startDateTime, timeZone: "America/Sao_Paulo" },
       end: { dateTime: endDateTime, timeZone: "America/Sao_Paulo" },
@@ -1044,42 +1044,23 @@ export async function scheduleFollowUp(
     };
 
     if (roomEmail && roomDisplayName) {
-      calendarEvent.attendees.push({
+      graphEvent.attendees.push({
         emailAddress: { address: roomEmail, name: roomDisplayName },
         type: "resource",
       });
-      calendarEvent.location = {
+      graphEvent.location = {
         displayName: roomDisplayName,
         locationEmailAddress: roomEmail,
       };
     }
 
-    const [managerToken, employeeToken] = await Promise.allSettled([
-      getUserToken(userId),
-      getUserToken(pdi.employeeId),
-    ]);
-
-    const managerAccessToken = managerToken.status === "fulfilled" ? managerToken.value : null;
-    const employeeAccessToken = employeeToken.status === "fulfilled" ? employeeToken.value : null;
-
-    const eventPromises: Promise<string | null>[] = [];
-    if (managerAccessToken) eventPromises.push(createCalendarEvent(managerAccessToken, calendarEvent));
-    if (employeeAccessToken) eventPromises.push(createCalendarEvent(employeeAccessToken, calendarEvent));
-
-    const results = await Promise.allSettled(eventPromises);
-
-    // Save manager's outlookEventId if available
-    let savedOutlookId: string | null = null;
-    if (managerAccessToken && results.length > 0) {
-      const managerResult = results[0];
-      if (managerResult.status === "fulfilled" && managerResult.value) {
-        savedOutlookId = managerResult.value;
-        await prisma.pDIFollowUp.update({
-          where: { id: followUp.id },
-          data: { outlookEventId: savedOutlookId },
-        });
-      }
-    }
+    const savedOutlookId = await syncOutlookEvent({
+      organizerUserId: userId,
+      attendeeUserIds: [pdi.employeeId],
+      graphEvent,
+      sourceType: "pdi_followup",
+      sourceId: followUp.id,
+    });
 
     // Create CalendarEvent
     await createCalendarEventForFollowUp({

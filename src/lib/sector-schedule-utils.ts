@@ -7,6 +7,7 @@ export {
   getBusinessDays,
   snapToBusinessDay,
   distributeEvents,
+  subtractBusinessDays,
 } from "./sector-schedule-pure-utils";
 
 /**

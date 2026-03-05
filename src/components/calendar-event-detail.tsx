@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { CloudOff } from "lucide-react";
 import type { CalendarEventDetail } from "@/app/(dashboard)/calendario/event-actions";
 import {
   updateCalendarEvent,
@@ -10,6 +11,7 @@ import {
   removeParticipant,
   cancelCalendarEvent,
   searchUsersForParticipant,
+  syncEventToOutlook,
 } from "@/app/(dashboard)/calendario/event-actions";
 import type { SystemUser } from "@/app/(dashboard)/calendario/event-actions";
 import { RoomPicker } from "@/components/room-picker";
@@ -150,14 +152,17 @@ const DURATION_OPTIONS = [
 export function CalendarEventDetailView({
   event,
   canEdit,
+  currentUserId,
 }: {
   event: CalendarEventDetail;
   canEdit: boolean;
+  currentUserId: string;
 }) {
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [cancelling, setCancelling] = useState(false);
+  const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Edit form state — extract date/time from ISO using São Paulo timezone
@@ -243,6 +248,18 @@ export function CalendarEventDetailView({
     }
   }
 
+  async function handleSyncOutlook() {
+    setSyncing(true);
+    setError(null);
+    const result = await syncEventToOutlook(event.id);
+    setSyncing(false);
+    if (result.success) {
+      router.refresh();
+    } else {
+      setError(result.error ?? "Erro ao sincronizar");
+    }
+  }
+
   async function handleAddUserParticipant(user: SystemUser) {
     setAddingParticipant(true);
     const result = await addParticipant(event.id, { userId: user.id });
@@ -313,6 +330,13 @@ export function CalendarEventDetailView({
         <TypeBadge type={event.type} />
         <StatusBadge status={event.status} />
       </div>
+
+      {!event.outlookEventId && event.status === "scheduled" && (
+        <div className="mb-4 flex items-center gap-2 rounded-md bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 p-3 text-sm text-orange-700 dark:text-orange-300">
+          <CloudOff size={16} className="shrink-0" />
+          Evento não sincronizado com o Outlook
+        </div>
+      )}
 
       {error && (
         <div className="mb-4 rounded-md bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-700 dark:text-red-300">
@@ -656,6 +680,19 @@ export function CalendarEventDetailView({
                   {linkedLabel}
                 </Link>
               )}
+
+              {!event.outlookEventId &&
+                event.status === "scheduled" &&
+                currentUserId === event.managerId && (
+                  <button
+                    onClick={handleSyncOutlook}
+                    disabled={syncing}
+                    className="flex items-center gap-1.5 rounded-md border border-orange-300 dark:border-orange-700 bg-orange-50 dark:bg-orange-900/20 px-4 py-2 text-sm font-medium text-orange-700 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/30 disabled:opacity-50"
+                  >
+                    <CloudOff size={14} />
+                    {syncing ? "Sincronizando..." : "Sincronizar com Outlook"}
+                  </button>
+                )}
 
               {canEdit && event.status === "scheduled" && (
                 <button

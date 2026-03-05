@@ -5,6 +5,7 @@ import {
   getBusinessDays,
   snapToBusinessDay,
   distributeEvents,
+  subtractBusinessDays,
 } from "../sector-schedule-utils";
 
 describe("calculatePeriods", () => {
@@ -226,5 +227,46 @@ describe("distributeEvents", () => {
   it("returns empty for empty business days", () => {
     const events = distributeEvents(employees, [], 1, "end-to-start");
     expect(events.length).toBe(0);
+  });
+});
+
+describe("subtractBusinessDays", () => {
+  it("subtracts 2 business days from Wednesday → Monday", () => {
+    // Wed Mar 4, 2026 - 2 biz days = Mon Mar 2, 2026
+    const wed = new Date("2026-03-04T00:00:00Z");
+    const result = subtractBusinessDays(wed, 2);
+    expect(result.getUTCDay()).toBe(1); // Monday
+    expect(result.getUTCDate()).toBe(2);
+  });
+
+  it("subtracts 2 business days from Monday → Thursday (skips weekend)", () => {
+    // Mon Mar 2, 2026 - 2 biz days = Thu Feb 26, 2026
+    const mon = new Date("2026-03-02T00:00:00Z");
+    const result = subtractBusinessDays(mon, 2);
+    expect(result.getUTCDay()).toBe(4); // Thursday
+    expect(result.getUTCDate()).toBe(26);
+    expect(result.getUTCMonth()).toBe(1); // February
+  });
+
+  it("subtracts 2 business days from Tuesday → Friday (skips weekend)", () => {
+    // Tue Mar 3, 2026 - 2 biz days = Fri Feb 27, 2026
+    const tue = new Date("2026-03-03T00:00:00Z");
+    const result = subtractBusinessDays(tue, 2);
+    expect(result.getUTCDay()).toBe(5); // Friday
+    expect(result.getUTCDate()).toBe(27);
+    expect(result.getUTCMonth()).toBe(1); // February
+  });
+
+  it("subtracts 1 business day from Monday → Friday", () => {
+    const mon = new Date("2026-03-02T00:00:00Z");
+    const result = subtractBusinessDays(mon, 1);
+    expect(result.getUTCDay()).toBe(5); // Friday
+    expect(result.getUTCDate()).toBe(27);
+  });
+
+  it("subtracts 0 business days returns same date", () => {
+    const wed = new Date("2026-03-04T00:00:00Z");
+    const result = subtractBusinessDays(wed, 0);
+    expect(result.getUTCDate()).toBe(4);
   });
 });

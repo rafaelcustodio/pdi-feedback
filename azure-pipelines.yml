@@ -1,0 +1,168 @@
+trigger:
+  - main
+
+pool:
+  vmImage: "ubuntu-latest"
+
+variables:
+  imageName: "pdi-feedback"
+  imageTag: "$(Build.BuildId)"
+  deployPath: "C:\\deploy\\pdi-feedback"
+  # Configurar estas variáveis no pipeline do Azure DevOps (Settings > Pipelines > Variables):
+  # - acrName: nome do ACR (ex: narwalacr) — sem .azurecr.io
+  # - deployServer: IP ou hostname do servidor Windows
+  # - deployUser: usuário com acesso WinRM ao servidor
+  # - deployPassword: senha (marcar como secret)
+  # Service Connection:
+  # - acrServiceConnection: nome da service connection do tipo "Docker Registry" (ACR)
+
+stages:
+  # ---- Stage 1: Build & Test ----
+  - stage: Build
+    displayName: "Build & Test"
+    jobs:
+      - job: BuildAndTest
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: "20.x"
+            displayName: "Setup Node.js"
+
+          - script: npm ci
+            displayName: "Install dependencies"
+
+          - script: npx prisma generate
+            displayName: "Generate Prisma client"
+
+          - script: npm run typecheck
+            displayName: "Type check"
+
+          - script: npm run lint
+            displayName: "Lint"
+
+          - script: npm run test
+            displayName: "Run tests"
+
+  # ---- Stage 2: Build & Push to ACR ----
+  - stage: BuildAndPush
+    displayName: "Build & Push to ACR"
+    dependsOn: Build
+    jobs:
+      - job: BuildAndPush
+        steps:
+          - task: Docker@2
+            inputs:
+              containerRegistry: "$(acrServiceConnection)"
+              repository: "$(imageName)"
+              command: "buildAndPush"
+              Dockerfile: "$(Build.SourcesDirectory)/Dockerfile"
+              tags: |
+                $(imageTag)
+                latest
+            displayName: "Build and push to ACR"
+
+  # ---- Stage 3: Deploy ----
+  - stage: Deploy
+    displayName: "Deploy to Server"
+    dependsOn: BuildAndPush
+    jobs:
+      - deployment: DeployToServer
+        environment: "production"
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                # Copiar Caddyfile e compose
+                - task: WindowsMachineFileCopy@2
+                  inputs:
+                    sourcePath: "$(Build.SourcesDirectory)/podman-compose.yml"
+                    machineNames: "$(deployServer)"
+                    adminUserName: "$(deployUser)"
+                    adminPassword: "$(deployPassword)"
+                    targetPath: "$(deployPath)"
+                  displayName: "Copy podman-compose.yml to server"
+
+                - task: WindowsMachineFileCopy@2
+                  inputs:
+                    sourcePath: "$(Build.SourcesDirectory)/Caddyfile"
+                    machineNames: "$(deployServer)"
+                    adminUserName: "$(deployUser)"
+                    adminPassword: "$(deployPassword)"
+                    targetPath: "$(deployPath)"
+                  displayName: "Copy Caddyfile to server"
+
+                # Pull e deploy no servidor
+                - task: PowerShellOnTargetMachines@3
+                  inputs:
+                    machines: "$(deployServer)"
+                    userName: "$(deployUser)"
+                    userPassword: "$(deployPassword)"
+                    scriptType: inline
+                    inlineScript: |
+                      $deployPath = "$(deployPath)"
+                      $acrName = "$(acrName)"
+                      $imageName = "$(imageName)"
+                      $imageTag = "$(imageTag)"
+                      $acrFqdn = "$acrName.azurecr.io"
+                      $fullImage = "$acrFqdn/${imageName}:${imageTag}"
+
+                      Set-Location $deployPath
+
+                      # Verificar certificados SSL
+                      if (-not (Test-Path "$deployPath\certs\cert.pem") -or -not (Test-Path "$deployPath\certs\key.pem")) {
+                        Write-Error "Certificados SSL nao encontrados em $deployPath\certs\"
+                        exit 1
+                      }
+
+                      # Login no ACR
+                      Write-Host "Autenticando no ACR..."
+                      podman login $acrFqdn --username $(acrUser) --password $(acrPassword)
+
+                      # Pull da nova imagem
+                      Write-Host "Baixando imagem $fullImage..."
+                      podman pull $fullImage
+
+                      # Taguear como latest para o compose usar
+                      podman tag $fullImage "${imageName}:latest"
+
+                      # Subir PostgreSQL
+                      Write-Host "Iniciando PostgreSQL..."
+                      podman-compose up -d db
+
+                      # Aguardar PostgreSQL ficar healthy
+                      Write-Host "Aguardando PostgreSQL..."
+                      $maxRetries = 30
+                      $retry = 0
+                      do {
+                        Start-Sleep -Seconds 2
+                        $health = podman inspect --format='{{.State.Health.Status}}' pdi-feedback-db 2>$null
+                        $retry++
+                        Write-Host "  Tentativa $retry/$maxRetries - Status: $health"
+                      } while ($health -ne "healthy" -and $retry -lt $maxRetries)
+
+                      if ($health -ne "healthy") {
+                        Write-Error "PostgreSQL nao ficou healthy em tempo habil"
+                        exit 1
+                      }
+
+                      # Recriar container da app
+                      Write-Host "Iniciando aplicacao..."
+                      podman-compose up -d app
+
+                      # Executar migrations
+                      Write-Host "Executando migrations..."
+                      podman exec pdi-feedback-app npx prisma migrate deploy
+
+                      # Subir Caddy (SSL)
+                      Write-Host "Iniciando Caddy (SSL)..."
+                      podman-compose up -d caddy
+
+                      # Limpar imagens antigas
+                      podman image prune -f
+
+                      Write-Host "========================================"
+                      Write-Host "Deploy concluido com sucesso!"
+                      Write-Host "  Imagem: $fullImage"
+                      Write-Host "  URL: https://gestaorh.narwalsistemas.com.br"
+                      Write-Host "========================================"
+                  displayName: "Deploy with Podman Compose"

@@ -23,7 +23,7 @@ export default async function CalendarEventPage({
 
   return (
     <div className="space-y-6">
-      <CalendarEventDetailView event={event} canEdit={canEdit} />
+      <CalendarEventDetailView event={event} canEdit={canEdit} currentUserId={userId} />
     </div>
   );
 }
